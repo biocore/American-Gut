@@ -1,0 +1,14 @@
+American Gut tables
+
+AG.biom.gz
+    - full table 
+AG_even1k.biom.gz
+    - evenly sampled at 1000 sequences per sample
+AG_even10k.biom.gz
+    - evenly sampled at 10000 sequences per sample
+AG_100nt.biom
+    - full 100nt trimmed table
+AG_100nt_even1k.biom.gz
+    - 100nt trimmed table at 1000 sequences per sample
+AG_100nt_even10k.biom.gz 
+    - 100nt trimmed table at 10000 sequences per sample
