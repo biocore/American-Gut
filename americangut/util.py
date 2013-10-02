@@ -23,3 +23,33 @@ def pick_rarifaction_level(id_, lookups):
         if id_ in lookup:
             return name
     return None
+
+def parse_mapping_file(open_file):
+    """return (header, [(sample_id, all_other_fields)])
+    
+    """
+    header = open_file.readline().strip()
+    res = []
+
+    for l in open_file:
+        res.append(l.strip().split('\t',1))
+    
+    return (header, res)
+
+def verify_subset(table, mapping):
+    """Returns True/False if the table is a subset"""
+    ids = set([i[0] for i in mapping])
+    t_ids = set(table.SampleIds)
+
+    return t_ids.issubset(ids)
+
+def slice_mapping_file(table, mapping):
+    """Returns a new mapping corresponding to just the ids in the table"""
+    t_ids = set(table.SampleIds)
+    res = []
+    
+    for id_, l in mapping:
+        if id_ in t_ids:
+            res.append('\t'.join([id_, l]))
+
+    return res

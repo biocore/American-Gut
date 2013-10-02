@@ -12,6 +12,16 @@ The following studies are being used to provide context for the American Gut dat
 * [Global Gut](http://www.ncbi.nlm.nih.gov/pubmed/22699611). The sequence data were generated using HiSeq instruments.
 * [Personal Genome Project](http://personalgenomes.org) microbiome samples, unpublished. The sequence data were generated using MiSeq instruments.
 
+Data prefixes
+-------------
+
+Each study used is described by an acronym:
+
+* AG, American Gut
+* HMP, Human Microbiome Project
+* GG, Global Gut
+* PGP, Personal Genome Project
+
 File tags
 ---------
 
