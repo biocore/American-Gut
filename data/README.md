@@ -1,7 +1,7 @@
 Data
 ====
 
-Tables and mapping files used to generate figures and statistics for the American Gut project.
+OTU Tables and QIIME-compliant mapping files used to generate figures and statistics for the American Gut project. All data are de-identified.
 
 Data sources
 ------------
