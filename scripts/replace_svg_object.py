@@ -43,8 +43,6 @@ def main():
     if not len(all_the_files):
         parser.error("no files were found")
 
-    print global_file_path
-    print all_the_files
     if global_file_path not in all_the_files:
         parser.error("cannot continue ... no global file found")
 
@@ -56,7 +54,6 @@ def main():
     fd = open(join(input_directory, global_file_path), 'U')
     global_file_contents = ''.join(fd.readlines())
     fd.close()
-
 
     for element in all_the_files:
         # avoid processing the global files
@@ -76,12 +73,11 @@ def main():
         per_sample_file = ''.join(fd.readlines())
         fd.close()
 
-        temp = format_print_for_magnified_sample(sample_id, per_sample_file,
+        try:
+            temp = format_print_for_magnified_sample(sample_id, per_sample_file,
             global_file_contents)
-
-        if temp == None:
+        except RuntimeError:
             print 'Problem found with %s, skipping it for now' % sample_id
-            continue
 
         fd_out = open(join(output_directory, element+'.svg'), 'w')
         fd_out.write(temp)
@@ -91,3 +87,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+ 
