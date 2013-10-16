@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__author__ = "Daniel McDonald"
+__author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Daniel McDonald"]
+__credits__ = ["Yoshiki Vazquez Baeza"]
 __license__ = "GPLv2"
 __version__ = "unversioned"
 __maintainer__ = "Yoshiki Vazquez Baeza"
