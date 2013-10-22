@@ -1,0 +1,5 @@
+this is
+
+a test
+
+insertion file that has a place for a #VALUE# (WORD) in it
