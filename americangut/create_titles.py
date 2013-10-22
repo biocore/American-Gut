@@ -3,6 +3,14 @@
 from os.path import join
 import argparse
 
+__author__ = "Adam Robbins-Pianka"
+__copyright__ = "Copyright 2013, The American Gut Project"
+__credits__ = ["Adam Robbins-Pianka"]
+__license__ = "BSD"
+__version__ = "unversioned"
+__maintainer__ = "Adam Robbins-Pianka"
+__email__ = "adam.robbinspianka@colorado.edu"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mapping_file', help=('The mapping file. Must '
     'have columns TITLE and COUNTRY.'), required=True)
