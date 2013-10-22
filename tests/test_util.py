@@ -10,7 +10,7 @@ from StringIO import StringIO
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Daniel McDonald"]
-__license__ = "GPLv2"
+__license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
