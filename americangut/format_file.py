@@ -2,6 +2,14 @@
 
 import argparse
 
+__author__ = "Adam Robbins-Pianka"
+__copyright__ = "Copyright 2013, The American Gut Project"
+__credits__ = ["Adam Robbins-Pianka"]
+__license__ = "BSD"
+__version__ = "unversioned"
+__maintainer__ = "Adam Robbins-Pianka"
+__email__ = "adam.robbinspianka@colorado.edu"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input_file', help=('The file to be formatted'),
     required=True),
@@ -23,7 +31,7 @@ class ArgumentError(Exception):
     """
     pass
 
-def do_replacements(input_fp, kfr, vfr, kfi, vfi):
+def do_replacements(input_string, kfr, vfr, kfi, vfi):
     """Does find-and-replace and find-and-insert operations on an input file
 
     input_fp is a filepath to an input file
@@ -42,8 +50,6 @@ def do_replacements(input_fp, kfr, vfr, kfi, vfi):
     Returns a string that is the contents of the input file with all
     replacements performed.
     """
-    input_string = open(input_fp, 'U').read()
-
     for k, v in zip(kfi, vfi):
         contents = open(v, 'U').read()
         input_string = input_string.replace(k, contents, -1)
@@ -89,7 +95,7 @@ if __name__ == '__main__':
         kfi = []
         vfi = []
 
-    output_string = do_replacements(input_fp, kfr, vfr, kfi, vfi)
+    output_string = do_replacements(open(input_fp).read(), kfr, vfr, kfi, vfi)
 
     output_fh = open(output_fp, 'w')
     output_fh.write(output_string)
