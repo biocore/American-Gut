@@ -71,9 +71,9 @@ def main():
 
     try:
         temp = format_print_for_magnified_sample(sample_id, per_sample_file,
-        global_file_contents)
+            global_file_contents)
     except RuntimeError:
-        print 'Problem found with %s, skipping it for now' % sample_id
+        parser.error('Problem found with sample %s ' % sample_id)
 
     transformed_svg_file = join(output_directory, sample_name+'.svg')
 
