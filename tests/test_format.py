@@ -7,7 +7,7 @@ from americangut.format import format_print_for_magnified_sample
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Yoshiki Vazquez Baeza"]
-__license__ = "GPLv2"
+__license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki.vazquezbaeza@colorado.edu"

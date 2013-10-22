@@ -5,7 +5,7 @@ from __future__ import division
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Yoshiki Vazquez Baeza", "Adam Robbins-Pianka"]
-__license__ = "GPLv2"
+__license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Yoshiki Vazquez Baeza"
 __email__ = "yoshiki.vazquezbaeza@colorado.edu"
