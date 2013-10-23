@@ -4,7 +4,7 @@ from __future__ import division
 
 from americangut.format_file import ArgumentError, do_replacements
 
-import argparse
+from argparse import ArgumentParser
 
 __author__ = "Adam Robbins-Pianka"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -14,7 +14,7 @@ __version__ = "unversioned"
 __maintainer__ = "Adam Robbins-Pianka"
 __email__ = "adam.robbinspianka@colorado.edu"
 
-parser = argparse.ArgumentParser()
+parser = ArgumentParser()
 parser.add_argument('-i', '--input_file', help=('The file to be formatted'),
     required=True),
 parser.add_argument('-k', '--keys_for_find_and_replace', help=('A comma '
