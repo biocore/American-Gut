@@ -36,6 +36,23 @@ def parse_mapping_file(open_file):
     
     return (header, res)
 
+def parse_mapping_file_dict(mapping_file):
+    """mapping_file is an open file handle to the mapping file
+
+    Returns a dict of dicts. Outer keys are sample IDs, inner keys are column
+    headers.
+    """
+    old_pos = mapping_file.tell()
+    mapping_file.seek(0)
+    headers = mapping_file.readline().strip().split('\t')[1:]
+    m = {}
+    for line in mapping_file:
+        elements = line.strip().split('\t')
+        m[elements[0]] = dict(zip(headers, elements[1:]))
+
+    mapping_file.seek(old_pos)
+    return m
+
 def verify_subset(table, mapping):
     """Returns True/False if the table is a subset"""
     ids = set([i[0] for i in mapping])
