@@ -43,7 +43,7 @@ if __name__ == '__main__':
     # and generate a 'title.txt' file that contains the proper text in that
     #sample's directory
     for sample_id, data in m.iteritems():
-        if data['TITLE'] != 'American Gut': continue
+        if data['TITLE'] != 'American Gut Project': continue
 
         if not isdir(sample_id):
             if force:

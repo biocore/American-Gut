@@ -19,8 +19,8 @@ class MappingFileError(Exception):
 # These are the only countries that are in the American Gut samples
 # for this release of module 2
 COUNTRY_ADJECTIVES = {
-    'GAZ:United States of America': 'American',
-    'GAZ:Canada': 'Canadian',
-    'GAZ:Spain': 'Spanish',
-    'GAZ:Norway': 'Norwegian'
+    'United States of America': 'American',
+    'Canada': 'Canadian',
+    'Spain': 'Spanish',
+    'Norway': 'Norwegian'
 }
