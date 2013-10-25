@@ -16,7 +16,7 @@ from argparse import ArgumentParser
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Justine Debelius"]
-__license__ = "BSD"
+__license__ = "BSD" 
 __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"

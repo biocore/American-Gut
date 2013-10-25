@@ -13,7 +13,7 @@ __credits__ = ["Justine Debelius"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
-__email__ = "j.debelius@gmail.com"
+__email__ = "j.debelius@gmail.com" 
 
 def taxa_importer(taxa_table_fp):
     """Loads text taxonomy files as numpy arrays.
