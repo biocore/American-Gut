@@ -409,7 +409,7 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
     FILEPREFIX = 'Figure_4_'
     MICHAEL_POLLAN = '000007108.1075657'
     NUM_TAXA = 9
-    NUM_CATS_TO_PLOT = 6
+    NUM_CATS_TO_PLOT = 7
     
     # Loads the mapping file
     map_dict = map_to_2D_dict(mapping_data)
@@ -470,8 +470,7 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
                 raise ValueError
             tax_array[:,cat_watch] = tax_summary[:,mapping_col]
             cat_watch = cat_watch + 1
-            if cat.upper() == 'BMI' or cat.upper() == 'CAT_BMI' or \
-                cat.upper() == 'BMI_CAT':
+            if 'BMI' in cat.upper():
                 cat_list.append('People with similar BMI')
             else:
                cat_list.append(mapping_key)
@@ -538,7 +537,8 @@ if __name__ == '__main__':
     if not args.categories:
         categories = {}     
     else:
-        category_fp = dict([c.strip().split(':') for c in args.categories.split(',')])
+        category_fp = dict([c.strip().split(':') \
+            for c in args.categories.split(',')])
         categories = load_category_files(category_fp, LEVEL)
     
     # Deals with the sample list
