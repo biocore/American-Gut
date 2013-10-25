@@ -472,8 +472,6 @@ def render_latex_list(raw_taxa, tax_format, tax_des):
     
     format_list_items = []       
 
-    format_list_items = []
-
     for (idx, element) in enumerate(raw_taxa):
         split_tax = [i.split('__',1)[-1] for i in element.strip().split('; ')]
         for id_, level in enumerate(split_tax):
@@ -518,6 +516,45 @@ def render_latex_list(raw_taxa, tax_format, tax_des):
     format_list_items = ''.join(format_list_items)
 
     return format_list_items
+
+def render_latex_comma_list(raw_taxa, tax_format, tax_des):
+    format_list_items = []
+
+    for (idx, element) in enumerate(raw_taxa):
+        split_tax = [i.split('__',1)[-1] for i in element.strip().split('; ')]
+        for id_, level in enumerate(split_tax):
+            if level != '':                
+                no_levels = id_ + 1
+
+        if tax_format[idx] == 'BOLD':
+            list_item = ['\\textbf{']
+        else:
+            list_item = []
+
+        if no_levels < 6:
+            list_item.append("%s %s" % (tax_des[no_levels - 1], \
+                split_tax[no_levels - 1]))
+        elif no_levels == 6:
+            list_item.append("%s \\textit{%s}" % (tax_des[no_levels - 1], \
+                split_tax[no_levels - 1]))
+        elif no_levels == 7:
+            list_item.append("\\textit{%s %s}" \
+                % (split_tax[no_levels - 2], \
+                split_tax[no_levels - 1]))
+        elif no_levels > 7:
+            list_item.append("kingdom %s" % split_tax)
+
+        if tax_format[idx] == 'BOLD':
+            list_item.append('}')
+        
+        list_item = ''.join(list_item)
+        list_item = list_item.strip('[').strip(']')
+        format_list_items.append(list_item)
+
+    format_list_items = ', '.join(format_list_items)
+
+    return format_list_items
+
    
 def render_raw_list(raw_taxa, tax_format, tax_des):
     """Creates a series of items for a raw text list
@@ -571,7 +608,7 @@ def render_raw_list(raw_taxa, tax_format, tax_des):
 
     return format_list_items
 
-def taxa_to_list(raw_taxa, tax_format, render_mode="RAW"):
+def taxa_to_list(raw_taxa, tax_format, render_mode="RAW", comma = True):
     """taxa_to_list takes a list of greengenes taxonomy strings and converts
     it to a text string that can be printed to a document.
 
@@ -598,10 +635,14 @@ def taxa_to_list(raw_taxa, tax_format, render_mode="RAW"):
     'genus', 'species']
 
     # Sets up precurser formatting text
-    if render_mode == "LATEX":
+    if render_mode == "LATEX" and comma == True:
+        format_list = render_latex_comma_list(raw_taxa, tax_format, TAX_DES)
+
+    elif render_mode == "LATEX":
         format_list = ["\\begin{itemize}"]
         format_list.append(render_latex_list(raw_taxa, tax_format, TAX_DES))
         format_list.append('\n\\end{itemize}')
+
 
     else:
         format_list = []
@@ -647,8 +688,6 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
     # actually shown.
     NUMBER_OF_TAXA_SHOWN = 4
 
-    # Checks the output directory is sane
-
     # Sets up samples for which tables are being generated
     if sample_ids == None:
         samples_to_test = samples
@@ -656,10 +695,10 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
         samples_to_test = sample_ids
 
     for idx, sample_id in enumerate(samples_to_test):
-        # Sets up the sample and population sets
-        population = delete(table, idx, 1)
-        sample = table[:,idx]
 
+        # Sets up the sample and population sets
+        sample = table[:,idx]
+        population = delete(table, idx, 1)
 
         # Calculates tax rank tables
         (unique, rare, low, high) = calculate_tax_rank_1(sample, population, \
@@ -684,18 +723,23 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
         number_rare_tax = len(rare_combined)
 
         if number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1:
-            rare_formatted = ["This sample contained %i rare or unique taxa,"\
-                              " including the following.\\\n" % number_rare_tax]
+            rare_formatted = ["This sample contained %i rare or unique taxa "
+                              "(unique are bold), including the following : " \
+                              % number_rare_tax]
             rare_formatted.append(taxa_to_list(\
                 rare_combined[:NUMBER_OF_TAXA_SHOWN ], rare_format, RENDERING))
             rare_formatted = ''.join(rare_formatted)
     
         elif number_rare_tax > 0:
-            rare_formatted = taxa_to_list(rare_combined, rare_format, \
-                RENDERING)
+            rare_formatted = ['This sample included the follow rare or unique'
+                              " taxa (unique are bold): "]
+            rare_formatted.append(taxa_to_list(rare_combined, rare_format, \
+                RENDERING))
+            rare_formatted = ''.join(rare_formatted)
+
 
         else:
-            rare_formatted = "There were no rare or unique samples found"\
+            rare_formatted = "There were no rare or unique taxa found"\
                          " in this sample."
 
         # Saves the file
@@ -712,7 +756,7 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
 
 #american_gut_fp = "/Users/jwdebelius/Desktop/FecesSplit/L6.txt"
 #output_dir = "/Users/jwdebelius/Desktop/TestOut/"
-#sample_ids = ['000007117.1075649', '000005634.1053886', '000005637.1053909']
+#sample_ids = ['000007117.1075649']
 #generate_otu_signifigance_tables_AGP(american_gut_fp, output_dir, \
 #    sample_ids = sample_ids)
 
@@ -746,6 +790,10 @@ if __name__ == '__main__':
     elif not exists(args.output):
         mkdir(args.output)
         output_dir = args.output
+    else:
+        output_dir = args.output
+
+
 
     if output_dir[-1] != "/":
         temp_dir_name = [output_dir]
