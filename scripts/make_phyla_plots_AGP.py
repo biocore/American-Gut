@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from __future__ import division
 from matplotlib import use
 use('agg')
 from os.path import isfile, exists
+from os.path import join as pjoin
 from os import mkdir
 from biom.parse import parse_biom_table, table_factory
-from os.path import (exists, isfile)
+from os.path import exists, isfile
 from numpy import array, zeros, mean, arange, shape, ones
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
@@ -186,7 +188,7 @@ def most_common_taxa_gg_13_5(level):
                        (u'k__Bacteria', u' p__Other')]
 
     else:
-        ValueError, "The level must be an integer with a value of 2 or 3."
+        ValueError, "The level must be an integer with a value of 2."
 
     return common_taxa
 
@@ -274,6 +276,7 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
                       [0.4000, 0.7608, 0.6471],
                       [0.1961, 0.5333, 0.7412],
                       [0.3333, 0.3333, 0.3333]])
+    
     X_TICK_OFFSET = 0.6
 
     BAR_WIDTH = 0.8
@@ -352,24 +355,28 @@ def load_category_files(category_files,level):
 
     category_tables = {}
     watch_count = 0
+    watch_list = []
 
     for category in category_files:
         category_file = category_files[category]
 
         if isfile(category_file) == False:
-            print 'The summarized OTU table file cannot be found for %s.' \
-                % category
-            print '%s is not in the filepath.' % category_file
+            watch_list.append('The summarized OTU table file cannot be found '
+                              'for %s. \n%s is not in the file path.' 
+                              % (category, category_file))            
             watch_count = watch_count + 1
         else:
-            cat_table = parse_biom_table(open(category_file))
+            cat_table = parse_biom_table(open(category_file, 'U'))
             (common_taxa, cat_ids, cat_summary)  = \
               summarize_human_taxa(cat_table,level)
             category_tables[category] = {'Groups': cat_ids, \
                                          'Taxa Summary': cat_summary}
 
+    if watch_count > 0:
+        print '\n'.join(watch_list)
     if watch_count == len(category_files):       
-        raise ValueError, 'No files could be found for the supplied categories.'
+        raise ValueError, 'No files could be found for any of the supplied '\
+            'categories. \n%s' % '\n'.join(watch_list)
 
     return category_tables
 
@@ -412,7 +419,7 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
 
     # Converts final taxa to a clean list
     common_phyla = []
-    for taxon in common_taxa: \
+    for taxon in common_taxa: 
         common_phyla.append(taxon[1].strip(' p__').strip('[').strip(']'))
     common_taxa = common_phyla
    
@@ -472,7 +479,9 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
         tax_array[:,5] = mp_sample_taxa
         cat_list.append('Michael Pollan')
         # Plots the data
-        filename = '%s%s%s.pdf' % (output_dir, FILEPREFIX, sample_id)
+        filename = pjoin(output_dir, '%s%s.pdf' \
+            % (FILEPREFIX, sample_id))
+        print filename
         plot_stacked_phyla(tax_array, common_taxa, cat_list, filename)
 
 # Sets up the command line interface
@@ -506,7 +515,7 @@ if __name__ == '__main__':
     if not args.input:
         parser.error("An input BIOM table is required.")
     elif not isfile(args.input):
-        raise ValueError, "The supplied biom table does not exist in the path."
+        parse.error('The supplied biom table does not exist in the path.')
     else:
         otu_table = parse_biom_table(open(args.input, 'U'))     
 
@@ -514,21 +523,16 @@ if __name__ == '__main__':
     if not args.mapping:
         parser.error("An input mapping file is required.")
     elif not isfile(args.mapping):
-        raise ValueError, "The supplied file does not exist in the path."
+        parser.error('he supplied file does not exist in the path')        
     else:
         mapping = open(args.mapping, 'U')
         
     # Checks the output directory is sane   
     if not args.output:
         parser.error("An output directory is required.")
-    else:
-        output_dir = args.output
-
-    if not exists(args.output):
-        mkdir(output_dir) 
-
-    if output_dir[-1] != '/':
-        output_dir = ''.join[output_dir, '/']
+    elif not exists(args.output):
+        mkdir(args.output)
+    output_dir = args.output
 
     # Parses the category argument
     if not args.categories:

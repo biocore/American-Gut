@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+from future import __division__
 from os import mkdir
-from os.path import isfile, exists
-from numpy import (loadtxt, array, delete, mean, shape, argsort, sort)
+from os.path import isfile, exists, join as pjoin
+from numpy import loadtxt, delete, mean, shape, argsort, sort
 from scipy.stats import ttest_1samp
 from argparse import ArgumentParser
 
@@ -157,8 +158,7 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
 
     OUTPUTS:
 
-        formatted_taxa -- a string of strings with formatting for the final 
-                    table. 
+        formatted_taxa -- a list of string with formatting for the final table. 
     """
     formatted_taxa = []
 
@@ -188,7 +188,7 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
 
     return formatted_taxa
 
-def taxa_to_table(corr_taxa, header, render_mode="RAW", numbering = 1):
+def taxa_to_table(corr_taxa, header, render_mode="RAW", numbering = True):
     """taxa_to_table takes a set of greengenes strings and corresponding 
     numeric values and converts them into a string or formatted table.
 
@@ -217,8 +217,8 @@ def taxa_to_table(corr_taxa, header, render_mode="RAW", numbering = 1):
 
     # Sets up the constant string designations, describing the phylogentic 
     # levels 
-    TAX_DES = ['kingdom', 'phylum', 'class', 'order', 'family', \
-    'genus', 'species']
+    TAX_DES = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 
+                'species']
     
     if render_mode == "LATEX":
         format_table = format_latex_table(corr_taxa, header, numbering, TAX_DES)
@@ -286,7 +286,7 @@ def format_raw_table(corr_taxa, header, numbering, tax_des):
         raise ValueError, "There cannot be more than 5 header categories"
 
     # Creates initial table row
-    if numbering == 1:
+    if numbering == True:
         header_element = ['-----%s\n      ' % HEADER_BAR]
     else:
         header_element = ['%s\n' % HEADER_BAR]
@@ -327,9 +327,9 @@ def format_raw_table(corr_taxa, header, numbering, tax_des):
                 % (split_tax, SPACER)
         
         # Sets up the first column
-        if numbering == 1 and count < 10:
+        if numbering == True and count < 10:
             table_row = ['\n ( %d) %s' % (count, clean_otu[0:27])]
-        elif numbering == 1:
+        elif numbering == True:
             table_row = ['\n (%d) %s' % (count, clean_otu[0:TAX_SPACE])]
         else:
             table_row = ['\n%s' % (clean_otu[0:TAX_SPACE])]
@@ -434,10 +434,10 @@ def format_latex_table(corr_taxa, header, numbering, tax_des):
 
         # Sets up the table entry
         table_row = []
-        if numbering == 1 and count < 10:
+        if numbering == True and count < 10:
             table_row.append("( %d) & %s" % (count, clean_otu))
             
-        elif numbering == 1:
+        elif numbering == True:
             table_row.append("(%d) & %s" % (count, clean_otu))
             
         else:
@@ -477,37 +477,26 @@ def render_latex_list(raw_taxa, tax_format, tax_des):
         for id_, level in enumerate(split_tax):
             if level != '':                
                 no_levels = id_
-        list_item = ['\n\\item ']           
         if tax_format[idx] == 'BOLD':
-            if no_levels < 6:
-                list_item.append("\\textbf{%s %s}" % (tax_des[no_levels], \
-                    split_tax[no_levels]))
-            elif no_levels == 6:
-                list_item.append("\\textbf{%s \\textit{%s}}" \
-                    % (tax_des[no_levels], \
-                    split_tax[no_levels]))
-            elif no_levels == 7:
-                list_item.append("\\textbf{\\textit{%s %s}}" \
-                    % (split_tax[no_levels - 1], \
-                    split_tax[no_levels]))
-            elif no_levels > 7:
-                list_item.append("\\textbf{kingdom %s}" \
-                    % split_tax)
-
+            list_item = ['\n\\item \\textbf{']     
         else:
-            if no_levels < 6:
-                list_item.append("%s %s" % (tax_des[no_levels], \
-                    split_tax[no_levels]))
-            elif no_levels == 6:
-                list_item.append("%s \\textit{%s}" \
-                    % (tax_des[no_levels], \
-                    split_tax[no_levels]))
-            elif no_levels == 7:
-                list_item.append("\\textit{%s %s}" \
-                    % (split_tax[no_levels - 1], \
-                    split_tax[no_levels]))
-            elif no_levels > 7:
-                list_item.append("kingdom %s" % split_tax)
+            list_item = ['\n\\item ']        
+
+        if no_levels < 6:
+            list_item.append("%s %s" % (tax_des[no_levels - 1], \
+                split_tax[no_levels - 1]))
+        elif no_levels == 6:
+            list_item.append("%s \\textit{%s}" % (tax_des[no_levels - 1], \
+                split_tax[no_levels - 1]))
+        elif no_levels == 7:
+            list_item.append("\\textit{%s %s}" \
+                % (split_tax[no_levels - 2], \
+                split_tax[no_levels - 1]))
+        elif no_levels > 7:
+            list_item.append("kingdom %s" % split_tax)
+
+        if tax_format[idx] == 'BOLD':
+            list_item.append('}')
         
         list_item = ''.join(list_item)
         list_item = list_item.strip('[').strip(']')
@@ -554,7 +543,6 @@ def render_latex_comma_list(raw_taxa, tax_format, tax_des):
     format_list_items = ', '.join(format_list_items)
 
     return format_list_items
-
    
 def render_raw_list(raw_taxa, tax_format, tax_des):
     """Creates a series of items for a raw text list
@@ -743,8 +731,10 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
                          " in this sample."
 
         # Saves the file
-        file_table_name = "%s/Table_%s.txt" % (output_dir, sample_id)
-        file_list_name = "%s/List_%s.txt" % (output_dir, sample_id)
+        file_table_name = pjoin(output_dir, "Table_%s.txt" \
+            % (output_dir, sample_id))
+        file_list_name = pjoin(output_dir, "List_%s.txt" \
+            % (output_dir, sample_id))
 
         file_table = open(file_table_name, 'w')
         file_table.write(high_formatted)
@@ -753,12 +743,6 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
         file_list = open(file_list_name, 'w')
         file_list.write(rare_formatted)
         file_list.close()
-
-#american_gut_fp = "/Users/jwdebelius/Desktop/FecesSplit/L6.txt"
-#output_dir = "/Users/jwdebelius/Desktop/TestOut/"
-#sample_ids = ['000007117.1075649']
-#generate_otu_signifigance_tables_AGP(american_gut_fp, output_dir, \
-#    sample_ids = sample_ids)
 
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates LaTeX formatted significant '\
@@ -780,7 +764,7 @@ if __name__ == '__main__':
     if not args.input:
         parser.error('An input taxonomy table is required')
     elif not isfile(args.input):
-        raise ValueError, "The supplied taxonomy file does not exist in the path."
+        parser.error("The supplied taxonomy file does not exist in the path.")
     else:
         (taxa, table, sample_ids) = taxa_importer(args.input)
 
@@ -788,17 +772,10 @@ if __name__ == '__main__':
     if not args.output:
         parser.error('An output directory must be supplied.')
     elif not exists(args.output):
-        mkdir(args.output)
-        output_dir = args.output
-    else:
-        output_dir = args.output
+        mkdir(args.output)        
 
-
-
-    if output_dir[-1] != "/":
-        temp_dir_name = [output_dir]
-        temp_dir_name.append('/')
-        output_dir = ''.join(temp_dir_name)
+    output_dir = args.output
+    
 
     # Parses the sample IDs as a list
     if args.samples:
