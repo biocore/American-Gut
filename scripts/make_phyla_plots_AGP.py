@@ -8,7 +8,7 @@ from os.path import join as pjoin
 from os import mkdir
 from biom.parse import parse_biom_table, table_factory
 from os.path import exists, isfile
-from numpy import array, zeros, mean, arange, shape, ones
+from numpy import array, zeros, mean, arange, shape, ones, around
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 from argparse import ArgumentParser
@@ -37,7 +37,6 @@ def map_to_2D_dict(mapping_data):
     for l in lines[1:]:
         inner = {k:v for k,v in zip(header, l)}
         sample_id = inner['#SampleID']
-        sample_id = sample_id
         D2[sample_id] = inner
 
     return D2
@@ -243,12 +242,12 @@ def summarize_human_taxa(otu_table, level):
 
     tax_summary[num_taxa - 1] = (tax_other.sum(0))
 
-    tax_summary = tax_summary/table_total
+    tax_summary = around(tax_summary/table_total,4)
 
     return common_taxa, sample_ids, tax_summary
 
 def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
-  file_out, sample_ids=None):
+  file_out, sample_ids=None, legend = True):
     """Creates a stacked taxonomy plot at the phylum level
 
     INPUTS:
@@ -281,8 +280,16 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
 
     BAR_WIDTH = 0.8
 
-    AXIS_DIMENSIONS = Bbox(array([[0.1538, 0.4000],
-                                  [0.6923, 0.9000]]))
+    if legend:
+        figure_dimensions = (8, 5)
+        axis_dimensions = Bbox(array([[0.2000, 0.3000],
+                                      [0.7000, 0.9000]]))
+    else:
+        figure_dimensions = (5.7143, 2.4)
+        axis_dimensions = Bbox(array([[0.2000, 0.1000],
+                                       [0.9000, 0.9000]]))
+
+
 
     X_MIN = -0.5
     X_TICK_INTERVAL = 1.0
@@ -299,7 +306,7 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     x_tick = arange(0,no_samples)
     x_max = X_MIN+no_samples
 
-    sample_figure = plt.figure(1, (8,5))
+    sample_figure = plt.figure(1, figure_dimensions)
 
     patches_watch = []
 
@@ -308,12 +315,13 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
         already_added_index = arange(plot_count)
         bottom_bar = sum(taxonomy_table[already_added_index,:])
         faces = plt.bar(x_tick-BAR_WIDTH/2, phyla, BAR_WIDTH, \
-                        bottom = bottom_bar, color = COLORMAP[plot_count,:])
+                        bottom = bottom_bar, color = COLORMAP[plot_count,:], \
+                        edgecolor=COLORMAP[plot_count,:])
         patches_watch.append(faces[1])
 
     # Sets up axis dimensiosn and limits
     ax1 = plt.gca()
-    ax1.set_position(AXIS_DIMENSIONS)
+    ax1.set_position(axis_dimensions)
     
     # The y-direction is reversed so the labels are in the same order as the 
     # colors in the legend
@@ -328,7 +336,7 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     y_text_labels = [str(e) for e in y_tick_labels]
 
     y_tick_labels = ax1.set_yticklabels(y_text_labels, size = TICK_FONT_SIZE)
-    y_axis_label = ax1.set_ylabel('Frequency (%)', size = LABEL_FONT_SIZE)
+    y_axis_label = ax1.set_ylabel('Frequency', size = LABEL_FONT_SIZE)
 
     # Sets up the x-axis labels
     x_text_labels = sample_labels[:] # copy
@@ -338,7 +346,9 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
         rotation = 45, horizontalalignment = 'right')
 
     # Adds the legend
-    plt.figlegend(patches_watch, taxonomy_headers, 'right')
+    if legend:
+        plt.figlegend(patches_watch, taxonomy_headers, 'right')
+
 
     plt.savefig(file_out, format = 'pdf')
 
@@ -443,10 +453,10 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
         # Preallocates a numpy array for the plotting data
         tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))        
         meta_data = map_dict[sample_id] 
-        cat_list = []
+        cat_list = ['', '']
 
-        cat_list.append('Your Fecal Sample')
-        cat_list.append('Average Fecal Samples')
+        #cat_list.append('Your Fecal Sample')
+        #cat_list.append('Average Fecal Samples')
     
         tax_array[:,0] = whole_summary[:,idx]
         tax_array[:,1] = mean(whole_summary, 1)
@@ -467,21 +477,24 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
                 print mapping_key
                 print cat 
                 print categories
-                raise ValueError
+                raise ValueError, 'The group cannot be found.'
             tax_array[:,cat_watch] = tax_summary[:,mapping_col]
+            cat_list.append('')
+
             cat_watch = cat_watch + 1
-            if 'BMI' in cat.upper():
-                cat_list.append('People with similar BMI')
-            else:
-               cat_list.append(mapping_key)
+#            if 'BMI' in cat.upper():
+#                cat_list.append('People with similar BMI')
+#            else:
+#               cat_list.append(mapping_key)
 
         tax_array[:,5] = mp_sample_taxa
-        cat_list.append('Michael Pollan')
+        #cat_list.append('Michael Pollan')
+        cat_list.append('')
         # Plots the data
         filename = pjoin(output_dir, '%s%s.pdf' \
             % (FILEPREFIX, sample_id))
-        print filename
-        plot_stacked_phyla(tax_array, common_taxa, cat_list, filename)
+        plot_stacked_phyla(tax_array, common_taxa, cat_list, filename, 
+                           legend = False)
 
 # Sets up the command line interface
 ## This uses argparse instead of optparse since optparse is being phased out 
@@ -499,7 +512,7 @@ parser.add_argument('-o', '--output', required = True, \
 parser.add_argument('-c', '--categories', \
                     help = 'Category associations with a collapsed OTU file '\
                     'path. The string should be associated with a colon, for'\
-                    ' example, "SEX:sex.biom, DIET_TYPE:diet.biom"'),
+                    ' example, "SEX:sex.biom,DIET_TYPE:diet.biom"'),
 parser.add_argument('-s', '--samples_to_plot', default = None, \
                     help = 'Sample IDs you wish to plot. If no value is '\
                     'specified, all samples are plotted.')
