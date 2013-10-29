@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from future import __division__
+from __future__ import division
 from os import mkdir
 from os.path import isfile, exists, join as pjoin
 from numpy import loadtxt, delete, mean, shape, argsort, sort
@@ -45,7 +45,8 @@ def taxa_importer(taxa_table_fp):
     # Returns the result
     return taxonomy, tax_table, sample_ids
 
-def calculate_tax_rank_1(sample, population, taxa):
+def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
+    abundance_threshold=0.95):
     """Identifies unique and rare samples in the population and preforms a 
     case 1 t-test on common samples.
 
@@ -59,36 +60,65 @@ def calculate_tax_rank_1(sample, population, taxa):
         taxa -- an array of greengenes ids associated the sample and 
                     population frequencies
 
+        rare_threshhold -- a value between 0 and 1 indicating the maximum 
+                    fraction of the population than can have an OTU for that 
+                    OTU to be considered rare.
+
+        abundance_threshhold -- a value between 0 and 1 indicating the minimum 
+                    fraction of a sample to be represented by the most abundant 
+                    OTUs. 
+
     OUTPUTS:
-        unique_taxa -- a list of greengenes taxonomy strings that are found
+        unique -- a list of greengenes taxonomy strings that are found
                     only in the sample
 
-        rare_taxa -- a list of greengenes taxonomy strings that are found in
+        rare -- a list of greengenes taxonomy strings that are found in
                     the sample and ten percent of the population
 
-        high_taxa -- a dictionary of greengenes strings, keyed to the sample 
-                    frequency, average population frequency, the ratio of 
-                    values, and the p-value
+        high -- a list of lists with greengenes strings, sample frequency, 
+                    average population frequency, the ratio of values, and the 
+                    p-value
 
-        low_taxa -- a dictionary of greengene strings keyed to the sample 
-                    frequency, average population frequency, the ratio of 
-                    values, and the p-value
+        low -- a list of lists with greengenes strings, sample frequency, 
+                    average population frequency, the ratio of values, and the 
+                    p-value
+
+        absent -- a list of greengenes taxonomy strings that are not found 
+                    in the sample but are present in the population.
+
+        abundant -- a list of lists of greenegenes taxonomy strings and the
+                    frequencies representing the most abundant taxa in the 
+                    sample.
     """
     # Rare taxa are defined as appearing in less than 10% of the samples
-    RARE_THRESHHOLD = 0.1
 
     (num_taxa, num_samples) = shape(population)
-    sample_shape = sample.shape
 
     # Calculates binary and count matrices
     sample_bin = sample > 0
     population_bin = population > 0
     population_count = population_bin.sum(1)
+
+    # Identifies absent taxonomies in the sample
+    absent = taxa[((sample_bin == 0) * (population_count != 0)) == 1]
+
+    # Sorts the sample by abundance
+    abundance_data = sort(sample)
+    abundance_rank = argsort(sample)
+    abundance_taxa = taxa[abundance_rank]
    
+    # Identifies the taxonomy up to the abundance threshold    
+    abundance_watch = 0
+    abundant = []
+    for idx, frequency in enumerate(reversed(abundance_data)):
+        abundance_watch = abundance_watch + frequency
+        abundant.append([abundance_taxa[idx], frequency])
+        if abundance_watch > abundance_threshold:
+            break
+
     # Identifies unique taxa and removes them from the table    
     unique = []
     rare = []
-    new_taxa = []
     remove_index = []    
 
     # Identifies rare and unique taxa
@@ -98,7 +128,7 @@ def calculate_tax_rank_1(sample, population, taxa):
             remove_index.append(idx)
 
         elif sample_bin[idx] == 1 and \
-             population_count[idx] < num_samples*RARE_THRESHHOLD:
+             population_count[idx] < num_samples*rare_threshold:
             rare.append(taxon)
             remove_index.append(idx)
 
@@ -122,7 +152,6 @@ def calculate_tax_rank_1(sample, population, taxa):
     p_stat = p_stat*num_samples
     
     # Determines list position based on the smallest p values.
-    p_sort = sort(p_stat)
     p_order = argsort(p_stat)
 
     # Goes through the p values and determines if they are enriched or depleted
@@ -135,7 +164,7 @@ def calculate_tax_rank_1(sample, population, taxa):
             low.append([taxa[index], sample[index], population_mean[index], \
                 ratio[index], p_stat[index]])
    
-    return unique, rare, low, high
+    return unique, rare, low, high, absent, abundant
 
 def convert_taxa(rough_taxa, render_mode, formatting_keys):
     """Takes a dictionary of taxonomy and corresponding values and formats
@@ -169,8 +198,17 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
         for idx, item in enumerate(element):
             if formatting_keys[idx] == "VAL_INT":
                 new_element.append("%i" % item)
+
             elif formatting_keys[idx] == "VAL_FLOAT":
                 new_element.append("%1.2f" % item)
+
+            elif formatting_keys[idx] == 'VAL_100':
+                new_element.append('%1.2f' % (item*100))
+
+            elif formatting_keys[idx] == 'VAL_100_DEC_ALIGN':
+                seperate = '%1.2f' % (item*100)
+                seperate = seperate.split('.')
+                new_element.append(' & '.join(seperate))
 
             elif formatting_keys[idx] == "VAL_PER" and render_mode == "LATEX":
                 new_element.append("%1.2f\\%%" % item)
@@ -188,417 +226,8 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
 
     return formatted_taxa
 
-def taxa_to_table(corr_taxa, header, render_mode="RAW", numbering = True):
-    """taxa_to_table takes a set of greengenes strings and corresponding 
-    numeric values and converts them into a string or formatted table.
-
-    INPUTS:
-        corr_taxa -- a python dictonary that relates the green genes taxonomy 
-                    string to the list of corresponding taxonomy values. 
-                    Ideally, these should be strings already formatted for use
-                    in the table.
-
-        table_header -- a python list of strings that describe the volumns in 
-                    the table. For raw text tables, the width of the columns is
-                    set by the number of entries in the header. RAW tables can
-                    have no more than 5 columns (corresponding to 15 characters
-                    in each column).
-
-        render_mode -- a string ("LATEX" or "RAW") which describes 
-                    the way the table will be formatted. LATEX or HTML gives a
-                    string containing formatting code. 
-    
-        numbering -- a binary value that will add numbers along the side of the
-                    table if true. Automatically FALSE for TSV rendering.
-
-    OUTPUTS:
-        format_table -- a python string formatted to give a table of taxa when
-                    rendered in the program specified by render_mode."""
-
-    # Sets up the constant string designations, describing the phylogentic 
-    # levels 
-    TAX_DES = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 
-                'species']
-    
-    if render_mode == "LATEX":
-        format_table = format_latex_table(corr_taxa, header, numbering, TAX_DES)
-    else:
-        format_table = format_raw_table(corr_taxa, header, numbering, TAX_DES)
-
-    # Returns the formatted table string
-    return format_table
-
-def format_raw_table(corr_taxa, header, numbering, tax_des):
-    """converts a greengenes ids and frequency to a raw text formatted table
-
-    INPUTS:
-        corr_taxa -- a list of lists that relates the green genes 
-                    taxonomy string to the list of corresponding taxonomy 
-                    values. Ideally, these should be strings already formatted 
-                    for use in the table.
-
-        table_header -- a python list of strings that describe the volumns 
-                    in the table. For raw text tables, the width of the columns 
-                    is set by the number of entries in the header. RAW tables 
-                    can have no more than 5 columns (corresponding to 15 
-                    characters in each column).
-
-        render_mode -- a string ("LATEX", "HTML",  or "RAW") which describes 
-                    the way the table will be formatted. LATEX or HTML gives
-                     a string containing formatting code. 
-    
-        numbering -- a binary value that will add numbers along the side of 
-                        the table if true. Automatically FALSE for TSV 
-                        rendering.
-
-        tax_des -- a list encoding phylogenetic levels
-
-    OUTPUTS:
-        format_table -- a python string formatted to give a table of taxa 
-                    when rendered in the program specified by render_mode.
-        """
-
-
-    # Sets constants
-    HEADER_BAR = "--------------------------------------------------------"\
-                 "-------------------"
-    SPACER = '                                    ' 
-    TAX_SPACE = 27
-    # Category lengths are set up for an 80 character table
-    CATEGORY_LEN_2 = 47
-    CATEGORY_LEN_3 = 23
-    CATEGORY_LEN_4 = 15
-    CATEGORY_LEN_5 = 11
-
-    # Initializes the table
-    header_len = len(header)
-
-    # Sets up the category length based on the number of header categories
-    if header_len == 2:
-        category_len = CATEGORY_LEN_2
-    elif header_len == 3:
-        category_len = CATEGORY_LEN_3
-    elif header_len == 4:
-        category_len = CATEGORY_LEN_4
-    elif header_len == 5:
-        category_len = CATEGORY_LEN_5
-    else:
-        raise ValueError, "There cannot be more than 5 header categories"
-
-    # Creates initial table row
-    if numbering == True:
-        header_element = ['-----%s\n      ' % HEADER_BAR]
-    else:
-        header_element = ['%s\n' % HEADER_BAR]
-
-    # Adds the header description
-    for counter, category in enumerate(header):
-        clean_cat = "%s%s" % (category, spacer)
-        if counter == 0:
-            header_element.append('%s' % clean_cat[0:TAX_SPACE])
-        else:
-            header_element.append(clean_cat[0:category_len])
-
-    # Terminates the table header
-    if numbering == 1:
-        header_element.append('\n-----%s' % HEADER_BAR)
-    else:
-        header_element.append('\n%s' % HEADER_BAR)
-
-    format_table = [''.join(header_element)]
-
-    for idx, element in enumerate(corr_taxa):
-        otu = element[0]            
-        otu_values = element[1:]
-        
-        # Cleans up otus for use in the table
-        split_tax = [i.split('__',1)[-1] for i in otu.split('; ')]
-        no_levels = len(split_tax)
-        if no_levels < 7:
-            clean_otu = "%s %s%s" \
-            % (tax_des[no_levels - 1], \
-                split_tax[no_levels - 1], SPACER)
-        elif no_levels == 7:
-            clean_otu = "%s %s%s" \
-            % (split_tax[no_levels - 2], \
-                split_tax[no_levels - 1], SPACER)
-        else:
-            clean_otu = "kingdom %s phylum Other%s" \
-                % (split_tax, SPACER)
-        
-        # Sets up the first column
-        if numbering == True and count < 10:
-            table_row = ['\n ( %d) %s' % (count, clean_otu[0:27])]
-        elif numbering == True:
-            table_row = ['\n (%d) %s' % (count, clean_otu[0:TAX_SPACE])]
-        else:
-            table_row = ['\n%s' % (clean_otu[0:TAX_SPACE])]
-        
-        # Adds row information to the table
-        for value in otu_values:
-            val_expand = "%s%s" % (value, SPACER)
-            table_row.append("\t%s" % (val_expand[0:(category_len)]))
-        
-        table_row = ''.join(table_row)   
-        format_table.append(table_row)
-
-    # Terminates the table
-    if numbering == 1:
-        format_table.append('\n-----%s' % HEADER_BAR)
-    else:
-        format_table.append('\n%s' % HEADER_BAR)
-
-    format_table = ''.join(format_table)
-
-    return format_table
-
-def format_latex_table(corr_taxa, header, numbering, tax_des):
-    """converts a greengenes ids and frequency to a raw text formatted table
-    
-    INPUTS:
-        corr_taxa -- a python dictonary that relates the green genes 
-                    taxonomy string to the list of corresponding taxonomy 
-                    values. Ideally, these should be strings already formatted 
-                    for use in the table.
-
-        table_header -- a python list of strings that describe the volumns 
-                    in the table. For raw text tables, the width of the columns 
-                    is set by the number of entries in the header. RAW tables 
-                    can have no more than 5 columns (corresponding to 15 
-                    characters in each column).
-
-        render_mode -- a string ("LATEX", "HTML",  or "RAW") which describes 
-                    the way the table will be formatted. LATEX or HTML gives
-                    a string containing formatting code. 
-    
-        numbering -- a binary value that will add numbers along the side of 
-                    the table if true. Automatically FALSE for TSV 
-                    rendering.
-
-        tax_des -- a list encoding phylogenetic levels
-
-    OUTPUTS:
-        format_table -- a python string formatted to give a table of taxa 
-                        when rendered in the program specified by render_mode.
-        """
-
-
-    # Initializes the table
-    if numbering == 1:
-        format_elements = ["{r"]
-        header_elements = [" & "]
-    else:
-        format_elements = ["{"]
-        header_elements = [""]
-
-    # Creates formatting designation and the header
-    for category in header: 
-        format_elements.append(" c")
-        header_elements.append("%s & " % category)
-
-    format_elements.append("}")        
-    format_code = ''.join(format_elements)
-    header_code = ''.join(header_elements)
-    header_code = header_code[0:(len(header_code)-3)]
-    # Sets up the intialization code
-    format_table = ["\\begin{tabular}%s\n\\hline\n%s \\\\ \n\\hline\n" \
-        %(format_code, header_code)]
-
-    for idx, element in enumerate(corr_taxa):
-        count = idx + 1
-        otu = element[0]
-        otu_values = element[1:]            
-            
-        # Cleans up the otu for use in the table
-        split_tax = [i.split('__',1)[-1] for i in otu.strip().split('; ')]
-        for id_, level in enumerate(split_tax):
-            if level != '':                
-                no_levels = id_
-
-        if no_levels < 6:
-            clean_otu = "%s %s" % (tax_des[no_levels - 1],  \
-                split_tax[no_levels - 1])
-
-        elif no_levels == 6:
-            clean_otu = "%s \\textit{%s}" % (tax_des[no_levels - 1], \
-                split_tax[no_levels - 1])
-            
-        elif no_levels == 7:
-            clean_otu = "\\textit{%s %s}" \
-            % (split_tax[no_levels - 2], \
-               split_tax[no_levels - 1])
-            
-        else:
-            clean_otu = "kingdom \\textit{%s} phylum Other" \
-            % split_tax
-
-        # Sets up the table entry
-        table_row = []
-        if numbering == True and count < 10:
-            table_row.append("( %d) & %s" % (count, clean_otu))
-            
-        elif numbering == True:
-            table_row.append("(%d) & %s" % (count, clean_otu))
-            
-        else:
-            table_row.append("%s" % clean_otu)
-            
-        # Adds numeric data to the table
-        for value in otu_values:table_row.append(" & %s" % value)
-                
-        # Appends to create a line break
-        table_row.append("\\\\\n")
-
-        format_table.append(''.join(table_row))
-
-    # Terminate the table
-    format_table.append('\\hline\n\\end{tabular}')
-
-    format_table = ''.join(format_table)
-
-    return format_table
-
-def render_latex_list(raw_taxa, tax_format, tax_des):
-    """Creates a series of items for a LaTex encoded list
-    INPUTS:
-        raw_taxa -- a python list object containing taxonomy strings from 
-                        greengenes to be included in the final, formated output.
-
-        tax_format -- a list specifiying if an argument should be bolded 
-                    (denoted by "BOLD") or left alone ("REG")
-
-    OUTPUTS:
-        format_list_items -- Latex encoded list items"""
-    
-    format_list_items = []       
-
-    for (idx, element) in enumerate(raw_taxa):
-        split_tax = [i.split('__',1)[-1] for i in element.strip().split('; ')]
-        for id_, level in enumerate(split_tax):
-            if level != '':                
-                no_levels = id_
-        if tax_format[idx] == 'BOLD':
-            list_item = ['\n\\item \\textbf{']     
-        else:
-            list_item = ['\n\\item ']        
-
-        if no_levels < 6:
-            list_item.append("%s %s" % (tax_des[no_levels - 1], \
-                split_tax[no_levels - 1]))
-        elif no_levels == 6:
-            list_item.append("%s \\textit{%s}" % (tax_des[no_levels - 1], \
-                split_tax[no_levels - 1]))
-        elif no_levels == 7:
-            list_item.append("\\textit{%s %s}" \
-                % (split_tax[no_levels - 2], \
-                split_tax[no_levels - 1]))
-        elif no_levels > 7:
-            list_item.append("kingdom %s" % split_tax)
-
-        if tax_format[idx] == 'BOLD':
-            list_item.append('}')
-        
-        list_item = ''.join(list_item)
-        list_item = list_item.strip('[').strip(']')
-        format_list_items.append(list_item)
-
-    format_list_items = ''.join(format_list_items)
-
-    return format_list_items
-
-def render_latex_comma_list(raw_taxa, tax_format, tax_des):
-    format_list_items = []
-
-    for (idx, element) in enumerate(raw_taxa):
-        split_tax = [i.split('__',1)[-1] for i in element.strip().split('; ')]
-        for id_, level in enumerate(split_tax):
-            if level != '':                
-                no_levels = id_ + 1
-
-        if tax_format[idx] == 'BOLD':
-            list_item = ['\\textbf{']
-        else:
-            list_item = []
-
-        if no_levels < 6:
-            list_item.append("%s %s" % (tax_des[no_levels - 1], \
-                split_tax[no_levels - 1]))
-        elif no_levels == 6:
-            list_item.append("%s \\textit{%s}" % (tax_des[no_levels - 1], \
-                split_tax[no_levels - 1]))
-        elif no_levels == 7:
-            list_item.append("\\textit{%s %s}" \
-                % (split_tax[no_levels - 2], \
-                split_tax[no_levels - 1]))
-        elif no_levels > 7:
-            list_item.append("kingdom %s" % split_tax)
-
-        if tax_format[idx] == 'BOLD':
-            list_item.append('}')
-        
-        list_item = ''.join(list_item)
-        list_item = list_item.strip('[').strip(']')
-        format_list_items.append(list_item)
-
-    format_list_items = ', '.join(format_list_items)
-
-    return format_list_items
-   
-def render_raw_list(raw_taxa, tax_format, tax_des):
-    """Creates a series of items for a raw text list
-    INPUTS:
-        raw_taxa -- a python list object containing taxonomy strings from 
-                    greengenes to be included in the final, formated output.
-
-        tax_format -- a list specifiying if an argument should be bolded 
-                    (denoted by "BOLD") or left alone ("REG")
-
-    OUTPUTS:
-        format_list_items -- raw text encoded list items"""
-
-    format_list_items = []
-
-    for idx, element in enumerate(raw_taxa):
-        split_tax = [i.split('__',1)[-1] for i in element.strip().split('; ')]
-        for id_, level in enumerate(split_tax):
-            if level != '':                
-                no_levels = id_
-
-        list_item = ['\n     o  ']
-        if tax_format(idx) == 'BOLD':
-            if no_levels < 7:
-                list_item.append("*%s %s*" \
-                    % (tax_des[no_levels - 1], \
-                    split_tax[no_levels - 1]))
-            elif no_levels == 7:
-                list_item.append("*%s %s*" \
-                    % (split_tax[no_levels - 2], \
-                        split_tax[no_levels - 1]))
-            else:
-                list_item.append("*kingdom %s*" \
-                    % split_tax)
-        else:
-            if no_levels < 7:
-                list_item.append("%s %s" % (tax_des[no_levels - 1], \
-                        split_tax[no_levels - 1]))
-            elif no_levels == 7:
-                list_item.append("%s %s" \
-                    % (split_tax[no_levels - 2], \
-                    split_tax[no_levels - 1]))
-            else:
-                list_item.append("kingdom %s" \
-                    % split_tax)
-            
-        list_item = ''.join(list_item)    
-        format_list_items.append(list_item)
-
-    format_list_items = ''.join(format_list_items)
-
-    return format_list_items
-
-def taxa_to_list(raw_taxa, tax_format, render_mode="RAW", comma = True):
-    """taxa_to_list takes a list of greengenes taxonomy strings and converts
-    it to a text string that can be printed to a document.
+def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
+    """Converts a list of greengenes strings to a text encoded list for printing
 
     INPUTS:
         raw_taxa -- a python list object containing taxonomy strings from 
@@ -609,38 +238,335 @@ def taxa_to_list(raw_taxa, tax_format, render_mode="RAW", comma = True):
 
         render_mode -- a python string describing the way the out should be 
                     formatted. Options are LATEX, corresponding to LaTex code,
-                    HTML, or RAW. LaTEX or HTML will give a string of code for
-                    inclusion in the corresponding document. RAW will give a 
-                    text file suitable for viewing, although RAW formats do not
-                    include italics.
-    
-    OUTPUTS:
+                    or RAW. LATEX will give a string which encodes a table. 
+                    RAW will give a text file suitable for viewing, although 
+                    RAW formats do not include italics.
+
+        comma -- a binary value indicating whether the list should be single 
+                    line comma separated list (TRUE), or a list format with each
+                    item on its own line (FALSE).
+
+    OUTPUT:
         format_list -- a python string formatted to give a list of taxa 
                     according to the supplied formatting mode."""
 
-    # Sets up the constant string designations, describing the phylogentic levels 
-    TAX_DES = ['kingdom', 'phylum', 'class', 'order', 'family',\
-    'genus', 'species']
+    # Sets up precurser text
+    if render_mode == "LATEX":
+        prelist = '\\begin{itemize}'
+        antelist = '\n\\end{itemize}'
+        preitem = '\n\\item '
+        anteitem = ''
+    else:
+        prelist = ''
+        antelist = ''
+        preitem = '\n o   '
+        anteitem = ''
 
-    # Sets up precurser formatting text
-    if render_mode == "LATEX" and comma == True:
-        format_list = render_latex_comma_list(raw_taxa, tax_format, TAX_DES)
+    # Creates the list
+    format_list = []
+    if comma == True:
+        for idx, taxon in enumerate(raw_taxa): 
+            format_list.append(clean_otu_string(taxon, render_mode, \
+                tax_format[idx].upper()=="BOLD"))
+        format_list = ', '.join(format_list)
+    else:
+        format_list.append(prelist)
+        for idx, taxon in enumerate(raw_taxa):
+            format_list.append('%s%s%s' % (preitem, clean_otu_string(taxon, \
+                render_mode, tax_format[idx].upper()=="BOLD"), anteitem))
+        format_list.append(antelist)
+        format_list = ''.join(format_list)
 
-    elif render_mode == "LATEX":
-        format_list = ["\\begin{itemize}"]
-        format_list.append(render_latex_list(raw_taxa, tax_format, TAX_DES))
-        format_list.append('\n\\end{itemize}')
+    return format_list
+    
+def clean_otu_string(greengenes_string, render_mode, bold=False):
+    """Distills a greengenes string to its high taxonomic resolution
 
+    INPUTS:
+        greengenes_string -- a greengenes string describing taxonomy
+
+        render_mode -- a string ("LATEX", "HTML" or "RAW") which describes 
+                    the way the table will be formatted. LATEX or HTML gives a
+                    string containing formatting code.
+        bold -- a binary value indication if the output string should be bolded.
+                    In raw text, *bold* is render with *.
+    OUTPUTS:
+        cleaned_taxon -- a formatted string describing taxonomic information
+
+    """
+    # Preallocates level descriptors
+    TAX_DES = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 
+               'Species']
+
+    # Sets up text formatting strings
+    if render_mode == "LATEX":
+        italic_before = '\\textit{'
+        italic_after = '}'
+        bold_before = '\\textbf{'
+        bold_after = '}'
 
     else:
-        format_list = []
-        format_list.append(render_raw_list(raw_taxa, tax_format, TAX_DES))
-        format_list.append('\n')
+        italic_before = ''
+        italic_after = ''
+        bold_before = '*'
+        bold_after = '*'
 
-    format_list = ''.join(format_list)
+    # Splits the taxonomy at the ; and removes the designation header. 
+    split_tax = [i.split('__',1)[-1] for i in \
+        greengenes_string.strip().split('; ')]
+    
+    # Identifies the highest level of resolution at which taxonomy is defined
+    for id_, level in enumerate(split_tax):
+        if level != '':                
+            no_levels = id_
 
-    # Returns formatted string
-    return format_list
+    # Sets up taxonomy string
+    if no_levels < 5:
+        cleaned_taxon = '%s %s' % (TAX_DES[no_levels], split_tax[no_levels])
+    elif no_levels == 5:
+        cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
+            split_tax[no_levels], italic_after)
+    elif no_levels == 6:
+        cleaned_taxon = '%s%s %s%s' % (italic_before, split_tax[no_levels-1],
+            split_tax[no_levels], italic_after)
+    else:
+        cleaned_taxon = 'Kingdom %s' % split_tax
+
+    # Removes greengenes bracketed characters if they're present
+    cleaned_taxon = cleaned_taxon.strip(']').strip('[')
+
+    # Bolds taxon if necessary
+    if bold:
+        cleaned_taxon = ''.join([bold_before, cleaned_taxon, bold_after])
+
+    return cleaned_taxon
+
+def render_latex_header(header, numbering = True, alignment = 'c'):
+    """Creates the header text for a LaTeX-encoded list
+
+    INPUTS:
+        header -- a python list of strings that describe the columns in the 
+                    table. There can be no more than 5 header columns in a 
+                    table.
+
+        numbering -- a binary value that will add numbers along the side of 
+                    the table if true.
+
+        alignment -- a string of list of strings describing how the latex 
+                    columns should be aligned. If a string (single value) is 
+                    provided, it will be used for all columns. A list must have 
+                    the same number of elements as the header list. Options for 
+                    this string include 'l' (left), 'r' (right), and 'c' 
+                    (center). For more information on alignment in LaTex 
+                    headers, see <http://en.wikibooks.org/wiki/LaTeX/Tables>.
+
+    OUTPUT:
+        table_header -- a string encoded to begin a LaTeX formatted table
+    """
+    
+    # Sets up a column for numbering if desired
+    if numbering == 1:
+        format_elements = ['{r']
+        format_header = [' ']
+    else:
+        format_elements = ['{']
+        format_header = []
+
+    # Sets up alignment string
+    if isinstance(alignment, (str, unicode)):
+        for element in header:
+            format_elements.append(alignment)
+
+    elif isinstance(alignment, list) and len(header) != len(alignment):
+        raise ValueError, 'The header list and alignment list must have the'\
+            ' same number of elements.'
+
+    elif isinstance(alignment, list):
+        format_elements.extend(alignment)       
+
+    else:
+        raise TypeError, 'Alignment must be a string or list type.'
+
+    format_elements.append('}')
+
+    # Sets up header
+    format_header.extend(header)
+
+    # Combines into a properly spaced header
+    table_header = '\\begin{tabular}%s\n\\hline\n%s \\\\\n\\hline\n' \
+        % (' '.join(format_elements), ' & '.join(format_header))
+
+    return table_header
+
+def render_raw_header(header, numbering, header_bar, spacer, tax_len, cat_len):
+    """Creates the header text for a raw text encoded table
+    """
+    
+    # Initializes the table row with the header bar
+    if numbering:
+        header_elements = ['-----%s\n     ' % header_bar]
+    else:
+        header_elements = ['%s\n' % header_bar]
+
+    # Creates the header elements for the table
+    for idx, category in enumerate(header):
+        clean_cat = '%s%s' % (category, spacer)
+        if idx == 0:
+            header_elements.append(clean_cat[:tax_len])
+        else:
+            header_elements.append(clean_cat[:cat_len])
+
+    # Terminates the table header with a horizontal bar
+    header_elements.append('\n%s\n' % header_bar)
+
+    table_header = ''.join(header_elements)
+
+    return table_header
+
+def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
+    numbering = True, alignment = 'c', header_code=None):
+    """Creates a text-encoded table
+
+    INPUTS:
+        corr_taxa -- a list of lists where the first item is a greengenes 
+                    taxonomy string and  subsequent items are associated 
+                    descriptions.
+
+        header -- a python list of strings that describe the columns in 
+                    the table. For raw text tables, the width of the columns is
+                    set by the number of entries in the header. RAW tables can
+                    have no more than 5 columns (corresponding to 15 characters
+                    in each column). 
+        
+        render_mode -- a string ("LATEX", "HTML",  or "RAW") which describes 
+                    the way the table will be formatted. LATEX or HTML gives a
+                    string containing formatting code. 
+
+        numbering -- a binary value that will add numbers along the side of the
+                    table when True
+
+        alignment -- a list or list of descriptors used to column alignment in 
+                    LaTex encoded tables. This is only used when a table is 
+                    formatted in LaTeX.
+                    
+        header_code -- a fully formatted LaTeX header description for custom 
+                    formatting of the table
+    OUTPUT:
+        table -- a string encoding a table.
+
+    """
+
+    # Sets constants for table formatting
+    HEADER_BAR = "------------------------------------------------------------"\
+    "---------------"
+    SPACER = '                                    '
+    TAX_SPACE = 27
+
+    # Category lengths are set up for an 80 character in a raw table
+    CATEGORY_LEN_2 = 47
+    CATEGORY_LEN_3 = 23
+    CATEGORY_LEN_4 = 15
+    CATEGORY_LEN_5 = 11
+
+    # Sets up the the formatting key
+    FORMAT_KEY = False
+
+    # Sets up preformatted text by table type
+    if render_mode == 'LATEX':  
+        # Creates the table header
+        if header_code == None:
+            table_header = render_latex_header(header, numbering, \
+                alignment = alignment)
+        else:
+            table_header = header_code
+
+        print table_header
+
+        # Creates formatting text around the table row
+        anterow = '\\\\\n'  
+        row_seperator = ' & '
+
+        # Creates the text to termiante the table
+        table_end = '\\hline\n\\end{tabular}'
+        
+    else:
+        # Determines the appropriate category length for each row
+        header_len = len(header)
+
+        if header_len == 2:
+            category_len = CATEGORY_LEN_2
+        elif header_len == 3:
+            category_len = CATEGORY_LEN_3
+        elif header_len == 4:
+            category_len = CATEGORY_LEN_4
+        elif header_len == 5:
+            category_len = CATEGORY_LEN_5
+        else:
+            raise ValueError, "There cannot be more than 5 header categories"
+
+        # Creates the table header
+        table_header = render_raw_header(header, numbering, \
+            header_bar = HEADER_BAR, spacer = SPACER, tax_len = TAX_SPACE, \
+            cat_len = category_len)
+
+        # Creates the text around the table  
+        anterow = '\n'
+        row_seperator = ''
+
+        # Sets up text to termiante the table
+        if numbering == 1:
+            table_end = '-----%s' % HEADER_BAR
+        else:
+            table_end = HEADER_BAR
+
+    # Starts creating the table
+    table_code = [table_header]
+
+    # Creates the table rows
+    for idx, taxon_description in enumerate(corr_taxa):
+        # Sets up the row text
+        table_row = []
+        # Pulls out the taxon and descriptor, separates them and formats them
+        taxon = taxon_description[0]
+        clean_taxon = clean_otu_string(taxon, render_mode = render_mode, \
+            bold = FORMAT_KEY)
+        description = taxon_description[1:]
+
+        # Adds numbering to the begining of the row if appropriate
+        if numbering == True and idx < 10:
+            table_row.append('( %d) ' % (idx + 1))
+        elif numbering == True:
+            table_row.append('(%d) ' % (idx + 1))
+        
+        # Pads the raw row if necessary
+        if render_mode == "RAW":
+            clean_taxon = '%s%s' % (clean_taxon, SPACER)
+            clean_taxon = clean_taxon[:TAX_SPACE]
+
+        # Adds the taxonomy data to the row
+        table_row.append('%s' % (clean_taxon))
+
+        # Sets up the data for the rows
+        for item in description:
+            # Pads the row if necessary
+            if render_mode == "RAW":
+                item = '%s%s' % (item, SPACER)
+                item = item[:category_len]              
+
+            # Adds the item to the table
+            table_row.append('%s' % (item))
+
+        # Inserts the correct spacer and adds to the table body
+        table_code.append(row_seperator.join(table_row))
+
+    table_code.append(table_end)
+
+    print table_code
+
+    # Returns an encoded string
+    table = anterow.join(table_code)
+
+    return table
 
 def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
     sample_ids = None):
@@ -664,17 +590,22 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
     OUTPUTS:
         Generates text files containing LaTex encoded strings which creates a 
         formatted table of taxa enriched in a single sample 
-        (Table_<SAMPLE_ID>.txt) and a list of rare and unique samples 
+        (Enriched_<SAMPLE_ID>.txt), the most abundant taxa in a single sample 
+        (Abundance_<SAMPLE_ID>.txt) and a list of rare and unique samples 
         (List_<SAMPLE_ID>). Rare defined as present in less than 10% of the 
         total population. The unique taxa are bolded in the lists. 
     """
     # Sets table constants
     RENDERING = "LATEX"
-    FORMAT_KEYS = ["100_PER", "100_PER", "VAL_INT", "SKIP"]
-    TABLE_HEADER = ['Taxonomy', 'Sample', 'Population', 'Fold Difference']
+    FORMAT_SIGNIFIGANCE = ["VAL_100", "VAL_100", "VAL_INT", "SKIP"]
+    FORMAT_ABUNDANCE = ["VAL_100_DEC_ALIGN"]    
+    TABLE_HEADER_SIGNIFIGANCE = ['Taxonomy', 'Sample (\\%%)',
+                                 'Population (\\%%)', 'Fold Difference']
+    TABLE_HEADER_ABUNDANCE = ['Taxonomy', 'Abundance (\\%%)']    
+
     # Number of taxa shown is an indexing value, it is one less than what is 
     # actually shown.
-    NUMBER_OF_TAXA_SHOWN = 4
+    NUMBER_OF_TAXA_SHOWN = 5
 
     # Sets up samples for which tables are being generated
     if sample_ids == None:
@@ -689,14 +620,28 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
         population = delete(table, idx, 1)
 
         # Calculates tax rank tables
-        (unique, rare, low, high) = calculate_tax_rank_1(sample, population, \
-            taxa)
+        (unique, rare, low, high, absent, abundance) = calculate_tax_rank_1\
+            (sample, population, taxa)
 
-        # Generates formatted table
-        formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN], \
-            render_mode = RENDERING, formatting_keys = FORMAT_KEYS)
-        high_formatted = taxa_to_table(formatted_high, TABLE_HEADER, \
-            render_mode = RENDERING)
+        # Generates formatted enriched table
+        formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
+                                      render_mode = RENDERING, 
+                                      formatting_keys = FORMAT_SIGNIFIGANCE)
+
+        high_formatted = convert_taxa_to_table(formatted_high,
+                                       header = TABLE_HEADER_SIGNIFIGANCE,
+                                       render_mode = RENDERING,
+                                       numbering = False)
+
+        # Generates formatted abundance table
+        formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
+                                           render_mode = RENDERING,
+                                           formatting_keys = FORMAT_ABUNDANCE)
+
+        abundance_formatted = convert_taxa_to_table(formatted_abundance,
+                                            header = TABLE_HEADER_ABUNDANCE,
+                                            render_mode = RENDERING,
+                                            numbering = False)
 
         # Generates formatted list
         rare_format = []
@@ -721,8 +666,9 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
         elif number_rare_tax > 0:
             rare_formatted = ['This sample included the follow rare or unique'
                               " taxa (unique are bold): "]
-            rare_formatted.append(taxa_to_list(rare_combined, rare_format, \
-                RENDERING))
+            rare_formatted.append(convert_taxa_to_list(rare_combined, 
+                                                       rare_format,
+                                                       RENDERING))
             rare_formatted = ''.join(rare_formatted)
 
 
@@ -731,14 +677,17 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
                          " in this sample."
 
         # Saves the file
-        file_table_name = pjoin(output_dir, "Table_%s.txt" \
-            % (output_dir, sample_id))
-        file_list_name = pjoin(output_dir, "List_%s.txt" \
-            % (output_dir, sample_id))
+        file_high_name = pjoin(output_dir, "Enriched_%s.txt" % sample_id)
+        file_abun_name = pjoin(output_dir, "Abundance_%s.txt" % sample_id)
+        file_list_name = pjoin(output_dir, "List_%s.txt" % sample_id)
 
-        file_table = open(file_table_name, 'w')
+        file_table = open(file_high_name, 'w')
         file_table.write(high_formatted)
         file_table.close()
+
+        file_abun = open(file_abun_name, 'w')
+        file_abun.write(abundance_formatted)
+        file_abun.close()
 
         file_list = open(file_list_name, 'w')
         file_list.write(rare_formatted)
