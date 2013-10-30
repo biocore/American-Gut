@@ -320,6 +320,9 @@ def clean_otu_string(greengenes_string, render_mode, bold=False):
         if level != '':                
             no_levels = id_
 
+    print 'greengenes string: %s' % greengenes_string
+    print 'level = %r' % (no_levels+1)
+
     # Sets up taxonomy string
     if no_levels < 5:
         cleaned_taxon = '%s %s' % (TAX_DES[no_levels], split_tax[no_levels])
@@ -334,6 +337,8 @@ def clean_otu_string(greengenes_string, render_mode, bold=False):
 
     # Removes greengenes bracketed characters if they're present
     cleaned_taxon = cleaned_taxon.strip(']').strip('[')
+
+    print 'Cleaned taxa: %r' % cleaned_taxon
 
     # Bolds taxon if necessary
     if bold:
@@ -442,6 +447,7 @@ def generate_latex_macro(corr_taxa, categories):
     ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
                 'Y', 'Z']
+    RENDER = 'LATEX'
 
     format_table = []
 
@@ -451,7 +457,7 @@ def generate_latex_macro(corr_taxa, categories):
             if id_ == 0:
                 format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
                                   clean_otu_string(taxon_description[0], 
-                                  'render_mode = LATEX')))
+                                  render_mode = RENDER)))
             else:
                 format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
                                   taxon_description[id_]))
