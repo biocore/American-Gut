@@ -91,7 +91,9 @@ def main():
 
     # based on pyqi/util.pyqi_system_call
     process = Popen(inkscape_command, shell=True, stdout=PIPE, stderr=PIPE)
-    _, _ = process.communicate()
+    o, e = process.communicate()
+    if o or e:
+        print o, e
     if process.returncode != 0:
         parser.error('Could not convert the file from SVG to PDF, exit status '
             'code is %d', process.returncode)
