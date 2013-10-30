@@ -480,8 +480,6 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
         else:
             table_header = header_code
 
-        print table_header
-
         # Creates formatting text around the table row
         anterow = '\\\\\n'  
         row_seperator = ' & '
@@ -560,9 +558,7 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
         table_code.append(row_seperator.join(table_row))
 
     table_code.append(table_end)
-
-    print table_code
-
+    
     # Returns an encoded string
     table = anterow.join(table_code)
 
