@@ -2,7 +2,7 @@
 
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Yoshiki Vazquez Baeza"]
+__credits__ = ["Yoshiki Vazquez Baeza", "Adam Robbins-Pianka"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Yoshiki Vazquez Baeza"
@@ -33,7 +33,8 @@ def format_print_for_magnified_sample(sample_id, per_sample_file_string,
 
     escaped_sample_id = escape(sample_id)
 
-    re = compile('<path id="%s".*?>' % escaped_sample_id)
+    # find the matches of the tags only within the same path
+    re = compile('<path id="%s".*?</path>' % escaped_sample_id)
     big_sphere_contents = findall(re, per_sample_file_string)
     small_sphere_contents = findall(re, global_file_string)
 
