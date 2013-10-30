@@ -61,4 +61,13 @@ def format_print_for_magnified_sample(sample_id, per_sample_file_string,
         temp = temp.replace('</svg>', ''.join([element for element
             in big_sphere_contents])+'</svg>')
 
+    # match the background in the print and remove it, note that the background
+    # in this case is nothing else but a rect covering the whole area; the
+    # reason why we have to remove it is to make inkscape's "fit to drawing
+    # area" algorithm work, otherwise it would contain a lot of whitespace
+    re = compile('<rect id="background".*?/>')
+    background_contents = findall(re, temp)
+    for element in background_contents:
+        temp = temp.replace(element, '')
+
     return temp
