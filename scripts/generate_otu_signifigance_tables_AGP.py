@@ -423,6 +423,46 @@ def render_raw_header(header, numbering, header_bar, spacer, tax_len, cat_len):
 
     return table_header
 
+def generate_latex_macro(corr_taxa, categories):
+    """Generates a LaTeX macro for use in a template
+    
+    INPUTS:
+        corr_taxa -- a list of lists where the first item is a greengenes 
+                    taxonomy string and  subsequent items are associated 
+                    descriptions.
+        categories -- a list of strings describing the macro data to be 
+                    substituted. i.e. Name, Sample, etc. 
+
+    OUTPUT:
+        A LaTeX macro with the definitions provided in categories
+
+
+    """
+    # Preallocates the an indexing varaible
+    ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
+                'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
+                'Y', 'Z']
+
+    format_table = []
+
+    # Combines categories with data and mapping index
+    for idx, taxon_description in enumerate(corr_taxa):
+        for id_, cat in enumerate(categories):
+            if id_ == 0:
+                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                  clean_otu_string(taxon_description[0], 
+                                  'render_mode = LATEX')))
+            else:
+                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                  taxon_description[id_]))
+
+    # Inserts line breaks
+    table = '\n'.join(format_table)
+
+
+    return table
+
+
 def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
     numbering = True, alignment = 'c', header_code=None):
     """Creates a text-encoded table
@@ -585,19 +625,20 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
 
     OUTPUTS:
         Generates text files containing LaTex encoded strings which creates a 
-        formatted table of taxa enriched in a single sample 
-        (Enriched_<SAMPLE_ID>.txt), the most abundant taxa in a single sample 
-        (Abundance_<SAMPLE_ID>.txt) and a list of rare and unique samples 
-        (List_<SAMPLE_ID>). Rare defined as present in less than 10% of the 
-        total population. The unique taxa are bolded in the lists. 
+        LaTeX macro dictionary with the information for creating a table of most
+        abundant taxa, most enriched taxa, and rare and unique taxa. Rare 
+        defined as present in less than 10% of the total population. The unique 
+        taxa are bolded in the lists. 
     """
     # Sets table constants
     RENDERING = "LATEX"
     FORMAT_SIGNIFIGANCE = ["VAL_100", "VAL_100", "VAL_INT", "SKIP"]
-    FORMAT_ABUNDANCE = ["VAL_100_DEC_ALIGN"]    
-    TABLE_HEADER_SIGNIFIGANCE = ['Taxonomy', 'Sample (\\%%)',
-                                 'Population (\\%%)', 'Fold Difference']
-    TABLE_HEADER_ABUNDANCE = ['Taxonomy', 'Abundance (\\%%)']    
+    FORMAT_ABUNDANCE = ["VAL_100"]    
+    MACRO_CATS_SIGNIFICANCE = ['Taxon','Sampl', 'Popul', 'Fold']
+    MACRO_CATS_ABUNDANCE = ['Taxon', 'Sampl']
+
+    FILE_PRECURSER = 'macros_'
+    FILE_EXTENSION = '.tex'
 
     # Number of taxa shown is an indexing value, it is one less than what is 
     # actually shown.
@@ -624,20 +665,15 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
                                       render_mode = RENDERING, 
                                       formatting_keys = FORMAT_SIGNIFIGANCE)
 
-        high_formatted = convert_taxa_to_table(formatted_high,
-                                       header = TABLE_HEADER_SIGNIFIGANCE,
-                                       render_mode = RENDERING,
-                                       numbering = False)
+        high_formatted = generate_latex_macro(formatted_high, \
+            categories = MACRO_CATS_SIGNIFICANCE)
 
         # Generates formatted abundance table
         formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
                                            render_mode = RENDERING,
                                            formatting_keys = FORMAT_ABUNDANCE)
-
-        abundance_formatted = convert_taxa_to_table(formatted_abundance,
-                                            header = TABLE_HEADER_ABUNDANCE,
-                                            render_mode = RENDERING,
-                                            numbering = False)
+        abundance_formatted = generate_latex_macro(formatted_abundance, \
+            categories = MACRO_CATS_ABUNDANCE)
 
         # Generates formatted list
         rare_format = []
@@ -655,16 +691,19 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
             rare_formatted = ["This sample contained %i rare or unique taxa "
                               "(unique are bold), including the following : " \
                               % number_rare_tax]
-            rare_formatted.append(taxa_to_list(\
-                rare_combined[:NUMBER_OF_TAXA_SHOWN ], rare_format, RENDERING))
+            rare_formatted.append(convert_taxa_to_list(\
+                rare_combined[:NUMBER_OF_TAXA_SHOWN ], tax_format = rare_format,
+                                                       render_mode = RENDERING, 
+                                                       comma = True))
             rare_formatted = ''.join(rare_formatted)
     
         elif number_rare_tax > 0:
             rare_formatted = ['This sample included the follow rare or unique'
                               " taxa (unique are bold): "]
             rare_formatted.append(convert_taxa_to_list(rare_combined, 
-                                                       rare_format,
-                                                       RENDERING))
+                                                       tax_format = rare_format,
+                                                       render_mode = RENDERING, 
+                                                       comma = True))
             rare_formatted = ''.join(rare_formatted)
 
 
@@ -673,21 +712,15 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
                          " in this sample."
 
         # Saves the file
-        file_high_name = pjoin(output_dir, "Enriched_%s.txt" % sample_id)
-        file_abun_name = pjoin(output_dir, "Abundance_%s.txt" % sample_id)
-        file_list_name = pjoin(output_dir, "List_%s.txt" % sample_id)
+        file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, sample_id, 
+            FILE_EXTENSION))
 
-        file_table = open(file_high_name, 'w')
-        file_table.write(high_formatted)
-        file_table.close()
-
-        file_abun = open(file_abun_name, 'w')
-        file_abun.write(abundance_formatted)
-        file_abun.close()
-
-        file_list = open(file_list_name, 'w')
-        file_list.write(rare_formatted)
-        file_list.close()
+        file_for_editing = open(file_name, 'w')
+        file_for_editing.write('%%Abundance Table\n%s\n\n\n' % abundance_formatted)
+        file_for_editing.write('%%Enrichment Table\n%s\n\n\n' % high_formatted)
+        file_for_editing.write('%%Rare List\n\\def\\rareList{%s}\n' \
+            % rare_formatted)
+        file_for_editing.close()
 
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates LaTeX formatted significant '\
