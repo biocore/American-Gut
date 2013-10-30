@@ -247,7 +247,7 @@ def summarize_human_taxa(otu_table, level):
     return common_taxa, sample_ids, tax_summary
 
 def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
-  file_out, sample_ids=None, legend = True):
+  file_out, sample_ids=None, legend = True, x_axis=True):
     """Creates a stacked taxonomy plot at the phylum level
 
     INPUTS:
@@ -280,15 +280,23 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
 
     BAR_WIDTH = 0.8
 
-    if legend:
+    if legend and x_axis:
         figure_dimensions = (8, 5)
         axis_dimensions = Bbox(array([[0.2000, 0.3000],
                                       [0.7000, 0.9000]]))
+    elif legend:
+        figure_dimensions = (8, 2.4)
+        axis_dimensions = Bbox(array([[0.2000, 0.1000],
+                                      [0.7000, 0.9000]]))
+    elif x_axis:
+        figure_dimensions = (5.7143, 5)
+        axis_dimensions = Bbox(array([[0.2000, 0.3000],
+                                      [0.9000, 0.9000]]))
+        #bah
     else:
         figure_dimensions = (5.7143, 2.4)
         axis_dimensions = Bbox(array([[0.2000, 0.1000],
-                                       [0.9000, 0.9000]]))
-
+                                      [0.9000, 0.9000]]))
 
 
     X_MIN = -0.5
@@ -391,7 +399,7 @@ def load_category_files(category_files,level):
     return category_tables
 
 def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
-    samples_to_plot = None):
+    samples_to_plot = None, legend = False, xaxis = True):
     """Creates stacked bar plots for an otu table
     INPUTS:
         otu_table -- an open OTU table
@@ -446,6 +454,8 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
     # Loads the category dictionary
     categories = load_category_files(category_fp, LEVEL)
 
+    print categories
+
     # Generates a figure for each sample
     for idx, sample_id in enumerate(sample_ids):       
         sample_id = sample_id
@@ -453,7 +463,8 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
         # Preallocates a numpy array for the plotting data
         tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))        
         meta_data = map_dict[sample_id] 
-        cat_list = ['', '']
+        cat_list = ['You', 'Average', 'Diet', 'BMI', 'Sex', 'Age', 
+                    'Michael Pollan', '']
 
         #cat_list.append('Your Fecal Sample')
         #cat_list.append('Average Fecal Samples')
@@ -463,38 +474,30 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
     
         cat_watch = 2
         # Identifies the appropriate metadata categories
-        for cat in categories:
+        for cat in categories:          
+            print cat
             # Pulls metadata for the sample and category
             mapping_key = meta_data[cat]
             # Pulls taxonomic summary and group descriptions for the category
             tax_summary = categories[cat]['Taxa Summary']
             group_descriptions = categories[cat]['Groups']
+            print group_descriptions
             # Amends plotting tables
             try:
                 mapping_col = group_descriptions.index(mapping_key)
             except:
-                print group_descriptions
-                print mapping_key
-                print cat 
-                print categories
-                raise ValueError, 'The group cannot be found.'
+                raise ValueError, 'The %s cannot be found in %s.' \
+                % (mapping_key, cat)
             tax_array[:,cat_watch] = tax_summary[:,mapping_col]
-            cat_list.append('')
 
             cat_watch = cat_watch + 1
-#            if 'BMI' in cat.upper():
-#                cat_list.append('People with similar BMI')
-#            else:
-#               cat_list.append(mapping_key)
 
-        tax_array[:,5] = mp_sample_taxa
-        #cat_list.append('Michael Pollan')
-        cat_list.append('')
+        tax_array[:,-1] = mp_sample_taxa
         # Plots the data
         filename = pjoin(output_dir, '%s%s.pdf' \
             % (FILEPREFIX, sample_id))
         plot_stacked_phyla(tax_array, common_taxa, cat_list, filename, 
-                           legend = False)
+                           legend = legend, x_axis = True)
 
 # Sets up the command line interface
 ## This uses argparse instead of optparse since optparse is being phased out 
