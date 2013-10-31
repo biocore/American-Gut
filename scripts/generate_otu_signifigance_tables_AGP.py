@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import division
 from os import mkdir
 from os.path import isfile, exists, join as pjoin
 from numpy import loadtxt, delete, mean, shape, argsort, sort
@@ -15,11 +14,11 @@ __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
 __email__ = "j.debelius@gmail.com" 
 
-def taxa_importer(taxa_table_fp):
+def taxa_importer(taxa_table_file):
     """Loads text taxonomy files as numpy arrays.
 
     INPUT:
-        taxa_table_fp -- a string describing the location of the taxonomy file
+        taxa_table_file -- the contents of the open taxonomy file
 
     OUTPUTS:
         taxonomy -- a numpy vector with greengenes taxonomy strings
@@ -32,7 +31,7 @@ def taxa_importer(taxa_table_fp):
     """
     # Loads the file as strings to determine the shape, then pulls of 
     # taxonomic designations and Sample IDs.
-    tax_table = loadtxt(taxa_table_fp, dtype = "string", \
+    tax_table = loadtxt(taxa_table_file, dtype = "string", \
         comments = "'", delimiter = "\t")
     (num_rows, num_cols) = tax_table.shape
 
@@ -145,7 +144,7 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
     low = []
     # Determines the ratio 
     population_mean = mean(population,1)
-    ratio = sample / population_mean
+    ratio = sample.astype(float) / population_mean.astype(float)
     # preforms a case 1 t-test comparing the sample and population
     (t_stat, p_stat) = ttest_1samp(population, sample, 1)
     # Preforms a bonferroni correction on the p values
@@ -200,27 +199,27 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
                 new_element.append("%i" % item)
 
             elif formatting_keys[idx] == "VAL_FLOAT":
-                new_element.append("%1.2f" % item)
+                new_element.append("%1.1f" % item)
 
             elif formatting_keys[idx] == 'VAL_100':
-                new_element.append('%1.2f' % (item*100))
+                new_element.append('%1.1f' % (item*100))
 
             elif formatting_keys[idx] == 'VAL_100_DEC_ALIGN':
-                seperate = '%1.2f' % (item*100)
+                seperate = '%1.1f' % (item*100)
                 seperate = seperate.split('.')
                 new_element.append(' & '.join(seperate))
 
             elif formatting_keys[idx] == "VAL_PER" and render_mode == "LATEX":
-                new_element.append("%1.2f\\%%" % item)
+                new_element.append("%1.1f\\%%" % item)
 
             elif formatting_keys[idx] == "100_PER" and render_mode == "LATEX":
-                new_element.append("%1.2f\\%%" % (item*100))
+                new_element.append("%1.1f\\%%" % (item*100))
 
             elif formatting_keys[idx] == "VAL_PER":
-                new_element.append("%1.2f%%" % item)
+                new_element.append("%1.1f%%" % item)
 
             elif formatting_keys[idx] == "100_PER":
-                new_element.append("%1.2f%%" % (item*100))
+                new_element.append("%1.1f%%" % (item*100))
 
         formatted_taxa.append(new_element)
 
@@ -267,19 +266,19 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
     if comma == True:
         for idx, taxon in enumerate(raw_taxa): 
             format_list.append(clean_otu_string(taxon, render_mode, \
-                tax_format[idx].upper()=="BOLD"))
+                tax_format[idx].upper()))
         format_list = ', '.join(format_list)
     else:
         format_list.append(prelist)
         for idx, taxon in enumerate(raw_taxa):
             format_list.append('%s%s%s' % (preitem, clean_otu_string(taxon, \
-                render_mode, tax_format[idx].upper()=="BOLD"), anteitem))
+                render_mode, tax_format[idx].upper()), anteitem))
         format_list.append(antelist)
         format_list = ''.join(format_list)
 
     return format_list
     
-def clean_otu_string(greengenes_string, render_mode, bold=False):
+def clean_otu_string(greengenes_string, render_mode, format=False):
     """Distills a greengenes string to its high taxonomic resolution
 
     INPUTS:
@@ -304,12 +303,16 @@ def clean_otu_string(greengenes_string, render_mode, bold=False):
         italic_after = '}'
         bold_before = '\\textbf{'
         bold_after = '}'
+        color_before = '\\testcolor{red}'
+        color_after = '}'
 
     else:
         italic_before = ''
         italic_after = ''
         bold_before = '*'
         bold_after = '*'
+        color_before = '*'
+        color_after = '*'
 
     # Splits the taxonomy at the ; and removes the designation header. 
     split_tax = [i.split('__',1)[-1] for i in \
@@ -319,9 +322,6 @@ def clean_otu_string(greengenes_string, render_mode, bold=False):
     for id_, level in enumerate(split_tax):
         if level != '':                
             no_levels = id_
-
-    print 'greengenes string: %s' % greengenes_string
-    print 'level = %r' % (no_levels+1)
 
     # Sets up taxonomy string
     if no_levels < 5:
@@ -335,14 +335,13 @@ def clean_otu_string(greengenes_string, render_mode, bold=False):
     else:
         cleaned_taxon = 'Kingdom %s' % split_tax
 
-    # Removes greengenes bracketed characters if they're present
-    cleaned_taxon = cleaned_taxon.strip(']').strip('[')
-
-    print 'Cleaned taxa: %r' % cleaned_taxon
+    cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
 
     # Bolds taxon if necessary
-    if bold:
+    if format == 'BOLD':
         cleaned_taxon = ''.join([bold_before, cleaned_taxon, bold_after])
+    elif format == 'COLOR':
+        cleaned_taxon = ''.join([color_before, cleaned_taxon, color_after])
 
     return cleaned_taxon
 
@@ -443,7 +442,7 @@ def generate_latex_macro(corr_taxa, categories):
 
 
     """
-    # Preallocates the an indexing varaible
+    # Preallocates the an indexing variable
     ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
                 'Y', 'Z']
@@ -610,8 +609,8 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
 
     return table
 
-def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
-    sample_ids = None):
+def generate_otu_signifigance_tables_AGP(taxa, table, sample_ids, output_dir, \
+    samples_to_analyze = None):
     """Creates LaTeX formatted significant OTU lists
 
     INPUTS:
@@ -620,14 +619,14 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
         tax_table -- a numpy array with the relative frequencies of taxonomies
             (rows) for each give sample (column)
 
-        sample_ids -- a numpy vector of sample ids associated with the 
+        samples_to_analyze -- a numpy vector of sample ids associated with the 
             tax_table values
 
         output_dir -- a directory where the final files should be saved.
 
-        sample_ids -- a list of sample_ids which should be used to generate 
-                    data. If this is left empty, all the samples in the table 
-                    will be used.
+        samples_to_analyze -- a list of samples_to_analyze which should be used 
+                    to generate data. If this is left empty, all the samples in 
+                    the table will be used.
 
     OUTPUTS:
         Generates text files containing LaTex encoded strings which creates a 
@@ -640,8 +639,8 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
     RENDERING = "LATEX"
     FORMAT_SIGNIFIGANCE = ["VAL_100", "VAL_100", "VAL_INT", "SKIP"]
     FORMAT_ABUNDANCE = ["VAL_100"]    
-    MACRO_CATS_SIGNIFICANCE = ['Taxon','Sampl', 'Popul', 'Fold']
-    MACRO_CATS_ABUNDANCE = ['Taxon', 'Sampl']
+    MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 'enrichFoldd']
+    MACRO_CATS_ABUNDANCE = ['abundTaxon', 'abundSampl']
 
     FILE_PRECURSER = 'macros_'
     FILE_EXTENSION = '.tex'
@@ -650,83 +649,105 @@ def generate_otu_signifigance_tables_AGP(taxa, table, samples, output_dir, \
     # actually shown.
     NUMBER_OF_TAXA_SHOWN = 5
 
-    # Sets up samples for which tables are being generated
-    if sample_ids == None:
-        samples_to_test = samples
-    else:
+    # Sets up samples for which tables are being generated    
+    if samples_to_analyze == None:
         samples_to_test = sample_ids
+    else:
+        samples_to_test = samples_to_analyze
 
-    for idx, sample_id in enumerate(samples_to_test):
+    for idx, sample_id in enumerate(sample_ids):
+        if sample_id in samples_to_test:
+            sample = table[:,idx]
 
-        # Sets up the sample and population sets
-        sample = table[:,idx]
-        population = delete(table, idx, 1)
+            population = delete(table, idx, 1)
 
-        # Calculates tax rank tables
-        (unique, rare, low, high, absent, abundance) = calculate_tax_rank_1\
-            (sample, population, taxa)
+            # Calculates tax rank tables
+            (unique, rare, low, high, absent, abundance) = \
+                calculate_tax_rank_1(sample, population, taxa)
 
-        # Generates formatted enriched table
-        formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
-                                      render_mode = RENDERING, 
-                                      formatting_keys = FORMAT_SIGNIFIGANCE)
+            # Generates formatted enriched table
+            formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
+                                          render_mode = RENDERING, 
+                                          formatting_keys = FORMAT_SIGNIFIGANCE)
 
-        high_formatted = generate_latex_macro(formatted_high, \
-            categories = MACRO_CATS_SIGNIFICANCE)
+            high_formatted = generate_latex_macro(formatted_high, \
+                categories = MACRO_CATS_SIGNIFICANCE)
 
-        # Generates formatted abundance table
-        formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
-                                           render_mode = RENDERING,
-                                           formatting_keys = FORMAT_ABUNDANCE)
-        abundance_formatted = generate_latex_macro(formatted_abundance, \
-            categories = MACRO_CATS_ABUNDANCE)
+            # Generates formatted abundance table
+            formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
+                                            render_mode = RENDERING,
+                                            formatting_keys = FORMAT_ABUNDANCE)
+            abundance_formatted = generate_latex_macro(formatted_abundance, \
+                categories = MACRO_CATS_ABUNDANCE)
+        
+            # Generates formatted list
+            rare_format = []
+            rare_combined = []
+            for taxon in unique:
+                rare_combined.append(taxon)
+                rare_format.append('COLOR')
+            for taxon in rare:
+                rare_combined.append(taxon)
+                rare_format.append('REG')
 
-        # Generates formatted list
-        rare_format = []
-        rare_combined = []
-        for taxon in unique:
-            rare_combined.append(taxon)
-            rare_format.append('BOLD')
-        for taxon in rare:
-            rare_combined.append(taxon)
-            rare_format.append('REG')
+            number_rare_tax = len(rare_combined)
 
-        number_rare_tax = len(rare_combined)
+            if number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1 and len(unique) == 0:
+                rare_formatted = ["This sample contained %i rare "\
+                "taxa, including the following: " % number_rare_tax]
+                rare_formatted.append(convert_taxa_to_list(\
+                    rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
+                    tax_format = rare_format,
+                    render_mode = RENDERING, 
+                    comma = True))
+                rare_formatted = ''.join(rare_formatted)                
 
-        if number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1:
-            rare_formatted = ["This sample contained %i rare or unique taxa "
-                              "(unique are bold), including the following : " \
-                              % number_rare_tax]
-            rare_formatted.append(convert_taxa_to_list(\
-                rare_combined[:NUMBER_OF_TAXA_SHOWN ], tax_format = rare_format,
-                                                       render_mode = RENDERING, 
-                                                       comma = True))
-            rare_formatted = ''.join(rare_formatted)
+            elif number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1:
+                rare_formatted = ["This sample contained %i rare and " \
+                     "\\textcolor{red}{%i \\textbf{unique}} taxa, including "\
+                     "the following: " % (len(rare), len(unique))]
+                rare_formatted.append(convert_taxa_to_list(\
+                    rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
+                    tax_format = rare_format,
+                    render_mode = RENDERING, 
+                    comma = True))
+                rare_formatted = ''.join(rare_formatted)
+
+            elif number_rare_tax > 0 and len(unique) == 0:
+                rare_formatted = ['This sample included the follow rare taxa: ']
+                rare_formatted.append(convert_taxa_to_list(rare_combined, 
+                                                    tax_format = rare_format,
+                                                    render_mode = RENDERING, 
+                                                    comma = True))
+                rare_formatted = ''.join(rare_formatted)
     
-        elif number_rare_tax > 0:
-            rare_formatted = ['This sample included the follow rare or unique'
-                              " taxa (unique are bold): "]
-            rare_formatted.append(convert_taxa_to_list(rare_combined, 
-                                                       tax_format = rare_format,
-                                                       render_mode = RENDERING, 
-                                                       comma = True))
-            rare_formatted = ''.join(rare_formatted)
+            elif number_rare_tax > 0 and len(unique) > 0:
+                rare_formatted = ['This sample included the follow rare or'
+                ' \\textbf{unique} taxa: ']
+                rare_formatted.append(convert_taxa_to_list(rare_combined, 
+                                                    tax_format = rare_format,
+                                                    render_mode = RENDERING, 
+                                                    comma = True))
+                rare_formatted = ''.join(rare_formatted)
+            
+            else:
+                rare_formatted = "There were no rare or unique taxa found"\
+                             " in this sample."
 
+            # Saves the file
+            file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, sample_id, 
+                FILE_EXTENSION))
 
-        else:
-            rare_formatted = "There were no rare or unique taxa found"\
-                         " in this sample."
-
-        # Saves the file
-        file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, sample_id, 
-            FILE_EXTENSION))
-
-        file_for_editing = open(file_name, 'w')
-        file_for_editing.write('%%Abundance Table\n%s\n\n\n' % abundance_formatted)
-        file_for_editing.write('%%Enrichment Table\n%s\n\n\n' % high_formatted)
-        file_for_editing.write('%%Rare List\n\\def\\rareList{%s}\n' \
-            % rare_formatted)
-        file_for_editing.close()
+            file_for_editing = open(file_name, 'w')
+            # file_for_editing.write('% Participant Name\n\\def\\yourname'\
+            #     '{Michael Pollan or longer name}\n\n')
+            file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
+                % abundance_formatted)
+            file_for_editing.write('%% Enrichment Table\n%s\n\n\n' \
+                % high_formatted)
+            file_for_editing.write('%% Rare List\n\\def\\rareList{%s}\n' \
+                % rare_formatted)
+            file_for_editing.close()
 
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates LaTeX formatted significant '\
@@ -770,5 +791,5 @@ if __name__ == '__main__':
         samples_to_analyze = None
 
     generate_otu_signifigance_tables_AGP(taxa = taxa, table = table, \
-        samples = sample_ids, output_dir = output_dir, \
-        sample_ids = samples_to_analyze)
+        sample_ids = sample_ids, output_dir = output_dir, \
+        samples_to_analyze = samples_to_analyze)
