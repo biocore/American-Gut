@@ -278,12 +278,7 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
 
     BAR_WIDTH = 0.8
 
-    if x_axis == 'AGP':
-        figure_dimensions = (5.4736, 4.4210)
-        axis_dimensions = Bbox(array([[0.2192, 0.2714],
-                                      [0.9500, 0.9500]]))
-
-    elif legend and x_axis:
+    if legend and x_axis:
         figure_dimensions = (8, 5)
         axis_dimensions = Bbox(array([[0.2000, 0.3000],
                                       [0.7000, 0.9000]]))
@@ -312,26 +307,6 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     TICK_FONT_SIZE = 15
     LABEL_FONT_SIZE = 20
 
-
-    FONT_DICT_TICK = {'family':'sans-serif',
-                      'sans-serif':['Helvetica'],
-                      'weight': 'normal',
-                      'size': TICK_FONT_SIZE}
-
-    FONT_DICT_LABEL =  {'family':'sans-serif',
-                        'sans-serif':['Helvetica'],
-                        'weight': 'normal',
-                        'size': LABEL_FONT_SIZE}
-
-    tick_font = font_manager.FontProperties(family='Helvetica', 
-                                            style = 'normal', 
-                                            size = 15, 
-                                            weight = 'normal', 
-                                            stretch = 'normal')
-
-    rc(('font', FONT_DICT_TICK))
-
-
     [no_phyla, no_samples] = taxonomy_table.shape
 
     x_tick = arange(0,no_samples)
@@ -351,7 +326,7 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
                         edgecolor=COLORMAP[plot_count,:])
         patches_watch.append(faces[1])
 
-    # Sets up axis dimensiosn and limits
+    # Sets up axis dimensions and limits
     ax1 = plt.gca()
     ax1.set_position(axis_dimensions)
     
@@ -380,6 +355,63 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     # Adds the legend
     if legend:
         plt.figlegend(patches_watch, taxonomy_headers, 'right')
+
+
+    plt.savefig(file_out, format = 'pdf')
+
+def plot_american_gut(taxonomy_table, file_out):
+    """
+    """
+    # Colormap is taken from the colorbrewer    
+    COLORMAP = array([[0.8353, 0.2421, 0.3098],
+                      [0.9569, 0.4275, 0.2627],
+                      [0.9922, 0.6824, 0.3804],
+                      [0.9961, 0.8784, 0.5351],
+                      [0.9020, 0.9608, 0.5961],
+                      [0.6706, 0.8667, 0.6431],
+                      [0.4000, 0.7608, 0.6471],
+                      [0.1961, 0.5333, 0.7412],
+                      [0.3333, 0.3333, 0.3333]])
+
+    BAR_WIDTH = 0.8
+
+    X_MIN = -0.5
+
+    Y_MIN = 0
+    Y_MAX = 1.0
+
+    figure_dimensions = (4.44444, 3.33333)
+    axis_dimensions = Bbox(array([[0.05, 0.05],[0.95,0.95]]))
+
+    [no_phyla, no_samples] = taxonomy_table.shape
+
+    x_tick = arange(0,no_samples)
+    x_max = X_MIN+no_samples
+
+    sample_figure = plt.figure(1, figure_dimensions)
+
+    patches_watch = []
+
+    # Plots the data
+    for plot_count, phyla in enumerate(taxonomy_table):
+        already_added_index = arange(plot_count)
+        bottom_bar = sum(taxonomy_table[already_added_index,:])
+        faces = plt.bar(x_tick-BAR_WIDTH/2, phyla, BAR_WIDTH, \
+                        bottom = bottom_bar, color = COLORMAP[plot_count,:], \
+                        edgecolor=COLORMAP[plot_count,:])
+        patches_watch.append(faces[1])
+
+     # Sets up axis dimensions and limits
+    ax1 = plt.gca()
+    ax1.set_position(axis_dimensions)
+
+    # The y-direction is reversed so the labels are in the same order as the 
+    # colors in the legend
+    plt.axis([X_MIN, x_max, Y_MAX, Y_MIN])
+
+    # Removes any axis labels
+    ax1.set_yticklabels('')
+    ax1.set_xticklabels('')
 
 
     plt.savefig(file_out, format = 'pdf')
@@ -516,8 +548,7 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
             # Plots the data
             filename = pjoin(output_dir, '%s%s.pdf' \
                 % (FILEPREFIX, sample_id))
-            plot_stacked_phyla(tax_array, common_taxa, cat_list, filename, 
-                               legend = legend, x_axis = 'AGP')
+            plot_american_gut(tax_array, filename)
 
 # Sets up the command line interface
 ## This uses argparse instead of optparse since optparse is being phased out 
