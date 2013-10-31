@@ -10,6 +10,7 @@ from biom.parse import parse_biom_table, table_factory
 from os.path import exists, isfile
 from numpy import array, zeros, mean, arange, shape, ones, around
 import matplotlib.pyplot as plt
+from matplotlib import font_manager, rc
 from matplotlib.transforms import Bbox
 from argparse import ArgumentParser
 
@@ -41,7 +42,7 @@ def map_to_2D_dict(mapping_data):
 
     return D2
 
-def most_common_taxa_gg_13_5(level):
+def most_common_taxa_gg_13_5():
     """Identifies the most common taxa at a given phylogenetic level
 
     INPUT:
@@ -175,19 +176,16 @@ def most_common_taxa_gg_13_5(level):
     ### average frequency (default likely at 95%). However, this still needs to 
     ### written. 
 
-    if level == 2:
-        common_taxa = [(u'k__Bacteria', u' p__Firmicutes'),
-                       (u'k__Bacteria', u' p__Bacteroidetes'),
-                       (u'k__Bacteria', u' p__Proteobacteria'),
-                       (u'k__Bacteria', u' p__Actinobacteria'),
-                       (u'k__Bacteria', u' p__Verrucomicrobia'),
-                       (u'k__Bacteria', u' p__Tenericutes'),
-                       (u'k__Bacteria', u' p__Cyanobacteria'),
-                       (u'k__Bacteria', u' p__Fusobacteria'),
-                       (u'k__Bacteria', u' p__Other')]
 
-    else:
-        ValueError, "The level must be an integer with a value of 2."
+    common_taxa = [(u'k__Bacteria', u' p__Firmicutes'),
+                   (u'k__Bacteria', u' p__Bacteroidetes'),
+                   (u'k__Bacteria', u' p__Proteobacteria'),
+                   (u'k__Bacteria', u' p__Actinobacteria'),
+                   (u'k__Bacteria', u' p__Verrucomicrobia'),
+                   (u'k__Bacteria', u' p__Tenericutes'),
+                   (u'k__Bacteria', u' p__Cyanobacteria'),
+                   (u'k__Bacteria', u' p__Fusobacteria'),
+                   (u'k__Bacteria', u' p__Other')]
 
     return common_taxa
 
@@ -215,7 +213,7 @@ def summarize_human_taxa(otu_table, level):
 
         tax_summary -- a numpy array 
     """
-    common_taxa = most_common_taxa_gg_13_5(level)
+    common_taxa = most_common_taxa_gg_13_5()
 
     num_taxa = len(common_taxa)
 
@@ -275,26 +273,31 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
                       [0.4000, 0.7608, 0.6471],
                       [0.1961, 0.5333, 0.7412],
                       [0.3333, 0.3333, 0.3333]])
-    
+
     X_TICK_OFFSET = 0.6
 
     BAR_WIDTH = 0.8
 
-    if legend and x_axis:
+    if x_axis == 'AGP':
+        figure_dimensions = (5.4736, 4.4210)
+        axis_dimensions = Bbox(array([[0.2192, 0.2714],
+                                      [0.9500, 0.9500]]))
+
+    elif legend and x_axis:
         figure_dimensions = (8, 5)
         axis_dimensions = Bbox(array([[0.2000, 0.3000],
                                       [0.7000, 0.9000]]))
     elif legend:
-        figure_dimensions = (8, 2.4)
+        figure_dimensions = (8, 3.75)
         axis_dimensions = Bbox(array([[0.2000, 0.1000],
                                       [0.7000, 0.9000]]))
     elif x_axis:
-        figure_dimensions = (5.7143, 5)
+        figure_dimensions = (6.2222, 5)
         axis_dimensions = Bbox(array([[0.2000, 0.3000],
                                       [0.9000, 0.9000]]))
         #bah
     else:
-        figure_dimensions = (5.7143, 2.4)
+        figure_dimensions = (6.22222, 3.75)
         axis_dimensions = Bbox(array([[0.2000, 0.1000],
                                       [0.9000, 0.9000]]))
 
@@ -309,12 +312,33 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     TICK_FONT_SIZE = 15
     LABEL_FONT_SIZE = 20
 
+
+    FONT_DICT_TICK = {'family':'sans-serif',
+                      'sans-serif':['Helvetica'],
+                      'weight': 'normal',
+                      'size': TICK_FONT_SIZE}
+
+    FONT_DICT_LABEL =  {'family':'sans-serif',
+                        'sans-serif':['Helvetica'],
+                        'weight': 'normal',
+                        'size': LABEL_FONT_SIZE}
+
+    tick_font = font_manager.FontProperties(family='Helvetica', 
+                                            style = 'normal', 
+                                            size = 15, 
+                                            weight = 'normal', 
+                                            stretch = 'normal')
+
+    rc(('font', FONT_DICT_TICK))
+
+
     [no_phyla, no_samples] = taxonomy_table.shape
 
     x_tick = arange(0,no_samples)
     x_max = X_MIN+no_samples
 
     sample_figure = plt.figure(1, figure_dimensions)
+
 
     patches_watch = []
 
@@ -390,8 +414,9 @@ def load_category_files(category_files,level):
             category_tables[category] = {'Groups': cat_ids, \
                                          'Taxa Summary': cat_summary}
 
-    if watch_count > 0:
-        print '\n'.join(watch_list)
+    if watch_count > 0:        
+        print 'The following category files could not be found: \n%s' \
+        % '\n'.join(watch_list)
     if watch_count == len(category_files):       
         raise ValueError, 'No files could be found for any of the supplied '\
             'categories. \n%s' % '\n'.join(watch_list)
@@ -454,50 +479,45 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
     # Loads the category dictionary
     categories = load_category_files(category_fp, LEVEL)
 
-    print categories
-
     # Generates a figure for each sample
-    for idx, sample_id in enumerate(sample_ids):       
-        sample_id = sample_id
+    for idx, sample_id in enumerate(whole_sample_ids):
+        if sample_id in sample_ids:
+            # Preallocates a numpy array for the plotting data
+            tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))        
+            meta_data = map_dict[sample_id] 
+            cat_list = ['You', 'Average', 'Diet', 'BMI', 'Sex', 'Age', 
+                        'Michael Pollan', '']
 
-        # Preallocates a numpy array for the plotting data
-        tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))        
-        meta_data = map_dict[sample_id] 
-        cat_list = ['You', 'Average', 'Diet', 'BMI', 'Sex', 'Age', 
-                    'Michael Pollan', '']
+            #cat_list.append('Your Fecal Sample')
+            #cat_list.append('Average Fecal Samples')
+        
+            tax_array[:,0] = whole_summary[:,idx]
+            tax_array[:,1] = mean(whole_summary, 1)
+        
+            cat_watch = 2
+            # Identifies the appropriate metadata categories
+            for cat in categories:                      
+                # Pulls metadata for the sample and category
+                mapping_key = meta_data[cat]
+                # Pulls taxonomic summary and group descriptions for the category
+                tax_summary = categories[cat]['Taxa Summary']
+                group_descriptions = categories[cat]['Groups']               
+                # Amends plotting tables
+                try:
+                    mapping_col = group_descriptions.index(mapping_key)
+                except:
+                    raise ValueError, 'The %s cannot be found in %s.' \
+                    % (mapping_key, cat)
+                tax_array[:,cat_watch] = tax_summary[:,mapping_col]
 
-        #cat_list.append('Your Fecal Sample')
-        #cat_list.append('Average Fecal Samples')
-    
-        tax_array[:,0] = whole_summary[:,idx]
-        tax_array[:,1] = mean(whole_summary, 1)
-    
-        cat_watch = 2
-        # Identifies the appropriate metadata categories
-        for cat in categories:          
-            print cat
-            # Pulls metadata for the sample and category
-            mapping_key = meta_data[cat]
-            # Pulls taxonomic summary and group descriptions for the category
-            tax_summary = categories[cat]['Taxa Summary']
-            group_descriptions = categories[cat]['Groups']
-            print group_descriptions
-            # Amends plotting tables
-            try:
-                mapping_col = group_descriptions.index(mapping_key)
-            except:
-                raise ValueError, 'The %s cannot be found in %s.' \
-                % (mapping_key, cat)
-            tax_array[:,cat_watch] = tax_summary[:,mapping_col]
+                cat_watch = cat_watch + 1
 
-            cat_watch = cat_watch + 1
-
-        tax_array[:,-1] = mp_sample_taxa
-        # Plots the data
-        filename = pjoin(output_dir, '%s%s.pdf' \
-            % (FILEPREFIX, sample_id))
-        plot_stacked_phyla(tax_array, common_taxa, cat_list, filename, 
-                           legend = legend, x_axis = True)
+            tax_array[:,-1] = mp_sample_taxa
+            # Plots the data
+            filename = pjoin(output_dir, '%s%s.pdf' \
+                % (FILEPREFIX, sample_id))
+            plot_stacked_phyla(tax_array, common_taxa, cat_list, filename, 
+                               legend = legend, x_axis = 'AGP')
 
 # Sets up the command line interface
 ## This uses argparse instead of optparse since optparse is being phased out 
@@ -559,7 +579,8 @@ if __name__ == '__main__':
     
     # Deals with the sample list
     if args.samples_to_plot:
-        samples = args.samples_to_plot.split(',')       
+        samples = args.samples_to_plot
+        samples = samples.split(',')
     else:
         samples = None
 
