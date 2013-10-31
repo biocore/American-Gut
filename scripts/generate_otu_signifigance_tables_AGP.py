@@ -303,7 +303,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         italic_after = '}'
         bold_before = '\\textbf{'
         bold_after = '}'
-        color_before = '\\testcolor{red}'
+        color_before = '\\textcolor{red}{'
         color_after = '}'
 
     else:
@@ -466,7 +466,6 @@ def generate_latex_macro(corr_taxa, categories):
 
 
     return table
-
 
 def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
     numbering = True, alignment = 'c', header_code=None):
@@ -704,7 +703,7 @@ def generate_otu_signifigance_tables_AGP(taxa, table, sample_ids, output_dir, \
 
             elif number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1:
                 rare_formatted = ["This sample contained %i rare and " \
-                     "\\textcolor{red}{%i \\textbf{unique}} taxa, including "\
+                     "\\textcolor{red}{%i unique} taxa, including "\
                      "the following: " % (len(rare), len(unique))]
                 rare_formatted.append(convert_taxa_to_list(\
                     rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
@@ -723,7 +722,7 @@ def generate_otu_signifigance_tables_AGP(taxa, table, sample_ids, output_dir, \
     
             elif number_rare_tax > 0 and len(unique) > 0:
                 rare_formatted = ['This sample included the follow rare or'
-                ' \\textbf{unique} taxa: ']
+                ' \\textcolor{red}{unique} taxa: ']
                 rare_formatted.append(convert_taxa_to_list(rare_combined, 
                                                     tax_format = rare_format,
                                                     render_mode = RENDERING, 
