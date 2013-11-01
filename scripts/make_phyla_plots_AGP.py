@@ -517,7 +517,8 @@ def make_phyla_plots_AGP(otu_table, mapping_data, categories, output_dir, \
             # Preallocates a numpy array for the plotting data
             tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))        
             meta_data = map_dict[sample_id] 
-            cat_list = ['You', 'Average', 'Diet', 'BMI', 'Sex', 'Age', 
+            cat_list = ['You', 'Average', 'Similar Diet', ' Similar BMI', 
+                        'Same Gender', 'Similar Age', 
                         'Michael Pollan', '']
 
             #cat_list.append('Your Fecal Sample')
