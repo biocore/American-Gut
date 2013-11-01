@@ -10,7 +10,7 @@ from biom.parse import parse_biom_table, table_factory
 from os.path import exists, isfile
 from numpy import array, zeros, mean, arange, shape, ones, around
 import matplotlib.pyplot as plt
-from matplotlib import font_manager, rc
+from matplotlib import font_manager, rc 
 from matplotlib.transforms import Bbox
 from argparse import ArgumentParser
 
