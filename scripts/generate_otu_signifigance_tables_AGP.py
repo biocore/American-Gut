@@ -37,7 +37,7 @@ def taxa_importer(taxa_table_file):
 
     # The sample Ids are taken as the first row
     sample_ids = tax_table[0,1:]    
-    taxonomy = tax_table[1:,0]        
+    taxonomy = tax_table[1:,0]       
     tax_table = delete(tax_table, 0, 0)
     tax_table = delete(tax_table, 0, 1)
     tax_table = tax_table.astype('float')
@@ -336,6 +336,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         cleaned_taxon = 'Kingdom %s' % split_tax
 
     cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
+    cleaned_taxon = cleaned_taxon.replace('_','-')
 
     # Bolds taxon if necessary
     if format == 'BOLD':
