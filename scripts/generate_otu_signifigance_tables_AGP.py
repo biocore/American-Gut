@@ -693,7 +693,7 @@ def generate_otu_signifigance_tables_AGP(taxa, table, sample_ids, output_dir, \
             number_rare_tax = len(rare_combined)
 
             if number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1 and len(unique) == 0:
-                rare_formatted = ["This sample contained %i rare "\
+                rare_formatted = ["Your sample contained %i rare "\
                 "taxa, including the following: " % number_rare_tax]
                 rare_formatted.append(convert_taxa_to_list(\
                     rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
