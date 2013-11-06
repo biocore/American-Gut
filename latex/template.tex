@@ -13,8 +13,8 @@
 \usepackage[abs]{overpic} % overlaying one graphic on another
 \usepackage{xstring,xifthen} % string length with conditionals
 \usepackage{color} % colored text
+\usepackage{helvet} % font
 %\usepackage{cmbright} % font
-%\usepackage{helvet} % font
 %\usepackage{avant} % font
 
 \renewcommand{\familydefault}{\sfdefault}
@@ -28,21 +28,13 @@
 \input{macros.tex}
 \def\yourname{Your Name Here}
 
-%\usepackage{unicode-math}
-%\setmainfont[
-%   UprightFont = * Condensed Medium,
-%      BoldFont = * Medium,
-%    ItalicFont = * Condensed Medium,
-%%    ItalicFont = * Medium Italic,
-%]{Futura}
-
 
 
 \begin{document}
 
 %\begin{tabularx}{\textwidth}{ X c X }     %<--does better with horizontal spacing
-\begin{tabular}{ @{} m{4.5cm} m{16cm} }  %<--does better with vertical spacing
-	\includegraphics[height=0.08\textheight]{pdfs/new_logo_texgyre.png} & {\fontfamily{pbk}\fontsize{40}{50}\selectfont YOUR AMERICAN GUT} \\
+\begin{tabular}{ @{} m{4.0cm} m{16cm} }  %<--does better with vertical spacing
+	\includegraphics[height=0.08\textheight]{pdfs/logoshape.pdf} & \includegraphics[height=0.065\textheight]{pdfs/youramericangutsampletext.pdf} \\
 \end{tabular}
 	
 \vspace{0.65cm}
@@ -52,16 +44,16 @@
 \StrLen{\yourname}[\yournameLen]
 
 \ifthenelse{\yournameLen < 28}{
-	{\fontsize{40}{50}\selectfont {\MakeUppercase {\bf \yourname}}}
+	{\fontfamily{phv}\fontsize{38}{48}\selectfont {\MakeUppercase {\bf \yourname}}}
 }{
-	{\fontsize{36}{50}\selectfont {\MakeUppercase {\bf \yourname}}}
+	{\fontfamily{phv}\fontsize{34}{46}\selectfont {\MakeUppercase {\bf \yourname}}}
 }
 
 \end{center}
 
 \vspace{0.65cm}
 
-{\Huge What's in your American Gut sample?}
+{\huge What's in your American Gut sample?}
 
 \vspace{2mm}
 
@@ -94,7 +86,7 @@
 
 \vspace{1.4cm}
 
-{\Huge How do your gut microbes compare to others?} 
+{\huge How do your gut microbes compare to others?} 
 
 \vspace{0mm}
 
@@ -115,7 +107,7 @@
 \begin{overpic}[height=0.30\textheight]{pdfs/figure2.pdf}
 	\put(0,0){\includegraphics[scale=0.48]{pdfs/figure2_ovals.png}}
 	\put(165,0){\includegraphics[scale=0.40]{pdfs/figure2_country_legend.pdf}}
- 	\put(210,182){\includegraphics[scale=0.45]{pdfs/ball_legend.pdf}}
+ 	\put(210,181){\includegraphics[scale=0.45]{pdfs/ball_legend.pdf}}
 \end{overpic}
 }
 %
