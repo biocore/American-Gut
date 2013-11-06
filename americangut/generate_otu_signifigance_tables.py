@@ -329,7 +329,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
 
     # Sets up taxonomy string
     if no_levels < 5:
-        cleaned_taxon = '%s %s' % (TAX_DES[no_levels], split_tax[no_levels])
+        cleaned_taxon = 'Unclassified %s %s' % (TAX_DES[no_levels], split_tax[no_levels])
     elif no_levels == 5:
         cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
             split_tax[no_levels], italic_after)
