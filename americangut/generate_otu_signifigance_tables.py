@@ -203,7 +203,7 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
                 new_element.append("%i" % item)
 
             elif formatting_keys[idx] == "VAL_FLOAT":
-                new_element.append("%1.1f" % item)
+                new_element.append("%1.2f" % item)
 
             elif formatting_keys[idx] == 'VAL_100':
                 new_element.append('%1.1f' % (item*100))
