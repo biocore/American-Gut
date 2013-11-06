@@ -109,9 +109,11 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
     # Identifies the taxonomy up to the abundance threshold    
     abundance_watch = 0
     abundant = []
+
     for idx, frequency in enumerate(reversed(abundance_data)):
+        tax_idx = len(abundance_data) - (idx + 1)
         abundance_watch = abundance_watch + frequency
-        abundant.append([abundance_taxa[idx], frequency])
+        abundant.append([abundance_taxa[tax_idx], frequency])
         if abundance_watch > abundance_threshold:
             break
 
@@ -128,6 +130,11 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
 
         elif sample_bin[idx] == 1 and \
              population_count[idx] < num_samples*rare_threshold:
+
+            # ignore contested groupings
+            if '[' in taxon:
+                continue
+
             rare.append(taxon)
             remove_index.append(idx)
 
