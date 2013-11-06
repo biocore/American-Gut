@@ -85,13 +85,17 @@ def main():
     assert exists(transformed_svg_file), "Something went wrong the file does "+\
         "exist (%s)." % transformed_svg_file
 
-    # -f takes any input file and -A will convert it into a PDF
-    inkscape_command = 'inkscape -f %s -A %s' % (transformed_svg_file,
+    # -z forces the session to be CLI-only; -D limits the print to the size
+    # of the print to the dimensions necessary to fit all the elements in the
+    # plot; -f takes any input file and -A will format the output as a PDF
+    inkscape_command = 'inkscape -z -D -f %s -A %s;' % (transformed_svg_file,
         transformed_svg_file[:-3]+'pdf')
 
     # based on pyqi/util.pyqi_system_call
     process = Popen(inkscape_command, shell=True, stdout=PIPE, stderr=PIPE)
-    _, _ = process.communicate()
+    o, e = process.communicate()
+    if o or e:
+        print o, e
     if process.returncode != 0:
         parser.error('Could not convert the file from SVG to PDF, exit status '
             'code is %d', process.returncode)
