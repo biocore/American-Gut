@@ -33,3 +33,10 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# vi
+.*.swp
+*~
+
+#OS X files
+.DS_Store
