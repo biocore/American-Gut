@@ -4,19 +4,22 @@ from biom.parse import parse_biom_table
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Daniel McDonald"]
+__credits__ = ["Daniel McDonald", "Justine Debelius"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
 def create_node(name):
+    """Create and return a new node"""
     return {'name':name, 'popcount':0, 'children':[]}
 
 def add_node(cur_node, node):
+    """Add a node as a child to an existing node"""
     cur_node['children'].append(node)
 
 def get_node(cur_node, name):
+    """Fetch a node from an existing node, return None if not found"""
     for c in cur_node['children']:
         if c['name'] == name:
             return c
@@ -68,7 +71,6 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
     popsize = float(tree['popcount'])
     for tax_string in sample_taxa:
         cur_node = tree
-        popcount = cur_node['popcount']
 
         for taxon in tax_string:
             if taxon.endswith('__'):
@@ -82,15 +84,14 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
             cur_node = node
         
         if cur_node['popcount'] == 1:
-            #unique.append(cur_node['name'])
             unique.append(tax_string)
         elif cur_node['popcount'] / popsize <= rare_threshold:
-            #rare.append(cur_node['name'])
             rare.append(tax_string)
 
     return (rare, unique)
 
 def traverse(node):
+    """Post-order traversal of the full tree"""
     for c in node['children']:
         for gc in traverse(c):
             yield gc
