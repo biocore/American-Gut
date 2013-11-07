@@ -1,6 +1,6 @@
-\documentclass[landscape,letterpaper]{article}
-\usepackage[top=0.4in,bottom=0.4in,left=0.75in,right=0.5in]{geometry}
-%\usepackage[paperwidth=14in,paperheight=11in,margin=0.5in]{geometry}
+\documentclass[landscape]{article}
+%\usepackage[top=0.4in,bottom=0.4in,left=0.75in,right=0.5in]{geometry}
+\usepackage[paperwidth=13.13636in,paperheight=8.5in,top=0.4in,bottom=0.4in,left=0.75in,right=0.75in]{geometry}  % aspect ratio same as 11x17 (1.5454)
 \usepackage{graphicx}
 \usepackage[labelformat=empty]{subfig}
 \DeclareGraphicsExtensions{.pdf}
@@ -32,7 +32,7 @@
 \begin{document}
 
 %\begin{tabularx}{\textwidth}{ X c X }     %<--does better with horizontal spacing
-\begin{tabular}{ m{3.95cm} m{16cm} }  %<--does better with vertical spacing
+\begin{tabular}{ m{4.4cm} m{16cm} }  %<--does better with vertical spacing
 	~~\includegraphics[height=0.08\textheight]{pdfs/logoshape.pdf} & \includegraphics[height=0.065\textheight]{pdfs/youramericangutsampletext.pdf} \\
 \end{tabular}
 
@@ -58,7 +58,7 @@
 
 \vspace{2mm}
 
-\begin{tabular*}{\textwidth}{ m{0.1in} m{3.1in} m{7.7in} }
+\begin{tabular*}{\textwidth}{ m{0.5in} m{3.5in} m{8.0in} }
 	&
 	\vspace{-2mm}
     \hspace{0mm}
@@ -69,23 +69,26 @@
     {\normalsize 
     \vspace{2.5mm}
     \parbox[b][][t]{6.5in}{
-	\begin{tabular}{ c l r c l r r }
-    	    \multicolumn{3}{l}{\large ~~Your most abundant microbes:} & \multicolumn{4}{l}{\large ~~Your most enriched microbes:}\\ \addlinespace[2mm]
-		\cline{2-3} \cline{5-7} \addlinespace[1mm]
-		& Taxonomy & Sample & & Taxonomy & Sample & Population \\
-		\cline{2-3} \cline{5-7} \addlinespace[1mm]
-		& \abundTaxonA{} & \abundSamplA{}\% & & \enrichTaxonA{} & \enrichSamplA{}\% & \enrichPopulA{}\% \\
-		& \abundTaxonB{} & \abundSamplB{}\% & & \enrichTaxonB{} & \enrichSamplB{}\% & \enrichPopulB{}\% \\
-		& \abundTaxonC{} & \abundSamplC{}\% & & \enrichTaxonC{} & \enrichSamplC{}\% & \enrichPopulC{}\% \\
-		& \abundTaxonD{} & \abundSamplD{}\% & & \enrichTaxonD{} & \enrichSamplD{}\% & \enrichPopulD{}\% \\
-		\cline{2-3} \cline{5-7} \addlinespace[3mm]
-		& \multicolumn{6}{p{5.2in}}{\normalsize \rareList{}}
+	\begin{tabular}{ c l r c l r r r }
+    \multicolumn{3}{l}{\large ~~Your most abundant microbes:} & \multicolumn{5}{l}{\large ~~Your most enriched microbes:}\\ \addlinespace[2mm]
+        \cline{2-3} \cline{5-8} \addlinespace[1mm]
+        & Taxonomy & Sample & & Taxonomy & Sample & Population & Fold \\
+        \cline{2-3} \cline{5-8} \addlinespace[1mm]
+        & \abundTaxonA{} & \abundSamplA{}\% & & \enrichTaxonA{} & \enrichSamplA{}\% & \enrichPopulA{}\% & \enrichFolddA{}x \\
+        & \abundTaxonB{} & \abundSamplB{}\% & & \enrichTaxonB{} & \enrichSamplB{}\% & \enrichPopulB{}\% & \enrichFolddB{}x \\
+        & \abundTaxonC{} & \abundSamplC{}\% & & \enrichTaxonC{} & \enrichSamplC{}\% & \enrichPopulC{}\% & \enrichFolddC{}x \\
+        & \abundTaxonD{} & \abundSamplD{}\% & & \enrichTaxonD{} & \enrichSamplD{}\% & \enrichPopulD{}\% & \enrichFolddD{}x \\
+        \cline{2-3} \cline{5-8} \addlinespace[3mm]
+        & \multicolumn{7}{p{5.6in}}{\normalsize \rareList{}}
 	\end{tabular}
 	}
 	}
 \end{tabular*}
 
-\vspace{1.8cm}
+
+
+
+\vspace{1.6cm}
 
 {\huge How do your gut microbes compare to others?} 
 
@@ -93,7 +96,7 @@
 
 \begin{figure}[!ht]
 
-\hspace{0mm}
+\hspace{11mm}
 \raisebox{29mm}{\includegraphics[scale=0.40]{pdfs/figure1_legend.pdf}}
 \hspace{-10mm}
 \subfloat[\fontfamily{phv}\selectfont{\normalsize Different body sites}\label{subfig-1:dummy}]{%
@@ -102,17 +105,17 @@
 \end{overpic}
 }
 %
-\hspace{0mm}
+\hspace{11mm}
 \includegraphics[scale=0.40]{pdfs/figure2_legend.pdf}
 \subfloat[\fontfamily{phv}\selectfont{\normalsize Different ages and populations}\label{subfig-2:dummy}]{%
 \begin{overpic}[height=0.30\textheight]{pdfs/figure2.pdf}
 	\put(0,0){\includegraphics[scale=0.48]{pdfs/figure2_ovals.png}}
 	\put(165,0){\includegraphics[scale=0.40]{pdfs/figure2_country_legend.pdf}}
- 	\put(210,181){\includegraphics[scale=0.45]{pdfs/ball_legend.pdf}}
+ 	\put(175,181){\includegraphics[scale=0.45]{pdfs/ball_legend.pdf}}
 \end{overpic}
 }
 %
-\hspace{8mm}
+\hspace{19mm}
 \includegraphics[scale=0.40]{pdfs/figure3_legend.pdf}
 \subfloat[\fontfamily{phv}\selectfont{\normalsize The American Gut population}\label{subfig-3:dummy}]{%
 \includegraphics[height=0.30\textheight]{pdfs/figure3.pdf}
