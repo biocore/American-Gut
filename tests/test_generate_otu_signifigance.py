@@ -7,7 +7,10 @@ from generate_otu_signifigance_tables_AGP import (taxa_importer)
 
 class GenerateOTUSignifiganceTablesTest(TestCase):
     
-    def setUP(self):
+    def setUp(self):
+        self.sample = array([0.0200, 0.7000, 0.0000, 0.00001, 0.1000, 0.0001, 
+                       0.03000, 0.0000, 0.0001, 0.0050, 0.0020, 0.1427])
+        self.population = []
         pass     
 
     def tearDown(self):
@@ -37,23 +40,6 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(known_matrix.all(), test_matrix.all())
     
     def test_caculate_taxa_rank_1 (self):
-        # Sets up the known data
-        sample = [0.1000, 0.1000, ]
-        test = [[0.0253, 0.0223, 0.0120, 0.0179, 0.0071, 0.0239, 0.0035, 0.0043, 0.0069, 0, 0.0294, 0.0183, 0.0075, 0.0287, 0],
-                [0.5949, 0.5879, 0.6160, 0.6156, 0.5568, 0.5985, 0.5918, 0.6314, 0.6547, 0.6555, 0.5568, 0.6039, 0.5393, 0.5443, 0.5997]]
-        taxa = [(u'k__Bacteria', u' p__Proteobacteria', u'c__Gammaproteobacteria'),
-                (u'k__Bacteria', u' p__Bacteroidetes', u'c__Bacteroidia'),]
-
-        known_high = [[u'class Bacteroidia', 0.2000, 0.0138, 0.1000/0.0138, 0.0254],
-                      [u'', 0.7000],
-                      [u'', 0     ],
-                      [u'', 0.0001],
-                      [u'', 0     ],
-                      [u'', 0.1000],
-                      [u'', 0.0001],
-                      [u'', ]
-
-
 
 
 
