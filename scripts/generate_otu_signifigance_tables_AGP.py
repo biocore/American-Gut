@@ -9,7 +9,6 @@ from americangut.generate_otu_signifigance_tables import (taxa_importer,
 									          convert_taxa_to_list,
 									          generate_latex_macro)
 
-
 def main(taxa, table, sample_ids, output_dir, samples_to_analyze = None):
     """Creates LaTeX formatted significant OTU lists
 

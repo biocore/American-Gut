@@ -3,7 +3,6 @@
 from numpy import loadtxt, delete, mean, shape, argsort, sort
 from scipy.stats import ttest_1samp
 
-
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Justine Debelius"]
@@ -107,9 +106,11 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
     # Identifies the taxonomy up to the abundance threshold    
     abundance_watch = 0
     abundant = []
+
     for idx, frequency in enumerate(reversed(abundance_data)):
+        tax_idx = len(abundance_data) - (idx + 1)
         abundance_watch = abundance_watch + frequency
-        abundant.append([abundance_taxa[idx], frequency])
+        abundant.append([abundance_taxa[tax_idx], frequency])
         if abundance_watch > abundance_threshold:
             break
 
@@ -126,6 +127,11 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
 
         elif sample_bin[idx] == 1 and \
              population_count[idx] < num_samples*rare_threshold:
+
+            # ignore contested groupings
+            if '[' in taxon:
+                continue
+
             rare.append(taxon)
             remove_index.append(idx)
 
@@ -197,7 +203,7 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
                 new_element.append("%i" % item)
 
             elif formatting_keys[idx] == "VAL_FLOAT":
-                new_element.append("%1.1f" % item)
+                new_element.append("%1.2f" % item)
 
             elif formatting_keys[idx] == 'VAL_100':
                 new_element.append('%1.1f' % (item*100))
@@ -323,7 +329,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
 
     # Sets up taxonomy string
     if no_levels < 5:
-        cleaned_taxon = '%s %s' % (TAX_DES[no_levels], split_tax[no_levels])
+        cleaned_taxon = 'Unclassified %s %s' % (TAX_DES[no_levels], split_tax[no_levels])
     elif no_levels == 5:
         cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
             split_tax[no_levels], italic_after)
@@ -606,4 +612,3 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
     table = anterow.join(table_code)
 
     return table
-
