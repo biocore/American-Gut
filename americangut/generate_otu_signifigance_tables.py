@@ -227,20 +227,27 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
     format_list = []
     if comma == True:
         for idx, taxon in enumerate(raw_taxa): 
-            format_list.append(clean_otu_string(taxon, render_mode, \
-                tax_format[idx].upper()))
+            format_list.append(clean_otu_string(taxon, 
+                                            render_mode = render_mode, \
+                                            format = tax_format[idx].upper(), 
+                                            unclassified = True))
+
         format_list = ', '.join(format_list)
     else:
         format_list.append(prelist)
         for idx, taxon in enumerate(raw_taxa):
-            format_list.append('%s%s%s' % (preitem, clean_otu_string(taxon, \
-                render_mode, tax_format[idx].upper()), anteitem))
+            format_list.append('%s%s%s' % (preitem, 
+                                clean_otu_string(taxon, \
+                                render_mode, format = tax_format[idx].upper(),
+                                unclassified = True), 
+                                anteitem))
+
         format_list.append(antelist)
         format_list = ''.join(format_list)
 
     return format_list
     
-def clean_otu_string(greengenes_string, render_mode, format=False):
+def clean_otu_string(greengenes_string, render_mode, format=False, unclassified = False):
     """Distills a greengenes string to its high taxonomic resolution
 
     INPUTS:
@@ -276,6 +283,11 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         color_before = '*'
         color_after = '*'
 
+    if unclassified == True:
+        classified = 'Unclassified '
+    else:
+        classified = ''
+
     # Splits the taxonomy at the ; and removes the designation header. 
     split_tax = [i.split('__',1)[-1] for i in \
         greengenes_string.strip().split('; ')]
@@ -287,7 +299,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
 
     # Sets up taxonomy string
     if no_levels < 5:
-        cleaned_taxon = '%s %s' % (TAX_DES[no_levels], \
+        cleaned_taxon = '%s%s %s' % (classified, TAX_DES[no_levels], \
             split_tax[no_levels])
     elif no_levels == 5:
         cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
@@ -296,7 +308,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         cleaned_taxon = '%s%s %s%s' % (italic_before, split_tax[no_levels-1],
             split_tax[no_levels], italic_after)
     else:
-        cleaned_taxon = 'Kingdom %s' % split_tax
+        cleaned_taxon = '%sKingdom %s' % (classified, split_tax)
 
     cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
     cleaned_taxon = cleaned_taxon.replace('_','-')
