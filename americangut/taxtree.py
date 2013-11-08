@@ -115,7 +115,7 @@ def build_tree_from_taxontable(table):
 
     return tree, sample_taxa_lookup
 
-def sample_rare_unique(tree, table, all_sample_taxa, rare):
+def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
     """Get the rare and unique taxa per sample
 
     returns (sample_id, biom table w/o rare and uniques, rare, unique)
@@ -132,7 +132,7 @@ def sample_rare_unique(tree, table, all_sample_taxa, rare):
         return f
 
     for sample_id, sample_taxa in all_sample_taxa.iteritems():
-        rare, unique = get_rare_unique(tree, sample_taxa,rare)
+        rare, unique = get_rare_unique(tree, sample_taxa,rare_threshold)
         filter_f = make_filter_f(rare, unique)
 
         if table is None:
