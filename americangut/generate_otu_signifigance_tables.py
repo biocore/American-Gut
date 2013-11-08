@@ -3,11 +3,6 @@
 from numpy import mean, shape, argsort, sort
 from scipy.stats import ttest_1samp
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> otu_table_improvements
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Justine Debelius"]
@@ -95,64 +90,10 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     # Rare taxa are defined as appearing in less than 10% of the samples
 
     (num_taxa, num_samples) = shape(population)
-
-<<<<<<< HEAD
-    # Calculates binary and count matrices
-    sample_bin = sample > 0
-    population_bin = population > 0
-    population_count = population_bin.sum(1)
-
-    # Identifies absent taxonomies in the sample
-    absent = taxa[((sample_bin == 0) * (population_count != 0)) == 1]
-
-    # Sorts the sample by abundance
-    abundance_data = sort(sample)
-    abundance_rank = argsort(sample)
-    abundance_taxa = taxa[abundance_rank]
-   
-    # Identifies the taxonomy up to the abundance threshold    
-    abundance_watch = 0
-    abundant = []
-
-    for idx, frequency in enumerate(reversed(abundance_data)):
-        tax_idx = len(abundance_data) - (idx + 1)
-        abundance_watch = abundance_watch + frequency
-        abundant.append([abundance_taxa[tax_idx], frequency])
-        if abundance_watch > abundance_threshold:
-            break
-
-    # Identifies unique taxa and removes them from the table    
-    unique = []
-    rare = []
-    remove_index = []    
-
-    # Identifies rare and unique taxa
-    for idx, taxon in enumerate(taxa):
-        if sample_bin[idx] == 1 and population_count[idx] == 0:
-            unique.append(taxon)
-            remove_index.append(idx)
-
-        elif sample_bin[idx] == 1 and \
-             population_count[idx] < num_samples*rare_threshold:
-
-            # ignore contested groupings
-            if '[' in taxon:
-                continue
-
-            rare.append(taxon)
-            remove_index.append(idx)
-
-    # Removes taxa identified as unique from the available set
-    taxa = delete(taxa, remove_index)
-    sample_bin = delete(sample_bin, remove_index)
-    sample = delete(sample, remove_index)
-    population_count = delete(population_count, remove_index)
-    population = delete(population, remove_index, 0)
-=======
+    
     if num_taxa != len(taxa):
         raise ValueError, 'The number of entries in samples and taxa must'\
         ' be equal.'
->>>>>>> otu_table_improvements
 
     # Identifies taxa that are significantly enriched or depleted in the 
     # population
@@ -184,7 +125,7 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
             low.append([taxa[index], sample[index], population_mean[index], \
                 ratio[index], p_stat[index]])
    
-    return low, high
+    return high, low
 
 def convert_taxa(rough_taxa, render_mode, formatting_keys):
     """Takes a dictionary of taxonomy and corresponding values and formats
@@ -346,7 +287,8 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
 
     # Sets up taxonomy string
     if no_levels < 5:
-        cleaned_taxon = 'Unclassified %s %s' % (TAX_DES[no_levels], split_tax[no_levels])
+        cleaned_taxon = 'Unclassified %s %s' % (TAX_DES[no_levels], \
+            split_tax[no_levels])
     elif no_levels == 5:
         cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
             split_tax[no_levels], italic_after)
@@ -354,7 +296,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         cleaned_taxon = '%s%s %s%s' % (italic_before, split_tax[no_levels-1],
             split_tax[no_levels], italic_after)
     else:
-        cleaned_taxon = 'Kingdom %s' % split_tax
+        cleaned_taxon = 'Unclassified Kingdom %s' % split_tax
 
     cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
     cleaned_taxon = cleaned_taxon.replace('_','-')

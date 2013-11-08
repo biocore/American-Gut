@@ -12,12 +12,9 @@ from americangut.generate_otu_signifigance_tables import (calculate_abundance,
 									                      generate_latex_macro)
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
-<<<<<<< HEAD
-def main(taxa, table, sample_ids, output_dir, samples_to_analyze = None):
-=======
 
 def main(taxa_table, output_dir, samples_to_analyze = None):
->>>>>>> otu_table_improvements
+
     """Creates LaTeX formatted significant OTU lists
 
     INPUTS:
@@ -42,6 +39,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         defined as present in less than 10% of the total population. The unique 
         taxa are bolded in the lists. 
     """
+
     # Sets table constants
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
@@ -182,95 +180,6 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         # Saves the file
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
             FILE_EXTENSION))
-
-<<<<<<< HEAD
-            # Generates formatted abundance table
-            formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
-                                            render_mode = RENDERING,
-                                            formatting_keys = FORMAT_ABUNDANCE)
-            abundance_formatted = generate_latex_macro(formatted_abundance, \
-                categories = MACRO_CATS_ABUNDANCE)
-        
-            # Generates formatted list
-            rare_format = []
-            rare_combined = []
-            for taxon in unique:
-                rare_combined.append(taxon)
-                rare_format.append('COLOR')
-            for taxon in rare:
-                rare_combined.append(taxon)
-                rare_format.append('REG')
-
-            number_rare_tax = len(rare_combined)
-
-            if number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1 and len(unique) == 0:
-                rare_formatted = ["Your sample contained %i rare "\
-                "taxa, including the following: " % number_rare_tax]
-                rare_formatted.append(convert_taxa_to_list(\
-                    rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
-                    tax_format = rare_format,
-                    render_mode = RENDERING, 
-                    comma = True))
-                rare_formatted = ''.join(rare_formatted)                
-
-            elif number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1:
-                rare_formatted = ["This sample contained %i rare and " \
-                     "\\textcolor{red}{%i unique} taxa, including "\
-                     "the following: " % (len(rare), len(unique))]
-                rare_formatted.append(convert_taxa_to_list(\
-                    rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
-                    tax_format = rare_format,
-                    render_mode = RENDERING, 
-                    comma = True))
-                rare_formatted = ''.join(rare_formatted)
-
-            elif number_rare_tax > 0 and len(unique) == 0:
-                rare_formatted = ['This sample included the following rare taxa: ']
-                rare_formatted.append(convert_taxa_to_list(rare_combined, 
-                                                    tax_format = rare_format,
-                                                    render_mode = RENDERING, 
-                                                    comma = True))
-                rare_formatted = ''.join(rare_formatted)
-    
-            elif number_rare_tax > 0 and len(unique) > 0:
-                rare_formatted = ['This sample included the following rare or'
-                ' \\textcolor{red}{unique} taxa: ']
-                rare_formatted.append(convert_taxa_to_list(rare_combined, 
-                                                    tax_format = rare_format,
-                                                    render_mode = RENDERING, 
-                                                    comma = True))
-                rare_formatted = ''.join(rare_formatted)
-            
-            else:
-                rare_formatted = "There were no rare or unique taxa found"\
-                             " in this sample."
-
-            # Saves the file
-            file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, sample_id, 
-                FILE_EXTENSION))
-
-            file_for_editing = open(file_name, 'w')
-            # file_for_editing.write('% Participant Name\n\\def\\yourname'\
-            #     '{Michael Pollan or longer name}\n\n')
-            file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
-                % abundance_formatted)
-            file_for_editing.write('%% Enrichment Table\n%s\n\n\n' \
-                % high_formatted)
-            file_for_editing.write('%% Rare List\n\\def\\rareList{%s}\n' \
-                % rare_formatted)
-            file_for_editing.close()
-=======
-        file_for_editing = open(file_name, 'w')
-        # file_for_editing.write('% Participant Name\n\\def\\yourname'\
-        #     '{Michael Pollan or longer name}\n\n')
-        file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
-            % abundance_formatted)
-        file_for_editing.write('%% Enrichment Table\n%s\n\n\n' \
-            % high_formatted)
-        file_for_editing.write('%% Rare List\n\\def\\rareList{%s}\n' \
-            % rare_formatted)
-        file_for_editing.close()
->>>>>>> otu_table_improvements
 
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates lists and tables of enriched, abundance and rare taxa")
