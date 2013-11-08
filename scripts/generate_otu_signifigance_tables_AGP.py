@@ -132,7 +132,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
             rare_formatted = ''.join(rare_formatted)
 
         elif number_rare_tax > 0 and len(unique) == 0:
-            rare_formatted = ['This sample included the follow rare taxa: ']
+            rare_formatted = ['This sample included the following rare taxa: ']
             rare_formatted.append(convert_taxa_to_list(rare_combined, 
                                                 tax_format = rare_format,
                                                 render_mode = RENDERING, 
@@ -140,7 +140,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
             rare_formatted = ''.join(rare_formatted)
 
         elif number_rare_tax > 0 and len(unique) > 0:
-            rare_formatted = ['This sample included the follow rare or'
+            rare_formatted = ['This sample included the following rare or'
             ' \\textcolor{red}{unique} taxa: ']
             rare_formatted.append(convert_taxa_to_list(rare_combined, 
                                                 tax_format = rare_format,
