@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from numpy import loadtxt, delete, mean, shape, argsort, sort
+from numpy import mean, shape, argsort, sort
 from scipy.stats import ttest_1samp
+
 
 
 __author__ = "Justine Debelius"
@@ -12,38 +13,56 @@ __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
 __email__ = "j.debelius@gmail.com" 
 
-def taxa_importer(taxa_table_file):
-    """Loads text taxonomy files as numpy arrays.
+def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
+    """Ranks taxa in a sample in order of abundance
 
-    INPUT:
-        taxa_table_file -- the contents of the open taxonomy file
+    INPUTS:
+        sample -- a one dimensional numpy array or list containing taxonomic 
+                    frequencies in a single sample
+
+        population -- a numpy array containing containing taxonomic frequency
+                    values. Samples are columns, taxa are rows.
+
+        taxa -- a one dimensional numpy array or list of greengenes ids 
+                    associated the sample
+
+        abundance_threshhold -- a value between 0 and 1 indicating the minimum 
+                    fraction of a sample to be represented by the most abundant 
+                    OTUs. 
 
     OUTPUTS:
-        taxonomy -- a numpy vector with greengenes taxonomy strings
+        absent -- a list of greengenes taxonomy strings that are not found 
+                    in the sample but are present in the population.
 
-        tax_table -- a numpy array with the relative frequencies of taxonomies
-            (rows) for each give sample (column)
+        abundant -- a list of lists of greenegenes taxonomy strings and the
+                    frequencies representing the most abundant taxa in the 
+                    sample.
+    """ 
 
-        sample_ids -- a numpy vector of sample ids associated with the 
-            tax_table values
-    """
-    # Loads the file as strings to determine the shape, then pulls of 
-    # taxonomic designations and Sample IDs.
-    tax_table = loadtxt(taxa_table_file, dtype = "string", \
-        comments = "'", delimiter = "\t")
-    (num_rows, num_cols) = tax_table.shape
+    if len(sample) != len(taxa):
+        raise ValueError, 'The number of enteries in samples and taxa must be equal.'
 
-    # The sample Ids are taken as the first row
-    sample_ids = tax_table[0,1:]    
-    taxonomy = tax_table[1:,0]       
-    tax_table = delete(tax_table, 0, 0)
-    tax_table = delete(tax_table, 0, 1)
-    tax_table = tax_table.astype('float')
-    # Returns the result
-    return taxonomy, tax_table, sample_ids
+    # Sorts the sample by abundance
+    abundance_data = sort(sample)[::-1]
+    abundance_rank = argsort(sample)[::-1]
 
-def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
-    abundance_threshold=0.95):
+    abundance_taxa = []
+    for rank in abundance_rank:
+        abundance_taxa.append(taxa[rank])
+
+   
+    # Identifies the taxonomy up to the abundance threshold    
+    abundance_watch = 0
+    abundant = []
+    for idx, frequency in enumerate(abundance_data):
+        abundance_watch = abundance_watch + frequency
+        abundant.append([abundance_taxa[idx], frequency])
+        if abundance_watch > abundance_threshhold:
+            break
+
+    return abundant
+
+def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     """Identifies unique and rare samples in the population and preforms a 
     case 1 t-test on common samples.
 
@@ -57,21 +76,10 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
         taxa -- an array of greengenes ids associated the sample and 
                     population frequencies
 
-        rare_threshhold -- a value between 0 and 1 indicating the maximum 
-                    fraction of the population than can have an OTU for that 
-                    OTU to be considered rare.
+        critical_value -- the alpha for use in the t-test
 
-        abundance_threshhold -- a value between 0 and 1 indicating the minimum 
-                    fraction of a sample to be represented by the most abundant 
-                    OTUs. 
 
-    OUTPUTS:
-        unique -- a list of greengenes taxonomy strings that are found
-                    only in the sample
-
-        rare -- a list of greengenes taxonomy strings that are found in
-                    the sample and ten percent of the population
-
+    OUTPUTS:       
         high -- a list of lists with greengenes strings, sample frequency, 
                     average population frequency, the ratio of values, and the 
                     p-value
@@ -79,89 +87,47 @@ def calculate_tax_rank_1(sample, population, taxa, rare_threshold=0.1, \
         low -- a list of lists with greengenes strings, sample frequency, 
                     average population frequency, the ratio of values, and the 
                     p-value
-
-        absent -- a list of greengenes taxonomy strings that are not found 
-                    in the sample but are present in the population.
-
-        abundant -- a list of lists of greenegenes taxonomy strings and the
-                    frequencies representing the most abundant taxa in the 
-                    sample.
     """
+
     # Rare taxa are defined as appearing in less than 10% of the samples
 
     (num_taxa, num_samples) = shape(population)
 
-    # Calculates binary and count matrices
-    sample_bin = sample > 0
-    population_bin = population > 0
-    population_count = population_bin.sum(1)
-
-    # Identifies absent taxonomies in the sample
-    absent = taxa[((sample_bin == 0) * (population_count != 0)) == 1]
-
-    # Sorts the sample by abundance
-    abundance_data = sort(sample)
-    abundance_rank = argsort(sample)
-    abundance_taxa = taxa[abundance_rank]
-   
-    # Identifies the taxonomy up to the abundance threshold    
-    abundance_watch = 0
-    abundant = []
-    for idx, frequency in enumerate(reversed(abundance_data)):
-        abundance_watch = abundance_watch + frequency
-        abundant.append([abundance_taxa[idx], frequency])
-        if abundance_watch > abundance_threshold:
-            break
-
-    # Identifies unique taxa and removes them from the table    
-    unique = []
-    rare = []
-    remove_index = []    
-
-    # Identifies rare and unique taxa
-    for idx, taxon in enumerate(taxa):
-        if sample_bin[idx] == 1 and population_count[idx] == 0:
-            unique.append(taxon)
-            remove_index.append(idx)
-
-        elif sample_bin[idx] == 1 and \
-             population_count[idx] < num_samples*rare_threshold:
-            rare.append(taxon)
-            remove_index.append(idx)
-
-    # Removes taxa identified as unique from the available set
-    taxa = delete(taxa, remove_index)
-    sample_bin = delete(sample_bin, remove_index)
-    sample = delete(sample, remove_index)
-    population_count = delete(population_count, remove_index)
-    population = delete(population, remove_index, 0)
+    if num_taxa != len(taxa):
+        raise ValueError, 'The number of entries in samples and taxa must'\
+        ' be equal.'
 
     # Identifies taxa that are significantly enriched or depleted in the 
     # population
     high = []
     low = []
+
+    from numpy import seterr
+    seterr(all='raise')
     # Determines the ratio 
     population_mean = mean(population,1)
+    #print population_mean
+    #print sample
     ratio = sample.astype(float) / population_mean.astype(float)
     # preforms a case 1 t-test comparing the sample and population
     (t_stat, p_stat) = ttest_1samp(population, sample, 1)
     # Preforms a bonferroni correction on the p values
-    p_stat = p_stat*num_samples
+    p_stat = p_stat
     
     # Determines list position based on the smallest p values.
     p_order = argsort(p_stat)
 
     # Goes through the p values and determines if they are enriched or depleted
     for index in p_order:
-        if p_stat[index] < 0.05 and ratio[index] > 1:
+        if p_stat[index] < critical_value and ratio[index] > 1:
             high.append([taxa[index], sample[index], population_mean[index], \
                 ratio[index], p_stat[index]])
 
-        elif p_stat[index] < 0.05 and ratio[index] > 0 and ratio[index] < 1:
+        elif p_stat[index] < critical_value and 0 < ratio[index] < 1:
             low.append([taxa[index], sample[index], population_mean[index], \
                 ratio[index], p_stat[index]])
    
-    return unique, rare, low, high, absent, abundant
+    return low, high
 
 def convert_taxa(rough_taxa, render_mode, formatting_keys):
     """Takes a dictionary of taxonomy and corresponding values and formats
@@ -197,10 +163,10 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
                 new_element.append("%i" % item)
 
             elif formatting_keys[idx] == "VAL_FLOAT":
-                new_element.append("%1.1f" % item)
+                new_element.append("%1.2f" % item)
 
             elif formatting_keys[idx] == 'VAL_100':
-                new_element.append('%1.1f' % (item*100))
+                new_element.append('%1.2f' % (item*100))
 
             elif formatting_keys[idx] == 'VAL_100_DEC_ALIGN':
                 seperate = '%1.1f' % (item*100)
