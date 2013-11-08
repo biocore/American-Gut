@@ -73,6 +73,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         if not samples_to_test:
             raise ValueError, "No samples!"
 
+    # Generates lists and tables for each sample
     for samp, filtered_table, rare, unique in sample_rare_unique(tree, \
         taxa_table, all_taxa, RARE_THRESHHOLD):
         filtered_table = filtered_table.filterObservations(lambda v,i,md:\
@@ -175,11 +176,20 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         abundance_formatted = generate_latex_macro(formatted_abundance, \
             categories = MACRO_CATS_ABUNDANCE)
     
-
-
-        # Saves the file
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
             FILE_EXTENSION))
+
+        # Saves the file
+        file_for_editing = open(file_name, 'w')
+        # file_for_editing.write('% Participant Name\n\\def\\yourname'\
+        #     '{Michael Pollan or longer name}\n\n')
+        file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
+            % abundance_formatted)
+        file_for_editing.write('%% Enrichment Table\n%s\n\n\n' \
+            % high_formatted)
+        file_for_editing.write('%% Rare List\n\\def\\rareList{%s}\n' \
+            % rare_formatted)
+        file_for_editing.close()
 
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates lists and tables of enriched, abundance and rare taxa")
