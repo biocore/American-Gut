@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from numpy import mean, shape, argsort, sort
+from numpy import mean, shape, argsort, sort, array
 from scipy.stats import ttest_1samp
 
 __author__ = "Justine Debelius"
@@ -29,16 +29,14 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
                     OTUs. 
 
     OUTPUTS:
-        absent -- a list of greengenes taxonomy strings that are not found 
-                    in the sample but are present in the population.
-
         abundant -- a list of lists of greenegenes taxonomy strings and the
                     frequencies representing the most abundant taxa in the 
                     sample.
     """ 
 
     if len(sample) != len(taxa):
-        raise ValueError, 'The number of enteries in samples and taxa must be equal.'
+        raise ValueError, 'The number of enteries in samples and taxa must be'\
+        ' equal.'
 
     # Sorts the sample by abundance
     abundance_data = sort(sample)[::-1]
@@ -54,7 +52,7 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
     abundant = []
     for idx, frequency in enumerate(abundance_data):
         abundance_watch = abundance_watch + frequency
-        abundant.append([abundance_taxa[idx], frequency])
+        abundant.append([abundance_taxa[idx], round(frequency, 6)])
         if abundance_watch > abundance_threshhold:
             break
 
@@ -104,26 +102,33 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     seterr(all='raise')
     # Determines the ratio 
     population_mean = mean(population,1)
-    #print population_mean
-    #print sample
     ratio = sample.astype(float) / population_mean.astype(float)
     # preforms a case 1 t-test comparing the sample and population
+    t_stat = []
+    p_stat = []
     (t_stat, p_stat) = ttest_1samp(population, sample, 1)
+
     # Preforms a bonferroni correction on the p values
-    p_stat = p_stat
-    
+    p_stat = p_stat*num_taxa
+
     # Determines list position based on the smallest p values.
     p_order = argsort(p_stat)
 
     # Goes through the p values and determines if they are enriched or depleted
     for index in p_order:
         if p_stat[index] < critical_value and ratio[index] > 1:
-            high.append([taxa[index], sample[index], population_mean[index], \
-                ratio[index], p_stat[index]])
+            high.append([taxa[index], 
+                         round(sample[index], 6), 
+                         round(population_mean[index],6), \
+                         round(ratio[index], 4), 
+                         p_stat[index]])
 
         elif p_stat[index] < critical_value and 0 < ratio[index] < 1:
-            low.append([taxa[index], sample[index], population_mean[index], \
-                ratio[index], p_stat[index]])
+                low.append([taxa[index], 
+                            round(sample[index],6), 
+                            round(population_mean[index],6), \
+                            round(ratio[index], 4), 
+                            p_stat[index]])
    
     return high, low
 
@@ -187,7 +192,8 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
 
     return formatted_taxa
 
-def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
+def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
+    color = 'red'):
     """Converts a list of greengenes strings to a text encoded list for printing
 
     INPUTS:
@@ -227,20 +233,30 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
     format_list = []
     if comma == True:
         for idx, taxon in enumerate(raw_taxa): 
-            format_list.append(clean_otu_string(taxon, render_mode, \
-                tax_format[idx].upper()))
+            format_list.append(clean_otu_string(taxon, 
+                                            render_mode = render_mode, \
+                                            format = tax_format[idx].upper(), 
+                                            unclassified = True,
+                                            color = color))
+
         format_list = ', '.join(format_list)
     else:
         format_list.append(prelist)
         for idx, taxon in enumerate(raw_taxa):
-            format_list.append('%s%s%s' % (preitem, clean_otu_string(taxon, \
-                render_mode, tax_format[idx].upper()), anteitem))
+            format_list.append('%s%s%s' % (preitem, 
+                                clean_otu_string(taxon, \
+                                render_mode, format = tax_format[idx].upper(),
+                                unclassified = True,
+                                color = color), 
+                                anteitem))
+
         format_list.append(antelist)
         format_list = ''.join(format_list)
 
     return format_list
     
-def clean_otu_string(greengenes_string, render_mode, format=False):
+def clean_otu_string(greengenes_string, render_mode, format=False, \
+    unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
     INPUTS:
@@ -265,7 +281,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         italic_after = '}'
         bold_before = '\\textbf{'
         bold_after = '}'
-        color_before = '\\textcolor{red}{'
+        color_before = '\\textcolor{%s}{' % color
         color_after = '}'
 
     else:
@@ -275,6 +291,11 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         bold_after = '*'
         color_before = '*'
         color_after = '*'
+
+    if unclassified == True:
+        classified = 'Unclassified '
+    else:
+        classified = ''
 
     # Splits the taxonomy at the ; and removes the designation header. 
     split_tax = [i.split('__',1)[-1] for i in \
@@ -287,7 +308,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
 
     # Sets up taxonomy string
     if no_levels < 5:
-        cleaned_taxon = 'Unclassified %s %s' % (TAX_DES[no_levels], \
+        cleaned_taxon = '%s%s %s' % (classified, TAX_DES[no_levels], \
             split_tax[no_levels])
     elif no_levels == 5:
         cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
@@ -296,7 +317,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         cleaned_taxon = '%s%s %s%s' % (italic_before, split_tax[no_levels-1],
             split_tax[no_levels], italic_after)
     else:
-        cleaned_taxon = 'Unclassified Kingdom %s' % split_tax
+        cleaned_taxon = '%sKingdom %s' % (classified, split_tax)
 
     cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
     cleaned_taxon = cleaned_taxon.replace('_','-')
@@ -406,10 +427,11 @@ def generate_latex_macro(corr_taxa, categories):
 
 
     """
-    # Preallocates the an indexing variable
+    # Preallocates an indexing variable
     ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
                 'Y', 'Z']
+    # Rendering must be LaTeX for a LaTex macro
     RENDER = 'LATEX'
 
     format_table = []
@@ -535,7 +557,7 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
         # Pulls out the taxon and descriptor, separates them and formats them
         taxon = taxon_description[0]
         clean_taxon = clean_otu_string(taxon, render_mode = render_mode, \
-            bold = FORMAT_KEY)
+            format = FORMAT_KEY)
         description = taxon_description[1:]
 
         # Adds numbering to the begining of the row if appropriate
