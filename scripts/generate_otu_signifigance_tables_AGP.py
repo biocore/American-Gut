@@ -132,7 +132,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
             rare_formatted = ''.join(rare_formatted)
 
         elif number_rare_tax > 0 and len(unique) == 0:
-            rare_formatted = ['This sample included the follow rare taxa: ']
+            rare_formatted = ['This sample included the following rare taxa: ']
             rare_formatted.append(convert_taxa_to_list(rare_combined, 
                                                 tax_format = rare_format,
                                                 render_mode = RENDERING, 
@@ -140,7 +140,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
             rare_formatted = ''.join(rare_formatted)
 
         elif number_rare_tax > 0 and len(unique) > 0:
-            rare_formatted = ['This sample included the follow rare or'
+            rare_formatted = ['This sample included the following rare or'
             ' \\textcolor{red}{unique} taxa: ']
             rare_formatted.append(convert_taxa_to_list(rare_combined, 
                                                 tax_format = rare_format,
@@ -155,16 +155,14 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         # Calculates abundance rank
         (abundance) = calculate_abundance(sample, taxa)
 
-        (low, high) = calculate_tax_rank_1(sample = sample, 
+        (high, low) = calculate_tax_rank_1(sample = sample, 
                                            population = population, 
                                            taxa = taxa)
 
-        #print high
         # Generates formatted enriched table
         formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
                                       render_mode = RENDERING, 
                                       formatting_keys = FORMAT_SIGNIFIGANCE)
-        #print formatted_high 
 
         high_formatted = generate_latex_macro(formatted_high, \
             categories = MACRO_CATS_SIGNIFICANCE)
