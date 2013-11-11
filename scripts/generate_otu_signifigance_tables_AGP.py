@@ -44,7 +44,8 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
     FORMAT_SIGNIFIGANCE = ["VAL_100", "VAL_100", "VAL_INT", "SKIP"]
-    FOMAT_LOW = ['VAL_100', 'VAL_100', 'VAL_FLOAT', 'SKIP']
+    DUMMY  = ['','','','']    
+    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
     FORMAT_ABUNDANCE = ["VAL_100"]    
     MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
         'enrichFoldd']
@@ -160,34 +161,42 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         (abundance) = calculate_abundance(sample, taxa, 
                                           abundance_threshhold = 1)
 
+        # Generates formatted abundance table
+        formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
+                                        render_mode = RENDERING,
+                                        formatting_keys = FORMAT_ABUNDANCE)
+
+        abundance_formatted = generate_latex_macro(formatted_abundance, \
+            categories = MACRO_CATS_ABUNDANCE)
+
         (high, low) = calculate_tax_rank_1(sample = sample, 
                                            population = population, 
                                            taxa = taxa,
                                            critical_value = 0.05)
 
-        if len(high) > 4:
+        if len(high) < NUMBER_OF_TAXA_SHOWN:
+            # Formats the known high taxa
+            formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
+                                          render_mode = RENDERING, 
+                                          formatting_keys = FORMAT_SIGNIFIGANCE)
+            # Adds the dummy list to the end
+            for idx in COUNT:
+                if idx == (NUMBER_OF_TAXA_SHOWN - len(high)):
+                    break
+                formatted_high.append(DUMMY)           
 
-            # Generates formatted enriched table
+            high_formatted = generate_latex_macro(formatted_high, \
+                categories = MACRO_CATS_SIGNIFICANCE)
+
+        else:
             formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
                                           render_mode = RENDERING, 
                                           formatting_keys = FORMAT_SIGNIFIGANCE)
 
             high_formatted = generate_latex_macro(formatted_high, \
                 categories = MACRO_CATS_SIGNIFICANCE)
-        else:
-            # Generates formatted depletion table
-            formatted_low = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
-                                         render_mode = RENDERING,
-                                         formatting_keys = FORMAT_LOW)
-            high_formatted = generate_latex_macro(formatted_low, 
-                                        categories = MACRO_CATS_SIGNIFICANCE)
 
-        # Generates formatted abundance table
-        formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
-                                        render_mode = RENDERING,
-                                        formatting_keys = FORMAT_ABUNDANCE)
-        abundance_formatted = generate_latex_macro(formatted_abundance, \
-            categories = MACRO_CATS_ABUNDANCE)
+
     
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
             FILE_EXTENSION))

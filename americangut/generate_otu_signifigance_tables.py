@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from numpy import mean, shape, argsort, sort, array
+from numpy import mean, shape, argsort, sort, sum as nsum, delete
 from scipy.stats import ttest_1samp
 
 __author__ = "Justine Debelius"
@@ -97,6 +97,16 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     # population
     high = []
     low = []
+
+    # Identifies taxa which are not populated
+    population_count = nsum(population > 0, axis = 1)
+
+    for idx, count in enumerate(population_count):
+        # Removes any line which is equal to zero
+        if count == 0:
+            population = delete(population, idx, 0)           
+            sample = delete(sample, idx)            
+            taxa = delete(taxa, idx)           
 
     from numpy import seterr
     seterr(all='raise')
@@ -438,14 +448,19 @@ def generate_latex_macro(corr_taxa, categories):
 
     # Combines categories with data and mapping index
     for idx, taxon_description in enumerate(corr_taxa):
-        for id_, cat in enumerate(categories):
-            if id_ == 0:
-                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                  clean_otu_string(taxon_description[0], 
-                                  render_mode = RENDER)))
-            else:
-                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                  taxon_description[id_]))
+        if taxon_description[0] == '':
+            for cat in categories:
+                format_table.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
+                
+        else:
+            for id_, cat in enumerate(categories):
+                if id_ == 0:
+                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                      clean_otu_string(taxon_description[0], 
+                                      render_mode = RENDER)))
+                else:
+                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                      taxon_description[id_]))
 
     # Inserts line breaks
     table = '\n'.join(format_table)
