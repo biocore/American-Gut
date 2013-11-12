@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from numpy import mean, shape, argsort, sort
+from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
 from scipy.stats import ttest_1samp
 
 __author__ = "Justine Debelius"
@@ -29,24 +29,21 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
                     OTUs. 
 
     OUTPUTS:
-        absent -- a list of greengenes taxonomy strings that are not found 
-                    in the sample but are present in the population.
-
         abundant -- a list of lists of greenegenes taxonomy strings and the
                     frequencies representing the most abundant taxa in the 
                     sample.
     """ 
 
     if len(sample) != len(taxa):
-        raise ValueError, 'The number of enteries in samples and taxa must be equal.'
+        raise ValueError, 'The number of enteries in samples and taxa must be'\
+            ' equal.'
 
     # Sorts the sample by abundance
     abundance_data = sort(sample)[::-1]
     abundance_rank = argsort(sample)[::-1]
 
-    abundance_taxa = []
-    for rank in abundance_rank:
-        abundance_taxa.append(taxa[rank])
+    # List comprehension; faster. Also possible in dictionaries?
+    abundance_taxa = [taxa[rank] for rank in abundance_rank]
 
    
     # Identifies the taxonomy up to the abundance threshold    
@@ -54,7 +51,7 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
     abundant = []
     for idx, frequency in enumerate(abundance_data):
         abundance_watch = abundance_watch + frequency
-        abundant.append([abundance_taxa[idx], frequency])
+        abundant.append([abundance_taxa[idx], round(frequency, 6)])
         if abundance_watch > abundance_threshhold:
             break
 
@@ -93,41 +90,58 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     
     if num_taxa != len(taxa):
         raise ValueError, 'The number of entries in samples and taxa must'\
-        ' be equal.'
+            ' be equal.'
 
     # Identifies taxa that are significantly enriched or depleted in the 
     # population
     high = []
     low = []
 
-    from numpy import seterr
+    # Identifies taxa which are not populated
+    population_count = nsum(population > 0, axis = 1)
+
+    for idx, count in enumerate(population_count):
+        # Removes any line which is equal to zero
+        if count == 0:
+            population = delete(population, idx, 0)           
+            sample = delete(sample, idx)            
+            taxa = delete(taxa, idx)           
+
     seterr(all='raise')
     # Determines the ratio 
     population_mean = mean(population,1)
-    #print population_mean
-    #print sample
     ratio = sample.astype(float) / population_mean.astype(float)
     # preforms a case 1 t-test comparing the sample and population
+    t_stat = []
+    p_stat = []
+    # Could potentially use qiime functions
     (t_stat, p_stat) = ttest_1samp(population, sample, 1)
+
     # Preforms a bonferroni correction on the p values
-    p_stat = p_stat
-    
+    p_stat = p_stat*num_taxa
+
     # Determines list position based on the smallest p values.
     p_order = argsort(p_stat)
 
     # Goes through the p values and determines if they are enriched or depleted
     for index in p_order:
-        if p_stat[index] < critical_value and ratio[index] > 1:
-            high.append([taxa[index], sample[index], population_mean[index], \
-                ratio[index], p_stat[index]])
+        if p_stat[index] >= critical_value:
+            continue
 
-        elif p_stat[index] < critical_value and 0 < ratio[index] < 1:
-            low.append([taxa[index], sample[index], population_mean[index], \
-                ratio[index], p_stat[index]])
+        list_value = [taxa[index], 
+                      round(sample[index], 6), 
+                         round(population_mean[index],6),
+                         round(ratio[index], 4), 
+                         p_stat[index]]        
+        if ratio[index] > 1:
+            high.append(list_value)
+
+        else:
+            low.append(list_value)
    
     return high, low
 
-def convert_taxa(rough_taxa, render_mode, formatting_keys):
+def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
     """Takes a dictionary of taxonomy and corresponding values and formats
     for inclusion in an output table.
 
@@ -139,17 +153,44 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
         render_mode -- a string describing the format for the table: "RAW",
                     "HTML" or "LATEX".
 
-        formatting_keys -- a string for converting values to strings. "VAL_INT"
-                    converts the value to a string with an integer, "VAL_FLOAT" 
-                    gives a truncated floating value as a string, "VAL_PER" adds
-                    a percent symbol to the end of the string, and "100_PER" 
-                    multiplies the value by 100 percent and adds a percent 
-                    symbol at the end.
+        formatting_keys --  a string describing the way the value should be 
+                    formatting using string formats. For example, %1.2f, %2d, 
+                    %i. A value of 'SKIP' will ignore that value and remove it 
+                    from the output list.
 
     OUTPUTS:
 
         formatted_taxa -- a list of string with formatting for the final table. 
     """
+    num_rough = len(rough_taxa)
+    key_class = formatting_keys.__class__
+    num_keys = len(formatting_keys)
+    hund_class = hundredx.__class__
+    num_hund = len(hundredx)
+
+    # Preforms sanity checks and sets up for constants
+    if not (key_class == list or key_class == bool):
+        raise TypeError, 'formatting_keys must be a list or bool.'
+
+    elif not (hund_class == list or hund_class == bool):
+        raise TypeError, 'hundredx must be a list or bool.'
+
+    if not num_rough == num_keys and not key_class == list:
+        raise ValueError, 'The number of elements in rough_taxa and the number'\
+            ' of elements in formatting_keys must be equal.'
+
+    elif not num_rough == num_hund and not hund_class == list:
+        raise ValueError, 'The number of elements in rough_taxa and the number'\
+            ' of elements in hundredx must be equal.'
+
+    # Converts formatting keys and hundredx to lists
+    if key_class == bool:
+        formatting_keys = [formatting_keys]*num_rough
+
+    if hund_class == bool:
+        hundredx = [hundredx]*num_rough
+
+    # Creates formatted list
     formatted_taxa = []
 
     for element in rough_taxa:
@@ -157,37 +198,20 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
         element.pop(0)
         new_element = [taxon]
         for idx, item in enumerate(element):
-            if formatting_keys[idx] == "VAL_INT":
-                new_element.append("%i" % item)
 
-            elif formatting_keys[idx] == "VAL_FLOAT":
-                new_element.append("%1.2f" % item)
+            if formatting_keys[idx] == 'SKIP':
+                continue
 
-            elif formatting_keys[idx] == 'VAL_100':
-                new_element.append('%1.2f' % (item*100))
-
-            elif formatting_keys[idx] == 'VAL_100_DEC_ALIGN':
-                seperate = '%1.1f' % (item*100)
-                seperate = seperate.split('.')
-                new_element.append(' & '.join(seperate))
-
-            elif formatting_keys[idx] == "VAL_PER" and render_mode == "LATEX":
-                new_element.append("%1.1f\\%%" % item)
-
-            elif formatting_keys[idx] == "100_PER" and render_mode == "LATEX":
-                new_element.append("%1.1f\\%%" % (item*100))
-
-            elif formatting_keys[idx] == "VAL_PER":
-                new_element.append("%1.1f%%" % item)
-
-            elif formatting_keys[idx] == "100_PER":
-                new_element.append("%1.1f%%" % (item*100))
+            if hundredx[idx] == True:
+                item = item * 100
+            new_element.append(formatting_keys[idx] % item)
 
         formatted_taxa.append(new_element)
 
     return formatted_taxa
 
-def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
+def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
+    color = 'red'):
     """Converts a list of greengenes strings to a text encoded list for printing
 
     INPUTS:
@@ -227,20 +251,30 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False):
     format_list = []
     if comma == True:
         for idx, taxon in enumerate(raw_taxa): 
-            format_list.append(clean_otu_string(taxon, render_mode, \
-                tax_format[idx].upper()))
+            format_list.append(clean_otu_string(taxon, 
+                                            render_mode = render_mode, \
+                                            format = tax_format[idx].upper(), 
+                                            unclassified = True,
+                                            color = color))
+
         format_list = ', '.join(format_list)
     else:
         format_list.append(prelist)
         for idx, taxon in enumerate(raw_taxa):
-            format_list.append('%s%s%s' % (preitem, clean_otu_string(taxon, \
-                render_mode, tax_format[idx].upper()), anteitem))
+            format_list.append('%s%s%s' % (preitem, 
+                                clean_otu_string(taxon, \
+                                render_mode, format = tax_format[idx].upper(),
+                                unclassified = True,
+                                color = color), 
+                                anteitem))
+
         format_list.append(antelist)
         format_list = ''.join(format_list)
 
     return format_list
     
-def clean_otu_string(greengenes_string, render_mode, format=False):
+def clean_otu_string(greengenes_string, render_mode, format=False, \
+    unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
     INPUTS:
@@ -265,7 +299,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         italic_after = '}'
         bold_before = '\\textbf{'
         bold_after = '}'
-        color_before = '\\textcolor{red}{'
+        color_before = '\\textcolor{%s}{' % color
         color_after = '}'
 
     else:
@@ -275,6 +309,11 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         bold_after = '*'
         color_before = '*'
         color_after = '*'
+
+    if unclassified == True:
+        classified = 'Unclassified '
+    else:
+        classified = ''
 
     # Splits the taxonomy at the ; and removes the designation header. 
     split_tax = [i.split('__',1)[-1] for i in \
@@ -287,7 +326,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
 
     # Sets up taxonomy string
     if no_levels < 5:
-        cleaned_taxon = 'Unclassified %s %s' % (TAX_DES[no_levels], \
+        cleaned_taxon = '%s%s %s' % (classified, TAX_DES[no_levels], \
             split_tax[no_levels])
     elif no_levels == 5:
         cleaned_taxon = '%s %s%s%s' % (TAX_DES[no_levels], italic_before, \
@@ -296,7 +335,7 @@ def clean_otu_string(greengenes_string, render_mode, format=False):
         cleaned_taxon = '%s%s %s%s' % (italic_before, split_tax[no_levels-1],
             split_tax[no_levels], italic_after)
     else:
-        cleaned_taxon = 'Unclassified Kingdom %s' % split_tax
+        cleaned_taxon = '%sKingdom %s' % (classified, split_tax)
 
     cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
     cleaned_taxon = cleaned_taxon.replace('_','-')
@@ -406,24 +445,30 @@ def generate_latex_macro(corr_taxa, categories):
 
 
     """
-    # Preallocates the an indexing variable
+    # Preallocates an indexing variable
     ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
                 'Y', 'Z']
+    # Rendering must be LaTeX for a LaTex macro
     RENDER = 'LATEX'
 
     format_table = []
 
     # Combines categories with data and mapping index
     for idx, taxon_description in enumerate(corr_taxa):
-        for id_, cat in enumerate(categories):
-            if id_ == 0:
-                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                  clean_otu_string(taxon_description[0], 
-                                  render_mode = RENDER)))
-            else:
-                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                  taxon_description[id_]))
+        if taxon_description[0] == '':
+            for cat in categories:
+                format_table.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
+                
+        else:
+            for id_, cat in enumerate(categories):
+                if id_ == 0:
+                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                      clean_otu_string(taxon_description[0], 
+                                      render_mode = RENDER)))
+                else:
+                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                      taxon_description[id_]))
 
     # Inserts line breaks
     table = '\n'.join(format_table)
@@ -535,14 +580,13 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
         # Pulls out the taxon and descriptor, separates them and formats them
         taxon = taxon_description[0]
         clean_taxon = clean_otu_string(taxon, render_mode = render_mode, \
-            bold = FORMAT_KEY)
+            format = FORMAT_KEY)
         description = taxon_description[1:]
 
         # Adds numbering to the begining of the row if appropriate
-        if numbering == True and idx < 10:
-            table_row.append('( %d) ' % (idx + 1))
-        elif numbering == True:
-            table_row.append('(%d) ' % (idx + 1))
+        # Use string formatting in f
+        if numbering:
+            table_row.append('(%2d) ' % (idx + 1))
         
         # Pads the raw row if necessary
         if render_mode == "RAW":

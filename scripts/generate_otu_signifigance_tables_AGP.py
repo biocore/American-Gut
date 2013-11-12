@@ -7,9 +7,9 @@ from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
                                                           calculate_tax_rank_1,
-									                      convert_taxa,
-									                      convert_taxa_to_list,
-									                      generate_latex_macro)
+                                                          convert_taxa,
+                                                          convert_taxa_to_list,
+                                                          generate_latex_macro)
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
 
@@ -43,8 +43,12 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     # Sets table constants
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
-    FORMAT_SIGNIFIGANCE = ["VAL_100", "VAL_100", "VAL_INT", "SKIP"]
-    FORMAT_ABUNDANCE = ["VAL_100"]    
+    FORMAT_SIGNIFIGANCE = ['%1.2f', "%1.2f", "%i", "SKIP"]
+    SIGNIFIGANCE_HUNDRED = [True, True, False, False]
+    DUMMY  = ['','','','']    
+    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
+    FORMAT_ABUNDANCE = ["%1.1f"]
+    ABUNDANCE_HUNDRED = [True]
     MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
         'enrichFoldd']
     MACRO_CATS_ABUNDANCE = ['abundTaxon', 'abundSampl']
@@ -109,72 +113,74 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
             rare_format.append('REG')
 
         number_rare_tax = len(rare_combined)
+        num_rare = len(rare)
+        num_unique = len(unique)
 
-        if number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1 and len(unique) == 0:
-            rare_formatted = ["Your sample contained %i rare "\
-            "taxa, including the following: " % number_rare_tax]
-            rare_formatted.append(convert_taxa_to_list(\
-                rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
-                tax_format = rare_format,
-                render_mode = RENDERING, 
-                comma = True))
-            rare_formatted = ''.join(rare_formatted)              
-
-        elif number_rare_tax > NUMBER_OF_TAXA_SHOWN + 1:
-            rare_formatted = ["This sample contained %i rare and " \
-                 "\\textcolor{red}{%i unique} taxa, including "\
-                 "the following: " % (len(rare), len(unique))]
-            rare_formatted.append(convert_taxa_to_list(\
-                rare_combined[:NUMBER_OF_TAXA_SHOWN ], 
-                tax_format = rare_format,
-                render_mode = RENDERING, 
-                comma = True))
-            rare_formatted = ''.join(rare_formatted)
-
-        elif number_rare_tax > 0 and len(unique) == 0:
-            rare_formatted = ['This sample included the following rare taxa: ']
-            rare_formatted.append(convert_taxa_to_list(rare_combined, 
-                                                tax_format = rare_format,
-                                                render_mode = RENDERING, 
-                                                comma = True))
-            rare_formatted = ''.join(rare_formatted)
-
-        elif number_rare_tax > 0 and len(unique) > 0:
-            rare_formatted = ['This sample included the following rare or'
-            ' \\textcolor{red}{unique} taxa: ']
-            rare_formatted.append(convert_taxa_to_list(rare_combined, 
-                                                tax_format = rare_format,
-                                                render_mode = RENDERING, 
-                                                comma = True))
-            rare_formatted = ''.join(rare_formatted)
-    
+        rare_formatted = convert_taxa_to_list(rare_combined[0:NUMBER_OF_TAXA_SHOWN], 
+                                               tax_format = rare_format,
+                                               render_mode = RENDERING, 
+                                               comma = True)        
+     
+        if num_unique > 0:
+            unique_string = ' and \\textcolor{red}{%i unique}' % num_unique
         else:
-            rare_formatted = "There were no rare or unique taxa found"\
-                         " in this sample."
+            unique_string = ''
+
+        if number_rare_tax == 0:
+            rare_formatted = "There were no rare or unique taxa found in "\
+                "your sample." 
+
+        elif 0 < number_rare_tax <= NUMBER_OF_TAXA_SHOWN:
+            rare_formatted = 'Your sample contained the following rare %s '\
+                'taxa: %s.' % (unique_string, rare_formatted)
+
+        else:
+            rare_formatted = 'Your sample contained %i rare and %s taxa, '\
+                'including the following: %s.' \
+                % (num_rare, unique_string, 
+                   rare_formatted)
+
 
         # Calculates abundance rank
-        (abundance) = calculate_abundance(sample, taxa)
-
-        (low, high) = calculate_tax_rank_1(sample = sample, 
-                                           population = population, 
-                                           taxa = taxa)
-
-        #print high
-        # Generates formatted enriched table
-        formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
-                                      render_mode = RENDERING, 
-                                      formatting_keys = FORMAT_SIGNIFIGANCE)
-        #print formatted_high 
-
-        high_formatted = generate_latex_macro(formatted_high, \
-            categories = MACRO_CATS_SIGNIFICANCE)
+        (abundance) = calculate_abundance(sample, taxa, 
+                                          abundance_threshhold = 1)
 
         # Generates formatted abundance table
-        formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],
-                                        render_mode = RENDERING,
-                                        formatting_keys = FORMAT_ABUNDANCE)
+        formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],                                        
+                                        formatting_keys = FORMAT_ABUNDANCE,
+                                        hundredx = ABUNDANCE_HUNDRED)
+
         abundance_formatted = generate_latex_macro(formatted_abundance, \
             categories = MACRO_CATS_ABUNDANCE)
+
+        (high, low) = calculate_tax_rank_1(sample = sample, 
+                                           population = population, 
+                                           taxa = taxa,
+                                           critical_value = 0.05)
+
+        if len(high) < NUMBER_OF_TAXA_SHOWN:
+            # Formats the known high taxa
+            formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
+                                          formatting_keys = FORMAT_SIGNIFIGANCE,
+                                          hundredx = SIGNIFIGANCE_HUNDRED)
+            # Adds the dummy list to the end
+            for idx in COUNT:
+                if idx == (NUMBER_OF_TAXA_SHOWN - len(high)):
+                    break
+                formatted_high.append(DUMMY)           
+
+            high_formatted = generate_latex_macro(formatted_high, \
+                categories = MACRO_CATS_SIGNIFICANCE)
+
+        else:
+            formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
+                                          formatting_keys = FORMAT_SIGNIFIGANCE,
+                                          hundredx = SIGNIFIGANCE_HUNDRED)
+
+            high_formatted = generate_latex_macro(formatted_high, \
+                categories = MACRO_CATS_SIGNIFICANCE)
+
+
     
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
             FILE_EXTENSION))
