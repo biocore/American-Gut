@@ -141,7 +141,7 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
    
     return high, low
 
-def convert_taxa(rough_taxa, render_mode, formatting_keys):
+def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
     """Takes a dictionary of taxonomy and corresponding values and formats
     for inclusion in an output table.
 
@@ -153,17 +153,44 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
         render_mode -- a string describing the format for the table: "RAW",
                     "HTML" or "LATEX".
 
-        formatting_keys -- a string for converting values to strings. "VAL_INT"
-                    converts the value to a string with an integer, "VAL_FLOAT" 
-                    gives a truncated floating value as a string, "VAL_PER" adds
-                    a percent symbol to the end of the string, and "100_PER" 
-                    multiplies the value by 100 percent and adds a percent 
-                    symbol at the end.
+        formatting_keys --  a string describing the way the value should be 
+                    formatting using string formats. For example, %1.2f, %2d, 
+                    %i. A value of 'SKIP' will ignore that value and remove it 
+                    from the output list.
 
     OUTPUTS:
 
         formatted_taxa -- a list of string with formatting for the final table. 
     """
+    num_rough = len(rough_taxa)
+    key_class = formatting_keys.__class__
+    num_keys = len(formatting_keys)
+    hund_class = hundredx.__class__
+    num_hund = len(hundredx)
+
+    # Preforms sanity checks and sets up for constants
+    if not (key_class == list or key_class == bool):
+        raise TypeError, 'formatting_keys must be a list or bool.'
+
+    elif not (hund_class == list or hund_class == bool):
+        raise TypeError, 'hundredx must be a list or bool.'
+
+    if not num_rough == num_keys and not key_class == list:
+        raise ValueError, 'The number of elements in rough_taxa and the number'\
+            ' of elements in formatting_keys must be equal.'
+
+    elif not num_rough == num_hund and not hund_class == list:
+        raise ValueError, 'The number of elements in rough_taxa and the number'\
+            ' of elements in hundredx must be equal.'
+
+    # Converts formatting keys and hundredx to lists
+    if key_class == bool:
+        formatting_keys = [formatting_keys]*num_rough
+
+    if hund_class == bool:
+        hundredx = [hundredx]*num_rough
+
+    # Creates formatted list
     formatted_taxa = []
 
     for element in rough_taxa:
@@ -171,31 +198,13 @@ def convert_taxa(rough_taxa, render_mode, formatting_keys):
         element.pop(0)
         new_element = [taxon]
         for idx, item in enumerate(element):
-            if formatting_keys[idx] == "VAL_INT":
-                new_element.append("%i" % item)
 
-            elif formatting_keys[idx] == "VAL_FLOAT":
-                new_element.append("%1.2f" % item)
+            if formatting_keys[idx] == 'SKIP':
+                continue
 
-            elif formatting_keys[idx] == 'VAL_100':
-                new_element.append('%1.2f' % (item*100))
-
-            elif formatting_keys[idx] == 'VAL_100_DEC_ALIGN':
-                seperate = '%1.1f' % (item*100)
-                seperate = seperate.split('.')
-                new_element.append(' & '.join(seperate))
-
-            elif formatting_keys[idx] == "VAL_PER" and render_mode == "LATEX":
-                new_element.append("%1.1f\\%%" % item)
-
-            elif formatting_keys[idx] == "100_PER" and render_mode == "LATEX":
-                new_element.append("%1.1f\\%%" % (item*100))
-
-            elif formatting_keys[idx] == "VAL_PER":
-                new_element.append("%1.1f%%" % item)
-
-            elif formatting_keys[idx] == "100_PER":
-                new_element.append("%1.1f%%" % (item*100))
+            if hundredx[idx] == True:
+                item = item * 100
+            new_element.append(formatting_keys[idx] % item)
 
         formatted_taxa.append(new_element)
 
