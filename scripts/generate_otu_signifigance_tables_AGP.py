@@ -7,9 +7,9 @@ from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
                                                           calculate_tax_rank_1,
-									                      convert_taxa,
-									                      convert_taxa_to_list,
-									                      generate_latex_macro)
+                                                          convert_taxa,
+                                                          convert_taxa_to_list,
+                                                          generate_latex_macro)
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
 
@@ -43,7 +43,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     # Sets table constants
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
-    FORMAT_SIGNIFIGANCE = ['%1.2f', "%1.2f", "%i", "SKIP"]
+    FORMAT_SIGNIFIGANCE = ['%1.1f', "%1.2f", "%i", "SKIP"]
     SIGNIFIGANCE_HUNDRED = [True, True, False, False]
     DUMMY  = ['','','','']    
     COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
