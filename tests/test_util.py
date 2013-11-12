@@ -2,7 +2,7 @@
 
 from unittest import TestCase, main
 from americangut.util import pick_rarifaction_level, slice_mapping_file, \
-        parse_mapping_file, verify_subset
+        parse_mapping_file, parse_mapping_file_dict, verify_subset
 from biom.table import table_factory
 from numpy import array
 from StringIO import StringIO
@@ -54,6 +54,15 @@ class UtilTests(TestCase):
                                         ['b','yy\txxx'],
                                         ['c',"poop\tdoesn't matter"]])
         obs = parse_mapping_file(StringIO(test_mapping))
+        self.assertEqual(obs, exp)
+
+    def test_parse_mapping_file_dict(self):
+        exp = {'a': {'foo': '1', 'bar': '123123'},
+            'b': {'foo': 'yy', 'bar': 'xxx'},
+            'c': {'foo': 'poop', 'bar': "doesn't matter"}
+        }
+
+        obs = parse_mapping_file_dict(StringIO(test_mapping))
         self.assertEqual(obs, exp)
 
 test_mapping = """#SampleIDs\tfoo\tbar

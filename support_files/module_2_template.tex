@@ -1,0 +1,99 @@
+%__author__ = "Adam Robbins-Pianka"
+%__copyright__ = "Copyright 2013, The American Gut Project"
+%__credits__ = ["Adam Robbins-Pianka"]
+%__license__ = "BSD"
+%__version__ = "unversioned"
+%__maintainer__ = "Adam Robbins-Pianka"
+%__email__ = "adam.robbinspianka@colorado.edu"
+
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[abs]{overpic}
+\usepackage[scaled]{helvet}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage[centering,margin=0.25in]{geometry}
+\DeclareGraphicsExtensions{.pdf}
+\usepackage{nopageno}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\pagestyle{plain}
+\usepackage[export]{adjust box}
+
+\definecolor{light-gray}{gray}{0.85}
+
+\begin{document}
+
+\noindent
+\parbox[b][10ex][t]{0.3\linewidth}{
+\includegraphics[width=1.0\linewidth]{../ag_logo.pdf}
+}
+\hspace{0.5cm}
+\parbox[b][10ex][b]{1.0\linewidth}{\bf \Huge Your__COUNTRY__Gut}
+
+\vspace{1cm}
+\noindent
+Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2. Introduction to module 2.
+\vspace{0.4cm}
+
+\noindent
+\colorbox{light-gray}{\makebox[\textwidth][c]{Beta Diversity}}
+\noindent
+\begin{overpic}[clip=true,width={0.333\linewidth}]%
+	{{__PCOA1__}.pdf}
+   \put(45,10){\includegraphics[scale=.30]%
+      {../figure_1_labels_two_rows.pdf}} % hard-code this
+   \put(20,170){\normalsize (A)}
+\end{overpic}
+\begin{overpic}[clip=true, width={0.333\linewidth}]%
+	{{__PCOA2__}.pdf}
+   \put(160,60){\includegraphics[scale=.30]%
+      {../colormap.pdf}} % hard-code this
+   \put(20,170){\normalsize (B)}
+\end{overpic}
+\begin{overpic}[clip=true, width={0.333\linewidth}]%
+	{{__PCOA3__}.pdf}
+   \put(20,170){\normalsize (C)}
+% TODO: missing legend here because we dont know what to color by
+\end{overpic}
+
+\noindent
+This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. This is some text about the pcoa plots. 
+
+\vspace{0.4cm}
+
+\noindent
+\colorbox{light-gray}{\makebox[\textwidth][c]{Alpha Diversity}}
+\adjincludegraphics[width={0.45\linewidth}]{{__TAXA_SUMMARY__}.pdf}
+\raisebox{5cm}{
+	\parbox[t][][t]{0.49\linewidth}{
+		This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. This is some text about the taxa summary plot. 
+	}
+} \\
+
+\noindent
+\colorbox{light-gray}{\makebox[\textwidth][c]{Your Taxa}}
+
+\vspace{0.4cm}
+
+\noindent
+\begin{tabularx}{\textwidth}{X l}
+\raisebox{0.2cm}{\parbox{\linewidth}{
+
+Text about table. Text about table. Text about table. Text about table. Text about table. Text about table. Text about table. Text about table. Text about table. Text about table. Text about table. Text about table.
+
+}} &
+
+__TAXA_TABLE__
+
+\end{tabularx}
+
+\vspace{0.2cm}
+
+\begin{center}
+__RARE_TAXA__
+\end{center}
+
+\end{document}
+
+
