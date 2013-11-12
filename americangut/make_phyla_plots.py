@@ -188,21 +188,18 @@ def most_common_taxa_gg_13_5():
 
     return common_taxa
 
-def summarize_human_taxa(otu_table, level):
+def summarize_human_taxa(otu_table, level, metadata_category = 'taxonomy'):
     """Determines the frequency of major human taxa in an OTU at a preset level
 
     INPUTS:
         otu_table -- a sparse biom table to be summarized
 
-        level -- an integer between 1 and 4 corresponding to the taxonomic level
-                    at which data should be summarized. The argument will only 
-                    take a single integer.
+        level -- an integer corresponding to the taxonomic level (or other meta 
+                    data category level) at which data should be summarized.
+                    The argument will only take a single integer.
 
-        common_taxa -- a list of the common taxa at the desired level. This is 
-                    typically an ouput of a most_common_taxa function.
-
-        num_taxa -- an integer describing the number of taxa in the common_taxa 
-                    list.
+        metadata_category -- the feature of the table which should be used for 
+                    summarization.
         
 
     OUTPUTS:
@@ -217,18 +214,15 @@ def summarize_human_taxa(otu_table, level):
     num_taxa = len(common_taxa)
 
     # Gets the sample ids from the otu table
-    sample_ids_temp = otu_table.SampleIds
-    sample_ids = []
-    for sample_id in sample_ids_temp:
-        sample_ids.append(sample_id)
-
+    sample_ids = list(otu_table.SampleIds)
+    
     # Determines the total number of counts in the table
     table_total = otu_table.sum('sample')
 
     # Collapses OTUs into taxonomic summaries from using the correct levels
     chunked = [(bin, table) for bin, table in \
-    otu_table.binObservationsByMetadata(lambda x: x['taxonomy'][:level])]
-
+        otu_table.binObservationsByMetadata(lambda x: x[metadata_category][:level])]
+   
     tax_summary = zeros([num_taxa, len(otu_table.SampleIds)])
     tax_other = zeros((len(chunked), len(otu_table.SampleIds)))
     for idx, (bin, table) in enumerate(chunked):
@@ -262,6 +256,8 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     OUTPUT:
         The rendered figure is saved as a pdf in the at the file_out location.
     """
+    # Colorbrewer python package. Can be loaded
+
     # Colormap is taken from the colorbrewer    
     COLORMAP = array([[0.8353, 0.2421, 0.3098],
                       [0.9569, 0.4275, 0.2627],
@@ -276,6 +272,8 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     X_TICK_OFFSET = 0.6
 
     BAR_WIDTH = 0.8
+
+    # Paramatizable the constants and the options for shape/size. User Passed size parameters
 
     if legend and x_axis:
         figure_dimensions = (8, 5)
@@ -359,7 +357,7 @@ def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
     plt.savefig(file_out, format = 'pdf')
 
 def plot_american_gut(taxonomy_table, file_out):
-    """
+    """Makes American Gut specific plots
     """
     # Colormap is taken from the colorbrewer    
     COLORMAP = array([[0.8353, 0.2421, 0.3098],
@@ -430,9 +428,8 @@ def load_category_files(category_files,level):
     watch_count = 0
     watch_list = []
 
-    for category in category_files:
-        category_file = category_files[category]
-
+    for category, category_file in category_files.iteritems():
+        
         if isfile(category_file) == False:
             watch_list.append('The summarized OTU table file cannot be found '
                               'for %s. \n%s is not in the file path.' 
