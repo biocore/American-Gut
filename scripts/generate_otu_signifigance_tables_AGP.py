@@ -43,7 +43,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     # Sets table constants
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
-    FORMAT_SIGNIFIGANCE = ['%1.2f', "%1.2f", "%i", "SKIP"]
+    FORMAT_SIGNIFIGANCE = ['%1.1f', "%1.2f", "%i", "SKIP"]
     SIGNIFIGANCE_HUNDRED = [True, True, False, False]
     DUMMY  = ['','','','']    
     COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
