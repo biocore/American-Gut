@@ -214,13 +214,18 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                            26.3158, 1.4507298345686689e-22], 
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
                           6.8727, 0.00073396297302392652]]
-        known_low_10  = [['k__Bacteria', 0.02, 0.704584, 
-                          0.0284, 0.051170083967289066], 
-                         ['k__Archaea; p__Crenarchaeota; '\
-                          'c__Thaumarchaeota; o__Cenarchaeales; '\
-                          'f__Cenarchaeaceae; g__Nitrosopumilus', 0.03, 
-                          0.289032, 0.1038, 0.065525264907055]]
-        known_low_05  = []
+        known_low_10  = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
+                          ' o__Actinomycetales; f__Dietziaceae; g__', 
+                          0.0, 0.044336, 0.0, 0.016163391728614671], 
+                         ['k__Bacteria', 
+                         0.02, 0.704584, 0.0284, 0.051170083967289066], 
+                         ['k__Archaea; p__Crenarchaeota; c__Thaumarchaeota;'\
+                         ' o__Cenarchaeales; f__Cenarchaeaceae; '\
+                         'g__Nitrosopumilus', 
+                         0.03, 0.289032, 0.1038, 0.065525264907055]]
+        known_low_05  = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
+                          ' o__Actinomycetales; f__Dietziaceae; g__', 
+                          0.0, 0.044336, 0.0, 0.016163391728614671]]
         known_low_01  = []
         # Sets up test values
         (test_high_10, test_low_10) = calculate_tax_rank_1(sample = self.sample,
@@ -231,11 +236,14 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         (test_high_05, test_low_05) = calculate_tax_rank_1(sample = self.sample,
                                                          population = self.pop,
                                                          taxa = self.taxa)
+        #print test_low_05
         
         (test_high_01, test_low_01) = calculate_tax_rank_1(sample = self.sample,
                                                         population = self.pop,
                                                         taxa = self.taxa,
                                                         critical_value = 0.01)
+
+        #print test_low_01
 
         self.assertEqual(known_high_10, test_high_10)
         self.assertEqual(known_low_10, test_low_10)
