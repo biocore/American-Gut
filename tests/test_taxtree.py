@@ -23,7 +23,7 @@ class TaxTreeTests(TestCase):
         exp = [('a', None, [['k__1','p__x','c__'],['k__1','p__y','c__3']], 
                            [['k__1','p__x','c__1'],['k__1','p__x','c__2']]),
                ('b', None, [['k__1','p__x','c__'],['k__1','p__y','c__3']], []),
-               ('c', None, [['k__1','p__y','c__']], [])]
+               ('c', None, [], [])]
         obs = sample_rare_unique(t, None, tax_by_sample, 0.7)
         self.assertEqual(sorted(obs), exp)
 
@@ -38,16 +38,18 @@ class TaxTreeTests(TestCase):
         table_c = table_factory(array([[1,2,3],
                                        [4,5,6],
                                        [7,8,9],
-                                       [10,11,12]]), ['a','b','c'], 
+                                       [10,11,12],
+                                       [14,15,16]]), ['a','b','c'], 
                                     ['k__1; p__x; c__1',
                                      'k__1; p__x; c__2',
                                      'k__1; p__x; c__',
-                                     'k__1; p__y; c__3'])
+                                     'k__1; p__y; c__3',
+                                     'k__1; p__y; c__'])
 
         exp = [('a', table_a, [['k__1','p__x','c__'],['k__1','p__y','c__3']], 
                            [['k__1','p__x','c__1'],['k__1','p__x','c__2']]),
                ('b', table_b, [['k__1','p__x','c__'],['k__1','p__y','c__3']], []),
-               ('c', table_c, [['k__1','p__y','c__']], [])]
+               ('c', table_c, [], [])]
 
         obs = sample_rare_unique(t, table, tax_by_sample, 0.7)
         for o,e in zip(sorted(obs), exp):
