@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from numpy import mean, shape, argsort, sort, array
+from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
 from scipy.stats import ttest_1samp
 
 __author__ = "Justine Debelius"
@@ -36,15 +36,14 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
 
     if len(sample) != len(taxa):
         raise ValueError, 'The number of enteries in samples and taxa must be'\
-        ' equal.'
+            ' equal.'
 
     # Sorts the sample by abundance
     abundance_data = sort(sample)[::-1]
     abundance_rank = argsort(sample)[::-1]
 
-    abundance_taxa = []
-    for rank in abundance_rank:
-        abundance_taxa.append(taxa[rank])
+    # List comprehension; faster. Also possible in dictionaries?
+    abundance_taxa = [taxa[rank] for rank in abundance_rank]
 
    
     # Identifies the taxonomy up to the abundance threshold    
@@ -91,14 +90,23 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     
     if num_taxa != len(taxa):
         raise ValueError, 'The number of entries in samples and taxa must'\
-        ' be equal.'
+            ' be equal.'
 
     # Identifies taxa that are significantly enriched or depleted in the 
     # population
     high = []
     low = []
 
-    from numpy import seterr
+    # Identifies taxa which are not populated
+    population_count = nsum(population > 0, axis = 1)
+
+    for idx, count in enumerate(population_count):
+        # Removes any line which is equal to zero
+        if count == 0:
+            population = delete(population, idx, 0)           
+            sample = delete(sample, idx)            
+            taxa = delete(taxa, idx)           
+
     seterr(all='raise')
     # Determines the ratio 
     population_mean = mean(population,1)
@@ -106,6 +114,7 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     # preforms a case 1 t-test comparing the sample and population
     t_stat = []
     p_stat = []
+    # Could potentially use qiime functions
     (t_stat, p_stat) = ttest_1samp(population, sample, 1)
 
     # Preforms a bonferroni correction on the p values
@@ -116,19 +125,19 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
 
     # Goes through the p values and determines if they are enriched or depleted
     for index in p_order:
-        if p_stat[index] < critical_value and ratio[index] > 1:
-            high.append([taxa[index], 
-                         round(sample[index], 6), 
-                         round(population_mean[index],6), \
-                         round(ratio[index], 4), 
-                         p_stat[index]])
+        if p_stat[index] >= critical_value:
+            continue
 
-        elif p_stat[index] < critical_value and 0 < ratio[index] < 1:
-                low.append([taxa[index], 
-                            round(sample[index],6), 
-                            round(population_mean[index],6), \
-                            round(ratio[index], 4), 
-                            p_stat[index]])
+        list_value = [taxa[index], 
+                      round(sample[index], 6), 
+                      round(population_mean[index],6),
+                      round(ratio[index], 0), 
+                      p_stat[index]]        
+        if ratio[index] > 1:           
+            high.append(list_value)
+
+        else:
+            low.append(list_value)
    
     return high, low
 
@@ -438,14 +447,19 @@ def generate_latex_macro(corr_taxa, categories):
 
     # Combines categories with data and mapping index
     for idx, taxon_description in enumerate(corr_taxa):
-        for id_, cat in enumerate(categories):
-            if id_ == 0:
-                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                  clean_otu_string(taxon_description[0], 
-                                  render_mode = RENDER)))
-            else:
-                format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                  taxon_description[id_]))
+        if taxon_description[0] == '':
+            for cat in categories:
+                format_table.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
+                
+        else:
+            for id_, cat in enumerate(categories):
+                if id_ == 0:
+                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                      clean_otu_string(taxon_description[0], 
+                                      render_mode = RENDER)))
+                else:
+                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                                      taxon_description[id_]))
 
     # Inserts line breaks
     table = '\n'.join(format_table)
@@ -561,10 +575,9 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
         description = taxon_description[1:]
 
         # Adds numbering to the begining of the row if appropriate
-        if numbering == True and idx < 10:
-            table_row.append('( %d) ' % (idx + 1))
-        elif numbering == True:
-            table_row.append('(%d) ' % (idx + 1))
+        # Use string formatting in f
+        if numbering:
+            table_row.append('(%2d) ' % (idx + 1))
         
         # Pads the raw row if necessary
         if render_mode == "RAW":
