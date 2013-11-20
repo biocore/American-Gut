@@ -5,7 +5,7 @@ from os.path import isfile, exists
 from os.path import join as pjoin
 from os import mkdir
 from argparse import ArgumentParser
-from make_phyla_plots import (map_to_2D_dict,
+from americangut.make_phyla_plots import (map_to_2D_dict,
                               summarize_human_taxa,
                               plot_american_gut,
                               load_category_files)
