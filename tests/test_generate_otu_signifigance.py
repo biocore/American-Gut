@@ -237,14 +237,11 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         (test_high_05, test_low_05) = calculate_tax_rank_1(sample = self.sample,
                                                          population = self.pop,
                                                          taxa = self.taxa)
-        #print test_low_05
         
         (test_high_01, test_low_01) = calculate_tax_rank_1(sample = self.sample,
                                                         population = self.pop,
                                                         taxa = self.taxa,
                                                         critical_value = 0.01)
-
-        #print test_low_01
 
         self.assertEqual(known_high_10, test_high_10)
         self.assertEqual(known_low_10, test_low_10)
