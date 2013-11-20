@@ -15,7 +15,7 @@ from americangut.generate_otu_signifigance_tables import (calculate_abundance,
 
 class GenerateOTUSignifiganceTablesTest(TestCase):
     
-    def setUp(self):        
+    def setUp(self):
         self.sample = array([0.0200, 0.7000, 0.0050, 0.0001, 0.0020, 
                              0.1000, 0.0002, 0.0300, 0.1427, 0.0000])
 
@@ -251,31 +251,18 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(known_low_01, test_low_01)
 
     def test_convert_taxa(self):
-        # test a raw text header
-        known_raw = [['Rose', '9', '10.10', '74.01', '97.6%', '68.0%'], 
-                     ['Martha', '10', '10.20', '38.23', '20.0%', '0.2%']]
-        
+        # test a raw text header        
         test_value = [['Rose', 9, 10.101, 0.7401, 97.643, 0.6802, 0.2252], 
                       ['Martha', 10, 10.201, 0.3823, 20.027, 0.0023, 0.2302]]
-        test_keys = ['VAL_INT', 'VAL_FLOAT', 'VAL_100', 'VAL_PER', '100_PER', 
-                     'skip']
+        test_keys = ['%i', '%1.2f', '%1.2f', '%1.1f\\%%', '%1.1f\\%%', 'SKIP']
+        test_hund = [False, False, True, False, True, False]              
 
-        test_raw = convert_taxa(test_value, render_mode = 'RAW', \
-            formatting_keys = test_keys)
-
-        self.assertEqual(test_raw, known_raw)
-
-        # Test LaTeX formatting
-        test_value = [['Rose', 9, 10.101, 0.7401, 97.643, 0.6802, 0.2252],
-                      ['Martha', 10, 10.201, 0.3823, 20.027, 0.0023, 0.2302]]
-        test_keys = ['VAL_INT', 'VAL_FLOAT', 'VAL_100', 'VAL_PER', '100_PER', 
-                     'skip']
-       
         known_latex = [['Rose', '9', '10.10', '74.01', '97.6\%', '68.0\%'],
                        ['Martha', '10', '10.20', '38.23', '20.0\%', '0.2\%']]
 
-        test_latex = convert_taxa(test_value, render_mode = 'LATEX', \
-            formatting_keys = test_keys)
+        test_latex = convert_taxa(test_value,
+                                  formatting_keys = test_keys,
+                                  hundredx = test_hund)
 
         self.assertEqual(test_latex, known_latex)
 
