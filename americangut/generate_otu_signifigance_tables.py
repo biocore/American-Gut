@@ -430,7 +430,7 @@ def render_raw_header(header, numbering, header_bar, spacer, tax_len, cat_len):
 
     return table_header
 
-def generate_latex_macro(corr_taxa, categories):
+def generate_abundance_macro(corr_taxa, categories):
     """Generates a LaTeX macro for use in a template
     
     INPUTS:

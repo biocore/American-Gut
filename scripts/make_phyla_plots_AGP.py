@@ -19,7 +19,7 @@ __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
 
-def main(otu_table, mapping_data, categories, output_dir, \
+def main(otu_table, mapping_data, categories, output_3dir, \
     samples_to_plot = None, legend = False, xaxis = True):
     """Creates stacked bar plots for an otu table
     INPUTS:

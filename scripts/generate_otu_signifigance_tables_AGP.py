@@ -6,14 +6,15 @@ from numpy import array, delete
 from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                          calculate_tax_rank_1,
-									                      convert_taxa,
-									                      convert_taxa_to_list,
-									                      generate_latex_macro)
+                                                    calculate_tax_rank_1,
+									                convert_taxa,
+									                convert_taxa_to_list,
+									                generate_abundance_macro)
+from ameriangut.make_phyla_plots import map_to_2D_dict
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
 
-def main(taxa_table, output_dir, samples_to_analyze = None):
+def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None):
 
     """Creates LaTeX formatted significant OTU lists
 
@@ -41,17 +42,23 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     """
 
     # Sets table constants
-    RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
+    RARE_THRESHHOLD = 0.1
+    
     FORMAT_SIGNIFIGANCE = ['%1.2f', "%1.2f", "%i", "SKIP"]
     SIGNIFIGANCE_HUNDRED = [True, True, False, False]
-    DUMMY  = ['','','','']    
+    MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
+        'enrichFold']
+
+    DUMMY  = ['','','','']
     COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
+    
     FORMAT_ABUNDANCE = ["%1.1f"]
     ABUNDANCE_HUNDRED = [True]
-    MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
-        'enrichFoldd']
     MACRO_CATS_ABUNDANCE = ['abundTaxon', 'abundSampl']
+
+    MACRO_CATS_OTHER = ['Barcode', 'Sample_Date', 'Sample_Time']
+    OTHER_KEYS = ['#Sample_ID', 'COLLECTION_DATE', 'SAMPLE_TIME']
 
     FILE_PRECURSER = 'macros_'
     FILE_EXTENSION = '.tex'
@@ -150,7 +157,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                                         formatting_keys = FORMAT_ABUNDANCE,
                                         hundredx = ABUNDANCE_HUNDRED)
 
-        abundance_formatted = generate_latex_macro(formatted_abundance, \
+        abundance_formatted = generate_abundance_macro(formatted_abundance, \
             categories = MACRO_CATS_ABUNDANCE)
 
         (high, low) = calculate_tax_rank_1(sample = sample, 
@@ -169,7 +176,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                     break
                 formatted_high.append(DUMMY)           
 
-            high_formatted = generate_latex_macro(formatted_high, \
+            high_formatted = generate_abundance_macro(formatted_high, \
                 categories = MACRO_CATS_SIGNIFICANCE)
 
         else:
@@ -177,16 +184,18 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                                           formatting_keys = FORMAT_SIGNIFIGANCE,
                                           hundredx = SIGNIFIGANCE_HUNDRED)
 
-            high_formatted = generate_latex_macro(formatted_high, \
+            high_formatted = generate_abundance_macro(formatted_high, \
                 categories = MACRO_CATS_SIGNIFICANCE)
+
 
 
     
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
-            FILE_EXTENSION))
+            FILE_EXTENSION)) 
 
         # Saves the file
         file_for_editing = open(file_name, 'w')
+        file_for_editing.write('%% Barcode\n\\def\\barcode{%s}\n' % samp)
         # file_for_editing.write('% Participant Name\n\\def\\yourname'\
         #     '{Michael Pollan or longer name}\n\n')
         file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
@@ -200,10 +209,15 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates lists and tables of enriched, abundance and rare taxa")
 
-parser.add_argument('-i', '--input', help = 'Path to taxonomy table [REQUIRED]')
-parser.add_argument('-o', '--output', \
+parser.add_argument('-i', '--input', 
+                    help = 'Path to taxonomy table [REQUIRED]')
+parser.add_argument('-o', '--output', 
                     help = 'Path to the output directory [REQUIRED]')
-parser.add_argument('-s', '--samples', default = None, \
+parser.add_argument('-m', '--mapping', 
+                    default = None, 
+                    help = 'Path to the mapping file.')
+parser.add_argument('-s', '--samples', 
+                    default = None, 
                     help = 'Sample IDs to be analyzed. If no value is '\
                     'specified, all samples in the taxonomy file will be'\
                     ' analyzed.')
@@ -227,6 +241,11 @@ if __name__ == '__main__':
         mkdir(args.output)        
 
     output_dir = args.output
+
+    if args.mapping and not isfile(args.mapping):
+        parser.error('The supplied mapping file does not exist in the path.')
+    elif args.mapping:
+        mapping_dict = map_to_2D_dict(open(args.mapping, 'U'))
     
 
     # Parses the sample IDs as a list
@@ -237,5 +256,7 @@ if __name__ == '__main__':
     else:
         samples_to_analyze = None
 
-    main(taxa_table = tax_table, output_dir = output_dir, \
-        samples_to_analyze = samples_to_analyze)
+    main(taxa_table = tax_table, 
+         output_dir = output_dir,
+         mapping_dict = mapping_dict,
+         samples_to_analyze = samples_to_analyze)
