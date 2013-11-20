@@ -130,10 +130,11 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
 
         list_value = [taxa[index], 
                       round(sample[index], 6), 
-                         round(population_mean[index],6),
-                         round(ratio[index], 0), 
-                         p_stat[index]]        
+                      round(population_mean[index],6),
+                      round(ratio[index], 0), 
+                      p_stat[index]]        
         if ratio[index] > 1:
+            
             high.append(list_value)
 
         else:
