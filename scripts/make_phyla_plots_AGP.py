@@ -5,7 +5,7 @@ from os.path import isfile, exists
 from os.path import join as pjoin
 from os import mkdir
 from argparse import ArgumentParser
-from numpy import zeros
+from numpy import zeros, mean
 from biom.parse import parse_biom_table
 from americangut.make_phyla_plots import (map_to_2D_dict,
                               summarize_human_taxa,
