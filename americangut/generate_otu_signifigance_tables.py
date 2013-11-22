@@ -273,7 +273,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
 
     return format_list
     
-def clean_greengenes_string(greengenes_string, render_mode, format=False, \
+def clean_greengenes_string(greengenes_string, render_mode, format = False, \
     unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
