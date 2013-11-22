@@ -7,13 +7,13 @@ from os.path import isfile, exists
 from os.path import join as pjoin
 from os import mkdir
 from biom.parse import parse_biom_table, table_factory
-from numpy import (array, zeros, mean, arange, shape, ones, around, 
-                   vstack, amax, sum as n_sum)
+from numpy import *
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc 
 from matplotlib.transforms import Bbox
 from argparse import ArgumentParser
 from operator import itemgetter
+import colorbrewer
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -221,19 +221,50 @@ def summarize_common_categories(biom_table, level, common_categories,
         else:
             cat_other = vstack((cat_other, table.sum('sample')))
 
-    cat_summary = vstack((cat_summary, sum(cat_other)))
+    cat_summary = vstack((cat_summary, sum(cat_other, 0)))
 
     return sample_ids, cat_summary
 
-def calculate_dimensions_square(axis_size = 4, border = 0.1, title = 1, 
-    legend = 2, xlab = 0, ylab = 0, unit = 'inches'):
+def translate_colorbrewer(num_colors, map_name = 'Spectral'):
+    """Gets a colorbrewer colormap and sets it up for plotting in matplotlib
+
+    INPUTS:
+        map_name -- the name of the colorbrewer map. Maps can be viewed at 
+                    http://colorbrewer2.org.
+
+        num_colors -- the number of colors desired in the map.
+
+    OUTPUTS:
+        colormap -- a numpy array with the colorbrewer map formatted for use in 
+                    matplotlib.
+    """
+    try:
+        raw_map = getattr(colorbrewer, map_name)        
+    except:
+        raise ValueError, ('%s is not a valid colorbrewer map name. '\
+            '\nSee http://colorbrewer2.org for valid map names.')
+
+    if not num_colors in raw_map.keys():
+        raise ValueError, ('Too many colors. \n'\
+                           '%i wanted %i possible. \n'\
+                           'Pick fewer colors.' \
+                           % (num_colors, max(raw_map.keys())))
+
+    map_ar = array(raw_map[num_colors])
+    # Corrects for colorbrewer's 0 to 255 scaling and matplotlib's use of 0 to 
+    # 1 color sclaing.
+    colormap = map_ar.astype(float)/255
+
+    return colormap    
+
+def calculate_dimensions_rectangle(axis_width = 4, axis_height = 4, 
+    border = 0.1, title = 0.25, legend = 1, xlab = 0, ylab = 0, unit = 'in'):
     """Determines the appriate axis and figure dimensions for square axis.
 
     INPUTS:
         axis_size -- a number specifying the side length the axis. DEFAULT: 4
 
-        border -- the fraction of the axis size to be added as white space 
-                    around the edge of the axis.
+        border -- the width of the border around the figure
 
         title -- the height to add to the top of the figure for a title. This 
                     is separate from the border, which is added by default. 
@@ -247,7 +278,7 @@ def calculate_dimensions_square(axis_size = 4, border = 0.1, title = 1,
         ylab -- the width to be added for labels along the y axis. DEFAULT: 0
 
         unit -- a string ('inches' or 'cm'), specifying the unit to be used 
-                    in image generation. DEFAULT: inches
+                    in image generation. DEFAULT: in
 
     OUTPUTS:
         axis_dimensions -- a Bbox class describing the axis position in the 
@@ -260,98 +291,33 @@ def calculate_dimensions_square(axis_size = 4, border = 0.1, title = 1,
     # Specifies a value for converting between units
     if unit == 'cm':
         conversion = float(1)/float(2.54)
-    elif unit == 'inches':
+    elif unit == 'in':
         conversion = 1.0
     else:
-        raise ValueError, 'unit must be "inches" or "cm".'
+        raise ValueError, 'unit must be "in" or "cm".'
 
     # Determines the figure dimensions
-    fig_width = float(axis_size*(1+border*2)+legend+ylab)
-    fig_height = float(axis_size*(1+border*2)+title+xlab)
+    fig_width = float(axis_width+(border*2)+legend+ylab)
+    fig_height = float(axis_height+(border*2)+title+xlab)
 
     figure_dimensions = (fig_width*conversion, fig_height*conversion)
 
     # Determines the axis bounds
-    axis_left = float(border*axis_size+ylab)/fig_width
-    axis_right = float((1+border)*axis_size+ylab)/fig_width
-    axis_bottom = float(border*axis_size+xlab)/fig_height
-    axis_top = float((1+border)*axis_size+xlab)/fig_height
+    axis_left = float(border+ylab)/fig_width
+    axis_right = float(border+axis_width+ylab)/fig_width
+    axis_bottom = float(border+xlab)/fig_height
+    axis_top = float(border+axis_height+xlab)/fig_height
 
-    axis_dimensions = Bbox(array([[axis_left, axis_bottom],
-                                  [axis_right, axis_top]]))
-
-    return axis_dimensions, figure_dimensions
-
-def calculate_dimensions_bar(num_bars, bar_width = 0.5, axis_height = 3, 
-    border = 0.1, title = 1, legend = 2, xlab = 0, ylab = 0, unit = 'inches'):
-    """Determines the axis and figure dimensions for a bar chart.
-
-    INPUTS:
-        num_bars 
-
-        border -- the size of white space to be added around the axis. 
-                    DEFAULT: 0.1"
-
-        title -- the height to add to the top of the figure for a title. This 
-                    is separate from the border, which is added by default. 
-                    DEFAULT: 1
-
-        legend -- the width of the legend to the be added to the figure. 
-                    DEFAULT: 2
-
-        xlab -- the height to be added for labels along the x axis. DEFAULT: 0
-
-        ylab -- the width to be added for labels along the y axis. DEFAULT: 0
-
-        unit -- a string ('inches' or 'cm'), specifying the unit to be used 
-                    in image generation. DEFAULT: inches
-
-    OUTPUTS:
-        axis_dimensions -- a Bbox class describing the axis position in the 
-            figure
-
-        figure_dimensions -- a 2 element tuple giving the width and height of 
-            the figure in inches
-    """
-
-    # Preforms some sanity checks. 
-    if num_bars < 1:
-        raise ValueError ('There must be at least one group to plot.\nnum_bars'\
-            ' must be a whole number greater than 1.')
-    elif not round(num_bars) == num_bars:
-        raise ValueError ('There cannot be partial categories. \nnum_bars must'\
-            ' be a whole number greater than 1.')
- 
-
-   # Specifies a value for converting between units
-    if unit == 'cm':
-        conversion = float(1)/float(2.54)
-    elif unit == 'inches':
-        conversion = 1.0
-    else:
-        raise ValueError, 'unit must be "inches" or "cm".'
-
-    # Determines the figure width
-    axis_width = float(num_bars*bar_width)
-    figure_width = float(border*2+ylab+axis_width+legend)
-    figure_height = float(border*2+xlab+axis_height+title)
-
-    figure_dimensions = (figure_width, figure_height)
-
-    axis_left = float(ylab+border)/figure_width
-    axis_right = float(ylab+border+axis_width)/figure_width
-    axis_bottom = float(xlab+border)/figure_height
-    axis_top = float(xlab+border+axis_height)/figure_height
-
-    axis_dimensions = Bbox(array([[axis_left, axis_bottom],
-                                  [axis_right, axis_top]]))
+    axis_dimensions = array([[axis_left,  axis_bottom],
+                             [axis_right, axis_top   ]])
 
     return axis_dimensions, figure_dimensions
 
 def render_single_pie(cats_vec, cat_names, axis_dims, fig_dims, 
-    file_out = 'piechart', filetype = 'PDF', colormap = [[1, 1, 1]], 
-    legend = True, title = None, labels = None, label_distance = 1.1, 
-    start_angle = 90, radius = 1, fontsize = 15):
+    file_out = 'piechart', filetype = 'PDF', colors = array([[1, 1, 1]]), 
+    show_edge = True, legend = True, title = None, labels = None, 
+    label_distance = 1.1, start_angle = 90, radius = 1, fontsize = 15, 
+    axis_limit = 1.1, legend_offset_x = 1.65, legend_offset_y = 0.5):
     """Creates a pie chart summarizing the category data
 
     INPUTS:
@@ -364,8 +330,8 @@ def render_single_pie(cats_vec, cat_names, axis_dims, fig_dims,
         file_out -- a string giving the file path where the pie plot should be 
                     saved.
 
-        colormap -- an n x 3 numpy array giving the desired colormap Default is 
-                    to color each wedge white.
+        colormap -- an n x 3 or n x 4 numpy array giving the desired colormap.
+                    Default is to color each wedge white.
 
         axis_dims -- a 2 x 2 numpy array giving the fraction of the figure 
                     which should bound the axis. (row 1: [left, bottom], row 2: 
@@ -396,24 +362,57 @@ def render_single_pie(cats_vec, cat_names, axis_dims, fig_dims,
         The rendered figure is saved in the at the file_out location.
     """
 
-    # Creates the figure
-    sample_figure = plt.figure(1, fig_dims)
+    # Sets up the colormap
+    num_wedges = len(cats_vec)
+    num_colors = len(colors[:,0])
+    if not 'ndarray' in str(type(colors)):
+        raise TypeError ('The colormap must be a numpy array.')
+    elif num_colors == 1:
+        colormap = colors*ones((num_wedges,1))
+    elif num_colors >= num_wedges:
+        colormap = colors 
+    else:
+        raise ValueError, ('The color map cannot be determined. \nColors must '\
+            'be a a list of n x 3 lists where n is the number of patches being'\
+            ' supplied or a single color to be used for all patches.')
 
     # Plots the data clockwise
-    pie_plot = pie(x = cat_vec[-1:], 
-                   labels = labels, 
-                   labeldistance = label_distance, 
-                   shadow = False,
-                   startangle = start_angle,
-                   color = colormap)
+    [pie_patches, pie_text] = plt.pie(x = cats_vec, 
+                                      labels = labels, 
+                                      labeldistance = label_distance, 
+                                      shadow = False,
+                                      startangle = start_angle)
 
-    # Sets up the axis dimensions
+    # Colors the data so its pretty!
+    for idx, patch in enumerate(pie_patches):
+        # Sets the face color
+        patch.set_facecolor(colormap[idx])
+        if not show_edge:
+            patch.set_edgecolor(colormap[idx])
+
+
+    # Sets the axis and figure dimensions
     ax1 = plt.gca()
-    ax1.set_position(axis_dims)
+    ax1.set_position(Bbox(axis_dims))
+    plt.draw()
+    fig = plt.gcf()
+    fig.set_size_inches(fig_dims)
+
+    # Reverses the axis dimensions for a counter-clockwise plot
+    plt.axis([axis_limit, -axis_limit, -axis_limit, axis_limit])
+
+    plt.figure(1, fig_dims)
 
     # Adds the legend if necessary
-    if legend:
-        plt.figlegend(pie_plot, cat_names, 'right')
+    if legend == True:
+        leg = plt.legend(pie_patches, cat_names, 
+                               loc = 'center right',
+                               prop = {'size': fontsize},
+                               frameon = False)
+        leg.set_bbox_to_anchor((legend_offset_x, legend_offset_y))
+
+
+
 
     # Adds the title if desired
     if title.__class__ == str:
@@ -421,207 +420,7 @@ def render_single_pie(cats_vec, cat_names, axis_dims, fig_dims,
 
     # Saves the output figure
     plt.savefig(file_out, format = filetype)
-
-def render_bar_char(cat_table, cat_names, sample_names, axis_dims, 
-    fig_dims, file_out = 'barchart', filetype = 'PDF', colormap = [[1, 1, 1]],
-    legend = True, x_axis = True, x_tick_offset = 0.6, 
-    bar_width = 0.8, x_min = -0.5, x_tick_interval = 1.0, y_lims = [0, 1], 
-    y_tick_interval = 0.2, tick_font_size = 15, label_font_size = 20, 
-    font_angle = 45, font_alignment = 'right'):
-    """Creates a stacked barchart using the data in the category table.
-
-    INPUTS:
-
-    OUTPUT:
-        The rendered figure is saved in the at the file_out location.       
-    """
-
-    # Preforms a sanity checks that the provided data is good
-    (table_height, table_width) = cat_table.shape
-    num_cats = len(cat_names)
-    num_samples = len(sample_names)
-
-    if not table_height == num_cats:
-        raise ValueError ('The number of provided categories differ.')
-    elif not table_width == num_samples:
-        raise ValueError ('The number of samples differ.')
-
-    # Sets up the x ticks 
-    x_tick = arrange(0, num_samples)
-    x_max = x_min + no_samples
-    bar_left = x_tick - bar_width*0.5
-
-    # Creates the figure
-    fig = plt.figure(1, fig_dims)
-
-    
-    # Plots the data
-    patches_watch = []
-    for plot_count, category in enumerate(cat_table):
-        bottom_bar = sum(category_table[:plot_count,:])
-        faces = plt.bar(left = bar_left, 
-                        height = category, 
-                        width = bar_width, 
-                        bottom = bottom_bar,
-                        color = colormap[plot_count,:],
-                        edgecolor = colormap[plot_count,:])
-        patches_watch.append(faces[0])
-
-    # Sets up the axis dimesnions and limits.
-    ax1 = plt.gca()
-    x1.set_position(axis_dims)
-
-     # The y-direction is reversed so the labels are in the same order as the 
-    # colors in the legend
-    plt.axis([x_min, x_max, y_lims[1], y_lims[0]])
-
-     # Sets y axis labels
-    y_tick_labels = (arange(y_max + y_tick_interval, y_min, \
-        -y_tick_interval) - y_tick_interval)*100
-    y_tick_labels[-1] = 0
-
-    # Converts y label to text
-    y_text_labels = [str(e) for e in y_tick_labels]
-
-    y_tick_labels = ax1.set_yticklabels(y_text_labels, 
-                                        size = tick_font_size)
-    y_axis_label = ax1.set_ylabel('Frequency', 
-                                  size = label_font_size)
-
-    # Sets up the x-axis labels
-    x_text_labels = sample_labels[:] # copy
-    x_text_labels.insert(0, '') # insert at the head of the list
-    
-    x_tick_labels = ax1.set_xticklabels(x_text_labels, 
-                                        size = tick_font_size,
-                                        rotation = font_angle, 
-                                        horizontalalignment = font_alignment)
-    if legend:
-        plt.figlegend(patches_watch, category_names, 'right')
-
-    plt.savefig(file_out, format = file_format)
-
    
-
-# def plot_stacked_phyla(taxonomy_table, taxonomy_headers, sample_labels, \
-#   file_out, sample_ids=None, legend = True, x_axis=True):
-#     """Creates a stacked taxonomy plot at the phylum level
-
-#     INPUTS:
-#         taxonomy_table -- a numpy array with sample information in the columns 
-#                         and phylum frequency information in the rows
-
-#         taxonomy_headers -- a  of the phyla which to the rows in the 
-#                         taxonomy_table
-
-#         sample_labels -- a list of the sample labels which correspond to the 
-#                         rows in the taxonomy_table
-
-#         file_out -- a string describing the filename for the output filename
-
-#     OUTPUT:
-#         The rendered figure is saved as a pdf in the at the file_out location.
-#     """
-#     # Colorbrewer python package. Can be loaded
-
-#     # Colormap is taken from the colorbrewer    
-#     COLORMAP = array([[0.8353, 0.2421, 0.3098],
-#                       [0.9569, 0.4275, 0.2627],
-#                       [0.9922, 0.6824, 0.3804],
-#                       [0.9961, 0.8784, 0.5351],
-#                       [0.9020, 0.9608, 0.5961],
-#                       [0.6706, 0.8667, 0.6431],
-#                       [0.4000, 0.7608, 0.6471],
-#                       [0.1961, 0.5333, 0.7412],
-#                       [0.3333, 0.3333, 0.3333]])
-
-#     X_TICK_OFFSET = 0.6
-
-#     BAR_WIDTH = 0.8
-
-#     # Paramatizable the constants and the options for shape/size. User Passed size parameters
-
-#     if legend and x_axis:
-#         figure_dimensions = (8, 5)
-#         axis_dimensions = Bbox(array([[0.2000, 0.3000],
-#                                       [0.7000, 0.9000]]))
-#     elif legend:
-#         figure_dimensions = (8, 3.75)
-#         axis_dimensions = Bbox(array([[0.2000, 0.1000],
-#                                       [0.7000, 0.9000]]))
-#     elif x_axis:
-#         figure_dimensions = (6.2222, 5)
-#         axis_dimensions = Bbox(array([[0.2000, 0.3000],
-#                                       [0.9000, 0.9000]]))
-#         #bah
-#     else:
-#         figure_dimensions = (6.22222, 3.75)
-#         axis_dimensions = Bbox(array([[0.2000, 0.1000],
-#                                       [0.9000, 0.9000]]))
-
-
-#     X_MIN = -0.5
-#     X_TICK_INTERVAL = 1.0
-
-#     Y_MIN = 0
-#     Y_MAX = 1.0
-#     Y_TICK_INTERVAL = 0.2
-
-#     TICK_FONT_SIZE = 15
-#     LABEL_FONT_SIZE = 20
-
-#     [no_phyla, no_samples] = taxonomy_table.shape
-
-#     x_tick = arange(0,no_samples)
-#     x_max = X_MIN+no_samples
-
-#     sample_figure = plt.figure(1, figure_dimensions)
-
-
-#     patches_watch = []
-
-#     # Plots the data
-#     for plot_count, phyla in enumerate(taxonomy_table):
-#         already_added_index = arange(plot_count)
-#         bottom_bar = sum(taxonomy_table[already_added_index,:])
-#         faces = plt.bar(x_tick-BAR_WIDTH/2, phyla, BAR_WIDTH, \
-#                         bottom = bottom_bar, color = COLORMAP[plot_count,:], \
-#                         edgecolor=COLORMAP[plot_count,:])
-#         patches_watch.append(faces[1])
-
-#     # Sets up axis dimensions and limits
-#     ax1 = plt.gca()
-#     ax1.set_position(axis_dimensions)
-    
-#     # The y-direction is reversed so the labels are in the same order as the 
-#     # colors in the legend
-#     plt.axis([X_MIN, x_max, Y_MAX, Y_MIN])
-
-#     # Sets y axis labels
-#     y_tick_labels = (arange(Y_MAX + Y_TICK_INTERVAL, Y_MIN, \
-#         -Y_TICK_INTERVAL) - Y_TICK_INTERVAL)*100
-#     y_tick_labels[-1] = 0
-
-#     # Converts y label to text
-#     y_text_labels = [str(e) for e in y_tick_labels]
-
-#     y_tick_labels = ax1.set_yticklabels(y_text_labels, size = TICK_FONT_SIZE)
-#     y_axis_label = ax1.set_ylabel('Frequency', size = LABEL_FONT_SIZE)
-
-#     # Sets up the x-axis labels
-#     x_text_labels = sample_labels[:] # copy
-#     x_text_labels.insert(0, '') # insert at the head of the list
-    
-#     x_tick_labels = ax1.set_xticklabels(x_text_labels, size = TICK_FONT_SIZE,\
-#         rotation = 45, horizontalalignment = 'right')
-
-#     # Adds the legend
-#     if legend:
-#         plt.figlegend(patches_watch, taxonomy_headers, 'right')
-
-
-#     plt.savefig(file_out, format = 'pdf')
-
 def plot_american_gut(taxonomy_table, file_out):
     """Makes American Gut specific plots
     """

@@ -13,6 +13,14 @@ from americangut.generate_otu_signifigance_tables import (calculate_abundance,
 from ameriangut.make_phyla_plots import map_to_2D_dict
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
+__author__ = "Justine Debelius"
+__copyright__ = "Copyright 2013, The American Gut Project"
+__credits__ = ["Justine Debelius", "Daniel McDonald"]
+__license__ = "BSD" 
+__version__ = "unversioned"
+__maintainer__ = "Justine Debelius"
+__email__ = "Justine.Debelius@colorado.edu"
+
 
 def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None):
 
@@ -97,7 +105,6 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
         
         sample_position = filtered_table.getSampleIndex(samp)
         sample = filtered_table.sampleData(samp)
-        print samp, sum(sample > 0)
                 
         population = delete(population, sample_position, 1)
         
@@ -210,7 +217,7 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
 parser = ArgumentParser(description = "Creates lists and tables of enriched, abundance and rare taxa")
 
 parser.add_argument('-i', '--input', 
-                    help = 'Path to taxonomy table [REQUIRED]')
+                    help = 'Path to taxonomy table biom file. [REQUIRED]')
 parser.add_argument('-o', '--output', 
                     help = 'Path to the output directory [REQUIRED]')
 parser.add_argument('-m', '--mapping', 

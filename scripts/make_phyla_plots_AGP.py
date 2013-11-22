@@ -12,7 +12,7 @@ from make_phyla_plots import (map_to_2D_dict,
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Justine Debelius"]
+__credits__ = ["Justine Debelius", "Daniel McDonald"]
 __license__ = "BSD" 
 __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"

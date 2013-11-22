@@ -8,8 +8,8 @@ from biom.table import table_factory, SparseOTUTable
 from americangut.make_phyla_plots import (map_to_2D_dict,
                                           idenitfy_most_common_categories,
                                           summarize_common_categories,
-                                          calculate_dimensions_square,
-                                          calculate_dimensions_bar)
+                                          calculate_dimensions_rectangle,
+                                          translate_colorbrewer)
 from matplotlib.transforms import Bbox
 
 __author__ = "Justine Debelius"
@@ -349,20 +349,19 @@ class MakePhylaPlotsAGPTest(TestCase):
         self.assertEqual(test_ids, known_ids)
         assert_almost_equal(test_table, table_known, decimal = 4)
 
-    def test_calculate_dimensions_square(self):
+    def test_calculate_dimensions_rectangle(self):
         # Sets up known values
-        known_figure_dimensions_def = (6.8, 5.8)
-        known_axis_dimensions_def = Bbox(array([[0.05882353, 0.06896552], 
-                                                [0.63705882, 0.75862069]]))
+        known_figure_dimensions_def = (5.2, 4.45)
+        known_axis_dimensions_def = Bbox(array([[0.01923077, 0.02247191],
+                                                [0.78846154, 0.92134831]]))
 
-        known_figure_dims_in = (5.4, 4.4)
-        known_axis_dims_in = Bbox(array([[0.22222222, 0.2727272727], 
-                                         [0.59259259, 0.7272727273]]))
+        known_figure_dims_in = (4.2, 3.45)
+        known_axis_dims_in = Bbox(array([[0.26190476, 0.31884058],
+                                         [0.73809524, 0.89855072]]))
 
-        known_figure_dims_cm = (4.794701, 3.793701)
-        known_axis_dims_cm = Bbox(array([[0.09855453, 0.123533],
-                                         [0.26281209, 0.332088]]))
-
+        known_figure_dims_cm = (1.6535433, 1.3582677)
+        known_axis_dims_cm = Bbox(array([[0.26190476, 0.31884058],
+                                         [0.73809524, 0.89855072]]))
         # Sets up test values
         test_axis_side = 2
         test_border = 0.1
@@ -371,23 +370,25 @@ class MakePhylaPlotsAGPTest(TestCase):
 
         # Tests that an error is raised if the units are not sane
         with self.assertRaises(ValueError):
-            calculate_dimensions_square(unit = 'Demons')
+            calculate_dimensions_rectangle(unit = 'Demons')
 
         # Calculates the test values
-        (test_axis_df, test_fig_df) = calculate_dimensions_square()
+        (test_axis_df, test_fig_df) = calculate_dimensions_rectangle()
         
-        (test_axis_in, test_fig_in) = calculate_dimensions_square(
-                                                    axis_size = test_axis_side,
-                                                    border = test_border,
-                                                    xlab = test_xlab,
-                                                    ylab = test_ylab)
+        (test_axis_in, test_fig_in) = calculate_dimensions_rectangle(
+                                                axis_width = test_axis_side,
+                                                axis_height = test_axis_side,
+                                                border = test_border,
+                                                xlab = test_xlab,
+                                                ylab = test_ylab)
 
-        (test_axis_cm, test_fig_cm) = calculate_dimensions_square(
-                                                    axis_size = test_axis_side,
-                                                    border = test_border,
-                                                    xlab = test_xlab,
-                                                    ylab = test_ylab,
-                                                    unit = 'cm')
+        (test_axis_cm, test_fig_cm) = calculate_dimensions_rectangle(
+                                                axis_width = test_axis_side,
+                                                axis_height = test_axis_side,
+                                                border = test_border,
+                                                xlab = test_xlab,
+                                                ylab = test_ylab,
+                                                unit = 'cm')
 
         assert_almost_equal(test_fig_df, known_figure_dimensions_def, 
                             decimal = 5)
@@ -399,6 +400,42 @@ class MakePhylaPlotsAGPTest(TestCase):
 
         assert_almost_equal(test_fig_cm, known_figure_dims_cm, decimal = 5)
         assert_almost_equal(test_axis_cm, known_axis_dims_cm, decimal = 5)
+
+    def test_translate_colorbrewer(self):
+        # Sets up knowns values
+        known_def_8 = array([[0.83529412, 0.24313725, 0.30980392],
+                             [0.95686275, 0.42745098, 0.26274510],
+                             [0.99215686, 0.68235294, 0.38039216],
+                             [0.99607843, 0.87843137, 0.54509804],
+                             [0.90196078, 0.96078431, 0.59607843],
+                             [0.67058824, 0.86666667, 0.64313725],
+                             [0.40000000, 0.76078431, 0.64705882],
+                             [0.19607843, 0.53333333, 0.74117647]])
+
+        known_PuRd_9 = array([[0.96862745, 0.95686275, 0.97647059],
+                              [0.90588235, 0.88235294, 0.93725490],
+                              [0.83137255, 0.72549020, 0.85490196],
+                              [0.78823529, 0.58039216, 0.78039216],
+                              [0.87450980, 0.39607843, 0.69019608],
+                              [0.90588235, 0.16078431, 0.54117647],
+                              [0.80784314, 0.07058824, 0.33725490],
+                              [0.59607843, 0.00000000, 0.26274510],
+                              [0.40392157, 0.00000000, 0.12156863]])
+        
+        # Test the calls
+        with self.assertRaises(ValueError):
+            translate_colorbrewer(5, 'Winchester')
+
+        with self.assertRaises(ValueError):
+            translate_colorbrewer(13)
+
+        def_map = translate_colorbrewer(8)
+        PuRd_map = translate_colorbrewer(9, 'PuRd')
+
+        # Checks the outputs are sane
+        assert_almost_equal(known_def_8, def_map)
+        assert_almost_equal(known_PuRd_9, PuRd_map)
+
 
 
 

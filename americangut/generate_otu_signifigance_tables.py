@@ -251,7 +251,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
     format_list = []
     if comma == True:
         for idx, taxon in enumerate(raw_taxa): 
-            format_list.append(clean_otu_string(taxon, 
+            format_list.append(clean_greengenes_string(taxon, 
                                             render_mode = render_mode, \
                                             format = tax_format[idx].upper(), 
                                             unclassified = True,
@@ -262,7 +262,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
         format_list.append(prelist)
         for idx, taxon in enumerate(raw_taxa):
             format_list.append('%s%s%s' % (preitem, 
-                                clean_otu_string(taxon, \
+                                clean_greengenes_string(taxon, \
                                 render_mode, format = tax_format[idx].upper(),
                                 unclassified = True,
                                 color = color), 
@@ -273,7 +273,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
 
     return format_list
     
-def clean_otu_string(greengenes_string, render_mode, format=False, \
+def clean_greengenes_string(greengenes_string, render_mode, format=False, \
     unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
@@ -464,7 +464,7 @@ def generate_abundance_macro(corr_taxa, categories):
             for id_, cat in enumerate(categories):
                 if id_ == 0:
                     format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                      clean_otu_string(taxon_description[0], 
+                                      clean_greengenes_string(taxon_description[0], 
                                       render_mode = RENDER)))
                 else:
                     format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
@@ -579,7 +579,7 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
         table_row = []
         # Pulls out the taxon and descriptor, separates them and formats them
         taxon = taxon_description[0]
-        clean_taxon = clean_otu_string(taxon, render_mode = render_mode, \
+        clean_taxon = clean_greengenes_string(taxon, render_mode = render_mode, \
             format = FORMAT_KEY)
         description = taxon_description[1:]
 
