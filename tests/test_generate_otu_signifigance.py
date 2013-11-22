@@ -1,3 +1,4 @@
+#!/usr/bin/env python 
 # make_phyla_plots_AGP_test.py
 
 from unittest import TestCase, main
@@ -194,35 +195,35 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         # Sets up known values
         known_high_10 = [['k__Bacteria; p__Proteobacteria; '\
                           'c__Gammaproteobacteria; o__Enterobacteriales; '\
-                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.3158, 
+                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0, 
                           1.4507298345686689e-22], 
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
-                          6.8727, 0.00073396297302392652], 
+                          7.0, 0.00073396297302392652], 
                          ['k__Bacteria; p__Proteobacteria; '\
                           'c__Gammaproteobacteria; o__Enterobacteriales; '\
                           'f__Enterbacteriaceae; g__Escherichia', 0.1, 0.04714, 
-                          2.1213, 0.068040408640427208]]
+                          2.0, 0.068040408640427208]]
         known_high_05 = [['k__Bacteria; p__Proteobacteria; '\
                           'c__Gammaproteobacteria; o__Enterobacteriales; '\
-                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.3158, 
+                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0, 
                           1.4507298345686689e-22], 
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
-                          6.8727, 0.00073396297302392652]]
+                          7.0, 0.00073396297302392652]]
         known_high_01 = [['k__Bacteria; p__Proteobacteria; '\
                           'c__Gammaproteobacteria; o__Enterobacteriales; '\
                           'f__Enterbacteriaceae', 0.002, 7.6e-05, 
-                           26.3158, 1.4507298345686689e-22], 
+                           26.0, 1.4507298345686689e-22], 
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
-                          6.8727, 0.00073396297302392652]]
+                          7.0, 0.00073396297302392652]]
         known_low_10  = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
                           ' o__Actinomycetales; f__Dietziaceae; g__', 
                           0.0, 0.044336, 0.0, 0.016163391728614671], 
                          ['k__Bacteria', 
-                           0.02, 0.704584, 0.0284, 0.051170083967289066], 
-                         ['k__Archaea; p__Crenarchaeota; c__Thaumarchaeota; '\
-                          'o__Cenarchaeales; f__Cenarchaeaceae; '\
-                          'g__Nitrosopumilus', 
-                          0.03, 0.289032, 0.1038, 0.065525264907055]]
+                         0.02, 0.704584, 0.0, 0.051170083967289066], 
+                         ['k__Archaea; p__Crenarchaeota; c__Thaumarchaeota;'\
+                         ' o__Cenarchaeales; f__Cenarchaeaceae; '\
+                         'g__Nitrosopumilus', 
+                         0.03, 0.289032, 0.0, 0.065525264907055]]
         known_low_05  = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
                           ' o__Actinomycetales; f__Dietziaceae; g__', 
                           0.0, 0.044336, 0.0, 0.016163391728614671]]
