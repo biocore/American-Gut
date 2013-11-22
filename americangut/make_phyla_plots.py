@@ -43,7 +43,7 @@ def map_to_2D_dict(mapping_data):
 
     return D2
 
-def idenitfy_most_common_categories(biom_table, level, 
+def identify_most_common_categories(biom_table, level, 
     metadata_category = 'taxonomy', limit_mode = 'COMPOSITE', limit = 1.0):
     """Identifies the most common taxa in a population using variable limits
 
@@ -197,6 +197,13 @@ def summarize_common_categories(biom_table, level, common_categories,
                     categories with an additional frequencies collapsed into 
                     the "other" category.
     """
+    # Checks that input biom table can be processed
+    if not biom_table.observationExists:
+        raise ValueError, ('The biom table cannot be summarized; supplied '\
+            'category does not exist.')
+
+    # print 'Common categories: %r' % common_categories
+
     num_cats = len(common_categories)
 
     sample_ids = list(biom_table.SampleIds)
@@ -204,18 +211,17 @@ def summarize_common_categories(biom_table, level, common_categories,
 
     # Normalizes the biom table
     biom_norm = biom_table.normObservationBySample()
-
     # Prealocates numpy objects (because that makes life fun!). tax_other is 
     # set up as a row array because this is ultimately summed
     cat_summary = zeros([num_cats, num_samples])
     cat_other = zeros([1, num_samples])
 
     # Collapses the OTU table using the category at the correct level
-    chunked = [(bin, table) for bin, table in 
-               biom_norm.binObservationsByMetadata(\
-               lambda x: x[metadata_category][:level])]
+    chunked = [(bin, table) for bin, table in \
+        biom_table.binObservationsByMetadata(lambda x: x[metadata_category]
+            [:level])]
 
-    for idx, (bin, table) in enumerate(chunked):
+    for (bin, table) in chunked:
         if bin in common_categories:
             cat_summary[common_categories.index(bin)] = table.sum('sample') 
         else:
@@ -478,12 +484,21 @@ def plot_american_gut(taxonomy_table, file_out):
 
     plt.savefig(file_out, format = 'pdf')
 
-def load_category_files(category_files,level):
+def load_category_files(category_files, common_groups, level = 2,
+        metadata_category = 'taxonomy'):
     """
     INPUTS:
-         category_files -- a dictionary that associates the mapping category 
+        category_files -- a dictionary that associates the mapping category 
                     (key) with the file path to the otu_table summarizing that 
                     category.
+        level -- the level at which data should be summarized
+
+        common_group -- the reference groups in the metadata category which 
+                    should be used to summarize the data.
+
+        metadata_category -- the metadata category which should be used to 
+                    summarize the data
+
     OUTPUTS:
         category_tables -- a dictionary that associates the mapping category 
                     with the summarized OTU tables for that category.
@@ -492,6 +507,10 @@ def load_category_files(category_files,level):
     category_tables = {}
     watch_count = 0
     watch_list = []
+
+    print 'Common group: %r' % common_groups
+    print 'level: %r' % level
+    print 'metadata_category: %r' % metadata_category
 
     for category, category_file in category_files.iteritems():
         
@@ -502,8 +521,9 @@ def load_category_files(category_files,level):
             watch_count = watch_count + 1
         else:
             cat_table = parse_biom_table(open(category_file, 'U'))
-            (common_taxa, cat_ids, cat_summary)  = \
-              summarize_human_taxa(cat_table,level)
+            (cat_ids, cat_summary)  = \
+              summarize_common_categories(cat_table, level = level, 
+                                          common_categories = common_groups)
             category_tables[category] = {'Groups': cat_ids, \
                                          'Taxa Summary': cat_summary}
 

@@ -5,9 +5,10 @@ from os.path import isfile, exists
 from os.path import join as pjoin
 from os import mkdir
 from argparse import ArgumentParser
+from biom.parse import parse_biom_table
 from make_phyla_plots import (map_to_2D_dict,
-                              summarize_human_taxa,
                               plot_american_gut,
+                              summarize_common_categories,
                               load_category_files)
 
 __author__ = "Justine Debelius"
@@ -19,7 +20,7 @@ __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
 
-def main(otu_table, mapping_data, categories, output_3dir, \
+def main(otu_table, mapping_data, categories, output_dir, \
     samples_to_plot = None, legend = False, xaxis = True):
     """Creates stacked bar plots for an otu table
     INPUTS:
@@ -45,16 +46,32 @@ def main(otu_table, mapping_data, categories, output_3dir, \
     """
     # Sets constants
     LEVEL = 2
+    CATEGORY = 'taxonomy'
     FILEPREFIX = 'Figure_4_'
     MICHAEL_POLLAN = '000007108.1075657'
     NUM_TAXA = 9
     NUM_CATS_TO_PLOT = 7
-    
+
+
     # Loads the mapping file
     map_dict = map_to_2D_dict(mapping_data)
-    
-    (common_taxa, whole_sample_ids, whole_summary) = \
-        summarize_human_taxa(otu_table, LEVEL)
+
+    # Common taxa are designated before processing to remain constant.
+    common_taxa = [(u'k__Bacteria', u' p__Firmicutes'),
+                   (u'k__Bacteria', u' p__Bacteroidetes'),
+                   (u'k__Bacteria', u' p__Proteobacteria'),
+                   (u'k__Bacteria', u' p__Actinobacteria'),
+                   (u'k__Bacteria', u' p__Verrucomicrobia'),
+                   (u'k__Bacteria', u' p__Tenericutes'),
+                   (u'k__Bacteria', u' p__Cyanobacteria'),
+                   (u'k__Bacteria', u' p__Fusobacteria'),
+                   (u'k__Bacteria', u' p__Other')]
+
+    (whole_sample_ids, whole_summary) = \
+    summarize_common_categories(biom_table = otu_table, 
+                                    level = LEVEL, 
+                                    common_categories = common_taxa, 
+                                    metadata_category = CATEGORY)
 
     # Converts final taxa to a clean list
     common_phyla = []
@@ -138,7 +155,16 @@ parser.add_argument('-s', '--samples_to_plot', default = None, \
 
 if __name__ == '__main__':
     # Sets the plotting level at phylum
-    LEVEL = 2
+    LEVEL = 2    
+    common_taxa = [(u'k__Bacteria', u' p__Firmicutes'),
+                   (u'k__Bacteria', u' p__Bacteroidetes'),
+                   (u'k__Bacteria', u' p__Proteobacteria'),
+                   (u'k__Bacteria', u' p__Actinobacteria'),
+                   (u'k__Bacteria', u' p__Verrucomicrobia'),
+                   (u'k__Bacteria', u' p__Tenericutes'),
+                   (u'k__Bacteria', u' p__Cyanobacteria'),
+                   (u'k__Bacteria', u' p__Fusobacteria'),
+                   (u'k__Bacteria', u' p__Other')]
 
     args = parser.parse_args()
 
@@ -171,7 +197,9 @@ if __name__ == '__main__':
     else:
         category_fp = dict([c.strip().split(':') \
             for c in args.categories.split(',')])
-        categories = load_category_files(category_fp, LEVEL)
+        categories = load_category_files(category_files = category_fp, 
+                                         common_groups = common_taxa,
+                                         level = 2)
     
     # Deals with the sample list
     if args.samples_to_plot:
@@ -182,3 +210,10 @@ if __name__ == '__main__':
 
     main(otu_table, mapping, output_dir = output_dir, \
         categories = categories, samples_to_plot = samples)
+
+
+# Commentary on the selection of common taxa:
+# Common taxa can be calculated using the function, 
+# identify_most_common_categories. When this was run on rounds 1, 2, and 3 of 
+# the American Gut for fecal and all sites equally weighted, and for the HMP for
+# fecal only and equal weights on the fecal, skin and oral sites. 

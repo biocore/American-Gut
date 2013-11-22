@@ -6,7 +6,7 @@ from numpy import array
 from numpy.testing import assert_almost_equal
 from biom.table import table_factory, SparseOTUTable
 from americangut.make_phyla_plots import (map_to_2D_dict,
-                                          idenitfy_most_common_categories,
+                                          identify_most_common_categories,
                                           summarize_common_categories,
                                           calculate_dimensions_rectangle,
                                           translate_colorbrewer)
@@ -132,7 +132,7 @@ class MakePhylaPlotsAGPTest(TestCase):
         test_dict = map_to_2D_dict(test_map)
         self.assertEqual(test_dict,known_dict)
 
-    def test_idenitfy_most_common_categories(self):
+    def test_identify_most_common_categories(self):
         # Sets up known values
         known_cats_comp = [(u'k__Bacteria', u' p__Bacteroidetes'),
                            (u'k__Bacteria', u' p__Firmicutes'),
@@ -266,27 +266,27 @@ class MakePhylaPlotsAGPTest(TestCase):
 
         # Tests code
         [test_cats_none, test_scores_none] = \
-            idenitfy_most_common_categories(biom_table = self.otu_table, 
+            identify_most_common_categories(biom_table = self.otu_table, 
                                             level = 2,
                                             metadata_category = 'taxonomy', 
                                             limit_mode = 'NONE')
 
         [test_cats_comp, test_scores_comp] = \
-            idenitfy_most_common_categories(biom_table = self.otu_table, 
+            identify_most_common_categories(biom_table = self.otu_table, 
                                             level = 2,
                                             metadata_category = 'taxonomy', 
                                             limit_mode = 'COMPOSITE',
                                             limit = 49)
 
         [test_cats_aver, test_scores_aver] = \
-            idenitfy_most_common_categories(biom_table = self.otu_table, 
+            identify_most_common_categories(biom_table = self.otu_table, 
                                             level = 2,
                                             metadata_category = 'taxonomy', 
                                             limit_mode = 'AVERAGE',
                                             limit = 0.1)        
 
         [test_cat_count, test_score_count] = \
-            idenitfy_most_common_categories(biom_table = self.otu_table, 
+            identify_most_common_categories(biom_table = self.otu_table, 
                                             level = 2,
                                             metadata_category = 'taxonomy', 
                                             limit_mode = 'COUNTS',
@@ -294,12 +294,12 @@ class MakePhylaPlotsAGPTest(TestCase):
 
         # Checks that appropriate errors are called
         with self.assertRaises(ValueError):
-            idenitfy_most_common_categories(biom_table = self.otu_table, 
+            identify_most_common_categories(biom_table = self.otu_table, 
                                         level = 2,
                                         limit_mode = 'This is a test')
 
         with self.assertRaises(ValueError):
-            idenitfy_most_common_categories(biom_table = self.otu_table,
+            identify_most_common_categories(biom_table = self.otu_table,
                                         level = 2,
                                         limit = 100000)
 

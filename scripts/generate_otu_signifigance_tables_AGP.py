@@ -10,7 +10,7 @@ from americangut.generate_otu_signifigance_tables import (calculate_abundance,
 									                convert_taxa,
 									                convert_taxa_to_list,
 									                generate_abundance_macro)
-from ameriangut.make_phyla_plots import map_to_2D_dict
+from make_phyla_plots import map_to_2D_dict
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
 __author__ = "Justine Debelius"
@@ -202,7 +202,8 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
 
         # Saves the file
         file_for_editing = open(file_name, 'w')
-        file_for_editing.write('%% Barcode\n\\def\\barcode{%s}\n' % samp)
+        file_for_editing.write('%% Barcode\n\\def\\barcode{%s}\n\n\n' \
+            % samp.split('.')[0])
         # file_for_editing.write('% Participant Name\n\\def\\yourname'\
         #     '{Michael Pollan or longer name}\n\n')
         file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
