@@ -9,8 +9,10 @@ from americangut.make_phyla_plots import (map_to_2D_dict,
                                           identify_most_common_categories,
                                           summarize_common_categories,
                                           calculate_dimensions_rectangle,
+                                          calculate_dimensions_bar,
                                           translate_colorbrewer)
 from matplotlib.transforms import Bbox
+
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -316,12 +318,7 @@ class MakePhylaPlotsAGPTest(TestCase):
         self.assertEqual(test_cat_count, known_cat_count)
         self.assertEqual(test_score_count, known_score_count)
     
-    def test_summarize_human_taxa(self):
-        [test_ids, test_table] = summarize_common_categories(
-                                        biom_table = self.otu_table,
-                                        level = 2,
-                                        common_categories = self.common_cats)
-
+    def test_summarize_common_categories(self):
         # Defines the known values
         known_ids = ['00010', '00100', '00200', '00111', '00112', '00211']
 
@@ -343,11 +340,36 @@ class MakePhylaPlotsAGPTest(TestCase):
                                0.00000000, 0.00000000, 0.05000492],
                              [ 0.02111052, 0.10987182, 0.04599409, 
                                0.02394619, 0.01986301, 0.00000000]])
-        
 
+        known_common_cats = [(u'k__Bacteria', u' p__Firmicutes'),
+                             (u'k__Bacteria', u' p__Bacteroidetes'),
+                             (u'k__Bacteria', u' p__Proteobacteria'),
+                             (u'k__Bacteria', u' p__Actinobacteria'),
+                             (u'k__Bacteria', u' p__Verrucomicrobia'),
+                             (u'k__Bacteria', u' p__Tenericutes'),
+                             (u'k__Bacteria', u' p__Cyanobacteria'),
+                             (u'k__Bacteria', u' p__Fusobacteria'),
+                             (u'k__Bacteria', u' p__Other')]
+
+        # Checks that appropriate errors are raised when the wrong type of 
+        # argument is passed.
+        with self.assertRaises(ValueError):
+            summarize_common_categories(biom_table = self.otu_table,
+                                        level = 2,
+                                        common_categories = self.common_cats,
+                                        metadata_category = 'Billy_Joel_Song')
+
+
+        # Calculates the test values
+        [test_ids, test_table, test_common_cats] = summarize_common_categories(
+                                        biom_table = self.otu_table, 
+                                        level = 2, 
+                                        common_categories = self.common_cats)        
+        
         # Checks that all the outputs are correct
         self.assertEqual(test_ids, known_ids)
         assert_almost_equal(test_table, table_known, decimal = 4)
+        self.assertEqual(test_common_cats, known_common_cats)
 
     def test_calculate_dimensions_rectangle(self):
         # Sets up known values
@@ -401,6 +423,78 @@ class MakePhylaPlotsAGPTest(TestCase):
         assert_almost_equal(test_fig_cm, known_figure_dims_cm, decimal = 5)
         assert_almost_equal(test_axis_cm, known_axis_dims_cm, decimal = 5)
 
+    def test_calculate_dimensions_bar(self):
+        # Sets up known values
+        known_axis_df = array([[0.01388889, 0.02380952],
+                               [0.70833333, 0.73809524]])
+
+        known_axis_in = array([[0.06179775, 0.21153846],
+                               [0.43258427, 0.98076923]])
+
+        known_axis_cm = array([[0.06179775, 0.21153846],
+                               [0.43258427, 0.98076923]])
+
+        known_fig_df = (7.2, 4.2)
+        known_fig_in = (8.9, 2.6)
+        known_fig_cm = (8.9, 2.6)
+        
+        # Sets up test values
+        test_num_bars = 10
+        test_bar_width = 0.33
+        test_axis_height = 2
+        test_border = 0.05
+        test_title = 0
+        test_legend = 5
+        test_xlab = 0.5
+        test_ylab = 0.5
+
+
+        # Checks that errors are raised when improper arguments are passed. (A 
+        # number of bars that is not an integer less than one, or a unit other 
+        # than 'in' or 'cm'.)
+        with self.assertRaises(ValueError):
+            calculate_dimensions_bar(num_bars = -3)
+
+        with self.assertRaises(ValueError):
+            calculate_dimensions_bar(num_bars = 3.1435)
+
+        with self.assertRaises(ValueError):
+            calculate_dimensions_bar(num_bars = 3, unit = 'Angel')
+
+
+        # Calculates the test values
+        (test_axis_df, test_fig_df) = calculate_dimensions_bar(test_num_bars)
+
+        (test_axis_in, test_fig_in) = calculate_dimensions_bar(
+                                                num_bars = test_num_bars,
+                                                bar_width = test_bar_width,
+                                                border = test_border, 
+                                                axis_height = test_axis_height,
+                                                xlab = test_xlab,
+                                                ylab = test_ylab,
+                                                title = test_title,                                       
+                                                legend = test_legend)
+
+        (test_axis_cm, test_fig_cm) = calculate_dimensions_bar(
+                                                num_bars = test_num_bars,
+                                                bar_width = test_bar_width, 
+                                                border = test_border,
+                                                axis_height = test_axis_height,
+                                                title = test_title,
+                                                xlab = test_xlab,
+                                                ylab = test_ylab,
+                                                legend = test_legend,
+                                                unit = 'cm')
+
+        # Checks that values are appropriate
+        self.assertEqual(known_fig_df, test_fig_df)
+        self.assertEqual(known_fig_in, test_fig_in)
+        self.assertEqual(known_fig_cm, test_fig_cm)
+
+        assert_almost_equal(known_axis_df, test_axis_df, decimal = 5)
+        assert_almost_equal(known_axis_in, test_axis_in, decimal = 5)
+        assert_almost_equal(known_axis_cm, test_axis_cm, decimal = 5)
+
     def test_translate_colorbrewer(self):
         # Sets up knowns values
         known_def_8 = array([[0.83529412, 0.24313725, 0.30980392],
@@ -435,15 +529,6 @@ class MakePhylaPlotsAGPTest(TestCase):
         # Checks the outputs are sane
         assert_almost_equal(known_def_8, def_map)
         assert_almost_equal(known_PuRd_9, PuRd_map)
-
-
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     main()
