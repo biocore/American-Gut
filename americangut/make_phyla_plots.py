@@ -7,7 +7,7 @@ from os.path import isfile, exists
 from os.path import join as pjoin
 from os import mkdir
 from biom.parse import parse_biom_table, table_factory
-from numpy import array, zeros, mean, arange, shape, ones, around
+from numpy import array, zeros, arange, shape, ones, around
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc 
 from matplotlib.transforms import Bbox
