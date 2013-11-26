@@ -14,6 +14,8 @@ import os
 from IPython.core.display import clear_output
 import sys
 from time import sleep
+import cPickle
+import tempfile
 
 REGISTERED_ENV_FILE = '.registered_env'
 REGISTERED_ENV_VAR  = '_registered_env'
@@ -159,9 +161,6 @@ def wait_on(jobs_to_monitor, additional_prefix=None):
 class EnvironmentState(object):
     """Store particulars from an environment, write to disk on change"""
     def __init__(self, basedir, **kwargs):
-        import os
-        import cPickle
-        
         env_fp = os.path.join(basedir, REGISTERED_ENV_FILE)
         super(EnvironmentState, self).__setattr__('_state_fp', env_fp)
 
@@ -214,18 +213,16 @@ def register(**kwargs):
         
 def register_env(basedir=None, **kwargs):
     """Create a registered environment"""
-    import os
     if basedir is None:
         basedir = os.getcwd()
 
     if REGISTERED_ENV_VAR in globals():
         raise KeyError("%s already exists!" % REGISTERED_ENV_VAR)
     globals()[REGISTERED_ENV_VAR] = EnvironmentState(basedir, **kwargs)
+    register_items(**kwargs)
 
 def recover(basedir=None):
     """Is there a registered environment to recover from?"""
-    import os
-
     if basedir is None:
         basedir=os.getcwd()
 
@@ -237,8 +234,6 @@ def recover(basedir=None):
 
 def recover_env(basedir=None):
     """Recover an environment"""
-    import os
-
     if basedir is None:
         basedir = os.getcwd()
 
@@ -268,11 +263,10 @@ def recover_jobs():
 
 def drop_env():
     """Drop an existing environment"""
-    import os
     if os.path.exists(REGISTERED_ENV_FILE):
         os.remove(REGISTERED_ENV_FILE)
     if REGISTERED_ENV_VAR in globals():
-        foo = globals().pop(REGISTERED_ENV_VAR)
+        _ = globals().pop(REGISTERED_ENV_VAR)
 
 def register_items(**kwargs):
     """Insert into the global namespace"""
@@ -280,6 +274,9 @@ def register_items(**kwargs):
         raise KeyError("%s is not in globals!" % REGISTERED_ENV_VAR)
     obj = globals()[REGISTERED_ENV_VAR]
     obj.update(**kwargs)   
+
+    for k,v in kwargs.items():
+        globals()[k] = v
 
 def create_env(prj_name, basedir=None):
     """Creates a simple project environment and working directory
@@ -289,25 +286,9 @@ def create_env(prj_name, basedir=None):
                appended on as well
     basedir  : set a base working directory, cwd if None
     """
-    # create a working directory
-    from random import choice
-    import os
-
     if basedir is None:
         basedir = os.getcwd()
 
-    alpha = 'abcdefghijklmnopqrstuvwxyz'; alpha += alpha.upper(); alpha += '0123456789'
-    
-    retries = 0
-    not_created = True
-    while retries < 5 and not_created:
-        name = '_'.join([prj_name, ''.join([choice(alpha) for i in range(3)])])
-        working_dir = os.path.join(basedir, name)
-        
-        if os.path.exists(working_dir):
-            retries += 1
-        else:
-            os.mkdir(working_dir)
-            not_created = False
-
+    working_dir = tempfile.mkdtemp(prefix=prj_name + '_', dir=basedir)
+    name = os.path.basename(working_dir)
     register_env(basedir, prj_name=name, working_dir=working_dir)
