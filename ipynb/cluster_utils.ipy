@@ -240,7 +240,8 @@ def recover_env(basedir=None):
     registered_env = os.path.join(basedir, REGISTERED_ENV_FILE)
     
     if not os.path.exists(registered_env):
-        raise ValueError("Cannot environment, %s does not exist!" % REGISTERED_ENV_FILE)
+        raise ValueError("Cannot recover environment, %s does not exist!" \
+                         % REGISTERED_ENV_FILE)
     
     global_vars = globals()
     obj = loads(open(registered_env).read())
