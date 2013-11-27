@@ -10,7 +10,7 @@ from americangut.make_phyla_plots import (map_to_2D_dict,
                                           summarize_common_categories,
                                           calculate_dimensions_rectangle,
                                           calculate_dimensions_bar,
-                                          translate_colorbrewer)
+                                          translate_colors)
 from matplotlib.transforms import Bbox
 
 
@@ -92,10 +92,6 @@ class MakePhylaPlotsAGPTest(TestCase):
                             (u'k__Bacteria', u' p__Cyanobacteria'),
                             (u'k__Bacteria', u' p__Fusobacteria')]
 
-    def tearDown(self):
-        #
-        pass
-        
     def test_map_to_2D_dict(self):
 
         # Creates a pseudo-opening function
@@ -144,12 +140,10 @@ class MakePhylaPlotsAGPTest(TestCase):
                            (u'k__Bacteria', u' p__Acidobacteria'),
                            (u'k__Bacteria', u' p__Actinobacteria'),
                            (u'k__Bacteria', u' p__'),
-                           (u'k__Bacteria', u' p__Fusobacteria'),
-                           u'Other']
+                           (u'k__Bacteria', u' p__Fusobacteria')]
 
         known_cats_aver = [(u'k__Bacteria', u' p__Bacteroidetes'), 
-                           (u'k__Bacteria', u' p__Firmicutes'), 
-                           u'Other']
+                           (u'k__Bacteria', u' p__Firmicutes')]
 
         known_cat_count = [(u'k__Bacteria', u' p__Bacteroidetes'), 
                            (u'k__Bacteria', u' p__Firmicutes'), 
@@ -158,8 +152,7 @@ class MakePhylaPlotsAGPTest(TestCase):
                            (u'k__Bacteria', u' p__TM7'), 
                            (u'k__Bacteria', u' p__Acidobacteria'), 
                            (u'k__Bacteria', u' p__'), 
-                           (u'k__Bacteria', u' p__Actinobacteria'), 
-                            u'Other']
+                           (u'k__Bacteria', u' p__Actinobacteria')]
 
         known_cats_none = [(u'k__Bacteria', u' p__'),
                            (u'k__Bacteria', u' p__Acidobacteria'),
@@ -171,8 +164,7 @@ class MakePhylaPlotsAGPTest(TestCase):
                            (u'k__Bacteria', u' p__Proteobacteria'),
                            (u'k__Bacteria', u' p__TM7'),
                            (u'k__Bacteria', u' p__Tenericutes'),
-                           (u'k__Bacteria', u' p__Verrucomicrobia'),
-                           u'Other']
+                           (u'k__Bacteria', u' p__Verrucomicrobia')]
         
         known_scores_comp = [[(u'k__Bacteria', u' p__Bacteroidetes'),   0.4950, 
                               1.0000, 4950.00], 
@@ -320,7 +312,7 @@ class MakePhylaPlotsAGPTest(TestCase):
     
     def test_summarize_common_categories(self):
         # Defines the known values
-        known_ids = ['00010', '00100', '00200', '00111', '00112', '00211']
+        known_ids = ('00010', '00100', '00200', '00111', '00112', '00211')
 
         table_known = array([[ 0.49973390, 0.25004162, 0.55001035, 
                                0.30008969, 0.45034247, 0.09997702],
@@ -495,7 +487,7 @@ class MakePhylaPlotsAGPTest(TestCase):
         assert_almost_equal(known_axis_in, test_axis_in, decimal = 5)
         assert_almost_equal(known_axis_cm, test_axis_cm, decimal = 5)
 
-    def test_translate_colorbrewer(self):
+    def test_translate_colors(self):
         # Sets up knowns values
         known_def_8 = array([[0.83529412, 0.24313725, 0.30980392],
                              [0.95686275, 0.42745098, 0.26274510],
@@ -518,13 +510,13 @@ class MakePhylaPlotsAGPTest(TestCase):
         
         # Test the calls
         with self.assertRaises(ValueError):
-            translate_colorbrewer(5, 'Winchester')
+            translate_colors(5, 'Winchester')
 
         with self.assertRaises(ValueError):
-            translate_colorbrewer(13)
+            translate_colors(13)
 
-        def_map = translate_colorbrewer(8)
-        PuRd_map = translate_colorbrewer(9, 'PuRd')
+        def_map = translate_colors(8)
+        PuRd_map = translate_colors(9, 'PuRd')
 
         # Checks the outputs are sane
         assert_almost_equal(known_def_8, def_map)

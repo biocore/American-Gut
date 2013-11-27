@@ -69,7 +69,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
     # Names categories being plotted
     CAT_LIST = ['You', 'Average', 'Similar Diet', ' Similar BMI', 
                         'Same Gender', 'Similar Age', 
-                        'Michael Pollan', '']
+                        'Michael Pollan']
 
 
     # Sets up plotting constants
@@ -107,7 +107,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
     common_phyla = []
     for taxon in new_common_taxa: 
         common_phyla.append(taxon[1].strip(' p__').strip('[').strip(']'))
-    new_common_taxa
+    new_common_taxa = common_phyla
    
     # Checks that the correct sample ids are plotted
     if samples_to_plot == None:
@@ -132,14 +132,13 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
         
             cat_watch = 2
             # Identifies the appropriate metadata categories
-            for cat in categories:                      
-                print cat
+            for cat in categories:
                 # Pulls metadata for the sample and category
                 mapping_key = meta_data[cat]
                 # Pulls taxonomic summary and group descriptions for the category
                 tax_summary = categories[cat]['Summary']
                 group_descriptions = categories[cat]['Groups']          
-                # Amends plotting tables
+                # Appends plotting tables
                 try:
                     mapping_col = group_descriptions.index(mapping_key)
                 except:

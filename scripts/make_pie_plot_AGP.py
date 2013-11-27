@@ -73,7 +73,6 @@ def main(tax_table, output_dir, samples_to_plot = None):
     LEG_FONT.set_family('san-serif')
     LEG_FONT.set_name('Arial')
     
-
     # Walks over a taxa tree and prioritizes based on taxonomy
     (tree, all_taxa) = build_tree_from_taxontable(tax_table)
 
@@ -117,13 +116,10 @@ def main(tax_table, output_dir, samples_to_plot = None):
 
         # Sets up plotting constants
         (axis_dims, fig_dims) = calculate_dimensions_rectangle(
-                                                    axis_width = AXIS_LENGTH,
-                                                    axis_height = AXIS_LENGTH, 
-                                                    border = AXIS_BORDER, 
-                                                    title = AXIS_TITLE,
-                                                    legend = AXIS_LEGEND)
+            axis_width = AXIS_LENGTH, axis_height = AXIS_LENGTH, 
+            border = AXIS_BORDER, title = AXIS_TITLE, legend = AXIS_LEGEND)
 
-        colormap = translate_colorbrewer((NUM_SHOW-1), MAP_NAME)
+        colormap = translate_colors((NUM_SHOW-1), MAP_NAME)
         colormap = vstack((colormap, OTHER_COLOR))
 
         # Sets up the sample filename
@@ -131,16 +127,12 @@ def main(tax_table, output_dir, samples_to_plot = None):
             FILENAME_AFTER))
 
         # Creates the pie chart
-        render_single_pie(data_vec = sample_freq,
-                          group_names = clean_tax,
-                          axis_dims = axis_dims,
-                          fig_dims = fig_dims,
-                          file_out = filename,
-                          legend = FIG_LEGEND,
-                          colors = colormap,
-                          show_edge = FIG_COLOR_EDGE,
-                          legend_frame = FIG_LEG_FRAME,
-                          legend_offset = FIG_LEG_OFFSET,
+        render_single_pie(data_vec = sample_freq, group_names = clean_tax,
+                          axis_dims = axis_dims, fig_dims = fig_dims,
+                          file_out = filename, legend = FIG_LEGEND,
+                          colors = colormap, show_edge = FIG_COLOR_EDGE,
+                          legend_frame = FIG_LEG_FRAME, 
+                          legend_offset = FIG_LEG_OFFSET, 
                           legend_font = LEG_FONT)
 
 # Sets up command line parsing
@@ -165,7 +157,7 @@ if __name__ == '__main__':
     elif not isfile(args.input):
         parser.error('The supplied taxonomy file does not exist in the path.')
     else:
-        tax_table = parse_biom_table(open(args.input))
+        tax_table = parse_biom_table(open(args.input, 'U'))
 
     # Checks the output directory is sane
     if not args.output:

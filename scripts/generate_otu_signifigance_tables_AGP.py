@@ -7,9 +7,9 @@ from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
                                                     calculate_tax_rank_1,
-									                convert_taxa,
-									                convert_taxa_to_list,
-									                generate_abundance_macro)
+                                                    convert_taxa,
+                                                    convert_taxa_to_list,
+                                                    generate_abundance_macro)
 from make_phyla_plots import map_to_2D_dict
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
