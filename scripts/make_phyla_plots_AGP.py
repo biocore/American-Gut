@@ -155,17 +155,11 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
             filename = pjoin(output_dir, '%s%s%s' \
                 % (FILEPREFIX, sample_id, FILE_END))
             
-            render_barchart(data_table = tax_array,
-                             group_names = new_common_taxa,
-                             sample_names = CAT_LIST,
-                             axis_dims = AXIS_DIMS,
-                             fig_dims = FIG_DIMS,
-                             file_out = filename,
-                             colors = COLORMAP,
-                             show_edge = False,
-                             legend = False,
-                             x_axis = False,
-                             y_axis = False)
+            render_barchart(data_table = tax_array, x_axis = False,
+                group_names = new_common_taxa, sample_names = CAT_LIST,
+                axis_dims = AXIS_DIMS, fig_dims = FIG_DIMS, file_out = filename,
+                colors = COLORMAP, show_edge = False, legend = False,  
+                y_axis = False)
 
 # Sets up the command line interface
 
@@ -193,7 +187,7 @@ if __name__ == '__main__':
     if not args.input:
         parser.error("An input BIOM table is required.")
     elif not isfile(args.input):
-        parse.error('The supplied biom table does not exist in the path.')
+        parser.error('The supplied biom table does not exist in the path.')
     else:
         otu_table = parse_biom_table(open(args.input, 'U'))     
 

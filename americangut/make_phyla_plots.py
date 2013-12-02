@@ -311,11 +311,11 @@ def summarize_common_categories(biom_table, level, common_categories,
 def translate_colors(num_colors, map_name='Spectral'):
     """Gets a colorbrewer colormap and sets it up for plotting in matplotlib
 
-    INPUTS:
-        map_name -- the name of the colorbrewer map. Maps can be viewed at 
-                    http://colorbrewer2.org.
-
-        num_colors -- the number of colors desired in the map.
+    Colors from www.ColorBrewer.org by Cynthia A. Brewer, Geography, 
+    Pennsylvania State University.
+    
+    Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State
+    University.
 
     OUTPUTS:
         colormap -- a numpy array with the colorbrewer map formatted for use in 
