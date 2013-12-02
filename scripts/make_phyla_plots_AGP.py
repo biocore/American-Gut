@@ -110,7 +110,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
     new_common_taxa = common_phyla
    
     # Checks that the correct sample ids are plotted
-    if samples_to_plot == None:
+    if samples_to_plot is None:
         sample_ids = whole_sample_ids
     else:
         sample_ids = samples_to_plot

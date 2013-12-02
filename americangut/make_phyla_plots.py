@@ -14,7 +14,10 @@ from matplotlib.font_manager import FontProperties
 from operator import itemgetter
 import colorbrewer
 
-# Colorbrewer is 
+# Colors from www.ColorBrewer.org by Cynthia A. Brewer, Geography, 
+#    Pennsylvania State University.
+# Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State
+# University.
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -60,7 +63,7 @@ def load_category_files(category_files):
     watch_count = 0
     watch_list = []
 
-    for idx, (category, category_file) in enumerate(category_files.iteritems()):
+    for (category, category_file) in category_files.iteritems():
         if isfile(category_file):
             cat_table = parse_biom_table(open(category_file, 'U'))    
             category_tables[category] = cat_table      
@@ -311,12 +314,6 @@ def summarize_common_categories(biom_table, level, common_categories,
 def translate_colors(num_colors, map_name='Spectral'):
     """Gets a colorbrewer colormap and sets it up for plotting in matplotlib
 
-    Colors from www.ColorBrewer.org by Cynthia A. Brewer, Geography, 
-    Pennsylvania State University.
-    
-    Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State
-    University.
-
     OUTPUTS:
         colormap -- a numpy array with the colorbrewer map formatted for use in 
                     matplotlib.
@@ -467,11 +464,11 @@ def calculate_dimensions_bar(num_bars, bar_width=0.5, axis_height=3,
     return axis_dimensions, figure_dimensions
 
 def render_single_pie(data_vec, group_names, axis_dims, fig_dims, 
-    file_out='piechart', filetype='PDF', colors=array([[1, 1, 1]]),
-    show_edge=True, axis_on=False, plot_ccw=False, start_angle=90,
-    x_lims=[-1.1, 1.1], y_lims=[-1.1, 1.1], legend=True, legend_offset=None,
-    legend_font=None, legend_frame=False, title=None, title_font=None, 
-    labels=None, label_distance=1.1, label_font=None):
+    file_out='piechart', filetype='PDF', colors=None, show_edge=True, 
+    axis_on=False, plot_ccw=False, start_angle=90, x_lims=[-1.1, 1.1], 
+    y_lims=[-1.1, 1.1], legend=True, legend_offset=None, legend_font=None, 
+    legend_frame=False, title=None, title_font=None, labels=None, 
+    label_distance=1.1, label_font=None):
 
     """Creates a pie chart summarizing the category data
 
@@ -565,30 +562,33 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     # Sets up the colormap
     num_wedges = len(data_vec)
     num_colors = len(colors[:,0])
-    #if not 'ndarray' in str(type(colors)):
-    if not isinstance(color, ndarray):
+
+    num_colors = len(colors[:,0])
+    if num_colors is None:
+        colormap = ones((table_height,3))
+    elif not isinstance(color, ndarray):
         raise TypeError ('The colormap must be a numpy array.')
     elif num_colors == 1:
-        colormap = colors*ones((num_wedges,1))
-    elif num_colors >= num_wedges:
+        colormap = colors*ones((table_height,1))
+    elif num_colors >= table_height:
         colormap = colors 
     else:
-        raise ValueError, ('The color map cannot be determined. \nColors must '\
-            'be a a list of n x 3 lists where n is the number of patches being'\
+        raise ValueError, ('The color map cannot be determined. \nColors must '
+            'be a a list of n x 3 lists where n is the number of patches being'
             ' supplied or a single color to be used for all patches.')
 
     # Sets up the font properties for each of the label objects
-    if label_font == None:
+    if label_font is None:
         label_font = FontProperties()
         label_font.set_size(20)
         label_font.set_family('sans-serif')
         
-    if legend_font == None:
+    if legend_font is None:
         legend_font = FontProperties()
         legend_font.set_size(15)
         legend_font.set_family('sans-serif')
 
-    if title_font == None:
+    if title_font is None:
         title_font = FontProperties()
         title_font.set_size(30)
         title_font.set_family('sans-serif')
@@ -616,7 +616,7 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
             patch.set_edgecolor(colormap[idx,:])
 
     # Sets the label properties
-    if not labels == None:
+    if not labels is None:
         for lab in pie_text:
             lab.set_set_font_properties(label_font)
 
@@ -629,12 +629,12 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
         plt.axis([x_lims[1], x_lims[0], y_lims[0], y_lims[1]])
 
     # Adds the legend if necessary
-    if legend == True:
+    if legend:
         leg = plt.legend(pie_patches, group_names, 
                                loc = 'center right',
                                fontproperties = legend_font,
                                frameon = legend_frame)
-        if not legend_offset == None:
+        if not legend_offset is None:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
 
     # Adds the title if desired
@@ -646,7 +646,7 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
 
 def render_barchart(data_table, group_names, sample_names, axis_dims, 
     fig_dims, file_out = 'barchart', filetype = 'PDF', 
-    colors = array([[1, 1, 1]]), show_edge = True, legend = True, title = None, 
+    colors = None, show_edge = True, legend = True, title = None, 
     match_legend = True, frame = True, bar_width = 0.8, x_axis = True, 
     x_label = None, x_min = -0.5, x_tick_interval = 1.0, x_grid = False, 
     y_axis = True, y_lims = [0, 1], y_tick_interval = 0.2, y_tick_labels = None, 
@@ -797,7 +797,9 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
 
      # Sets up the colormap
     num_colors = len(colors[:,0])
-    if not 'ndarray' in str(type(colors)):
+    if num_colors is None:
+        colormap = ones((table_height,3))
+    elif not isinstance(color, ndarray):
         raise TypeError ('The colormap must be a numpy array.')
     elif num_colors == 1:
         colormap = colors*ones((table_height,1))
@@ -809,29 +811,29 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
             ' supplied or a single color to be used for all patches.')
 
     # Sets up the edge colormap
-    if show_edge == True:
+    if show_edge:
         edgecolor = zeros(num_cats, 3)
     else:
         edgecolor = colormap
 
     # Sets up the font properties for each of the label objects
-    if label_font == None:
+    if label_font is None:
         label_font = FontProperties()
         label_font.set_size(20)
         label_font.set_family('sans-serif')
         label_font.set_style('italic')
         
-    if legend_font == None:
+    if legend_font is None:
         legend_font = FontProperties()
         legend_font.set_size(15)
         legend_font.set_family('sans-serif')
 
-    if tick_font == None:
+    if tick_font is None:
         tick_font = FontProperties()
         tick_font.set_size(15)
         tick_font.set_family('sans-serif')
 
-    if title_font == None:
+    if title_font is None:
         title_font = FontProperties()
         title_font.set_size(30)
         title_font.set_family('sans-serif')
@@ -844,21 +846,21 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
     bar_left = x_tick - bar_width/2
 
     # Creates the x tick labels.
-    if x_axis == True:
-        x_text_labels = [str(lab) for lab in sample_names] 
+    if x_axis:
+        x_text_labels = map(str, sample_names)
     else:
         x_text_labels = ['']*num_samples
 
     # Creates the y tick labels
-    if y_tick_labels == None:
+    if y_tick_labels is None:
         y_tick_labels = arange(y_lims[1] + y_tick_interval, y_lims[0], -y_tick_interval)
         y_tick_labels = y_tick_labels - y_tick_interval
         y_tick_labels[-1] = y_lims[0]
     
     num_y_ticks = len(y_tick_labels)
 
-    if y_axis == True:
-        y_text_labels = [str(e) for e in y_tick_labels]
+    if y_axis:
+        y_text_labels = map(str, y_tick_labels)
     else:
         y_text_labels = ['']*num_y_ticks
 
@@ -892,13 +894,13 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
    
      # The y-axis is reversed so the labels are in the same order as the 
     # colors in the legend
-    if match_legend == True:
+    if match_legend:
         plt.axis([x_min, x_max, y_lims[1], y_lims[0]])
 
     # Sets up y labels if they are desired.
     
     y_tick_labels = ax1.set_yticklabels(y_text_labels, fontproperties = tick_font)
-    if not y_label == None:
+    if not y_label is None:
         ax1.set_ylabel(y_label, fontproperties = label_font)
 
     # Set the x-axis labels
@@ -908,7 +910,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
                         horizontalalignment = font_alignment)
 
     
-    if not x_label == None:
+    if not x_label is None:
         ax1.set_xlabel(x_label, fontproperties = label_font)
 
     if legend:
@@ -916,10 +918,10 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
                          loc = 'center right',
                          fontproperties = legend_font,
                          frameon = legend_frame)
-        if not legend_offset == None:
+        if not legend_offset is None:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
 
-    if title.__class__ == str:
+    if isistance(title, str):
         plt.title(title, fontproperties = title_font)
 
     plt.savefig(file_out, format = filetype)
