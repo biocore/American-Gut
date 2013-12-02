@@ -11,7 +11,6 @@ from numpy import array, zeros, mean, shape, ones, around, vstack, arange
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 from matplotlib.font_manager import FontProperties
-from argparse import ArgumentParser
 from operator import itemgetter
 import colorbrewer
 
