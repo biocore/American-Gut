@@ -70,6 +70,9 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
 
     popsize = float(tree['popcount'])
     for tax_string in sample_taxa:
+        if '[' in tax_string:
+            continue
+            
         cur_node = tree
 
         for taxon in tax_string:
