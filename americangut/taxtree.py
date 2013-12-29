@@ -70,6 +70,9 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
 
     popsize = float(tree['popcount'])
     for tax_string in sample_taxa:
+        if '[' in tax_string:
+            continue
+            
         cur_node = tree
 
         for taxon in tax_string:
@@ -108,7 +111,7 @@ def build_tree_from_taxontable(table):
         sample_taxa = []
         for taxon, freq in zip(table.ObservationIds, taxa_freqs):
             if freq > 0:
-                sample_taxa.append(taxon.split('; '))
+               sample_taxa.append(taxon.split('; '))
         sample_taxa_lookup[sample_id] = sample_taxa
 
     tree = update_tree(None, sample_taxa_lookup.values())
