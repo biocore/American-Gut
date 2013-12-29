@@ -14,14 +14,15 @@ __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
-class TaxTreeTests(TestCase):
+class TaxTreeTests(TestCase):    
     def test_sample_rare_unique(self):
         t = update_tree(None, tax_strings_by_sample)
         tax_by_sample = {'a':tax_strings_by_sample[0],
                          'b':tax_strings_by_sample[1],
                          'c':tax_strings_by_sample[2]}
         exp = [('a', None, [['k__1','p__x','c__'],['k__1','p__y','c__3']], 
-                           [['k__1','p__x','c__1'],['k__1','p__x','c__2']]),
+                           [['k__1','p__x','c__1'],['k__1','p__x','c__2'],
+                            ['k__1','p__[y]', 'c__[1]']]),
                ('b', None, [['k__1','p__x','c__'],['k__1','p__y','c__3']], []),
                ('c', None, [], [])]
         obs = sample_rare_unique(t, None, tax_by_sample, 0.7)
@@ -31,28 +32,34 @@ class TaxTreeTests(TestCase):
                                 ['k__1; p__y; c__'])
         table_b = table_factory(array([[1,2,3],
                                        [4,5,6],
-                                       [14,15,16]]), ['a','b','c'], 
+                                       [14,15,16],
+                                       [3,0,0]]), ['a','b','c'], 
                                     ['k__1; p__x; c__1',
                                      'k__1; p__x; c__2',
-                                     'k__1; p__y; c__'])
+                                     'k__1; p__y; c__',
+                                     'k__1; p__[y]; c__[1]'])
         table_c = table_factory(array([[1,2,3],
                                        [4,5,6],
                                        [7,8,9],
                                        [10,11,12],
-                                       [14,15,16]]), ['a','b','c'], 
+                                       [14,15,16],
+                                       [3,0,0]]), ['a','b','c'], 
                                     ['k__1; p__x; c__1',
                                      'k__1; p__x; c__2',
                                      'k__1; p__x; c__',
                                      'k__1; p__y; c__3',
-                                     'k__1; p__y; c__'])
+                                     'k__1; p__y; c__',
+                                     'k__1; p__[y]; c__[1]'])
 
-        exp = [('a', table_a, [['k__1','p__x','c__'],['k__1','p__y','c__3']], 
-                           [['k__1','p__x','c__1'],['k__1','p__x','c__2']]),
-               ('b', table_b, [['k__1','p__x','c__'],['k__1','p__y','c__3']], []),
+        exp = [('a', table_a, [['k__1','p__x','c__'],  ['k__1','p__y','c__3']], 
+                              [['k__1','p__x','c__1'], ['k__1','p__x','c__2'], 
+                               ['k__1','p__[y]','c__[1]']]),
+               ('b', table_b, [['k__1','p__x','c__'], ['k__1','p__y','c__3']], []),
                ('c', table_c, [], [])]
 
         obs = sample_rare_unique(t, table, tax_by_sample, 0.7)
-        for o,e in zip(sorted(obs), exp):
+        for o,e in zip(sorted(obs), exp):            
+
             self.assertEqual(o[0], e[0])
             self.assertEqual(o[1], e[1])
             self.assertEqual(o[2], e[2])
@@ -65,7 +72,8 @@ class TaxTreeTests(TestCase):
 
     def test_traverse(self):
         t = update_tree(None, tax_strings_by_sample)
-        exp = ['c__1','c__2','p__x','c__3','p__y','k__1','root']
+        exp = ['c__1','c__2','p__x','c__3','p__y','c__[1]','p__[y]','k__1',
+               'root']
         obs = [n['name'] for n in traverse(t)]
         self.assertEqual(obs, exp)
 
@@ -88,6 +96,7 @@ class TaxTreeTests(TestCase):
     
     def test_create_tree(self):
         """take tax strings, create a tree"""
+        self.maxDiff = None
         exp = {'name':'root',
                 'popcount':3, 
                 'children':[
@@ -112,10 +121,18 @@ class TaxTreeTests(TestCase):
                               'popcount':2,
                               'children':[]}
                              ]
-                         }
+                         },
+                        {'name':'p__[y]',
+                         'popcount': 1,
+                         'children':[
+                            {'name': 'c__[1]', 
+                             'popcount': 1, 
+                             'children': []}
+                        ]}
                     ]}
                 ]}
         obs = update_tree(None, tax_strings_by_sample)
+
         self.assertEqual(obs, exp)
 
     def test_get_rare_unique(self):
@@ -139,7 +156,8 @@ tax_strings_by_sample = [
             ['k__1','p__x','c__1'],
             ['k__1','p__x','c__2'],
             ['k__1','p__x','c__'],
-            ['k__1','p__y','c__3']
+            ['k__1','p__y','c__3'],
+            ['k__1','p__[y]', 'c__[1]']
         ],
         [
             ['k__1','p__x','c__'],
@@ -154,11 +172,14 @@ table = table_factory(array([[1,2,3],
            [4,5,6],
            [7,8,9],
            [10,11,12],
-           [14,15,16]]), ['a','b','c'],['k__1; p__x; c__1', 
+           [14,15,16],
+           [ 3, 0, 0]]), ['a','b','c'],['k__1; p__x; c__1', 
                                         'k__1; p__x; c__2', 
                                         'k__1; p__x; c__',
                                         'k__1; p__y; c__3',
-                                        'k__1; p__y; c__'])
+                                        'k__1; p__y; c__',
+                                        'k__1; p__[y]; c__[1]'],
+                                        )
 
 sample_taxa = [
         ['k__1','p__x','c__2'],
