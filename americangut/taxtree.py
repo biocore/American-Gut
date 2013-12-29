@@ -111,7 +111,7 @@ def build_tree_from_taxontable(table):
         sample_taxa = []
         for taxon, freq in zip(table.ObservationIds, taxa_freqs):
             if freq > 0:
-                sample_taxa.append(taxon.split('; '))
+               sample_taxa.append(taxon.split('; '))
         sample_taxa_lookup[sample_id] = sample_taxa
 
     tree = update_tree(None, sample_taxa_lookup.values())
