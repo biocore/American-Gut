@@ -3,9 +3,10 @@
 # <codecell>
 
 import os
-from IPython.core.display import clear_output
+import cPickle        
 import sys
 from time import sleep
+from IPython.core.display import clear_output
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -159,9 +160,6 @@ def wait_on(jobs_to_monitor, additional_prefix=None):
 class EnvironmentState(object):
     """Store particulars from an environment, write to disk on change"""
     def __init__(self, basedir, **kwargs):
-        import os
-        import cPickle
-        
         env_fp = os.path.join(basedir, REGISTERED_ENV_FILE)
         super(EnvironmentState, self).__setattr__('_state_fp', env_fp)
 
@@ -245,7 +243,8 @@ def recover_env(basedir=None):
     registered_env = os.path.join(basedir, REGISTERED_ENV_FILE)
     
     if not os.path.exists(registered_env):
-        raise ValueError("Cannot environment, %s does not exist!" % REGISTERED_ENV_FILE)
+        raise ValueError("Cannot recover environment, %s does not exist!" \
+                % REGISTERED_ENV_FILE)
     
     global_vars = globals()
     obj = loads(open(registered_env).read())
