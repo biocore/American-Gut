@@ -43,7 +43,7 @@ def update_tree(tree, taxa_by_sample):
             cur_node = tree
 
             for taxon in tax_string:
-                if taxon.endswith('__'):
+                if taxon.endswith('__') or '[' in taxon:
                     break
                 
                 node = get_node(cur_node, taxon)
