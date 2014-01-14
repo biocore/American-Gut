@@ -7,13 +7,13 @@ from numpy import array, vstack
 from argparse import ArgumentParser
 from biom.parse import parse_biom_table
 from matplotlib.font_manager import FontProperties, ttfFontProperty
-from americangut.make_phyla_plots import (translate_colorbrewer,
-                                          calculate_dimensions_rectangle,
-                                          render_single_pie)
-from americangut.generate_otu_signifigance_tables import(calculate_abundance,
-                                                        clean_greengenes_string)
-from americangut.taxtree import (build_tree_from_taxontable, 
-                                 sample_rare_unique)
+from make_phyla_plots import (translate_colors,
+                              calculate_dimensions_rectangle,
+                              render_single_pie)
+from generate_otu_signifigance_tables import(calculate_abundance,
+                                             clean_greengenes_string)
+from taxtree import (build_tree_from_taxontable, 
+                     sample_rare_unique)
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -46,32 +46,45 @@ def main(tax_table, output_dir, samples_to_plot = None):
     FILENAME_AFTER = '.pdf'
 
     # Handles string cleaning
-    RENDER = 'RAW'
+    RENDER = 'LATEX'
     UNCLASSIFIED = False
 
     # Sets up the rare threshhold for 
     RARE_THRESH = 0.001
 
-    # Sets up figure parameters
     # Sets up axis parameters
-    AXIS_LENGTH = 6
-    AXIS_BORDER = 0.1
+    AXIS_LENGTH = 7.25
+    AXIS_BORDER = 0.01
     AXIS_TITLE = 0
-    AXIS_LEGEND = 4
-     # Sets up constants for getting the colormap and plotting
-    MAP_NAME = 'Spectral'
+    AXIS_LEGEND = 6.253
+    # Modifies the axis limits
+    AX_LIMS = [-1.05, 1.05]
+    # Sets up constants for getting the colormap and plotting
+    MAP_NAME = 'BrBG'
     NUM_SHOW = 12
     OTHER_COLOR = array([[85/255, 85/255, 85/255]])    
     # Sets up plotting parameters
     FIG_LEGEND = True
     FIG_COLOR_EDGE = False
     FIG_LEG_FRAME = False
-    FIG_LEG_OFFSET = [1.6, 0.5]
+    FIG_LEG_OFFSET = [1.9, 0.5]
     # Sets up the the legend font
     LEG_FONT = FontProperties()
-    LEG_FONT.set_size(15)
-    LEG_FONT.set_family('san-serif')
-    LEG_FONT.set_name('Arial')
+    LEG_FONT.set_size(30)
+    LEG_FONT.set_family('sans-serif')
+    # Sets the general font properties
+    use_latex=True
+    rc_font_family='sans-serif'
+    rc_font = ['Helvetica', 'Arial']
+
+    # Sets up the colormap
+    colormap = translate_colors((NUM_SHOW-1), MAP_NAME)
+    colormap = vstack((colormap, OTHER_COLOR))
+
+     # Sets up plotting constants
+    (axis_dims, fig_dims) = calculate_dimensions_rectangle(
+        axis_width=AXIS_LENGTH, axis_height=AXIS_LENGTH, border=AXIS_BORDER, 
+        title=AXIS_TITLE, legend=AXIS_LEGEND)
     
     # Walks over a taxa tree and prioritizes based on taxonomy
     (tree, all_taxa) = build_tree_from_taxontable(tax_table)
@@ -112,15 +125,7 @@ def main(tax_table, output_dir, samples_to_plot = None):
         clean_tax = [clean_greengenes_string(tax, RENDER, 
                             unclassified = UNCLASSIFIED)for tax in sample_tax]
         clean_tax.append('Other')
-        sample_freq.append(1-sum(sample_freq))
-
-        # Sets up plotting constants
-        (axis_dims, fig_dims) = calculate_dimensions_rectangle(
-            axis_width = AXIS_LENGTH, axis_height = AXIS_LENGTH, 
-            border = AXIS_BORDER, title = AXIS_TITLE, legend = AXIS_LEGEND)
-
-        colormap = translate_colors((NUM_SHOW-1), MAP_NAME)
-        colormap = vstack((colormap, OTHER_COLOR))
+        sample_freq.append(1-sum(sample_freq))       
 
         # Sets up the sample filename
         filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp, 
@@ -131,9 +136,10 @@ def main(tax_table, output_dir, samples_to_plot = None):
                           axis_dims = axis_dims, fig_dims = fig_dims,
                           file_out = filename, legend = FIG_LEGEND,
                           colors = colormap, show_edge = FIG_COLOR_EDGE,
-                          legend_frame = FIG_LEG_FRAME, 
-                          legend_offset = FIG_LEG_OFFSET, 
-                          legend_font = LEG_FONT)
+                          legend_frame = FIG_LEG_FRAME, rc_font=rc_font,
+                          legend_offset = FIG_LEG_OFFSET, rc_fam=rc_font_family,
+                          legend_font = LEG_FONT, use_latex=use_latex, 
+                          x_lims=AX_LIMS, y_lims=AX_LIMS)
 
 # Sets up command line parsing
 parser = ArgumentParser(description = 'Creates a pie chart of the most abundant taxa in a supplied table.')

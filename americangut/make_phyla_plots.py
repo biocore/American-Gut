@@ -7,10 +7,12 @@ from os.path import isfile, exists
 from os.path import join as pjoin
 from os import mkdir
 from biom.parse import parse_biom_table, table_factory
-from numpy import array, zeros, mean, shape, ones, around, vstack, arange
+from numpy import (array, zeros, mean, shape, ones, around, 
+                   vstack, arange, ndarray)
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 from matplotlib.font_manager import FontProperties
+from matplotlib import rc
 from operator import itemgetter
 import colorbrewer
 
@@ -322,7 +324,7 @@ def translate_colors(num_colors, map_name='Spectral'):
         raw_map = getattr(colorbrewer, map_name)        
     except:
         raise ValueError, ('%s is not a valid colorbrewer map name. '
-            '\nSee http://colorbrewer2.org for valid map names.')
+            '\nSee http://colorbrewer2.org for valid map names.' % map_name)
 
     if num_colors not in raw_map:
         raise ValueError, ('Too many colors. \n'
@@ -468,8 +470,8 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     axis_on=False, plot_ccw=False, start_angle=90, x_lims=[-1.1, 1.1], 
     y_lims=[-1.1, 1.1], legend=True, legend_offset=None, legend_font=None, 
     legend_frame=False, title=None, title_font=None, labels=None, 
-    label_distance=1.1, label_font=None):
-
+    label_distance=1.1, label_font=None, use_latex=False, rc_fam='sans-serif',
+    rc_font=['Helvetica']):
     """Creates a pie chart summarizing the category data
 
     INPUTS:
@@ -555,6 +557,19 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
                     sans-serif.
                     DEFAULT: None
 
+        use_latex -- a binary value indicating if matplotlib's ability to render
+                    using LaTeX should be considered or not. If this is the
+                    case, the supplied rc_fam and rc_font will be used.
+                    DEFAULT: False
+
+        rc_family -- the font family which should be used for LaTeX rendering. 
+                    Options are 'sans-serif', 'serif', 'cursive'.
+                    DEFAULT: 'sans-serif'
+
+        rc_font -- a list of the font(s) which should be used with latex 
+                    rendering.
+                    DEFAULT: ['Helvetica']
+
     OUTPUTS:
         The rendered figure is saved in the at the file_out location.
     """
@@ -566,11 +581,11 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     num_colors = len(colors[:,0])
     if num_colors is None:
         colormap = ones((table_height,3))
-    elif not isinstance(color, ndarray):
+    elif not isinstance(colors, ndarray):
         raise TypeError ('The colormap must be a numpy array.')
     elif num_colors == 1:
         colormap = colors*ones((table_height,1))
-    elif num_colors >= table_height:
+    elif num_colors >= num_wedges:
         colormap = colors 
     else:
         raise ValueError, ('The color map cannot be determined. \nColors must '
@@ -593,6 +608,12 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
         title_font.set_size(30)
         title_font.set_family('sans-serif')
 
+    # Sets up LateX rendering if desired
+    if use_latex:
+        rc('text', usetex=True)
+        rc('font',**{'family':rc_fam, rc_fam:rc_font})
+
+    # Creates the figure
     fig = plt.gcf()
     fig.set_size_inches(fig_dims)
     ax1 = plt.axes(Bbox(axis_dims))    
@@ -632,14 +653,14 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     if legend:
         leg = plt.legend(pie_patches, group_names, 
                                loc = 'center right',
-                               fontproperties = legend_font,
+                               prop = legend_font,
                                frameon = legend_frame)
         if not legend_offset is None:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
 
     # Adds the title if desired
     if isinstance(title, str):
-        plt.title(title, fontproperties = title_font)
+        plt.title(title, prop = title_font)
 
     # Saves the output figure
     plt.savefig(file_out, format = filetype)
@@ -652,7 +673,8 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
     y_axis = True, y_lims = [0, 1], y_tick_interval = 0.2, y_tick_labels = None, 
     y_label = None, y_grid = False, legend_frame = False, legend_offset = None, 
     font_angle = 45, font_alignment = 'right', tick_font = None, 
-    label_font = None, legend_font = None, title_font = None):
+    label_font = None, legend_font = None, title_font = None, use_latex=False, 
+    rc_fam='sans-serif', rc_font=['Helvetica']):
     """Creates a stacked bar chart using the data in the category table.
 
     A single value bar chart can be created using a vector for data_table 
@@ -781,6 +803,19 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
                     to use the 36 pt normal sans-serif.
                     DEFAULT: None
 
+         use_latex -- a binary value indicating if matplotlib's ability to render
+                    using LaTeX should be considered or not. If this is the
+                    case, the supplied rc_fam and rc_font will be used.
+                    DEFAULT: False
+
+        rc_family -- the font family which should be used for LaTeX rendering. 
+                    Options are 'sans-serif', 'serif', 'cursive'.
+                    DEFAULT: 'sans-serif'
+
+        rc_font -- a list of the font(s) which should be used with latex 
+                    rendering.
+                    DEFAULT: ['Helvetica']
+
     OUTPUT:
         The rendered figure is saved in the at the file_out location.
     """
@@ -837,6 +872,11 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
         title_font = FontProperties()
         title_font.set_size(30)
         title_font.set_family('sans-serif')
+
+     # Sets up LateX rendering if desired
+    if use_latex:
+        rc('text', usetex=True)
+        rc('font',**{'family':rcfam, rcfam:rcfont})
 
     # Sets up the x ticks.
     # Bar width is divided by two because the tick is assumed to be at the 
