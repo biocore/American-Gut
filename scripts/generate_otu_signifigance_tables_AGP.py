@@ -51,6 +51,11 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         taxa are bolded in the lists. 
     """
 
+    # Sets up the way samples should be converted
+    SAMPLE_CONVERTER = {'feces': 'fecal',
+                        'oral_cavity':'oral',
+                        'skin':'skin'}
+
     # Sets table constants
     RENDERING = "LATEX"
     RARE_THRESHHOLD = 0.1
@@ -216,9 +221,13 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
             sample_time = mapping[samp][TIME_FIELD].lower()
             if sample_time[0] == '0':
                 sample_time = sample_time[1:]
+
+            sample_type_prelim = mapping[samp]['BODY_HABITAT'].split(':')[1]
+            sample_type = SAMPLE_CONVERTER[sample_type_prelim]
         else:
             sample_date = 'unknown'
             sample_time = 'unknown'
+            sample_type = 'unknown'
 
     
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
@@ -226,8 +235,10 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
 
         # Saves the file
         file_for_editing = open(file_name, 'w')
-        file_for_editing.write('%% Barcode\n\\def\\barcode{%s}\n\n\n' \
+        file_for_editing.write('%% Barcode\n\\def\\barcode{%s}\n\n' \
             % samp.split('.')[0])
+        file_for_editing.write('%% Sample Type\n\\def\\sampletype{%s}\n\n' 
+            % sample_type)
         # file_for_editing.write('% Participant Name\n\\def\\yourname'\
         #     '{Michael Pollan or longer name}\n\n')
         file_for_editing.write('%% Sample Date\n\\def\\sampledate{%s}\n'

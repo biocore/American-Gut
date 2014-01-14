@@ -58,7 +58,8 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
 
     return abundant
 
-def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
+def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05, 
+    round_to=None):
     """Identifies unique and rare samples in the population and preforms a 
     case 1 t-test on common samples.
 
@@ -73,7 +74,6 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
                     population frequencies
 
         critical_value -- the alpha for use in the t-test
-
 
     OUTPUTS:       
         high -- a list of lists with greengenes strings, sample frequency, 
@@ -110,7 +110,7 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
 
     seterr(all='raise')
     # Determines the ratio 
-    population_mean = mean(population,1)
+    population_mean = mean(population,1)    
     ratio = sample.astype(float) / population_mean.astype(float)
     # preforms a case 1 t-test comparing the sample and population
     t_stat = []
