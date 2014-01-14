@@ -4,14 +4,15 @@
 from unittest import TestCase, main
 from numpy import array
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                          calculate_tax_rank_1,
-                                                          convert_taxa,
-                                                          clean_otu_string,
-                                                          render_latex_header,
-                                                          render_raw_header,
-                                                          convert_taxa_to_list,
-                                                          generate_latex_macro,
-                                                          convert_taxa_to_table)
+                                                    calculate_tax_rank_1,
+                                                    convert_taxa,
+                                                    clean_greengenes_string,
+                                                    render_latex_header,
+                                                    render_raw_header,
+                                                    convert_taxa_to_list,
+                                                    build_latex_macro,
+                                                    convert_taxa_to_table,
+                                                    format_date)
 
 class GenerateOTUSignifiganceTablesTest(TestCase):
     
@@ -119,9 +120,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
 
         self.header = ['Taxonomy', 'Doctor', 'Humans', 'Fold']  
 
-    def tearDown(self):
-        #
-        pass
+        self.meta = {'Sample_Date':'2/17/1963', 'Sample_Time':'3:27 am'}
 
     def test_calculate_abundance(self):
         # Sets up known value
@@ -317,7 +316,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(test_list_raw_format, known_raw_format)
         self.assertEqual(test_list_raw_comma, known_raw_comma)
 
-    def test_clean_otu_string(self):
+    def test_clean_greengenes_string(self):
         known_raw = ['*Kingdom Bacteria*',
                      'Phylum Proteobacteria',
                      'Class Gammaproteobacteria',
@@ -349,10 +348,11 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                 color = 'red'
 
             # Generates the cleaned string
-            test_string_raw = clean_otu_string(taxon, render_mode = 'RAW', \
-                format = format, color = color)
-            test_string_latex = clean_otu_string(taxon, render_mode = 'LATEX',\
-                format = format, color = color, unclassified = True)
+            test_string_raw = clean_greengenes_string(taxon, 
+                render_mode = 'RAW', format = format, color = color)
+            test_string_latex = clean_greengenes_string(taxon, 
+                render_mode = 'LATEX', format = format, color = color, 
+                unclassified = True)
             self.assertEqual(test_string_raw, known_raw[idx])
             self.assertEqual(test_string_latex, known_latex[idx])
 
@@ -423,24 +423,45 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(known_header_numbering, test_header_numbering)
         self.assertEqual(known_header_no_number, test_header_no_number)
 
-    def test_render_latex_macro(self):
-        # Sets up variable for testing        
+    def test_build_latex_macro(self):
+        """Tests that a latex macro is generated"""
+        # Sets up the text functions for formatting
+        test_funs = [lambda x: clean_greengenes_string(x, render_mode='LATEX'),
+                     lambda x: x,
+                     lambda x: x,
+                     lambda x: x]
+
+        # Tests single generation mode
+        known_macro = '\\def\\Taxonomy{Genus \\textit{Escherichia}}\n'\
+                      '\\def\\Doctor{10.00%}\n'\
+                      '\\def\\Humans{1.00%}\n'\
+                      '\\def\\Fold{10}'
+
+        test_macro = build_latex_macro(data=self.test_table[0], 
+                                       categories = self.header,
+                                       format = test_funs)
+        self.assertEqual(known_macro, test_macro)
+
+
+        # Tests multiple generation mode (a list of lists)
         known_macro = '\\def\\TaxonomyA{Genus \\textit{Escherichia}}\n'\
                       '\\def\\DoctorA{10.00%}\n'\
                       '\\def\\HumansA{1.00%}\n'\
-                      '\\def\\FoldA{10}\n'\
+                      '\\def\\FoldA{10}\n\n'\
                       '\\def\\TaxonomyB{\\textit{Escherichia coli}}\n'\
                       '\\def\\DoctorB{0.10%}\n'\
                       '\\def\\HumansB{1.00%}\n'\
-                      '\\def\\FoldB{0.10}'
+                      '\\def\\FoldB{0.10}\n'
 
-        # Calculates test variable
-        test_macro = generate_latex_macro(self.test_table, self.header)
+       
 
-        # Checks the outputs match
+        test_macro = build_latex_macro(data=self.test_table, 
+                                       categories = self.header,
+                                       format = test_funs)
         self.assertEqual(known_macro, test_macro)
 
     def test_convert_taxa_table(self):
+        """Tests generating a LaTeX macro for use in a template"""
         # Sets up inputs
         header_code = '<THIS IS HEADER CODE FOR LATEX>'
         alignment_vary = ['l', 'c', 'c', 'r']
@@ -593,11 +614,54 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                                                   header_code = header_code)
         self.assertEqual(latex_header_test, latex_code_known)
 
+    def test_format_date(self):
+        """Test formating the date information for a metadata dictionary"""
+        # Sets the locations of the time information in the metadata
+        date_field = 'Sample_Date'
+        time_field = 'Sample_Time'
 
+        # Checks that errors are called appropriately
+        with self.assertRaises(ValueError):
+            format_date(self.meta)
 
+        with self.assertRaises(ValueError):
+            format_date(self.meta, date_field='Tardis', d_form_in='%Y')
 
-      
-        
+        with self.assertRaises(ValueError):
+            format_date(self.meta, date_field=date_field)
+
+        with self.assertRaises(ValueError):
+            format_date(self.meta, time_field='Smith', t_form_in='%H:%M')
+
+        with self.assertRaises(ValueError):
+            format_date(self.meta, time_field=time_field)
+
+        # Generates and checks the test values for a single date
+        known = '17 Feb 1963'
+        format_in = '%m/%d/%Y'
+        format_out = '%d %b %Y'
+        test = format_date(self.meta, date_field=date_field, 
+                           d_form_in=format_in, format_out=format_out)
+        self.assertEqual(test, known)
+
+        # Generates and checks the test value for a time only
+        known = '03:27'
+        format_in = '%I:%M %p'
+        format_out = '%H:%M'
+        test = format_date(self.meta, time_field=time_field, 
+                           t_form_in=format_in, format_out=format_out)
+        self.assertEqual(test, known)
+
+        # Checks the combination of reading a date and time format
+        known = '17 Feb 1963 03:27 AM'
+        d_format_in = '%m/%d/%Y'
+        t_format_in = '%I:%M %p'
+        format_out = '%d %b %Y %I:%M %p'
+        test = format_date(self.meta, date_field=date_field, 
+                           time_field=time_field, d_form_in=d_format_in, 
+                           t_form_in=t_format_in, format_out=format_out)
+
+        self.assertEqual(test, known)
 
 if __name__ == '__main__':
     main()

@@ -9,7 +9,9 @@ from americangut.generate_otu_signifigance_tables import (calculate_abundance,
                                                     calculate_tax_rank_1,
                                                     convert_taxa,
                                                     convert_taxa_to_list,
-                                                    generate_abundance_macro)
+                                                    build_latex_macro,
+                                                    clean_greengenes_string,
+                                                    format_date)
 from make_phyla_plots import map_to_2D_dict
 from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
@@ -22,7 +24,7 @@ __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
 
-def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None):
+def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
 
     """Creates LaTeX formatted significant OTU lists
 
@@ -57,6 +59,9 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
     SIGNIFIGANCE_HUNDRED = [True, True, False, False]
     MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
         'enrichFold']
+    MACRO_FORM_SIGNIFICANCE = [lambda x: clean_greengenes_string(x, 
+                                render_mode='LATEX'), lambda x: x,
+                               lambda x: x, lambda x: x]
 
     DUMMY  = ['','','','']
     COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
@@ -64,12 +69,19 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
     FORMAT_ABUNDANCE = ["%1.1f"]
     ABUNDANCE_HUNDRED = [True]
     MACRO_CATS_ABUNDANCE = ['abundTaxon', 'abundSampl']
+    MACRO_FORM_ABUNDANCE = [lambda x: clean_greengenes_string(x, 
+                            render_mode='LATEX'), lambda x: x]
 
     MACRO_CATS_OTHER = ['Barcode', 'Sample_Date', 'Sample_Time']
     OTHER_KEYS = ['#Sample_ID', 'COLLECTION_DATE', 'SAMPLE_TIME']
 
     FILE_PRECURSER = 'macros_'
     FILE_EXTENSION = '.tex'
+
+    DATE_FIELD = 'COLLECTION_DATE'
+    DATE_FORMAT = '%m/%d/%Y'
+    DATE_OUT = '%B %d, %Y'
+    TIME_FIELD = 'SAMPLE_TIME'
 
     # Number of taxa shown is an indexing value, it is one less than what is 
     # actually shown.
@@ -164,8 +176,8 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
                                         formatting_keys = FORMAT_ABUNDANCE,
                                         hundredx = ABUNDANCE_HUNDRED)
 
-        abundance_formatted = generate_abundance_macro(formatted_abundance, \
-            categories = MACRO_CATS_ABUNDANCE)
+        abundance_formatted = build_latex_macro(formatted_abundance, \
+            categories = MACRO_CATS_ABUNDANCE, format = MACRO_FORM_ABUNDANCE)
 
         (high, low) = calculate_tax_rank_1(sample = sample, 
                                            population = population, 
@@ -183,7 +195,7 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
                     break
                 formatted_high.append(DUMMY)           
 
-            high_formatted = generate_abundance_macro(formatted_high, \
+            high_formatted = build_latex_macro(formatted_high, \
                 categories = MACRO_CATS_SIGNIFICANCE)
 
         else:
@@ -191,10 +203,22 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
                                           formatting_keys = FORMAT_SIGNIFIGANCE,
                                           hundredx = SIGNIFIGANCE_HUNDRED)
 
-            high_formatted = generate_abundance_macro(formatted_high, \
-                categories = MACRO_CATS_SIGNIFICANCE)
+            high_formatted = build_latex_macro(formatted_high, \
+                categories = MACRO_CATS_SIGNIFICANCE, 
+                format=MACRO_FORM_SIGNIFICANCE)
 
-
+        # Gets the sample date and time
+        if mapping_dict is not None:
+            sample_date = format_date(mapping[samp], 
+                                      date_field=DATE_FIELD, 
+                                      d_form_in=DATE_FORMAT, 
+                                      format_out=DATE_OUT)
+            sample_time = mapping[samp][TIME_FIELD].lower()
+            if sample_time[0] == '0':
+                sample_time = sample_time[1:]
+        else:
+            sample_date = 'unknown'
+            sample_time = 'unknown'
 
     
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
@@ -206,6 +230,9 @@ def main(taxa_table, output_dir, mapping_dict = None, samples_to_analyze = None)
             % samp.split('.')[0])
         # file_for_editing.write('% Participant Name\n\\def\\yourname'\
         #     '{Michael Pollan or longer name}\n\n')
+        file_for_editing.write('%% Sample Date\n\\def\\sampledate{%s}\n'
+                               '\\def\\sampletime{%s}\n\n\n' 
+                               % (sample_date, sample_time))
         file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
             % abundance_formatted)
         file_for_editing.write('%% Enrichment Table\n%s\n\n\n' \
@@ -266,5 +293,5 @@ if __name__ == '__main__':
 
     main(taxa_table = tax_table, 
          output_dir = output_dir,
-         mapping_dict = mapping_dict,
+         mapping = mapping_dict,
          samples_to_analyze = samples_to_analyze)

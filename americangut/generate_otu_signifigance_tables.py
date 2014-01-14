@@ -2,6 +2,7 @@
 
 from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
 from scipy.stats import ttest_1samp
+from time import strftime, strptime, struct_time
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -274,7 +275,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
 
     return format_list
     
-def clean_greengenes_string(greengenes_string, render_mode, format = False, \
+def clean_greengenes_string(greengenes_string, render_mode, format = None, \
     unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
@@ -284,8 +285,21 @@ def clean_greengenes_string(greengenes_string, render_mode, format = False, \
         render_mode -- a string ("LATEX", "HTML" or "RAW") which describes 
                     the way the table will be formatted. LATEX or HTML gives a
                     string containing formatting code.
-        bold -- a binary value indication if the output string should be bolded.
-                    In raw text, *bold* is render with *.
+
+        format -- a string with a formatting keys to be used with the data. 
+                    'BOLD' indicates that bold text should be used. 'COLOR' 
+                    indicates the entry should be colored using the value given 
+                    by color. A value of None indicates no special formatting.
+                    DEFUALT:None
+        unclassified -- a binary value indicating whether or not the designator 
+                    'Unclassified' should be added to entries above the family 
+                    level
+                    DEFUALT: False
+
+        color -- a string describing the latex color to use to render colored 
+                    text. Valid colors can be found at 
+                   <http://en.wikibooks.org/wiki/LaTeX/Colors#Predefined_colors>
+    
     OUTPUTS:
         cleaned_taxon -- a formatted string describing taxonomic information
 
@@ -431,52 +445,6 @@ def render_raw_header(header, numbering, header_bar, spacer, tax_len, cat_len):
 
     return table_header
 
-def generate_abundance_macro(corr_taxa, categories):
-    """Generates a LaTeX macro for use in a template
-    
-    INPUTS:
-        corr_taxa -- a list of lists where the first item is a greengenes 
-                    taxonomy string and  subsequent items are associated 
-                    descriptions.
-        categories -- a list of strings describing the macro data to be 
-                    substituted. i.e. Name, Sample, etc. 
-
-    OUTPUT:
-        A LaTeX macro with the definitions provided in categories
-
-
-    """
-    # Preallocates an indexing variable
-    ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
-                'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
-                'Y', 'Z']
-    # Rendering must be LaTeX for a LaTex macro
-    RENDER = 'LATEX'
-
-    format_table = []
-
-    # Combines categories with data and mapping index
-    for idx, taxon_description in enumerate(corr_taxa):
-        if taxon_description[0] == '':
-            for cat in categories:
-                format_table.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
-                
-        else:
-            for id_, cat in enumerate(categories):
-                if id_ == 0:
-                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                      clean_greengenes_string(taxon_description[0], 
-                                      render_mode = RENDER)))
-                else:
-                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                      taxon_description[id_]))
-
-    # Inserts line breaks
-    table = '\n'.join(format_table)
-
-
-    return table
-
 def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
     numbering = True, alignment = 'c', header_code=None):
     """Creates a text-encoded table
@@ -616,3 +584,133 @@ def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
     table = anterow.join(table_code)
 
     return table
+
+def build_latex_macro(data, categories, format=None):
+    """Generates a LaTeX macro for use in a template
+
+    INPUTS:
+        data -- a list or list of lists where the inner list contains the same 
+                    set of information, corresponding to categories and format.
+
+        categories -- a list of strings describing the data to be used in the 
+                macro (i.e. Name, Sample, etc.)
+
+        format -- a list of anonymous or function names to be used to format 
+                the data. The final data must be converted to a string. If a 
+                format of None is provided, all entries will be converted to 
+                strings.
+                DEFAULT: None
+
+    OUTPUTS:
+        A LaTeX macro with the definitions provided in categories
+    """
+
+    # Preallocates an indexing variable
+    ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
+                'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
+                'Y', 'Z']
+
+    # Preforms a sanity check on the data
+    if isinstance(data[0], list):
+        num_entries = len(data[0])
+        mode = 'multi'
+    else:
+        num_entries = len(data)
+        mode = 'single'
+
+    num_cats = len(categories)
+    num_forms = len(format)
+
+    if not num_entries == num_cats:
+        raise ValueError('There must be a category for every entry.')
+    elif not num_entries == num_forms and format is not None:
+        raise ValueError('There must be a format for every entry.')
+
+    # Sets up formatting if necessary
+    if format is None:
+        format = [lambda x: '%r' %x]*num_entries
+
+    macro = []
+    # Combines the data into a mapping index
+    for idx, entry in enumerate(data):
+        if mode == 'single':
+            fun = format[idx]
+            macro.append('\\def\\%s{%s}' %(categories[idx], fun(entry)))
+
+        if mode == 'multi' and len(entry[0]) == 0:
+            for cat in categories:
+                macro.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
+            macro.append('')
+        elif mode == 'multi':
+            for id_, cat in enumerate(categories):
+                fun = format[id_]
+                element = entry[id_]
+                macro.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                    fun(element)))
+            macro.append('')
+
+    # Inserts line breaks
+    macro = '\n'.join(macro)
+
+    return macro
+
+def format_date(meta, date_field=None, d_form_in=None, time_field=None, 
+    t_form_in=None, format_out='%b %d, %Y'):
+    """Formats the date information for a metadata dictionary
+    INPUTS:
+        meta -- a 2D dictionary where a sample ID is keyed to an metadata 
+                dictionary giving values associated with each sample
+
+        date_filed -- the name of the category holding date information
+
+        format_in -- a string describing how the temporal information is 
+                encoded. See the time module for string formatting 
+                (http://docs.python.org/2/library/time.html#time.struct_time)
+
+        format_out -- the way the output string should be formatted. Use the 
+                format keys from the time module.
+    OUTPUT:
+        date -- a string giving the date information
+    """
+
+    # Performs a sanity check on the data
+    if date_field is None and time_field is None:
+        raise ValueError('A date or time field must be supplied. '\
+                         'Neither is available.')
+
+    if date_field is not None and date_field not in meta:
+        raise ValueError('The date_field must be in the meta data.')
+
+    if d_form_in is None and date_field is not None:
+        raise ValueError('A date format must be supplied with a date field.')
+
+    if time_field is not None and time_field not in meta:
+        raise ValueError('The time_field must be in the meta data.')
+
+    if t_form_in is None and time_field is not None:
+        raise ValueError('A time format must be supplied with a time field.')
+
+    # Gets the date information
+    if date_field is not None:
+        date = strptime(meta[date_field], d_form_in)
+    if time_field is not None:
+        time = strptime(meta[time_field], t_form_in)
+
+    # Gets the date and time into a single structure
+    if date_field is not None and time_field is not None:
+        tmp = struct_time((date.tm_year, date.tm_mon, date.tm_mday,
+                           time.tm_hour, time.tm_min, time.tm_sec,
+                           date.tm_wday, date.tm_yday, date.tm_isdst))
+    elif date_field is None:
+        tmp = time
+    elif time_field is None:
+        tmp = date
+
+    # Formats the output
+    date = strftime(format_out, tmp)
+
+    return date
+
+
+
+
