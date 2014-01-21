@@ -12,7 +12,6 @@ from numpy import (array, zeros, mean, shape, ones, around,
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 from matplotlib.font_manager import FontProperties
-from matplotlib import rc
 from operator import itemgetter
 import colorbrewer
 
@@ -152,15 +151,8 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
                     composite value, and metadata category should be printed and
                     retained.
 
-        log_file -- the filename where the log file should be saved.
-
     OUTPUTS
-        sample_ids -- a list of the sample ids contained in the matrix 
-                    (column header)
-        
         common_categories -- a list of the common categories in the (row header)
-
-        category_summary -- a numpy array of the category values.
 
         scores -- a sorted list of all the taxa and their scores
 
@@ -578,7 +570,6 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     num_wedges = len(data_vec)
     num_colors = len(colors[:,0])
 
-    num_colors = len(colors[:,0])
     if num_colors is None:
         colormap = ones((table_height,3))
     elif not isinstance(colors, ndarray):
@@ -834,7 +825,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
     num_colors = len(colors[:,0])
     if num_colors is None:
         colormap = ones((table_height,3))
-    elif not isinstance(color, ndarray):
+    elif not isinstance(colors, ndarray):
         raise TypeError ('The colormap must be a numpy array.')
     elif num_colors == 1:
         colormap = colors*ones((table_height,1))
@@ -847,7 +838,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
 
     # Sets up the edge colormap
     if show_edge:
-        edgecolor = zeros(num_cats, 3)
+        edgecolor = zeros((num_cats, 3))
     else:
         edgecolor = colormap
 
@@ -922,46 +913,39 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
 
     patches_watch = []
     for plot_count, category in enumerate(data_table):
-        already_added_index = arange(plot_count)        
-        bottom_bar = sum(data_table[already_added_index,:])
+        bottom_bar = sum(data_table[0:plot_count,:],0)
         faces = ax1.bar(bar_left, category, bar_width, bottom_bar,
                         color = colormap[plot_count,:],
                         edgecolor = edgecolor[plot_count,:])
         patches_watch.append(faces[0])
-
-    # Sets up the axis dimensions and limits.
-    plt.draw()
-   
-     # The y-axis is reversed so the labels are in the same order as the 
+        
+    # The y-axis is reversed so the labels are in the same order as the 
     # colors in the legend
     if match_legend:
         plt.axis([x_min, x_max, y_lims[1], y_lims[0]])
 
     # Sets up y labels if they are desired.
-    
+
     y_tick_labels = ax1.set_yticklabels(y_text_labels, fontproperties = tick_font)
     if not y_label is None:
         ax1.set_ylabel(y_label, fontproperties = label_font)
 
     # Set the x-axis labels
-    ax1.set_xticklabels(x_text_labels, 
-                        fontproperties = tick_font,
+    ax1.set_xticks(x_tick)
+    ax1.set_xticklabels(x_text_labels,                     
                         rotation = font_angle,
-                        horizontalalignment = font_alignment)
+                        horizontalalignment = 'right',
+                        fontproperties = label_font)
 
-    
-    if not x_label is None:
-        ax1.set_xlabel(x_label, fontproperties = label_font)
+    if x_label is not None:
+            ax1.set_xlabel(x_label, fontproperties = label_font)
 
     if legend:
-        leg = plt.legend(patches_watch, category_names, 
-                         loc = 'center right',
-                         fontproperties = legend_font,
-                         frameon = legend_frame)
+        leg = plt.legend(patches_watch, group_names, prop = legend_font)
         if not legend_offset is None:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
 
-    if isistance(title, str):
+    if isinstance(title, str):
         plt.title(title, fontproperties = title_font)
 
     plt.savefig(file_out, format = filetype)

@@ -21,8 +21,9 @@ __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
+SAMPLE_TYPES = set(('fecal', 'oral', 'skin'))
 
-def main(otu_table, mapping_data, cat_tables, output_dir, \
+def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     samples_to_plot = None, legend = False, xaxis = True):
     """Creates stacked bar plots for an otu table
     INPUTS:
@@ -50,27 +51,10 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
     CATEGORY = 'taxonomy'
     NUM_TAXA = 9
     NUM_CATS_TO_PLOT = 7
-    MICHAEL_POLLAN = '000007108.1075657'
 
     # Sets up file name constants
     FILEPREFIX = 'Figure_4_'
     FILE_END = '.pdf'
-
-    # Common taxa are designated before processing to remain constant.
-    COMMON_TAXA = [(u'k__Bacteria', u' p__Firmicutes'),
-                   (u'k__Bacteria', u' p__Bacteroidetes'),
-                   (u'k__Bacteria', u' p__Proteobacteria'),
-                   (u'k__Bacteria', u' p__Actinobacteria'),
-                   (u'k__Bacteria', u' p__Verrucomicrobia'),
-                   (u'k__Bacteria', u' p__Tenericutes'),
-                   (u'k__Bacteria', u' p__Cyanobacteria'),
-                   (u'k__Bacteria', u' p__Fusobacteria')]
-    
-    # Names categories being plotted
-    CAT_LIST = ['You', 'Average', 'Similar Diet', ' Similar BMI', 
-                        'Same Gender', 'Similar Age', 
-                        'Michael Pollan']
-
 
     # Sets up plotting constants
     COLORMAP = array([[0.8353, 0.2421, 0.3098],
@@ -86,80 +70,137 @@ def main(otu_table, mapping_data, cat_tables, output_dir, \
     FIG_DIMS = (4.44444, 3.33333)
     AXIS_DIMS = array([[0.05, 0.05],
                        [0.95, 0.95]])
+
+    # Common taxa are designated before processing to remain constant.
+    COMMON_TAXA = [(u'k__Bacteria', u' p__Firmicutes'),
+                   (u'k__Bacteria', u' p__Bacteroidetes'),
+                   (u'k__Bacteria', u' p__Proteobacteria'),
+                   (u'k__Bacteria', u' p__Actinobacteria'),
+                   (u'k__Bacteria', u' p__Verrucomicrobia'),
+                   (u'k__Bacteria', u' p__Tenericutes'),
+                   (u'k__Bacteria', u' p__Cyanobacteria'),
+                   (u'k__Bacteria', u' p__Fusobacteria')]
+
+    SKIPSET = set(('Sample', 'Average', 'MP'))
     
-    
-    # Creates the mapping file
+    # Names categories being plotted
+    if sample_type == 'fecal':
+        michael_pollan = '000007108.1075657'
+        cat_list = ['You', 'Average', 'Similar Diet', ' Similar BMI', 
+                            'Same Gender', 'Similar Age', 'Michael Pollan']
+        order = ['Sample', 'Average', 'DIET_TYPE', 'BMI_CATEGORY', 'SEX', 
+                 'AGE_CATEGORY', 'MP']
+
+    elif sample_type == 'skin':
+        michael_pollan = '7113.1075702'
+        cat_list = ['You', 'Average', 'Similar Cosmetic Use', 
+                    'Same Dominant Hand', 'Same Gender', 'Same Age', 
+                    'Michael Pollan']
+        order = ['Sample', 'Average', 'COSMETICS_FREQUENCY', 
+                 'DOMINANT_HAND', 'SEX', 'AGE_CATEGORY', 'MP']
+
+    elif sample_type == 'oral':
+        michael_pollan = '7109.1075688'
+        cat_list = ['You', 'Average', 'Similar Diet', 'Flossing Frequency',
+                    'Same Gender', 'Same Age', 'Michael Pollan']
+        order = ['Sample', 'Average', 'DIET_TYPE', 'FLOSSING_FREQUENCY', 
+                 'SEX', 'AGE_CATEGORY', 'MP']
+
+    else:
+        raise ValueError('%s is not a supported sample type.' %sample_type)
+
+    # Gets the mapping file
     map_dict = map_to_2D_dict(mapping_data)
 
-    # Generates the category file dictionary
+    # Gets the category file dictionary summarized with the common categories
+     # Generates the category file dictionary
     categories = parse_category_files(raw_tables = cat_tables, 
                                       common_groups = COMMON_TAXA, 
                                       level = LEVEL, 
                                       metadata = CATEGORY)
 
+    # Summarizes taxonomy for the category
     (whole_sample_ids, whole_summary, new_common_taxa) = \
     summarize_common_categories(biom_table = otu_table, 
                                 level = LEVEL, 
                                 common_categories = COMMON_TAXA[:8], 
                                 metadata_category = CATEGORY)
 
+    # Converts the final taxa to a cleaned up list
     # Converts final taxa to a clean list
     common_phyla = []
     for taxon in new_common_taxa: 
         common_phyla.append(taxon[1].strip(' p__').strip('[').strip(']'))
     new_common_taxa = common_phyla
-   
-    # Checks that the correct sample ids are plotted
+
+      # Checks that the crrect sample ids are plotted
     if samples_to_plot is None:
         sample_ids = whole_sample_ids
     else:
         sample_ids = samples_to_plot
 
-    # Identifies Michael Pollan's pre-ABX sample
-    mp_sample_pos = whole_sample_ids.index(MICHAEL_POLLAN)
+
+    # Gets Micahel Pollan's sample
+     # Identifies Michael Pollan's pre-ABX sample
+    mp_sample_pos = whole_sample_ids.index(michael_pollan)
     mp_sample_taxa = whole_summary[:,mp_sample_pos]
+
+    # Gets the table average
+    table_average = mean(whole_summary,1)
 
     # Generates a figure for each sample
     for idx, sample_id in enumerate(whole_sample_ids):
         if sample_id in sample_ids:
 
-            # Preallocates a numpy array for the plotting data
-            tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))
-            meta_data = map_dict[sample_id]            
+            meta_data = map_dict[sample_id]
 
-            tax_array[:,0] = whole_summary[:,idx]
-            tax_array[:,1] = mean(whole_summary, 1)
-        
-            cat_watch = 2
-            # Identifies the appropriate metadata categories
-            for cat in categories:
-                # Pulls metadata for the sample and category
+            # Prealocates a numpy array to hold the data
+            tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))
+
+            # Adds preset values to the array so the first column is the sample
+            # the second column is the average and the last column is Michael 
+            # Pollan
+            tax_array[:,0] = whole_summary[:, idx]
+            tax_array[:,1] = table_average
+            tax_array[:,-1] = mp_sample_taxa
+
+            # print tax_array
+            # print ''
+
+            # Adds the categories to the table in the listed order
+            for idx, cat in enumerate(order):
+                print cat
+                print idx
+                # Skips over undesired categories
+                if cat in SKIPSET:
+                    print 'skip'
+                    continue
+                # Gets the sample metadata
                 mapping_key = meta_data[cat]
-                # Pulls taxonomic summary and group descriptions for the category
+                # Pulls taxonomic summary and group descriptions
                 tax_summary = categories[cat]['Summary']
-                group_descriptions = categories[cat]['Groups']          
-                # Appends plotting tables
+                group_descriptions = categories[cat]['Groups'] 
+                 # Appends plotting tables
                 try:
                     mapping_col = group_descriptions.index(mapping_key)
                 except:
                     raise ValueError, 'The %s cannot be found in %s.' \
                     % (mapping_key, cat)
+                tax_array[:,idx] = tax_summary[:,mapping_col]
+                # print tax_array
+                # print ''
 
-                tax_array[:,cat_watch] = tax_summary[:,mapping_col]
-
-                cat_watch = cat_watch + 1
-
-            tax_array[:,-1] = mp_sample_taxa
-
-            # Plots the data
+            # Sets up the file to save the data
             filename = pjoin(output_dir, '%s%s%s' \
                 % (FILEPREFIX, sample_id, FILE_END))
             
+            # Plots the data
             render_barchart(data_table = tax_array, x_axis = False,
-                group_names = new_common_taxa, sample_names = CAT_LIST,
-                axis_dims = AXIS_DIMS, fig_dims = FIG_DIMS, file_out = filename,
-                colors = COLORMAP, show_edge = False, legend = False,  
-                y_axis = False)
+                            group_names = new_common_taxa, legend = False,
+                            sample_names = cat_list, y_axis = False,
+                            axis_dims = AXIS_DIMS, fig_dims = FIG_DIMS, 
+                            file_out = filename, show_edge = False,
+                            colors = COLORMAP)
 
 # Sets up the command line interface
 
@@ -179,6 +220,9 @@ parser.add_argument('-c', '--categories', \
 parser.add_argument('-s', '--samples_to_plot', default = None, \
                     help = 'Sample IDs you wish to plot. If no value is '\
                     'specified, all samples are plotted.')
+parser.add_argument('-t', '--sample_type', default='fecal',
+                    help='Specifies the sample type: fecal, oral, or skin. '
+                    'DEFAULT: fecal')
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -221,8 +265,20 @@ if __name__ == '__main__':
     else:
         samples = None
 
-    main(otu_table, mapping, output_dir = output_dir, \
-        cat_tables = categories, samples_to_plot = samples)
+    # Checks the sample type is sane
+    if args.sample_type:
+        if args.sample_type in SAMPLE_TYPES:
+            sample_type = args.sample_type
+        else:
+            parser.error('%s is not a supported sample type.' 
+                         % args.sample_type)
+    else:
+        sample_type = 'fecal'
+        
+
+    main(otu_table, mapping, output_dir = output_dir, 
+        cat_tables = categories, samples_to_plot = samples, 
+        sample_type=sample_type)
 
 
 ### Commentary on the selection of common taxa:
