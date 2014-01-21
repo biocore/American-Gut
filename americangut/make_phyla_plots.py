@@ -214,7 +214,7 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
     # Identifies rows which meet the scoring criteria
     scores = []
     watch = True
-    for idx, score in enumerate(scores_all):
+    for score in scores_all:
         scores.append(score)
         if score[score_position] > limit:
             common_categories.append(score[0])                         
