@@ -59,7 +59,7 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
     return abundant
 
 def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05, 
-    round_to=None):
+                         round_to=None):
     """Identifies unique and rare samples in the population and preforms a 
     case 1 t-test on common samples.
 
@@ -213,7 +213,7 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
     return formatted_taxa
 
 def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
-    color = 'red'):
+                         color = 'red'):
     """Converts a list of greengenes strings to a text encoded list for printing
 
     INPUTS:
@@ -276,7 +276,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
     return format_list
     
 def clean_greengenes_string(greengenes_string, render_mode, format = None, \
-    unclassified = False, color = 'red'):
+                            unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
     INPUTS:
@@ -655,7 +655,7 @@ def build_latex_macro(data, categories, format=None):
     return macro
 
 def format_date(meta, date_field=None, d_form_in=None, time_field=None, 
-    t_form_in=None, format_out='%b %d, %Y'):
+                t_form_in=None, format_out='%b %d, %Y'):
     """Formats the date information for a metadata dictionary
     INPUTS:
         meta -- a 2D dictionary where a sample ID is keyed to an metadata 
@@ -675,7 +675,7 @@ def format_date(meta, date_field=None, d_form_in=None, time_field=None,
 
     # Performs a sanity check on the data
     if date_field is None and time_field is None:
-        raise ValueError('A date or time field must be supplied. '\
+        raise ValueError('A date or time field must be supplied. '
                          'Neither is available.')
 
     if date_field is not None and date_field not in meta:
@@ -710,7 +710,3 @@ def format_date(meta, date_field=None, d_form_in=None, time_field=None,
     date = strftime(format_out, tmp)
 
     return date
-
-
-
-

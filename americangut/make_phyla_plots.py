@@ -85,7 +85,7 @@ def load_category_files(category_files):
     return category_tables
 
 def parse_category_files(raw_tables, common_groups, level=2, 
-    metadata='taxonomy'):
+                         metadata='taxonomy'):
     """ Collapses categeory tables using the most common OUTPUTS
 
     INPUTS:
@@ -108,7 +108,8 @@ def parse_category_files(raw_tables, common_groups, level=2,
     ori_num = len(common_groups)
     category_data = {}
     for (cat, cat_table) in raw_tables.items():
-        [ids, data, cats] = summarize_common_categories(biom_table = cat_table, 
+        [ids, data, cats] = summarize_common_categories(
+                                    biom_table = cat_table, 
                                     level = level,
                                     common_categories = common_groups[:ori_num],
                                     metadata_category = metadata)
@@ -117,7 +118,7 @@ def parse_category_files(raw_tables, common_groups, level=2,
     return category_data
 
 def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE', 
-    metadata_category='taxonomy', limit=1.0):
+                                    metadata_category='taxonomy', limit=1.0):
     """Identifies the most common taxa in a population using variable limits
 
     This method uses a composite score to account for both the average frequency
@@ -227,7 +228,7 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
     return common_categories, scores
 
 def summarize_common_categories(biom_table, level, common_categories, 
-    metadata_category='taxonomy'):
+                                metadata_category='taxonomy'):
     """Determines the frequency of common categories present in a biom table
 
     INPUTS:
@@ -332,7 +333,8 @@ def translate_colors(num_colors, map_name='Spectral'):
     return colormap    
 
 def calculate_dimensions_rectangle(axis_width=4, axis_height=4, border=0.1, 
-    title=0.25, legend=1, xlab=0, ylab=0, unit='in'):
+                                   title=0.25, legend=1, xlab=0, ylab=0, 
+                                   unit='in'):
     """Determines the appriate axis and figure dimensions for square axis.
 
     INPUTS:
@@ -388,7 +390,8 @@ def calculate_dimensions_rectangle(axis_width=4, axis_height=4, border=0.1,
     return axis_dimensions, figure_dimensions
 
 def calculate_dimensions_bar(num_bars, bar_width=0.5, axis_height=3, 
-    border=0.1, title=1, legend=2, xlab=0, ylab=0, unit='in'):
+                             border=0.1, title=1, legend=2, xlab=0, ylab=0, 
+                             unit='in'):
     """Determines the axis and figure dimensions for a bar chart.
 
     INPUTS:
@@ -458,12 +461,14 @@ def calculate_dimensions_bar(num_bars, bar_width=0.5, axis_height=3,
     return axis_dimensions, figure_dimensions
 
 def render_single_pie(data_vec, group_names, axis_dims, fig_dims, 
-    file_out='piechart', filetype='PDF', colors=None, show_edge=True, 
-    axis_on=False, plot_ccw=False, start_angle=90, x_lims=[-1.1, 1.1], 
-    y_lims=[-1.1, 1.1], legend=True, legend_offset=None, legend_font=None, 
-    legend_frame=False, title=None, title_font=None, labels=None, 
-    label_distance=1.1, label_font=None, use_latex=False, rc_fam='sans-serif',
-    rc_font=['Helvetica']):
+                      file_out='piechart', filetype='PDF', colors=None, 
+                      show_edge=True, axis_on=False, plot_ccw=False, 
+                      start_angle=90, x_lims=[-1.1, 1.1], y_lims=[-1.1, 1.1], 
+                      legend=True, legend_offset=None, legend_font=None, 
+                      legend_frame=False, title=None, title_font=None, 
+                      labels=None, label_distance=1.1, label_font=None, 
+                      use_latex=False, rc_fam='sans-serif', 
+                      rc_font=['Helvetica']):
     """Creates a pie chart summarizing the category data
 
     INPUTS:
@@ -657,15 +662,16 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     plt.savefig(file_out, format = filetype)
 
 def render_barchart(data_table, group_names, sample_names, axis_dims, 
-    fig_dims, file_out = 'barchart', filetype = 'PDF', 
-    colors = None, show_edge = True, legend = True, title = None, 
-    match_legend = True, frame = True, bar_width = 0.8, x_axis = True, 
-    x_label = None, x_min = -0.5, x_tick_interval = 1.0, x_grid = False, 
-    y_axis = True, y_lims = [0, 1], y_tick_interval = 0.2, y_tick_labels = None, 
-    y_label = None, y_grid = False, legend_frame = False, legend_offset = None, 
-    font_angle = 45, font_alignment = 'right', tick_font = None, 
-    label_font = None, legend_font = None, title_font = None, use_latex=False, 
-    rc_fam='sans-serif', rc_font=['Helvetica']):
+                    fig_dims, file_out='barchart', filetype='PDF', colors=None, 
+                    show_edge=True, legend=True, title=None, match_legend=True, 
+                    frame=True, bar_width=0.8, x_axis=True, x_label=None, 
+                    x_min=-0.5, x_tick_interval=1.0, x_grid=False, y_axis=True, 
+                    y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None, 
+                    y_label=None, y_grid=False, legend_frame=False, 
+                    legend_offset=None, font_angle=45, font_alignment='right', 
+                    tick_font=None, label_font = None, legend_font=None, 
+                    title_font=None, use_latex=False, rc_fam='sans-serif', 
+                    rc_font=['Helvetica']):
     """Creates a stacked bar chart using the data in the category table.
 
     A single value bar chart can be created using a vector for data_table 
