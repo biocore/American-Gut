@@ -1,4 +1,4 @@
-\documentclass[landscape]{article}
+\documentclass[landscape,draft]{article}
 %\usepackage[top=0.4in,bottom=0.4in,left=0.75in,right=0.5in]{geometry}
 \usepackage[paperwidth=13.13636in,paperheight=8.5in,top=0.4in,bottom=0.3in,left=0.75in,right=0.75in]{geometry}  % aspect ratio same as 11x17 (1.5454)
 \usepackage{graphicx}
@@ -23,13 +23,13 @@
 \baselineskip=0pt
 \parskip=0pt
 
-\input{macros.tex}
+\input{macros_gut.tex}
 
 \begin{document}
 
 %\begin{tabularx}{\textwidth}{ X c X }     %<--does better with horizontal spacing
 \begin{tabular}{ m{4.4cm} m{16cm} }  %<--does better with vertical spacing
-	~~\includegraphics[height=0.08\textheight]{pdfs/logoshape.pdf} & \includegraphics[height=0.065\textheight]{pdfs/youramericangutsampletext.pdf} \\
+	~~\includegraphics[height=0.08\textheight]{pdfs-gut/logoshape.pdf} & \includegraphics[height=0.065\textheight]{pdfs-gut/youramericangutsampletext.pdf} \\
 \end{tabular}
 
 \hrule
@@ -58,8 +58,8 @@
 	&
 	\vspace{-2mm}
     \hspace{0mm}
-    \begin{overpic}[width= 2.10in]{pdfs/figure4.pdf}
-		\put(-32,-39){\includegraphics[width=3.65in]{pdfs/figure4_overlay.pdf}}
+    \begin{overpic}[width= 2.10in]{pdfs-gut/figure4.pdf}
+		\put(-32,-39){\includegraphics[width=3.65in]{pdfs-gut/figure4_overlay.pdf}}
 	\end{overpic} 
     &
     {\normalsize 
@@ -93,28 +93,28 @@
 \begin{figure}[!ht]
 
 \hspace{11mm}
-\raisebox{29mm}{\includegraphics[scale=0.40]{pdfs/figure1_legend.pdf}}
+\raisebox{29mm}{\includegraphics[scale=0.40]{pdfs-gut/figure1_legend.pdf}}
 \hspace{-10mm}
 \subfloat[\fontfamily{phv}\selectfont{\normalsize Different body sites}\label{subfig-1:dummy}]{%
-\begin{overpic}[height=0.30\textheight]{pdfs/figure1.pdf}
-	\put(0,-3){\includegraphics[scale=0.43]{pdfs/figure1_ovals.png}}
+\begin{overpic}[height=0.30\textheight]{pdfs-gut/figure1.pdf}
+	\put(0,-3){\includegraphics[scale=0.43]{pdfs-gut/figure1_ovals.png}}
 \end{overpic}
 }
 %
 \hspace{11mm}
-\includegraphics[scale=0.40]{pdfs/figure2_legend.pdf}
+\includegraphics[scale=0.40]{pdfs-gut/figure2_legend.pdf}
 \subfloat[\fontfamily{phv}\selectfont{\normalsize Different ages and populations}\label{subfig-2:dummy}]{%
-\begin{overpic}[height=0.30\textheight]{pdfs/figure2.pdf}
-	\put(0,0){\includegraphics[scale=0.48]{pdfs/figure2_ovals.png}}
-	\put(180,122){\includegraphics[scale=0.40]{pdfs/figure2_country_legend.pdf}}
- 	\put(130,181){\includegraphics[scale=0.45]{pdfs/ball_legend.pdf}}
+\begin{overpic}[height=0.30\textheight]{pdfs-gut/figure2.pdf}
+	\put(0,0){\includegraphics[scale=0.48]{pdfs-gut/figure2_ovals.png}}
+	\put(180,122){\includegraphics[scale=0.40]{pdfs-gut/figure2_country_legend.pdf}}
+ 	\put(130,181){\includegraphics[scale=0.45]{pdfs-gut/ball_legend.pdf}}
 \end{overpic}
 }
 %
 \hspace{19mm}
-\includegraphics[scale=0.40]{pdfs/figure3_legend.pdf}
+\includegraphics[scale=0.40]{pdfs-gut/figure3_legend.pdf}
 \subfloat[\fontfamily{phv}\selectfont{\normalsize The American Gut population}\label{subfig-3:dummy}]{%
-\includegraphics[height=0.30\textheight]{pdfs/figure3.pdf}
+\includegraphics[height=0.30\textheight]{pdfs-gut/figure3.pdf}
 }
 \end{figure}
 
