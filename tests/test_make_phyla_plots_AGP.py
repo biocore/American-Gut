@@ -1,4 +1,4 @@
-# #!/usr/bin/env python
+#!/usr/bin/env python
 
 from unittest import TestCase, main
 from StringIO import StringIO

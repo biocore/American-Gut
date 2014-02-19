@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
 from matplotlib.font_manager import FontProperties
 from operator import itemgetter
+# from util import map_to_2D_dict
 import colorbrewer
 
 # Colors from www.ColorBrewer.org by Cynthia A. Brewer, Geography, 
@@ -28,7 +29,7 @@ __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
-def map_to_2D_dict(mapping_data):
+def map_to_2D_dict(mapping):
     """ Converts mapping file to 2D dictionary
 
     INPUT:
@@ -38,7 +39,7 @@ def map_to_2D_dict(mapping_data):
         D2 -- a two dimensional dictionary where each sample ID is keyed to a 
                     dictionary of meta data containing headers and observations.
     """
-    lines = [l.strip().split('\t') for l in mapping_data]
+    lines = [l.strip().split('\t') for l in mapping]
     header = lines[0]
     D2 = {}
     for l in lines[1:]:
@@ -85,7 +86,7 @@ def load_category_files(category_files):
     return category_tables
 
 def parse_category_files(raw_tables, common_groups, level=2, 
-                         metadata='taxonomy'):
+    metadata='taxonomy'):
     """ Collapses categeory tables using the most common OUTPUTS
 
     INPUTS:
@@ -118,7 +119,7 @@ def parse_category_files(raw_tables, common_groups, level=2,
     return category_data
 
 def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE', 
-                                    metadata_category='taxonomy', limit=1.0):
+    metadata_category='taxonomy', limit=1.0):
     """Identifies the most common taxa in a population using variable limits
 
     This method uses a composite score to account for both the average frequency
@@ -228,7 +229,7 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
     return common_categories, scores
 
 def summarize_common_categories(biom_table, level, common_categories, 
-                                metadata_category='taxonomy'):
+    metadata_category='taxonomy'):
     """Determines the frequency of common categories present in a biom table
 
     INPUTS:
@@ -333,8 +334,8 @@ def translate_colors(num_colors, map_name='Spectral'):
     return colormap    
 
 def calculate_dimensions_rectangle(axis_width=4, axis_height=4, border=0.1, 
-                                   title=0.25, legend=1, xlab=0, ylab=0, 
-                                   unit='in'):
+    title=0.25, legend=1, xlab=0, ylab=0, 
+    unit='in'):
     """Determines the appriate axis and figure dimensions for square axis.
 
     INPUTS:
@@ -390,8 +391,8 @@ def calculate_dimensions_rectangle(axis_width=4, axis_height=4, border=0.1,
     return axis_dimensions, figure_dimensions
 
 def calculate_dimensions_bar(num_bars, bar_width=0.5, axis_height=3, 
-                             border=0.1, title=1, legend=2, xlab=0, ylab=0, 
-                             unit='in'):
+    border=0.1, title=1, legend=2, xlab=0, ylab=0, 
+    unit='in'):
     """Determines the axis and figure dimensions for a bar chart.
 
     INPUTS:
@@ -419,11 +420,10 @@ def calculate_dimensions_bar(num_bars, bar_width=0.5, axis_height=3,
                     in image generation. DEFAULT: in
 
     OUTPUTS:
-        axis_dimensions -- a Bbox class describing the axis position in the 
-            figure
+        axis_dimensions -- an array describing the axis position in the figure
 
         figure_dimensions -- a 2 element tuple giving the width and height of 
-            the figure 
+                    the figure 
     """
 
     # Preforms some sanity checks. 
@@ -461,14 +461,14 @@ def calculate_dimensions_bar(num_bars, bar_width=0.5, axis_height=3,
     return axis_dimensions, figure_dimensions
 
 def render_single_pie(data_vec, group_names, axis_dims, fig_dims, 
-                      file_out='piechart', filetype='PDF', colors=None, 
-                      show_edge=True, axis_on=False, plot_ccw=False, 
-                      start_angle=90, x_lims=[-1.1, 1.1], y_lims=[-1.1, 1.1], 
-                      legend=True, legend_offset=None, legend_font=None, 
-                      legend_frame=False, title=None, title_font=None, 
-                      labels=None, label_distance=1.1, label_font=None, 
-                      use_latex=False, rc_fam='sans-serif', 
-                      rc_font=['Helvetica']):
+    file_out='piechart', filetype='PDF', colors=None, 
+    show_edge=True, axis_on=False, plot_ccw=False, 
+    start_angle=90, x_lims=[-1.1, 1.1], y_lims=[-1.1, 1.1], 
+    legend=True, legend_offset=None, legend_font=None, 
+    legend_frame=False, title=None, title_font=None, 
+    labels=None, label_distance=1.1, label_font=None, 
+    use_latex=False, rc_fam='sans-serif', 
+    rc_font=['Helvetica']):
     """Creates a pie chart summarizing the category data
 
     INPUTS:
@@ -814,7 +814,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
                     DEFAULT: ['Helvetica']
 
     OUTPUT:
-        The rendered figure is saved in the at the file_out location.
+        The rendered figure is saved in the file_out location.
     """
 
     # Preforms a sanity checks that the provided data is good
