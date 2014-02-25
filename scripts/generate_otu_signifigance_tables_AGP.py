@@ -5,15 +5,15 @@ from os import mkdir
 from numpy import array, delete
 from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
-from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                    calculate_tax_rank_1,
-                                                    convert_taxa,
-                                                    convert_taxa_to_list,
-                                                    build_latex_macro,
-                                                    clean_greengenes_string,
-                                                    format_date)
+from generate_otu_signifigance_tables import (calculate_abundance,
+                                              calculate_tax_rank_1,
+                                              convert_taxa,
+                                              convert_taxa_to_list,
+                                              build_latex_macro,
+                                              clean_greengenes_string,
+                                              format_date)
 from make_phyla_plots import map_to_2D_dict
-from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
+from taxtree import build_tree_from_taxontable, sample_rare_unique
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -60,6 +60,11 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     RENDERING = "LATEX"
     RARE_THRESHHOLD = 0.1
     
+    # Sets the rounding value to 4 decimal places, so the ratio matches the 
+    # rounded values.
+    ROUND_TO = 4
+    SORT_BY = 'RATIO'
+    CRITICAL = 0.05
     FORMAT_SIGNIFIGANCE = ['%1.2f', "%1.2f", "%i", "SKIP"]
     SIGNIFIGANCE_HUNDRED = [True, True, False, False]
     MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
@@ -125,6 +130,10 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                 
         population = delete(population, sample_position, 1)
         
+        # Sorts the taxa alphabetically
+        rare = sorted(rare)
+        unique = sorted(unique)
+
         # Converts the lists into greengenes strings for later processing
         greengenes_rare = []
         greengenes_unique = []
@@ -146,11 +155,12 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         number_rare_tax = len(rare_combined)
         num_rare = len(rare)
         num_unique = len(unique)
+        limited_rare = rare_combined[0:NUMBER_OF_TAXA_SHOWN]
 
-        rare_formatted = convert_taxa_to_list(rare_combined[0:NUMBER_OF_TAXA_SHOWN], 
-                                               tax_format = rare_format,
-                                               render_mode = RENDERING, 
-                                               comma = True)        
+        rare_formatted = convert_taxa_to_list(limited_rare, 
+                                              tax_format=rare_format,
+                                              render_mode=RENDERING, 
+                                              comma=True)        
      
         if num_unique > 0:
             unique_string = ' and \\textcolor{red}{%i unique}' % num_unique
@@ -160,16 +170,13 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         if number_rare_tax == 0:
             rare_formatted = "There were no rare or unique taxa found in "\
                 "your sample." 
-
         elif 0 < number_rare_tax <= NUMBER_OF_TAXA_SHOWN:
             rare_formatted = 'Your sample contained the following rare %s '\
                 'taxa: %s.' % (unique_string, rare_formatted)
-
         else:
-            rare_formatted = 'Your sample contained %i rare and %s taxa, '\
+            rare_formatted = 'Your sample contained %i rare %s taxa, '\
                 'including the following: %s.' \
-                % (num_rare, unique_string, 
-                   rare_formatted)
+                % (num_rare, unique_string, rare_formatted)
 
 
         # Calculates abundance rank
@@ -184,10 +191,12 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         abundance_formatted = build_latex_macro(formatted_abundance, \
             categories = MACRO_CATS_ABUNDANCE, format = MACRO_FORM_ABUNDANCE)
 
-        (high, low) = calculate_tax_rank_1(sample = sample, 
-                                           population = population, 
-                                           taxa = taxa,
-                                           critical_value = 0.05)
+        (high, low) = calculate_tax_rank_1(sample=sample, 
+                                           population=population, 
+                                           taxa=taxa,
+                                           critical_value=CRITICAL,
+                                           round_to=ROUND_TO,
+                                           sort_by=SORT_BY)
 
         if len(high) < NUMBER_OF_TAXA_SHOWN:
             # Formats the known high taxa
@@ -213,7 +222,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                 format=MACRO_FORM_SIGNIFICANCE)
 
         # Gets the sample date and time
-        if mapping_dict is not None:
+        if mapping is not None:
             sample_date = format_date(mapping[samp], 
                                       date_field=DATE_FIELD, 
                                       d_form_in=DATE_FORMAT, 
@@ -291,7 +300,7 @@ if __name__ == '__main__':
     if args.mapping and not isfile(args.mapping):
         parser.error('The supplied mapping file does not exist in the path.')
     elif args.mapping:
-        mapping_dict = map_to_2D_dict(open(args.mapping, 'U'))
+        mapping = map_to_2D_dict(open(args.mapping, 'U'))
     
 
     # Parses the sample IDs as a list
@@ -304,5 +313,5 @@ if __name__ == '__main__':
 
     main(taxa_table = tax_table, 
          output_dir = output_dir,
-         mapping = mapping_dict,
+         mapping = mapping,
          samples_to_analyze = samples_to_analyze)

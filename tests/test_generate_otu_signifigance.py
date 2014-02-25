@@ -3,16 +3,16 @@
 
 from unittest import TestCase, main
 from numpy import array
-from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                    calculate_tax_rank_1,
-                                                    convert_taxa,
-                                                    clean_greengenes_string,
-                                                    render_latex_header,
-                                                    render_raw_header,
-                                                    convert_taxa_to_list,
-                                                    build_latex_macro,
-                                                    convert_taxa_to_table,
-                                                    format_date)
+from generate_otu_signifigance_tables import (calculate_abundance,
+                                              calculate_tax_rank_1,
+                                              convert_taxa,
+                                              clean_greengenes_string,
+                                              render_latex_header,
+                                              render_raw_header,
+                                              convert_taxa_to_list,
+                                              build_latex_macro,
+                                              convert_taxa_to_table,
+                                              format_date)
 
 class GenerateOTUSignifiganceTablesTest(TestCase):
     
@@ -123,6 +123,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.meta = {'Sample_Date':'2/17/1963', 'Sample_Time':'3:27 am'}
 
     def test_calculate_abundance(self):
+        """Checks that abundance is calculated sanely"""
         # Sets up known value
         known_abundance_95 = [['k__Bacteria; p__[Proteobacteria]', 0.7],
                               ['k__Bacteria; p__Actinobacteria; '\
@@ -191,66 +192,159 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(test_abundance_1, known_abundance_1)
 
     def test_calculate_tax_rank_1(self):
-        # Sets up known values
-        known_high_10 = [['k__Bacteria; p__Proteobacteria; '\
-                          'c__Gammaproteobacteria; o__Enterobacteriales; '\
-                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0, 
-                          1.4507298345686689e-22], 
-                         ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
-                          7.0, 0.00073396297302392652], 
-                         ['k__Bacteria; p__Proteobacteria; '\
-                          'c__Gammaproteobacteria; o__Enterobacteriales; '\
-                          'f__Enterbacteriaceae; g__Escherichia', 0.1, 0.04714, 
-                          2.0, 0.068040408640427208]]
-        known_high_05 = [['k__Bacteria; p__Proteobacteria; '\
-                          'c__Gammaproteobacteria; o__Enterobacteriales; '\
-                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0, 
-                          1.4507298345686689e-22], 
-                         ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
-                          7.0, 0.00073396297302392652]]
-        known_high_01 = [['k__Bacteria; p__Proteobacteria; '\
-                          'c__Gammaproteobacteria; o__Enterobacteriales; '\
-                          'f__Enterbacteriaceae', 0.002, 7.6e-05, 
-                           26.0, 1.4507298345686689e-22], 
-                         ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
-                          7.0, 0.00073396297302392652]]
-        known_low_10  = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
-                          ' o__Actinomycetales; f__Dietziaceae; g__', 
-                          0.0, 0.044336, 0.0, 0.016163391728614671], 
-                         ['k__Bacteria', 
-                         0.02, 0.704584, 0.0, 0.051170083967289066], 
-                         ['k__Archaea; p__Crenarchaeota; c__Thaumarchaeota;'\
-                         ' o__Cenarchaeales; f__Cenarchaeaceae; '\
-                         'g__Nitrosopumilus', 
-                         0.03, 0.289032, 0.0, 0.065525264907055]]
-        known_low_05  = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
-                          ' o__Actinomycetales; f__Dietziaceae; g__', 
-                          0.0, 0.044336, 0.0, 0.016163391728614671]]
-        known_low_01  = []
-        # Sets up test values
-        (test_high_10, test_low_10) = calculate_tax_rank_1(sample = self.sample,
-                                                        population = self.pop,
-                                                        taxa = self.taxa,
-                                                        critical_value = 0.1)
+        """Checks enriched and depeleted samples are identified sanely"""
+        # Checks errors are thrown appropriately when the data shape is not 
+        # appropriate
+        with self.assertRaises(TypeError):
+            calculate_tax_rank_1('self.sample', self.pop, self.taxa)
+        with self.assertRaises(TypeError):
+            calculate_tax_rank_1(self.sample, 'self.pop', self.taxa)
+        with self.assertRaises(TypeError):
+            calculate_tax_rank_1(self.sample, self.pop, 'self.taxa')
+        with self.assertRaises(ValueError):
+            calculate_tax_rank_1(self.sample, self.pop, self.taxa[:4])
+        with self.assertRaises(ValueError):
+            calculate_tax_rank_1(self.sample, self.pop, self.taxa[:4])
 
-        (test_high_05, test_low_05) = calculate_tax_rank_1(sample = self.sample,
-                                                         population = self.pop,
-                                                         taxa = self.taxa)
+        # Checks errors are thrown when optional arguments are not sane
+        with self.assertRaises(TypeError):
+            calculate_tax_rank_1(self.sample, self.pop, self.taxa,
+                             critical_value='0.05')
+        with self.assertRaises(TypeError):
+            calculate_tax_rank_1(self.sample, self.pop, self.taxa,
+                             round_to='2')
+        with self.assertRaises(TypeError):
+            calculate_tax_rank_1(self.sample, self.pop, self.taxa,
+                             sort_by=2)
+        with self.assertRaises(ValueError):
+            calculate_tax_rank_1(self.sample, self.pop, self.taxa,
+                             sort_by='River Styx')
+
+        # Checks the default setup
+        known_hi = [['k__Bacteria; p__Proteobacteria; '\
+                     'c__Gammaproteobacteria; o__Enterobacteriales; '\
+                     'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0, 
+                     1.4507298345686689e-22], 
+                    ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
+                     7.0, 0.00073396297302392652]]
+        known_lo = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
+                     ' o__Actinomycetales; f__Dietziaceae; g__', 
+                     0.0, 0.044336, 0.0, 0.016163391728614671]]
+       
+        (test_hi, test_lo) = calculate_tax_rank_1(sample=self.sample,
+                                                  population=self.pop,
+                                                  taxa=self.taxa)
+        self.assertEqual(known_hi, test_hi)
+        self.assertEqual(known_lo, test_lo)
+
+        # Checks a custom critical value
+        known_hi = [['k__Bacteria; p__Proteobacteria; '\
+                     'c__Gammaproteobacteria; o__Enterobacteriales; '\
+                     'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0, 
+                     1.4507298345686689e-22], 
+                    ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 
+                     7.0, 0.00073396297302392652], 
+                    ['k__Bacteria; p__Proteobacteria; '\
+                     'c__Gammaproteobacteria; o__Enterobacteriales; '\
+                     'f__Enterbacteriaceae; g__Escherichia', 0.1, 0.04714, 
+                     2.0, 0.068040408640427208]]
+        known_lo = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'\
+                     ' o__Actinomycetales; f__Dietziaceae; g__', 
+                     0.0, 0.044336, 0.0, 0.016163391728614671], 
+                    ['k__Bacteria', 
+                     0.02, 0.704584, 0.0, 0.051170083967289066], 
+                    ['k__Archaea; p__Crenarchaeota; c__Thaumarchaeota;'\
+                     ' o__Cenarchaeales; f__Cenarchaeaceae; '\
+                     'g__Nitrosopumilus', 
+                     0.03, 0.289032, 0.0, 0.065525264907055]]
+
+        (test_hi, test_lo) = calculate_tax_rank_1(sample=self.sample,
+                                                  population=self.pop,
+                                                  taxa=self.taxa,
+                                                  critical_value=0.1)
         
-        (test_high_01, test_low_01) = calculate_tax_rank_1(sample = self.sample,
-                                                        population = self.pop,
-                                                        taxa = self.taxa,
-                                                        critical_value = 0.01)
+        self.assertEqual(known_hi, test_hi)
+        self.assertEqual(known_lo, test_lo)
 
-        self.assertEqual(known_high_10, test_high_10)
-        self.assertEqual(known_low_10, test_low_10)
-        self.assertEqual(known_high_05, test_high_05)
-        self.assertEqual(known_low_05, test_low_05)
-        self.assertEqual(known_high_01, test_high_01)
-        self.assertEqual(known_low_01, test_low_01)
+        # Checks a custom rounding value
+        known_hi = [['k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; '
+                     'o__Enterobacteriales; f__Enterbacteriaceae', 0.002, 
+                     7.6e-05, 25.0, 1.4507298345686689e-22],
+                    ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 7.0, 
+                     0.00073396297302392652]]
+
+        known_lo = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria; '
+                     'o__Actinomycetales; f__Dietziaceae; g__', 0.0, 0.044336, 
+                     0.0, 0.016163391728614671]]
+
+        (test_hi, test_lo) = calculate_tax_rank_1(sample=self.sample,
+                                                  population=self.pop,
+                                                  taxa=self.taxa,
+                                                  round_to=5)
+        
+        self.assertEqual(known_hi, test_hi)
+        self.assertEqual(known_lo, test_lo)
+
+        # Checks SAMPLE sorting
+        known_hi = [['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 7.0, 
+                     0.00073396297302392652],
+                    ['k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; '
+                     'o__Enterobacteriales; f__Enterbacteriaceae', 0.002, 
+                     7.6e-05, 26.0, 1.4507298345686689e-22]]
+
+        known_lo = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria; '
+                     'o__Actinomycetales; f__Dietziaceae; g__', 0.0, 0.044336, 
+                     0.0, 0.016163391728614671]]
+
+        (test_hi, test_lo) = calculate_tax_rank_1(sample=self.sample,
+                                                  population=self.pop,
+                                                  taxa=self.taxa,
+                                                  sort_by='SAMPLE')
+        
+        self.assertEqual(known_hi, test_hi)
+        self.assertEqual(known_lo, test_lo)
+
+        # Checks POPULATION sorting
+        known_hi = [['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 7.0, 
+                     0.00073396297302392652],
+                    ['k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; '
+                     'o__Enterobacteriales; f__Enterbacteriaceae', 0.002, 
+                     7.6e-05, 26.0, 1.4507298345686689e-22]]
+
+        known_lo = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria; '
+                     'o__Actinomycetales; f__Dietziaceae; g__', 0.0, 0.044336, 
+                     0.0, 0.016163391728614671]]
+
+        (test_hi, test_lo) = calculate_tax_rank_1(sample=self.sample,
+                                                  population=self.pop,
+                                                  taxa=self.taxa,
+                                                  sort_by='SAMPLE')
+        
+        self.assertEqual(known_hi, test_hi)
+        self.assertEqual(known_lo, test_lo)
+
+         # Checks RATIO sorting
+        known_hi = [['k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; '
+                     'o__Enterobacteriales; f__Enterbacteriaceae', 0.002, 
+                     7.6e-05, 26.0, 1.4507298345686689e-22],
+                    ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852, 7.0, 
+                     0.00073396297302392652]]
+
+        known_lo = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria; '
+                     'o__Actinomycetales; f__Dietziaceae; g__', 0.0, 0.044336, 
+                     0.0, 0.016163391728614671]]
+
+        (test_hi, test_lo) = calculate_tax_rank_1(sample=self.sample,
+                                                  population=self.pop,
+                                                  taxa=self.taxa,
+                                                  sort_by='RATIO')
+        
+        self.assertEqual(known_hi, test_hi)
+        self.assertEqual(known_lo, test_lo)
 
     def test_convert_taxa(self):
-        # test a raw text header        
+        """Checks the header is converted correctly"""
+        # test  raw header        
         test_value = [['Rose', 9, 10.101, 0.7401, 97.643, 0.6802, 0.2252], 
                       ['Martha', 10, 10.201, 0.3823, 20.027, 0.0023, 0.2302]]
         test_keys = ['%i', '%1.2f', '%1.2f', '%1.1f\\%%', '%1.1f\\%%', 'SKIP']
@@ -317,6 +411,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(test_list_raw_comma, known_raw_comma)
 
     def test_clean_greengenes_string(self):
+        """Checks the greengenes strings are cleaned sanely"""
         known_raw = ['*Kingdom Bacteria*',
                      'Phylum Proteobacteria',
                      'Class Gammaproteobacteria',
@@ -357,6 +452,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
             self.assertEqual(test_string_latex, known_latex[idx])
 
     def test_render_latex_header(self):
+        """Checks a latex header can be rendered sanely"""
         test_alignment = ['l', 'c', 'c', 'r']
 
         # Checks that appropriate errors are raised
@@ -386,6 +482,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(test_align_no_nums, known_header_align_no_num)
 
     def test_render_raw_header(self):
+        """Checks a raw table header can be rendered sanely"""
         # Sets constants for table formatting
         test_header = ['Doctor', 'Companion(s)', 'Writer']
         category_length = 23        
@@ -424,7 +521,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(known_header_no_number, test_header_no_number)
 
     def test_build_latex_macro(self):
-        """Tests that a latex macro is generated"""
+        """Tests that a latex macro is generated sanely"""
         # Sets up the text functions for formatting
         test_funs = [lambda x: clean_greengenes_string(x, render_mode='LATEX'),
                      lambda x: x,

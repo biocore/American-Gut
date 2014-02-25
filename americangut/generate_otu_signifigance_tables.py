@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
+from __future__ import division
+from numpy import (mean, shape, argsort, sort, sum as nsum, delete, 
+                   seterr, ndarray, zeros)
 from scipy.stats import ttest_1samp
 from time import strftime, strptime, struct_time
 
@@ -59,9 +61,8 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
     return abundant
 
 def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05, 
-                         round_to=None):
-    """Identifies unique and rare samples in the population and preforms a 
-    case 1 t-test on common samples.
+                         round_to=None, sort_by='P_VALUE'):
+    """Identifies enriched and depleted samples
 
     INPUTS:
         sample -- a one dimensional numpy array containing the taxonomic
@@ -74,6 +75,15 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05,
                     population frequencies
 
         critical_value -- the alpha for use in the t-test
+                    DEFAULT: 0.05
+
+        rount_to -- the number of places after the decimal to round raw values 
+                    before calculating the ratio. None skips rounding
+                    DEFAULT: None
+
+        sort_by -- a number indicating the value to be used to sort the data: 
+                    'SAMPLE', 'POPULATION', 'RATIO', 'P_VALUE'
+                    DEFAULT: 'P_VALUE'
 
     OUTPUTS:       
         high -- a list of lists with greengenes strings, sample frequency, 
@@ -85,13 +95,30 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05,
                     p-value
     """
 
-    # Rare taxa are defined as appearing in less than 10% of the samples
-
+    # Performs a check on the imports for the taxa, population and samples
+    if not isinstance(sample, ndarray):
+        raise TypeError('Samples must be a numpy array')
+    if not isinstance(population, ndarray):
+        raise TypeError('Population must be a numpy array')
+    if not isinstance(taxa, (list, tuple)):
+        raise TypeError('Taxa must be a iterable.')
+    if not len(taxa) == len(sample):
+        raise ValueError('Each entry in sample must have a corresponding '
+                         'taxon.')
     (num_taxa, num_samples) = shape(population)
-    
-    if num_taxa != len(taxa):
-        raise ValueError, 'The number of entries in samples and taxa must'\
-            ' be equal.'
+    if not num_taxa == len(taxa):
+        raise ValueError('Each row in the population table must have a '
+                         'corresponding taxon.')
+
+    # Preforms error checking on Keyword arguments
+    if not isinstance(critical_value, float):
+        raise TypeError('The critical_value must be a floating point number')
+    if not isinstance(round_to, int) and round_to is not None:
+        raise TypeError('round_to must be an integer or None.')
+    if not isinstance(sort_by, str):
+        raise TypeError('sort_by must be a string')
+    if not sort_by in set(['SAMPLE', 'POPULATION', 'RATIO', 'P_VALUE']):
+        raise ValueError('sort_by value is not supported.')
 
     # Identifies taxa that are significantly enriched or depleted in the 
     # population
@@ -109,9 +136,18 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05,
             taxa = delete(taxa, idx)           
 
     seterr(all='raise')
+    
     # Determines the ratio 
     population_mean = mean(population,1)    
-    ratio = sample.astype(float) / population_mean.astype(float)
+    ratio = zeros(population_mean.shape)
+    for idx, element in enumerate(population_mean):
+        if round_to is None:
+            ratio[idx] = sample[idx]/element
+        elif round(element, round_to) == 0:
+            ratio[idx] = round(sample[idx], round_to)/element
+        else:
+            ratio[idx] = round(sample[idx], round_to)/round(element, round_to)
+
     # preforms a case 1 t-test comparing the sample and population
     t_stat = []
     p_stat = []
@@ -121,11 +157,18 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05,
     # Preforms a bonferroni correction on the p values
     p_stat = p_stat*num_taxa
 
-    # Determines list position based on the smallest p values.
-    p_order = argsort(p_stat)
+    # Determines list position based on the target value
+    if sort_by == 'SAMPLE':
+        order = sample.argsort()[::-1]
+    elif sort_by == 'POPULATION':
+        order = population_mean.argsort()[::-1]
+    elif sort_by == 'RATIO':
+        order = ratio.argsort()[::-1]
+    elif sort_by == 'P_VALUE':
+        order = p_stat.argsort()
 
     # Goes through the p values and determines if they are enriched or depleted
-    for index in p_order:
+    for index in order:
         if p_stat[index] >= critical_value:
             continue
 
@@ -213,7 +256,7 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
     return formatted_taxa
 
 def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
-                         color = 'red'):
+    color = 'red'):
     """Converts a list of greengenes strings to a text encoded list for printing
 
     INPUTS:
@@ -276,7 +319,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
     return format_list
     
 def clean_greengenes_string(greengenes_string, render_mode, format = None, \
-                            unclassified = False, color = 'red'):
+    unclassified = False, color = 'red'):
     """Distills a greengenes string to its high taxonomic resolution
 
     INPUTS:
@@ -655,7 +698,7 @@ def build_latex_macro(data, categories, format=None):
     return macro
 
 def format_date(meta, date_field=None, d_form_in=None, time_field=None, 
-                t_form_in=None, format_out='%b %d, %Y'):
+    t_form_in=None, format_out='%b %d, %Y'):
     """Formats the date information for a metadata dictionary
     INPUTS:
         meta -- a 2D dictionary where a sample ID is keyed to an metadata 
