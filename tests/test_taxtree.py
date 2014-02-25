@@ -5,6 +5,7 @@ from americangut.taxtree import create_node, add_node, get_node, update_tree, \
         get_rare_unique, traverse, sample_rare_unique
 from biom.table import table_factory
 from numpy import array
+from copy import deepcopy
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -115,9 +116,42 @@ class TaxTreeTests(TestCase):
                          }
                     ]}
                 ]}
-        obs = update_tree(None, tax_strings_by_sample)
+        tax_strings = deepcopy(tax_strings_by_sample)
+        tax_strings[0].append(['k__[1]','p__x','c__'])
+        obs = update_tree(None, tax_strings)
         self.assertEqual(obs, exp)
 
+    def test_create_tree_ignore_contested(self):
+        """take tax strings, create a tree"""
+        exp = {'name':'root',
+                'popcount':3, 
+                'children':[
+                    {'name':'k__1',
+                     'popcount':3,
+                     'children':[
+                        {'name':'p__x', 
+                         'popcount':2,
+                         'children':[
+                            {'name':'c__1', 
+                             'popcount':1, 
+                             'children':[]},
+                            {'name':'c__2', 
+                             'popcount':1, 
+                             'children':[]}
+                            ]
+                        },
+                        {'name':'p__y',
+                         'popcount':3,
+                         'children':[
+                             {'name':'c__3',
+                              'popcount':2,
+                              'children':[]}
+                             ]
+                         }
+                    ]}
+                ]}
+        obs = update_tree(None, tax_strings_by_sample)
+        self.assertEqual(obs, exp)
     def test_get_rare_unique(self):
         t = update_tree(None, tax_strings_by_sample)
         exp_unique = [['k__1','p__x','c__2']]
