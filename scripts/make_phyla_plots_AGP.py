@@ -72,14 +72,14 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                        [0.95, 0.95]])
 
     # Common taxa are designated before processing to remain constant.
-    COMMON_TAXA = [(u'k__Bacteria', u' p__Firmicutes'),
-                   (u'k__Bacteria', u' p__Bacteroidetes'),
-                   (u'k__Bacteria', u' p__Proteobacteria'),
-                   (u'k__Bacteria', u' p__Actinobacteria'),
-                   (u'k__Bacteria', u' p__Verrucomicrobia'),
-                   (u'k__Bacteria', u' p__Tenericutes'),
-                   (u'k__Bacteria', u' p__Cyanobacteria'),
-                   (u'k__Bacteria', u' p__Fusobacteria')]
+    COMMON_TAXA = [(u'k__Bacteria', u'p__Firmicutes'),
+                   (u'k__Bacteria', u'p__Bacteroidetes'),
+                   (u'k__Bacteria', u'p__Proteobacteria'),
+                   (u'k__Bacteria', u'p__Actinobacteria'),
+                   (u'k__Bacteria', u'p__Verrucomicrobia'),
+                   (u'k__Bacteria', u'p__Tenericutes'),
+                   (u'k__Bacteria', u'p__Cyanobacteria'),
+                   (u'k__Bacteria', u'p__Fusobacteria')]
 
     SKIPSET = set(('Sample', 'Average', 'MP'))
     
@@ -113,7 +113,6 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     map_dict = map_to_2D_dict(mapping_data)
 
     # Gets the category file dictionary summarized with the common categories
-     # Generates the category file dictionary
     categories = parse_category_files(raw_tables = cat_tables, 
                                       common_groups = COMMON_TAXA, 
                                       level = LEVEL, 
@@ -125,6 +124,8 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                                 level = LEVEL, 
                                 common_categories = COMMON_TAXA[:8], 
                                 metadata_category = CATEGORY)
+    print 'Whole table summary: \n', whole_summary
+    print '\n\nNew Common Taxa: \n%r\n', new_common_taxa
 
     # Converts the final taxa to a cleaned up list
     # Converts final taxa to a clean list
