@@ -115,7 +115,8 @@ def parse_category_files(raw_tables, common_groups, level=2,
                                     common_categories = common_groups[:ori_num],
                                     metadata_category = metadata)
         category_data.update({cat: {'Groups': ids,
-                                   'Summary': data}})
+                                   'Summary': data,
+                                   'Taxonomy': cats}})
     return category_data
 
 def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE', 
@@ -284,7 +285,6 @@ def summarize_common_categories(biom_table, level, common_categories,
 
     # Normalizes the biom table
     biom_norm = biom_table.normObservationBySample()
-
     # Prealocates numpy objects (because that makes life fun!). tax_other is 
     # set up as a row array because this is ultimately summed    
     cat_summary = zeros([num_cats, num_samples])  
@@ -293,17 +293,16 @@ def summarize_common_categories(biom_table, level, common_categories,
     # Collapses the OTU table using the category at the correct level
     bin_fun = lambda x:x[metadata_category][:level]
     for (bin, table) in biom_norm.binObservationsByMetadata(bin_fun):        
-
-        if bin in common_categories:
-            cat_summary[common_categories.index(bin)] = table.sum('sample') 
+        if bin. in common_categories:
+            cat_summary[common_categories.index(bin)] = table.sum('sample')
         else:       
             cat_other = vstack((cat_other, table.sum('sample')))
 
     
-    cat_summary = vstack((cat_summary, sum(cat_other, 0)))
     common_cats = common_categories
-    
     common_cats.extend(other_name)
+    
+    cat_summary = vstack((cat_summary, sum(cat_other, 0)))
 
     return sample_ids, cat_summary, common_cats
 
@@ -662,16 +661,16 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     plt.savefig(file_out, format = filetype)
 
 def render_barchart(data_table, group_names, sample_names, axis_dims, 
-                    fig_dims, file_out='barchart', filetype='PDF', colors=None, 
-                    show_edge=True, legend=True, title=None, match_legend=True, 
-                    frame=True, bar_width=0.8, x_axis=True, x_label=None, 
-                    x_min=-0.5, x_tick_interval=1.0, x_grid=False, y_axis=True, 
-                    y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None, 
-                    y_label=None, y_grid=False, legend_frame=False, 
-                    legend_offset=None, font_angle=45, font_alignment='right', 
-                    tick_font=None, label_font = None, legend_font=None, 
-                    title_font=None, use_latex=False, rc_fam='sans-serif', 
-                    rc_font=['Helvetica']):
+    fig_dims, file_out='barchart', filetype='PDF', colors=None, 
+    show_edge=True, legend=True, title=None, match_legend=True, 
+    frame=True, bar_width=0.8, x_axis=True, x_label=None, 
+    x_min=-0.5, x_tick_interval=1.0, x_grid=False, y_axis=True, 
+    y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None, 
+    y_label=None, y_grid=False, legend_frame=False, 
+    legend_offset=None, font_angle=45, font_alignment='right', 
+    tick_font=None, label_font = None, legend_font=None, 
+    title_font=None, use_latex=False, rc_fam='sans-serif', 
+    rc_font=['Helvetica']):
     """Creates a stacked bar chart using the data in the category table.
 
     A single value bar chart can be created using a vector for data_table 
