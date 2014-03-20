@@ -41,6 +41,7 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     """
 
     # Sets table constants
+    RARIFCATION_LEVEL = 1000
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
     FORMAT_SIGNIFIGANCE = ['%1.1f', "%1.2f", "%i", "SKIP"]
@@ -49,6 +50,8 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
     FORMAT_ABUNDANCE = ["%1.1f"]
     ABUNDANCE_HUNDRED = [True]
+    # Includes all samples in the abundance listing
+    SUM_MIN = 1
     MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
         'enrichFoldd']
     MACRO_CATS_ABUNDANCE = ['abundTaxon', 'abundSampl']
@@ -59,6 +62,8 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     # Number of taxa shown is an indexing value, it is one less than what is 
     # actually shown.
     NUMBER_OF_TAXA_SHOWN = 5
+
+    # Pulls out any samples 
 
     # Builds the the taxomnomy tree for the table and identifies the 
     # rare/unique taxa in each sample
@@ -141,9 +146,9 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                    rare_formatted)
 
 
-        # Calculates abundance rank
+        # Calculates abundance rank, taking all samples into consideration 
         (abundance) = calculate_abundance(sample, taxa, 
-                                          abundance_threshhold = 1)
+                                          sum_min = SUM_MIN)
 
         # Generates formatted abundance table
         formatted_abundance = convert_taxa(abundance[0:NUMBER_OF_TAXA_SHOWN],                                        
@@ -160,9 +165,11 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
 
         if len(high) < NUMBER_OF_TAXA_SHOWN:
             # Formats the known high taxa
-            formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
+            formatted_high = convert_taxa(high,
                                           formatting_keys = FORMAT_SIGNIFIGANCE,
                                           hundredx = SIGNIFIGANCE_HUNDRED)
+            if len(high) == 1:
+                print formatted_high
             # Adds the dummy list to the end
             for idx in COUNT:
                 if idx == (NUMBER_OF_TAXA_SHOWN - len(high)):

@@ -119,10 +119,6 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
 
         self.header = ['Taxonomy', 'Doctor', 'Humans', 'Fold']  
 
-    def tearDown(self):
-        #
-        pass
-
     def test_calculate_abundance(self):
         # Sets up known value
         known_abundance_95 = [['k__Bacteria; p__[Proteobacteria]', 0.7],

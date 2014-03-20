@@ -11,7 +11,7 @@ __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
 __email__ = "j.debelius@gmail.com" 
 
-def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
+def calculate_abundance(sample, taxa, sum_min = 0.95):
     """Ranks taxa in a sample in order of abundance
 
     INPUTS:
@@ -24,9 +24,9 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
         taxa -- a one dimensional numpy array or list of greengenes ids 
                     associated the sample
 
-        abundance_threshhold -- a value between 0 and 1 indicating the minimum 
-                    fraction of a sample to be represented by the most abundant 
-                    OTUs. 
+        sum_min -- a value between 0 and 1 indicating the minimum fraction of a 
+                    sample to be represented by the sum of the most abundant 
+                    OTUs.
 
     OUTPUTS:
         abundant -- a list of lists of greenegenes taxonomy strings and the
@@ -52,7 +52,7 @@ def calculate_abundance(sample, taxa, abundance_threshhold = 0.95):
     for idx, frequency in enumerate(abundance_data):
         abundance_watch = abundance_watch + frequency
         abundant.append([abundance_taxa[idx], round(frequency, 6)])
-        if abundance_watch > abundance_threshhold:
+        if abundance_watch > sum_min:
             break
 
     return abundant
@@ -148,8 +148,8 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
 
     INPUTS:
 
-        rough_taxa -- a dictionary of greengenes taxonomy strings keyed to a
-                    list of numeric values.
+        rough_taxa -- a list of lists with the greengenes taxonomy strings 
+                    first followed by corresponding values
 
         render_mode -- a string describing the format for the table: "RAW",
                     "HTML" or "LATEX".
@@ -164,23 +164,21 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
         formatted_taxa -- a list of string with formatting for the final table. 
     """
     num_rough = len(rough_taxa)
-    key_class = formatting_keys.__class__
     num_keys = len(formatting_keys)
-    hund_class = hundredx.__class__
     num_hund = len(hundredx)
 
     # Preforms sanity checks and sets up for constants
-    if not (key_class == list or key_class == bool):
+    if not isinstance(formatting_keys, (list, bool)):
         raise TypeError, 'formatting_keys must be a list or bool.'
 
-    elif not (hund_class == list or hund_class == bool):
+    elif not isinstance(hundredx, (list, bool)):
         raise TypeError, 'hundredx must be a list or bool.'
 
-    if not num_rough == num_keys and not key_class == list:
+    if not num_rough == num_keys and isinstance(formatting_keys, list):
         raise ValueError, 'The number of elements in rough_taxa and the number'\
             ' of elements in formatting_keys must be equal.'
 
-    elif not num_rough == num_hund and not hund_class == list:
+    elif not num_rough == num_hund and isinstance(hundredx, list):
         raise ValueError, 'The number of elements in rough_taxa and the number'\
             ' of elements in hundredx must be equal.'
 
