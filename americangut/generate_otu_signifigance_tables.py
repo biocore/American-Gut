@@ -44,7 +44,6 @@ def calculate_abundance(sample, taxa, sum_min = 0.95):
 
     # List comprehension; faster. Also possible in dictionaries?
     abundance_taxa = [taxa[rank] for rank in abundance_rank]
-
    
     # Identifies the taxonomy up to the abundance threshold    
     abundance_watch = 0
@@ -148,45 +147,63 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
 
     INPUTS:
 
-        rough_taxa -- a list of lists with the greengenes taxonomy strings 
-                    first followed by corresponding values
+        rough_taxa -- a list of lists with a descriptor string followed by
+                   a list of corresponding values
 
-        render_mode -- a string describing the format for the table: "RAW",
-                    "HTML" or "LATEX".
-
-        formatting_keys --  a string describing the way the value should be 
-                    formatting using string formats. For example, %1.2f, %2d, 
-                    %i. A value of 'SKIP' will ignore that value and remove it 
-                    from the output list.
+        formatting_keys --  a list describing the way values following the 
+                    taxonomy string should be formatting using string formats. 
+                    For example, %1.2f, %2d, %i. A value of 'SKIP' will ignore 
+                    that value and remove it from the output list.
 
     OUTPUTS:
 
         formatted_taxa -- a list of string with formatting for the final table. 
     """
-    num_rough = len(rough_taxa)
-    num_keys = len(formatting_keys)
-    num_hund = len(hundredx)
+    
+    print rough_taxa
+    print rough_taxa.__class__
+    
+    # Checks the rough_taxa argument is sane
+    if not isinstance(rough_taxa, list):
+        raise TypeError('rough_taxa must be a list of lists')
+    num_ent = len(rough_taxa[0])
+    for entry in rough_taxa:
+        if not isinstance(entry, list):
+            raise TypeError('rough_taxa must be a list of lists')
+        if not len(entry) == num_ent:
+            raise ValueError('list size is inconsistant')
+    num_rough = num_ent-1
 
-    # Preforms sanity checks and sets up for constants
-    if not isinstance(formatting_keys, (list, bool)):
-        raise TypeError, 'formatting_keys must be a list or bool.'
+
+    if isinstance(formatting_keys, list):
+        num_keys = len(formatting_keys)
+    else:
+        num_keys = 1
+
+    if isinstance(hundredx, list):
+        num_hund = len(hundredx)
+    else:
+        num_hund = 1
+
+    if not isinstance(formatting_keys, (list, str)):
+        raise TypeError, 'formatting_keys must be a list or string.'
+    if not num_rough == num_keys and isinstance(formatting_keys, list):
+        raise ValueError('The number of elements in rough_taxa (%i) and the '
+                         'number of elements in formatting_keys (%i) must be '
+                         'equal.' %(num_rough, num_keys))
 
     elif not isinstance(hundredx, (list, bool)):
         raise TypeError, 'hundredx must be a list or bool.'
-
-    if not num_rough == num_keys and isinstance(formatting_keys, list):
-        raise ValueError, 'The number of elements in rough_taxa and the number'\
-            ' of elements in formatting_keys must be equal.'
-
     elif not num_rough == num_hund and isinstance(hundredx, list):
-        raise ValueError, 'The number of elements in rough_taxa and the number'\
-            ' of elements in hundredx must be equal.'
+        raise ValueError('The number of elements in rough_taxa(%i) and the '
+                         'number of elements in hundredx(%i) must be equal.' 
+                         %(num_rough, num_hund))
 
     # Converts formatting keys and hundredx to lists
-    if key_class == bool:
+    if isinstance(formatting_keys, str):
         formatting_keys = [formatting_keys]*num_rough
 
-    if hund_class == bool:
+    if isinstance(hundredx, bool):
         hundredx = [hundredx]*num_rough
 
     # Creates formatted list

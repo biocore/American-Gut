@@ -120,6 +120,11 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.header = ['Taxonomy', 'Doctor', 'Humans', 'Fold']  
 
     def test_calculate_abundance(self):
+        """Checks that abundance is calculated sanely"""
+        # Checks errors are thrown when the sample and taxa are different lengths
+        with self.assertRaises(ValueError):
+            calculate_abundance(self.sample[0:2], self.taxa)
+
         # Sets up known value
         known_abundance_95 = [['k__Bacteria; p__[Proteobacteria]', 0.7],
                               ['k__Bacteria; p__Actinobacteria; '\
@@ -179,12 +184,12 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
 
         test_abundance_99 = calculate_abundance(sample = self.sample, 
                                                 taxa = self.taxa, 
-                                                abundance_threshhold = 0.99)
+                                                sum_min = 0.99)
         self.assertEqual(test_abundance_99, known_abundance_99)
 
         test_abundance_1 = calculate_abundance(sample = self.sample, 
-                                                taxa = self.taxa, 
-                                                abundance_threshhold = 1.000)
+                                               taxa = self.taxa, 
+                                               sum_min = 1.000)
         self.assertEqual(test_abundance_1, known_abundance_1)
 
     def test_calculate_tax_rank_1(self):
@@ -247,20 +252,64 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(known_low_01, test_low_01)
 
     def test_convert_taxa(self):
-        # test a raw text header        
+        """Checks that convert_taxa runs sanely"""
+        # Sets up test values
         test_value = [['Rose', 9, 10.101, 0.7401, 97.643, 0.6802, 0.2252], 
                       ['Martha', 10, 10.201, 0.3823, 20.027, 0.0023, 0.2302]]
         test_keys = ['%i', '%1.2f', '%1.2f', '%1.1f\\%%', '%1.1f\\%%', 'SKIP']
         test_hund = [False, False, True, False, True, False]              
 
-        known_latex = [['Rose', '9', '10.10', '74.01', '97.6\%', '68.0\%'],
-                       ['Martha', '10', '10.20', '38.23', '20.0\%', '0.2\%']]
+        # Checks that errors are called correctly
+        with self.assertRaises(TypeError):
+            convert_taxa('test_value', test_keys, test_hund)
+        
+        with self.assertRaises(TypeError):
+            convert_taxa(test_value.append('Cats'), test_keys, test_hund)
+        test_value.pop(test_value.index('Cats'))
+        test_value.append(['Cats'])
 
-        test_latex = convert_taxa(test_value,
-                                  formatting_keys = test_keys,
-                                  hundredx = test_hund)
+        with self.assertRaises(ValueError):
+            convert_taxa(test_value, test_keys, test_hund)
+        test_value.pop(test_value.index(['Cats']))
 
-        self.assertEqual(test_latex, known_latex)
+        with self.assertRaises(TypeError):
+            convert_taxa(test_value, set(test_keys), test_hund)
+        with self.assertRaises(ValueError):
+            convert_taxa(test_value, test_keys[0:1], test_hund)
+
+        with self.assertRaises(TypeError):
+            convert_taxa(test_value, set(test_keys), test_hund)
+        with self.assertRaises(ValueError):
+            convert_taxa(test_value, test_keys[0:1], test_hund)
+
+        with self.assertRaises(TypeError):
+            convert_taxa(test_value, test_keys, set(test_hund))
+        with self.assertRaises(ValueError):
+            convert_taxa(test_value, test_keys, test_hund[0:1])
+
+        # Tests with list values
+        test  = convert_taxa(test_value, test_keys, test_hund)
+        known = [['Rose', '9', '10.10', '74.01', '97.6\%', '68.0\%'],
+                 ['Martha', '10', '10.20', '38.23', '20.0\%', '0.2\%']]
+        self.assertEqual(test, known)
+
+        # Tests with string key
+        key = '%i'
+        test_value = [['Rose', 9, 10.101, 0.7401, 97.643, 0.6802, 0.2252], 
+                      ['Martha', 10, 10.201, 0.3823, 20.027, 0.0023, 0.2302]]
+        test  = convert_taxa(test_value, key, test_hund)
+        known = [['Rose', '9', '10', '74', '97', '68', '0'],
+                 ['Martha', '10', '10', '38', '20', '0', '0']]
+        self.assertEqual(known, test)
+
+         # Tests with hundred key
+        hund = False
+        test_value = [['Rose', 9, 10.101, 0.7401, 97.643, 0.6802, 0.2252], 
+                      ['Martha', 10, 10.201, 0.3823, 20.027, 0.0023, 0.2302]]
+        test  = convert_taxa(test_value, test_keys, hund)
+        known = [['Rose', '9', '10.10', '0.74', '97.6\%', '0.7\\%'],
+                 ['Martha', '10', '10.20', '0.38', '20.0\%', '0.0\\%']]
+        self.assertEqual(known, test)
 
     def test_convert_taxa_to_list(self):
         format_list = ['BOLD', 'REG', 'REG', 'REG', 'REG', 'REG', 'COLOR']
@@ -588,11 +637,6 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                                                   alignment = alignment_vary,
                                                   header_code = header_code)
         self.assertEqual(latex_header_test, latex_code_known)
-
-
-
-
-      
         
 
 if __name__ == '__main__':

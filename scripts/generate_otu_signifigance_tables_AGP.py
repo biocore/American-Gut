@@ -63,8 +63,6 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     # actually shown.
     NUMBER_OF_TAXA_SHOWN = 5
 
-    # Pulls out any samples 
-
     # Builds the the taxomnomy tree for the table and identifies the 
     # rare/unique taxa in each sample
     tree, all_taxa = build_tree_from_taxontable(taxa_table)
@@ -95,7 +93,6 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         
         sample_position = filtered_table.getSampleIndex(samp)
         sample = filtered_table.sampleData(samp)
-        print samp, sum(sample > 0)
                 
         population = delete(population, sample_position, 1)
         
@@ -124,7 +121,12 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         rare_formatted = convert_taxa_to_list(rare_combined[0:NUMBER_OF_TAXA_SHOWN], 
                                                tax_format = rare_format,
                                                render_mode = RENDERING, 
-                                               comma = True)        
+                                               comma = True)    
+
+        # Sets up the filename
+        file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
+            FILE_EXTENSION))
+    
      
         if num_unique > 0:
             unique_string = ' and \\textcolor{red}{%i unique}' % num_unique
@@ -145,7 +147,6 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                 % (num_rare, unique_string, 
                    rare_formatted)
 
-
         # Calculates abundance rank, taking all samples into consideration 
         (abundance) = calculate_abundance(sample, taxa, 
                                           sum_min = SUM_MIN)
@@ -163,34 +164,28 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                                            taxa = taxa,
                                            critical_value = 0.05)
 
-        if len(high) < NUMBER_OF_TAXA_SHOWN:
+        if len(high) == 0:
+            formatted_high = [['', '', '', '']]*NUMBER_OF_TAXA_SHOWN
+
+
+        elif len(high) < NUMBER_OF_TAXA_SHOWN:
             # Formats the known high taxa
             formatted_high = convert_taxa(high,
                                           formatting_keys = FORMAT_SIGNIFIGANCE,
                                           hundredx = SIGNIFIGANCE_HUNDRED)
-            if len(high) == 1:
-                print formatted_high
             # Adds the dummy list to the end
             for idx in COUNT:
                 if idx == (NUMBER_OF_TAXA_SHOWN - len(high)):
                     break
                 formatted_high.append(DUMMY)           
 
-            high_formatted = generate_latex_macro(formatted_high, \
-                categories = MACRO_CATS_SIGNIFICANCE)
-
         else:
             formatted_high = convert_taxa(high[0:NUMBER_OF_TAXA_SHOWN],
                                           formatting_keys = FORMAT_SIGNIFIGANCE,
                                           hundredx = SIGNIFIGANCE_HUNDRED)
 
-            high_formatted = generate_latex_macro(formatted_high, \
-                categories = MACRO_CATS_SIGNIFICANCE)
-
-
-    
-        file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp, 
-            FILE_EXTENSION))
+        high_formatted = generate_latex_macro(formatted_high, \
+            categories = MACRO_CATS_SIGNIFICANCE)
 
         # Saves the file
         file_for_editing = open(file_name, 'w')
