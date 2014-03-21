@@ -57,8 +57,7 @@ def calculate_abundance(sample, taxa, sum_min = 0.95):
     return abundant
 
 def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
-    """Identifies unique and rare samples in the population and preforms a 
-    case 1 t-test on common samples.
+    """Preforms a case 1 t-test on common samples
 
     INPUTS:
         sample -- a one dimensional numpy array containing the taxonomic
@@ -142,8 +141,7 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     return high, low
 
 def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
-    """Takes a dictionary of taxonomy and corresponding values and formats
-    for inclusion in an output table.
+    """Formats lists of numbers for table generation
 
     INPUTS:
 
@@ -227,7 +225,7 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
     return formatted_taxa
 
 def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
-    color = 'red'):
+                         color = 'red'):
     """Converts a list of greengenes strings to a text encoded list for printing
 
     INPUTS:
@@ -235,7 +233,8 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
                     greengenes to be included in the final, formated output.
 
         tax_format -- a list specifiying if an argument should be bolded 
-                        (denoted by "BOLD") or left alone ("REG")
+                        (denoted by "BOLD"), rendered in color ('COLOR'), 
+                        or left alone ('REG').
 
         render_mode -- a python string describing the way the out should be 
                     formatted. Options are LATEX, corresponding to LaTex code,
@@ -246,6 +245,9 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
         comma -- a binary value indicating whether the list should be single 
                     line comma separated list (TRUE), or a list format with each
                     item on its own line (FALSE).
+
+        color -- a string identifying the shade latex should use for the text.
+                    DEFAULT: 'red'
 
     OUTPUT:
         format_list -- a python string formatted to give a list of taxa 
@@ -290,8 +292,8 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
     return format_list
     
 def clean_otu_string(greengenes_string, render_mode, format=False, \
-    unclassified = False, color = 'red'):
-    """Distills a greengenes string to its high taxonomic resolution
+                     unclassified = False, color = 'red'):
+    """Distills a greengenes string to its highest taxonomic resolution
 
     INPUTS:
         greengenes_string -- a greengenes string describing taxonomy
@@ -299,8 +301,9 @@ def clean_otu_string(greengenes_string, render_mode, format=False, \
         render_mode -- a string ("LATEX", "HTML" or "RAW") which describes 
                     the way the table will be formatted. LATEX or HTML gives a
                     string containing formatting code.
-        bold -- a binary value indication if the output string should be bolded.
-                    In raw text, *bold* is render with *.
+        format -- A string (BOLD, COLOR) describing additional formatting 
+                    for the text.
+        color -- a string indicating the color latex should use
     OUTPUTS:
         cleaned_taxon -- a formatted string describing taxonomic information
 
@@ -493,7 +496,7 @@ def generate_latex_macro(corr_taxa, categories):
     return table
 
 def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
-    numbering = True, alignment = 'c', header_code=None):
+                          numbering = True, alignment = 'c', header_code=None):
     """Creates a text-encoded table
 
     INPUTS:
