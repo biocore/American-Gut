@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
 from scipy.stats import ttest_1samp
 
@@ -98,17 +99,29 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value = 0.05):
     # Identifies taxa which are not populated
     population_count = nsum(population > 0, axis = 1)
 
-    for idx, count in enumerate(population_count):
+    pop_watch = [(idx, count) for (idx, count) in enumerate(population_count)]
+
+    for (idx, count) in pop_watch[::-1]:
         # Removes any line which is equal to zero
         if count == 0:
             population = delete(population, idx, 0)           
             sample = delete(sample, idx)            
             taxa = delete(taxa, idx)           
 
-    seterr(all='raise')
+    # seterr(all='raise')
     # Determines the ratio 
     population_mean = mean(population,1)
-    ratio = sample.astype(float) / population_mean.astype(float)
+    # Removes any average which equals zero (although these should not 
+    # be present)
+    mean_list = population_mean.tolist()
+    for idx, bin in enumerate(mean_list):
+        if bin == 0:
+            population_mean = delete(population_mean, idx, 0)
+            population = delete(population, idx, 0)
+            sample = delete(sample, idx, 0)
+            taxa = delete(taxa, idx, 0)
+
+    ratio = sample/population_mean
     # preforms a case 1 t-test comparing the sample and population
     t_stat = []
     p_stat = []
@@ -157,9 +170,6 @@ def convert_taxa(rough_taxa, formatting_keys = '%1.2f', hundredx = False):
 
         formatted_taxa -- a list of string with formatting for the final table. 
     """
-    
-    print rough_taxa
-    print rough_taxa.__class__
     
     # Checks the rough_taxa argument is sane
     if not isinstance(rough_taxa, list):
@@ -333,10 +343,10 @@ def clean_otu_string(greengenes_string, render_mode, format=False, \
         classified = 'Unclassified '
     else:
         classified = ''
-
+    greengenes_string = greengenes_string.replace(' ', '')
     # Splits the taxonomy at the ; and removes the designation header. 
     split_tax = [i.split('__',1)[-1] for i in \
-        greengenes_string.strip().split('; ')]
+        greengenes_string.split(';')]
     
     # Identifies the highest level of resolution at which taxonomy is defined
     for id_, level in enumerate(split_tax):
