@@ -68,7 +68,6 @@ def get_filtered_taxa_summary(mapping_file, taxa_summary_file,
 
     taxa_labels.append('Other')
     N = len(taxa_labels)  # Number of classes/labels
-    M = filtered_taxa_table.shape[1]  # Number of samples after filtering
 
     # Sort samples by most_abundant_taxa
     sort_sample_indices = argsort(-filtered_taxa_table[top_taxa[0], :])
