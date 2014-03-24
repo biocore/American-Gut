@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import division
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -7,8 +9,6 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
-
-from future import __division__
 
 from numpy import array, argsort, zeros
 
