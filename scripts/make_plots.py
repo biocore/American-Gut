@@ -13,10 +13,9 @@ import argparse
 import brewer2mpl
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-from numpy import array, cumsum, arange
+from numpy import cumsum, arange
 
-from americangut.parse import parse_mapping_file_to_dict, \
-    get_filtered_taxa_summary
+from americangut.parse import get_filtered_taxa_summary
 
 
 def interface():
@@ -126,7 +125,7 @@ def make_pie_chart(table, colors, output_file):
     if table.shape[0] != len(colors):
         raise ValueError("Number of colors must equal number of rows!")
     fractions = [100*x for x in table.mean(axis=1)]
-    fig = plt.figure()
+    plt.figure()
     wedges, texts = plt.pie(fractions, colors=colors)
 
     for w in wedges:
