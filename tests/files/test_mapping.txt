@@ -1,0 +1,4 @@
+#SampleID	TEST_CATEGORY	AWESOME_CATEGORY
+sample_a	1	super
+sample_b	2	totally
+
