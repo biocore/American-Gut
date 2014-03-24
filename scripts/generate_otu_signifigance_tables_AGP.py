@@ -5,32 +5,33 @@ from os import mkdir
 from numpy import array, delete
 from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
-from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                          calculate_tax_rank_1,
-                                                          convert_taxa,
-                                                          convert_taxa_to_list,
-                                                          generate_latex_macro)
-from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
+from generate_otu_signifigance_tables import (calculate_abundance,
+                                                        calculate_tax_rank_1,
+                                                        convert_taxa,
+                                                        convert_taxa_to_list,
+                                                        clean_greengenes_string,
+                                                        build_latex_macro,
+                                                        format_date)
+from taxtree import build_tree_from_taxontable, sample_rare_unique
+from make_phyla_plots import map_to_2D_dict
 
 
-def main(taxa_table, output_dir, samples_to_analyze = None):
+def main(taxa_table, output_dir, mapping=None, samples_to_analyze = None):
 
     """Creates LaTeX formatted significant OTU lists
 
     INPUTS:
-        taxa -- a numpy vector with greengenes taxonomy strings
-
         tax_table -- a numpy array with the relative frequencies of taxonomies
             (rows) for each give sample (column)
 
-        samples_to_analyze -- a numpy vector of sample ids associated with the 
-            tax_table values
-
         output_dir -- a directory where the final files should be saved.
 
+        mapping -- a 2D dictionary of mapping data where the sample id is keyed
+                    to a dictionary of metadata.
+
         samples_to_analyze -- a list of samples_to_analyze which should be used 
-                    to generate data. If this is left empty, all the samples in 
-                    the table will be used.
+                    to generate data. If None, all the samples will be used.
+                    DEFAULT: None
 
     OUTPUTS:
         Generates text files containing LaTex encoded strings which creates a 
@@ -39,24 +40,46 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         defined as present in less than 10% of the total population. The unique 
         taxa are bolded in the lists. 
     """
+     # Sets up the way samples should be converted
+    SAMPLE_CONVERTER = {'feces': 'fecal',
+                        'oral_cavity':'oral',
+                        'skin':'skin'}
+
+    DUMMY  = ['','','','']    
+    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
 
     # Sets table constants
     RARE_THRESHHOLD = 0.1
     RENDERING = "LATEX"
-    FORMAT_SIGNIFIGANCE = ['%1.1f', "%1.2f", "%i", "SKIP"]
-    SIGNIFIGANCE_HUNDRED = [True, True, False, False]
-    DUMMY  = ['','','','']    
-    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
+    SUM_MIN = 1
+
+    # Sets up constants for abundance data
     FORMAT_ABUNDANCE = ["%1.1f"]
     ABUNDANCE_HUNDRED = [True]
-    # Includes all samples in the abundance listing
-    SUM_MIN = 1
-    MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
-        'enrichFoldd']
     MACRO_CATS_ABUNDANCE = ['abundTaxon', 'abundSampl']
+    MACRO_FORM_ABUNDANCE = [lambda x: clean_greengenes_string(x, 
+                            render_mode='LATEX'), lambda x: x]
+
+    # Sets up constants for enrichment data
+    FORMAT_SIGNIFIGANCE = ['%1.2f', "%1.2f", "%i", "SKIP"]
+    SIGNIFIGANCE_HUNDRED = [True, True, False, False]
+    MACRO_CATS_SIGNIFICANCE = ['enrichTaxon','enrichSampl', 'enrichPopul', 
+        'enrichFold']
+    MACRO_FORM_SIGNIFICANCE = [lambda x: clean_greengenes_string(x, 
+                                render_mode='LATEX'), 
+                               lambda x: x,
+                               lambda x: x, 
+                               lambda x: x]
 
     FILE_PRECURSER = 'macros_'
     FILE_EXTENSION = '.tex'
+
+    DATE_FIELD = 'COLLECTION_DATE'
+    DATE_FORMAT_SHORT = '%m/%d/%y'
+    DATE_FORMAT_LONG = '%m/%d/%Y'
+    UNKNOWNS = set(['None', 'NONE', 'none', 'NA', 'na','UNKNOWN', 'unknown'])
+    DATE_OUT = '%B %d, %Y'
+    TIME_FIELD = 'SAMPLE_TIME'
 
     # Number of taxa shown is an indexing value, it is one less than what is 
     # actually shown.
@@ -82,8 +105,8 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
     # Generates lists and tables for each sample
     for samp, filtered_table, rare, unique in sample_rare_unique(tree, \
         taxa_table, all_taxa, RARE_THRESHHOLD):
-        filtered_table = filtered_table.filterObservations(lambda v,i,md:\
-        v.sum() > 0)
+        filtered_table = filtered_table.filterObservations(
+            lambda v,i,md: v.sum() > 0)
 
         # Gets sample information for other samples
         taxa = filtered_table.ObservationIds       
@@ -99,9 +122,9 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
         greengenes_rare = []
         greengenes_unique = []
         for taxon in rare:
-            greengenes_rare.append('; '.join(taxon))
+            greengenes_rare.append(';'.join(taxon))
         for taxon in unique:
-            greengenes_unique.append('; '.join(taxon))
+            greengenes_unique.append(';'.join(taxon))
 
         # Formats the rare and unique lists          
         rare_format = []
@@ -141,31 +164,30 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                 'taxa: %s.' % (unique_string, rare_formatted)
 
         else:
-            rare_formatted = 'Your sample contained %i rare and %s taxa, '\
-                'including the following: %s.' \
-                % (num_rare, unique_string, 
-                   rare_formatted)
+            rare_formatted = 'Your sample contained %i rare %s taxa, '\
+                'including the following: %s.' % (num_rare, unique_string, 
+                rare_formatted)
 
         # Calculates abundance rank, taking all samples into consideration 
         (abundance) = calculate_abundance(sample, taxa, 
-                                          sum_min = SUM_MIN)
+                                          sum_min=SUM_MIN)
 
         # Generates formatted abundance table
         formatted_abundance = convert_taxa(abundance[0:NUM_TAXA_SHOWN],                                        
-                                        formatting_keys = FORMAT_ABUNDANCE,
-                                        hundredx = ABUNDANCE_HUNDRED)
+                                           formatting_keys=FORMAT_ABUNDANCE,
+                                           hundredx=ABUNDANCE_HUNDRED)
 
-        abundance_formatted = generate_latex_macro(formatted_abundance, \
-            categories = MACRO_CATS_ABUNDANCE)
+        abundance_formatted = build_latex_macro(formatted_abundance,
+                                                categories=MACRO_CATS_ABUNDANCE,
+                                                format=MACRO_FORM_ABUNDANCE)
 
-        (high, low) = calculate_tax_rank_1(sample = sample, 
-                                           population = population, 
-                                           taxa = taxa,
-                                           critical_value = 0.05)
+        (high, low) = calculate_tax_rank_1(sample=sample, 
+                                           population=population, 
+                                           taxa=taxa,
+                                           critical_value=0.05)
 
         if len(high) == 0:
             formatted_high = [['', '', '', '']]*NUM_TAXA_SHOWN
-
 
         elif len(high) < NUM_TAXA_SHOWN:
             # Formats the known high taxa
@@ -183,13 +205,51 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
                                           formatting_keys = FORMAT_SIGNIFIGANCE,
                                           hundredx = SIGNIFIGANCE_HUNDRED)
 
-        high_formatted = generate_latex_macro(formatted_high, \
-            categories = MACRO_CATS_SIGNIFICANCE)
+        high_formatted = build_latex_macro(formatted_high,
+                                           categories = MACRO_CATS_SIGNIFICANCE,
+                                           format = MACRO_FORM_SIGNIFICANCE)
+
+        # Handles date parsing
+        if mapping is not None and mapping[samp][DATE_FIELD] not in UNKNOWNS:
+            try:
+                sample_date = format_date(mapping[samp],
+                                         date_field=DATE_FIELD,
+                                         d_form_in=DATE_FORMAT_SHORT,
+                                         format_out=DATE_OUT)
+            except:
+                sample_date = format_date(mapping[samp],
+                                         date_field=DATE_FIELD,
+                                         d_form_in=DATE_FORMAT_LONG,
+                                         format_out=DATE_OUT)
+        else:
+            sample_date = 'unknown'
+
+        # Handles sample parsing
+        if mapping is not None and mapping[samp][TIME_FIELD] not in UNKNOWNS:
+            sample_time = mapping[samp][TIME_FIELD].lower()
+        else:
+            sample_time = 'unknown'
+
+        if mapping is not None:
+            sample_type_prelim = mapping[samp]['BODY_HABITAT'].split(':')[1]
+            if sample_type_prelim in SAMPLE_CONVERTER:
+                sample_type = SAMPLE_CONVERTER[sample_type_prelim]
+            elif sample_type in UNKNOWNS:
+                sample_time = 'unknown'
+            else:
+                sample_type = sample_type_prelim.lower()
+        else:
+            sample_type = 'unknown'
 
         # Saves the file
         file_for_editing = open(file_name, 'w')
-        # file_for_editing.write('% Participant Name\n\\def\\yourname'\
-        #     '{Michael Pollan or longer name}\n\n')
+        file_for_editing.write('%% Barcode\n\\def\\barcode{%s}\n\n' \
+            % samp.split('.')[0])
+        file_for_editing.write('%% Sample Type\n\\def\\sampletype{%s}\n\n' 
+            % sample_type)
+        file_for_editing.write('%% Sample Date\n\\def\\sampledate{%s}\n'
+                               '\\def\\sampletime{%s}\n\n\n' 
+                               % (sample_date, sample_time))
         file_for_editing.write('%% Abundance Table\n%s\n\n\n' \
             % abundance_formatted)
         file_for_editing.write('%% Enrichment Table\n%s\n\n\n' \
@@ -201,13 +261,18 @@ def main(taxa_table, output_dir, samples_to_analyze = None):
 # Sets up command line parsing
 parser = ArgumentParser(description = "Creates lists and tables of enriched, abundance and rare taxa")
 
-parser.add_argument('-i', '--input', help = 'Path to taxonomy table [REQUIRED]')
-parser.add_argument('-o', '--output', \
+parser.add_argument('-i', '--input', 
+                    help = 'Path to taxonomy table [REQUIRED]')
+parser.add_argument('-o', '--output',
                     help = 'Path to the output directory [REQUIRED]')
-parser.add_argument('-s', '--samples', default = None, \
-                    help = 'Sample IDs to be analyzed. If no value is '\
+parser.add_argument('-s', '--samples', 
+                    default=None,
+                    help='Sample IDs to be analyzed. If no value is '\
                     'specified, all samples in the taxonomy file will be'\
                     ' analyzed.')
+parser.add_argument('-m', '--mapping',
+                   default=None,
+                   help='Path to a mapping file')
 
 if __name__ == '__main__':
 
@@ -228,7 +293,11 @@ if __name__ == '__main__':
         mkdir(args.output)        
 
     output_dir = args.output
-    
+
+    if args.mapping and not isfile(args.mapping):
+        parser.error('The supplied mapping file does not exist in the path.')
+    elif args.mapping:
+        mapping = map_to_2D_dict(open(args.mapping, 'U'))
 
     # Parses the sample IDs as a list
     if args.samples:
@@ -238,5 +307,7 @@ if __name__ == '__main__':
     else:
         samples_to_analyze = None
 
-    main(taxa_table = tax_table, output_dir = output_dir, \
+    main(taxa_table = tax_table, 
+        output_dir = output_dir,
+        mapping=mapping,
         samples_to_analyze = samples_to_analyze)

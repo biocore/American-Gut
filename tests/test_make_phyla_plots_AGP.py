@@ -8,6 +8,7 @@ from americangut.make_phyla_plots import (map_to_2D_dict,
                                           most_common_taxa_gg_13_5,
                                           summarize_human_taxa)
 
+
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Justine Debelius"]
@@ -170,6 +171,55 @@ class MakePhylaPlotsAGPTest(TestCase):
         self.assertEqual(test_taxa, known_taxa)
         self.assertEqual(test_table.all(), table_known.all())
 
+
+    def test_format_date(self):
+        """Test formating the date information for a metadata dictionary"""
+        # Sets the locations of the time information in the metadata
+        date_field = 'Sample_Date'
+        time_field = 'Sample_Time'
+
+        # Checks that errors are called appropriately
+        with self.assertRaises(ValueError):
+            format_date(self.meta)
+
+        with self.assertRaises(ValueError):
+            format_date(self.meta, date_field='Tardis', d_form_in='%Y')
+
+        with self.assertRaises(ValueError):
+            format_date(self.meta, date_field=date_field)
+
+        with self.assertRaises(ValueError):
+            format_date(self.meta, time_field='Smith', t_form_in='%H:%M')
+
+        with self.assertRaises(ValueError):
+            format_date(self.meta, time_field=time_field)
+
+        # Generates and checks the test values for a single date
+        known = '17 Feb 1963'
+        format_in = '%m/%d/%Y'
+        format_out = '%d %b %Y'
+        test = format_date(self.meta, date_field=date_field, 
+                           d_form_in=format_in, format_out=format_out)
+        self.assertEqual(test, known)
+
+        # Generates and checks the test value for a time only
+        known = '03:27'
+        format_in = '%I:%M %p'
+        format_out = '%H:%M'
+        test = format_date(self.meta, time_field=time_field, 
+                           t_form_in=format_in, format_out=format_out)
+        self.assertEqual(test, known)
+
+        # Checks the combination of reading a date and time format
+        known = '17 Feb 1963 03:27 AM'
+        d_format_in = '%m/%d/%Y'
+        t_format_in = '%I:%M %p'
+        format_out = '%d %b %Y %I:%M %p'
+        test = format_date(self.meta, date_field=date_field, 
+                           time_field=time_field, d_form_in=d_format_in, 
+                           t_form_in=t_format_in, format_out=format_out)
+
+        self.assertEqual(test, known)
 
 
 

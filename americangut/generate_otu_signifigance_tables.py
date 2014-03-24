@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
+from numpy import mean, shape, argsort, sort, sum as nsum, delete
 from scipy.stats import ttest_1samp
+from time import strftime, strptime, struct_time
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -279,7 +280,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
     format_list = []
     if comma == True:
         for idx, taxon in enumerate(raw_taxa): 
-            format_list.append(clean_otu_string(taxon, 
+            format_list.append(clean_greengenes_string(taxon, 
                                             render_mode = render_mode, \
                                             format = tax_format[idx].upper(), 
                                             unclassified = True,
@@ -290,19 +291,20 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma = False, \
         format_list.append(prelist)
         for idx, taxon in enumerate(raw_taxa):
             format_list.append('%s%s%s' % (preitem, 
-                                clean_otu_string(taxon, \
-                                render_mode, format = tax_format[idx].upper(),
-                                unclassified = True,
-                                color = color), 
-                                anteitem))
+                                clean_greengenes_string(taxon,
+                                            render_mode=render_mode, 
+                                            format = tax_format[idx].upper(),
+                                            unclassified = True,
+                                            color = color), 
+                                            anteitem))
 
         format_list.append(antelist)
         format_list = ''.join(format_list)
 
     return format_list
     
-def clean_otu_string(greengenes_string, render_mode, format=False, \
-                     unclassified = False, color = 'red'):
+def clean_greengenes_string(greengenes_string, render_mode, format=False, \
+                            unclassified = False, color = 'red'):
     """Distills a greengenes string to its highest taxonomic resolution
 
     INPUTS:
@@ -377,270 +379,128 @@ def clean_otu_string(greengenes_string, render_mode, format=False, \
 
     return cleaned_taxon
 
-def render_latex_header(header, numbering = True, alignment = 'c'):
-    """Creates the header text for a LaTeX-encoded list
-
-    INPUTS:
-        header -- a python list of strings that describe the columns in the 
-                    table. There can be no more than 5 header columns in a 
-                    table.
-
-        numbering -- a binary value that will add numbers along the side of 
-                    the table if true.
-
-        alignment -- a string of list of strings describing how the latex 
-                    columns should be aligned. If a string (single value) is 
-                    provided, it will be used for all columns. A list must have 
-                    the same number of elements as the header list. Options for 
-                    this string include 'l' (left), 'r' (right), and 'c' 
-                    (center). For more information on alignment in LaTex 
-                    headers, see <http://en.wikibooks.org/wiki/LaTeX/Tables>.
-
-    OUTPUT:
-        table_header -- a string encoded to begin a LaTeX formatted table
-    """
-    
-    # Sets up a column for numbering if desired
-    if numbering == 1:
-        format_elements = ['{r']
-        format_header = [' ']
-    else:
-        format_elements = ['{']
-        format_header = []
-
-    # Sets up alignment string
-    if isinstance(alignment, (str, unicode)):
-        for element in header:
-            format_elements.append(alignment)
-
-    elif isinstance(alignment, list) and len(header) != len(alignment):
-        raise ValueError, 'The header list and alignment list must have the'\
-            ' same number of elements.'
-
-    elif isinstance(alignment, list):
-        format_elements.extend(alignment)       
-
-    else:
-        raise TypeError, 'Alignment must be a string or list type.'
-
-    format_elements.append('}')
-
-    # Sets up header
-    format_header.extend(header)
-
-    # Combines into a properly spaced header
-    table_header = '\\begin{tabular}%s\n\\hline\n%s \\\\\n\\hline\n' \
-        % (' '.join(format_elements), ' & '.join(format_header))
-
-    return table_header
-
-def render_raw_header(header, numbering, header_bar, spacer, tax_len, cat_len):
-    """Creates the header text for a raw text encoded table
-    """
-    
-    # Initializes the table row with the header bar
-    if numbering:
-        header_elements = ['-----%s\n     ' % header_bar]
-    else:
-        header_elements = ['%s\n' % header_bar]
-
-    # Creates the header elements for the table
-    for idx, category in enumerate(header):
-        clean_cat = '%s%s' % (category, spacer)
-        if idx == 0:
-            header_elements.append(clean_cat[:tax_len])
-        else:
-            header_elements.append(clean_cat[:cat_len])
-
-    # Terminates the table header with a horizontal bar
-    header_elements.append('\n%s\n' % header_bar)
-
-    table_header = ''.join(header_elements)
-
-    return table_header
-
-def generate_latex_macro(corr_taxa, categories):
+def build_latex_macro(data, categories, format=None):
     """Generates a LaTeX macro for use in a template
-    
+
     INPUTS:
-        corr_taxa -- a list of lists where the first item is a greengenes 
-                    taxonomy string and  subsequent items are associated 
-                    descriptions.
-        categories -- a list of strings describing the macro data to be 
-                    substituted. i.e. Name, Sample, etc. 
+        data -- a list or list of lists where the inner list contains the same 
+                    set of information, corresponding to categories and format.
 
-    OUTPUT:
+        categories -- a list of strings describing the data to be used in the 
+                macro (i.e. Name, Sample, etc.)
+
+        format -- a list of anonymous or function names to be used to format 
+                the data. The final data must be converted to a string. If a 
+                format of None is provided, all entries will be converted to 
+                strings.
+                DEFAULT: None
+
+    OUTPUTS:
         A LaTeX macro with the definitions provided in categories
-
-
     """
+
     # Preallocates an indexing variable
     ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
                 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
                 'Y', 'Z']
-    # Rendering must be LaTeX for a LaTex macro
-    RENDER = 'LATEX'
 
-    format_table = []
+    # Preforms a sanity check on the data
+    if isinstance(data[0], list):
+        num_entries = len(data[0])
+        mode = 'multi'
+    else:
+        num_entries = len(data)
+        mode = 'single'
 
-    # Combines categories with data and mapping index
-    for idx, taxon_description in enumerate(corr_taxa):
-        if taxon_description[0] == '':
+    num_cats = len(categories)
+    num_forms = len(format)
+
+    if not num_entries == num_cats:
+        raise ValueError('There must be a category for every entry.')
+    elif not num_entries == num_forms and format is not None:
+        raise ValueError('There must be a format for every entry.')
+
+    # Sets up formatting if necessary
+    if format is None:
+        format = [lambda x: '%r' %x]*num_entries
+
+    macro = []
+    # Combines the data into a mapping index
+    for idx, entry in enumerate(data):
+        if mode == 'single':
+            fun = format[idx]
+            macro.append('\\def\\%s{%s}' %(categories[idx], fun(entry)))
+
+        if mode == 'multi' and len(entry[0]) == 0:
             for cat in categories:
-                format_table.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
-                
-        else:
+                macro.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
+            macro.append('')
+        elif mode == 'multi':
             for id_, cat in enumerate(categories):
-                if id_ == 0:
-                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                      clean_otu_string(taxon_description[0], 
-                                      render_mode = RENDER)))
-                else:
-                    format_table.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
-                                      taxon_description[id_]))
+                fun = format[id_]
+                element = entry[id_]
+                macro.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx], 
+                    fun(element)))
+            macro.append('')
 
     # Inserts line breaks
-    table = '\n'.join(format_table)
+    macro = '\n'.join(macro)
 
+    return macro
 
-    return table
-
-def convert_taxa_to_table(corr_taxa, header, render_mode = "RAW", \
-                          numbering = True, alignment = 'c', header_code=None):
-    """Creates a text-encoded table
-
+def format_date(mapping, date_field=None, d_form_in=None, time_field=None, 
+                t_form_in=None, format_out='%b %d, %Y'):
+    """Formats the date information from a mapping dictionary
     INPUTS:
-        corr_taxa -- a list of lists where the first item is a greengenes 
-                    taxonomy string and  subsequent items are associated 
-                    descriptions.
+        mapping -- a 2D dictionary where a sample ID is keyed to an mappingdata 
+                dictionary giving values associated with each sample
 
-        header -- a python list of strings that describe the columns in 
-                    the table. For raw text tables, the width of the columns is
-                    set by the number of entries in the header. RAW tables can
-                    have no more than 5 columns (corresponding to 15 characters
-                    in each column). 
-        
-        render_mode -- a string ("LATEX", "HTML",  or "RAW") which describes 
-                    the way the table will be formatted. LATEX or HTML gives a
-                    string containing formatting code. 
+        date_filed -- the name of the category holding date information
 
-        numbering -- a binary value that will add numbers along the side of the
-                    table when True
+        format_in -- a string describing how the temporal information is 
+                encoded. See the time module for string formatting 
+                (http://docs.python.org/2/library/time.html#time.struct_time)
 
-        alignment -- a list or list of descriptors used to column alignment in 
-                    LaTex encoded tables. This is only used when a table is 
-                    formatted in LaTeX.
-                    
-        header_code -- a fully formatted LaTeX header description for custom 
-                    formatting of the table
+        format_out -- the way the output string should be formatted. Use the 
+                format keys from the time module.
     OUTPUT:
-        table -- a string encoding a table.
-
+        date -- a string giving the date information
     """
 
-    # Sets constants for table formatting
-    HEADER_BAR = "------------------------------------------------------------"\
-    "---------------"
-    SPACER = '                                    '
-    TAX_SPACE = 27
+    # Performs a sanity check on the data
+    if date_field is None and time_field is None:
+        raise ValueError('A date or time field must be supplied. '
+                         'Neither is available.')
 
-    # Category lengths are set up for an 80 character in a raw table
-    CATEGORY_LEN_2 = 47
-    CATEGORY_LEN_3 = 23
-    CATEGORY_LEN_4 = 15
-    CATEGORY_LEN_5 = 11
+    if date_field is not None and date_field not in mapping:
+        raise ValueError('The date_field must be in the mapping data.')
 
-    # Sets up the the formatting key
-    FORMAT_KEY = False
+    if d_form_in is None and date_field is not None:
+        raise ValueError('A date format must be supplied with a date field.')
 
-    # Sets up preformatted text by table type
-    if render_mode == 'LATEX':  
-        # Creates the table header
-        if header_code == None:
-            table_header = render_latex_header(header, numbering, \
-                alignment = alignment)
-        else:
-            table_header = header_code
+    if time_field is not None and time_field not in mapping:
+        raise ValueError('The time_field must be in the mapping data.')
 
-        # Creates formatting text around the table row
-        anterow = '\\\\\n'  
-        row_seperator = ' & '
+    if t_form_in is None and time_field is not None:
+        raise ValueError('A time format must be supplied with a time field.')
 
-        # Creates the text to termiante the table
-        table_end = '\\hline\n\\end{tabular}'
-        
-    else:
-        # Determines the appropriate category length for each row
-        header_len = len(header)
+    # Gets the date information
+    if date_field is not None:
+        date = strptime(mapping[date_field], d_form_in)
+    if time_field is not None:
+        time = strptime(mapping[time_field], t_form_in)
 
-        if header_len == 2:
-            category_len = CATEGORY_LEN_2
-        elif header_len == 3:
-            category_len = CATEGORY_LEN_3
-        elif header_len == 4:
-            category_len = CATEGORY_LEN_4
-        elif header_len == 5:
-            category_len = CATEGORY_LEN_5
-        else:
-            raise ValueError, "There cannot be more than 5 header categories"
+    # Gets the date and time into a single structure
+    if date_field is not None and time_field is not None:
+        tmp = struct_time((date.tm_year, date.tm_mon, date.tm_mday,
+                           time.tm_hour, time.tm_min, time.tm_sec,
+                           date.tm_wday, date.tm_yday, date.tm_isdst))
+    elif date_field is None:
+        tmp = time
+    elif time_field is None:
+        tmp = date
 
-        # Creates the table header
-        table_header = render_raw_header(header, numbering, \
-            header_bar = HEADER_BAR, spacer = SPACER, tax_len = TAX_SPACE, \
-            cat_len = category_len)
+    # Formats the output
+    date = strftime(format_out, tmp)
 
-        # Creates the text around the table  
-        anterow = '\n'
-        row_seperator = ''
-
-        # Sets up text to termiante the table
-        if numbering == 1:
-            table_end = '-----%s' % HEADER_BAR
-        else:
-            table_end = HEADER_BAR
-
-    # Starts creating the table
-    table_code = [table_header]
-
-    # Creates the table rows
-    for idx, taxon_description in enumerate(corr_taxa):
-        # Sets up the row text
-        table_row = []
-        # Pulls out the taxon and descriptor, separates them and formats them
-        taxon = taxon_description[0]
-        clean_taxon = clean_otu_string(taxon, render_mode = render_mode, \
-            format = FORMAT_KEY)
-        description = taxon_description[1:]
-
-        # Adds numbering to the begining of the row if appropriate
-        # Use string formatting in f
-        if numbering:
-            table_row.append('(%2d) ' % (idx + 1))
-        
-        # Pads the raw row if necessary
-        if render_mode == "RAW":
-            clean_taxon = '%s%s' % (clean_taxon, SPACER)
-            clean_taxon = clean_taxon[:TAX_SPACE]
-
-        # Adds the taxonomy data to the row
-        table_row.append('%s' % (clean_taxon))
-
-        # Sets up the data for the rows
-        for item in description:
-            # Pads the row if necessary
-            if render_mode == "RAW":
-                item = '%s%s' % (item, SPACER)
-                item = item[:category_len]              
-
-            # Adds the item to the table
-            table_row.append('%s' % (item))
-
-        # Inserts the correct spacer and adds to the table body
-        table_code.append(row_seperator.join(table_row))
-
-    table_code.append(table_end)
-    
-    # Returns an encoded string
-    table = anterow.join(table_code)
-
-    return table
+    return date

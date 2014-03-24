@@ -4,14 +4,12 @@
 from unittest import TestCase, main
 from numpy import array
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                          calculate_tax_rank_1,
-                                                          convert_taxa,
-                                                          clean_otu_string,
-                                                          render_latex_header,
-                                                          render_raw_header,
-                                                          convert_taxa_to_list,
-                                                          generate_latex_macro,
-                                                          convert_taxa_to_table)
+                                                        calculate_tax_rank_1,
+                                                        convert_taxa,
+                                                        clean_greengenes_string,
+                                                        convert_taxa_to_list,
+                                                        build_latex_macro,
+                                                        format_date)
 
 class GenerateOTUSignifiganceTablesTest(TestCase):
     
@@ -118,6 +116,8 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                             '0.10%', '1.00%', '0.10']] 
 
         self.header = ['Taxonomy', 'Doctor', 'Humans', 'Fold']  
+
+        self.meta = {'Sample_Date':'2/17/1963', 'Sample_Time':'3:27 am'}
 
     def test_calculate_abundance(self):
         """Checks that abundance is calculated sanely"""
@@ -362,7 +362,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         self.assertEqual(test_list_raw_format, known_raw_format)
         self.assertEqual(test_list_raw_comma, known_raw_comma)
 
-    def test_clean_otu_string(self):
+    def test_clean_greengenes_string(self):
         known_raw = ['*Kingdom Bacteria*',
                      'Phylum Proteobacteria',
                      'Class Gammaproteobacteria',
@@ -394,250 +394,99 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                 color = 'red'
 
             # Generates the cleaned string
-            test_string_raw = clean_otu_string(taxon, render_mode = 'RAW', \
+            test_string_raw = clean_greengenes_string(taxon, render_mode = 'RAW', \
                 format = format, color = color)
-            test_string_latex = clean_otu_string(taxon, render_mode = 'LATEX',\
+            test_string_latex = clean_greengenes_string(taxon, render_mode = 'LATEX',\
                 format = format, color = color, unclassified = True)
             self.assertEqual(test_string_raw, known_raw[idx])
             self.assertEqual(test_string_latex, known_latex[idx])
 
-    def test_render_latex_header(self):
-        test_alignment = ['l', 'c', 'c', 'r']
+    def test_build_latex_macro(self):
+        """Tests that a latex macro is generated"""
+        # Sets up the text functions for formatting
+        test_funs = [lambda x: clean_greengenes_string(x, render_mode='LATEX'),
+                     lambda x: x,
+                     lambda x: x,
+                     lambda x: x]
 
-        # Checks that appropriate errors are raised
-        with self.assertRaises(ValueError):
-            render_latex_header(['Doctor', 'Companion', 'Writer', 'Queen', \
-                'Years'], alignment = ['l', 'c'])
+        # Tests single generation mode
+        known_macro = '\\def\\Taxonomy{Genus \\textit{Escherichia}}\n'\
+                      '\\def\\Doctor{10.00%}\n'\
+                      '\\def\\Humans{1.00%}\n'\
+                      '\\def\\Fold{10}'
 
-        with self.assertRaises(TypeError):
-            render_latex_header(self.header, alignment = 2)
-
-        # Checks that the code is loading properly
-        test_center_number = render_latex_header(self.header, 
-                                                 numbering = True)
-
-        test_align_no_nums = render_latex_header(self.header, \
-                                                 alignment = test_alignment,\
-                                                 numbering = False)
-
-        known_header_center_number = '\\begin{tabular}{r c c c c }\n\\hline\n '\
-        ' & Taxonomy & Doctor & Humans & Fold \\\\\n\\hline\n'
-
-        known_header_align_no_num = '\\begin{tabular}{ l c c r }\n\\hline\n'\
-        'Taxonomy & Doctor & Humans & Fold \\\\\n\\hline\n'
-
-        self.assertEqual(test_center_number, known_header_center_number)
-
-        self.assertEqual(test_align_no_nums, known_header_align_no_num)
-
-    def test_render_raw_header(self):
-        # Sets constants for table formatting
-        test_header = ['Doctor', 'Companion(s)', 'Writer']
-        category_length = 23        
-        HEADER_BAR = "--------------------------------------------------------"\
-        "-------------------"
-        SPACER = '                                    '
-        TAX_SPACE = 27
-        
-        # Sets up known values
-        known_header_numbering = '--------------------------------------------'\
-        '------------------------------------\n     Doctor                    '\
-        ' Companion(s)           Writer                 \n--------------------'\
-        '-------------------------------------------------------\n'
-        known_header_no_number = '--------------------------------------------'\
-        '-------------------------------\nDoctor                     Companion'\
-        '(s)           Writer                 \n------------------------------'\
-        '---------------------------------------------\n'
-
-        # Checks the function
-        test_header_numbering = render_raw_header(test_header,
-                                                  numbering = True, 
-                                                  header_bar = HEADER_BAR, 
-                                                  spacer = SPACER,
-                                                  tax_len = TAX_SPACE, 
-                                                  cat_len = category_length)
-        
-        test_header_no_number = render_raw_header(test_header,
-                                                  numbering = False, 
-                                                  header_bar = HEADER_BAR, 
-                                                  spacer = SPACER, 
-                                                  tax_len = TAX_SPACE, 
-                                                  cat_len = category_length)
+        test_macro = build_latex_macro(data=self.test_table[0], 
+                                       categories = self.header,
+                                       format = test_funs)
+        self.assertEqual(known_macro, test_macro)
 
 
-        self.assertEqual(known_header_numbering, test_header_numbering)
-        self.assertEqual(known_header_no_number, test_header_no_number)
-
-    def test_render_latex_macro(self):
-        # Sets up variable for testing        
+        # Tests multiple generation mode (a list of lists)
         known_macro = '\\def\\TaxonomyA{Genus \\textit{Escherichia}}\n'\
                       '\\def\\DoctorA{10.00%}\n'\
                       '\\def\\HumansA{1.00%}\n'\
-                      '\\def\\FoldA{10}\n'\
+                      '\\def\\FoldA{10}\n\n'\
                       '\\def\\TaxonomyB{\\textit{Escherichia coli}}\n'\
                       '\\def\\DoctorB{0.10%}\n'\
                       '\\def\\HumansB{1.00%}\n'\
-                      '\\def\\FoldB{0.10}'
+                      '\\def\\FoldB{0.10}\n'
 
-        # Calculates test variable
-        test_macro = generate_latex_macro(self.test_table, self.header)
+       
 
-        # Checks the outputs match
+        test_macro = build_latex_macro(data=self.test_table, 
+                                       categories = self.header,
+                                       format = test_funs)
         self.assertEqual(known_macro, test_macro)
 
-    def test_convert_taxa_table(self):
-        # Sets up inputs
-        header_code = '<THIS IS HEADER CODE FOR LATEX>'
-        alignment_vary = ['l', 'c', 'c', 'r']
+    def test_format_date(self):
+        """Test formating the date information for a metadata dictionary"""
+        # Sets the locations of the time information in the metadata
+        date_field = 'Sample_Date'
+        time_field = 'Sample_Time'
 
-        # Sets up known values
-        default_known = '-----------------------------------------------------'\
-                        '---------------------------\n'\
-                        '     Taxonomy                   Doctor         Humans'\
-                        '         Fold           \n'\
-                        '-----------------------------------------------------'\
-                        '----------------------\n\n'\
-                        '( 1) Genus Escherichia          10.00%         1.00% '\
-                        '         10             \n'\
-                        '( 2) Escherichia coli           0.10%          1.00% '\
-                        '         0.10           \n'\
-                        '-----------------------------------------------------'\
-                        '---------------------------'
+        # Checks that errors are called appropriately
+        with self.assertRaises(ValueError):
+            format_date(self.meta)
 
-        latex_default_known = '\\begin{tabular}{r c c c c }\n\\hline\n'\
-                              '  & Taxonomy & Doctor & Humans & Fold \\\\\n'\
-                              '\\hline\n'\
-                              '\\\\\n'\
-                              '( 1)  & Genus \\textit{Escherichia} & 10.00% &'\
-                              ' 1.00% & 10\\\\\n'\
-                              '( 2)  & \\textit{Escherichia coli} & 0.10% & '\
-                              '1.00% & 0.10\\\\\n\\hline\n\\end{tabular}'
+        with self.assertRaises(ValueError):
+            format_date(self.meta, date_field='Tardis', d_form_in='%Y')
 
-        raw_no_numbers_known = '----------------------------------------------'\
-                               '-----------------------------\n'\
-                               'Taxonomy                   Doctor         '\
-                               'Humans         Fold           \n'\
-                               '----------------------------------------------'\
-                               '-----------------------------\n\n'\
-                               'Genus Escherichia          10.00%         '\
-                               '1.00%          10             \n'\
-                               'Escherichia coli           0.10%          '\
-                               '1.00%          0.10           \n'\
-                               '----------------------------------------------'\
-                               '-----------------------------'
+        with self.assertRaises(ValueError):
+            format_date(self.meta, date_field=date_field)
 
-        latex_no_number_known = '\\begin{tabular}{ c c c c }\n'\
-                                '\\hline\n'\
-                                'Taxonomy & Doctor & Humans & Fold \\\\\n'\
-                                '\\hline\n'\
-                                '\\\\\n'\
-                                'Genus \\textit{Escherichia} & 10.00% & 1.00% '\
-                                '& 10\\\\\n'\
-                                '\\textit{Escherichia coli} & 0.10% & 1.00% & '\
-                                '0.10\\\\\n'\
-                                '\\hline\n'\
-                                '\\end{tabular}'
+        with self.assertRaises(ValueError):
+            format_date(self.meta, time_field='Smith', t_form_in='%H:%M')
 
-        raw_alignment_known = '-----------------------------------------------'\
-                              '---------------------------------\n'\
-                              '     Taxonomy                   Doctor         '\
-                              'Humans         Fold           \n'\
-                              '-----------------------------------------------'\
-                              '----------------------------\n'\
-                              '\n'\
-                              '( 1) Genus Escherichia          10.00%         '\
-                              '1.00%          10             \n'\
-                              '( 2) Escherichia coli           0.10%          '\
-                              '1.00%          0.10           \n'\
-                              '-----------------------------------------------'\
-                              '---------------------------------'
+        with self.assertRaises(ValueError):
+            format_date(self.meta, time_field=time_field)
 
-        latex_alignment_known = '\\begin{tabular}{r l c c r }\n'\
-                                '\\hline\n'\
-                                '  & Taxonomy & Doctor & Humans & Fold \\\\\n'\
-                                '\\hline\n'\
-                                '\\\\\n'\
-                                '( 1)  & Genus \\textit{Escherichia} & 10.00% '\
-                                '& 1.00% & 10\\\\\n'\
-                                '( 2)  & \\textit{Escherichia coli} & 0.10% & '\
-                                '1.00% & 0.10\\\\\n'\
-                                '\\hline\n'\
-                                '\\end{tabular}'
+        # Generates and checks the test values for a single date
+        known = '17 Feb 1963'
+        format_in = '%m/%d/%Y'
+        format_out = '%d %b %Y'
+        test = format_date(self.meta, date_field=date_field, 
+                           d_form_in=format_in, format_out=format_out)
+        self.assertEqual(test, known)
 
-        raw_code_known = '----------------------------------------------------'\
-                         '----------------------------\n'\
-                         '     Taxonomy                   Doctor         '\
-                         'Humans         Fold           \n'\
-                         '----------------------------------------------------'\
-                         '-----------------------\n'\
-                         '\n'\
-                         '( 1) Genus Escherichia          10.00%         1.00%'\
-                         '          10             \n'\
-                         '( 2) Escherichia coli           0.10%          1.00%'\
-                         '          0.10           \n'\
-                         '----------------------------------------------------'\
-                         '----------------------------'
+        # Generates and checks the test value for a time only
+        known = '03:27'
+        format_in = '%I:%M %p'
+        format_out = '%H:%M'
+        test = format_date(self.meta, time_field=time_field, 
+                           t_form_in=format_in, format_out=format_out)
+        self.assertEqual(test, known)
 
-        latex_code_known = '<THIS IS HEADER CODE FOR LATEX>\\\\\n'\
-                           '( 1)  & Genus \\textit{Escherichia} & 10.00% & '\
-                           '1.00% & 10\\\\\n'\
-                           '( 2)  & \\textit{Escherichia coli} & 0.10% & 1.00%'\
-                           ' & 0.10\\\\\n'\
-                           '\\hline\n'\
-                           '\\end{tabular}'
+        # Checks the combination of reading a date and time format
+        known = '17 Feb 1963 03:27 AM'
+        d_format_in = '%m/%d/%Y'
+        t_format_in = '%I:%M %p'
+        format_out = '%d %b %Y %I:%M %p'
+        test = format_date(self.meta, date_field=date_field, 
+                           time_field=time_field, d_form_in=d_format_in, 
+                           t_form_in=t_format_in, format_out=format_out)
 
-        # Generates tables and compares to the knowns
-        default_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                             header = self.header)
-        self.assertEqual(default_test, default_known)
-
-        latex_default_test = convert_taxa_to_table(corr_taxa = self.test_table,
-                                                   header = self.header,
-                                                   render_mode = 'LATEX')
-        self.assertEqual(latex_default_test, latex_default_known)
-
-        raw_no_nums_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                                 header = self.header,
-                                                 render_mode = 'RAW',
-                                                 numbering = False)
-        self.assertEqual(raw_no_nums_test, raw_no_numbers_known)
-
-        latex_no_nums_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                                   header = self.header,
-                                                   render_mode = 'LATEX',
-                                                   numbering = False)
-        self.assertEqual(latex_no_nums_test, latex_no_number_known)
-        
-        raw_align_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                               header = self.header,
-                                               render_mode = 'RAW',
-                                               numbering = True,
-                                               alignment = alignment_vary)
-        self.assertEqual(raw_align_test, raw_alignment_known)
-
-        latex_align_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                                 header = self.header,
-                                                 render_mode = 'LATEX',
-                                                 numbering = True,
-                                                 alignment = alignment_vary)
-        self.assertEqual(latex_align_test, latex_alignment_known)
-
-        raw_header_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                                header = self.header,
-                                                render_mode = 'RAW',
-                                                numbering = True,
-                                                alignment = alignment_vary,
-                                                header_code = header_code)
-        self.assertEqual(raw_header_test, raw_code_known)
-
-        latex_header_test = convert_taxa_to_table(corr_taxa = self.test_table, 
-                                                  header = self.header,
-                                                  render_mode = 'LATEX',
-                                                  numbering = True,
-                                                  alignment = alignment_vary,
-                                                  header_code = header_code)
-        self.assertEqual(latex_header_test, latex_code_known)
-        
+        self.assertEqual(test, known)
+   
 
 if __name__ == '__main__':
     main()
