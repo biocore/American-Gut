@@ -15,8 +15,8 @@ from os.path import realpath, dirname, join
 from numpy import array, array_equal
 from unittest import TestCase, main
 
-from americangut.parse import parse_mapping_file_to_dict, \
-    get_filtered_taxa_summary
+from americangut.parse import (parse_mapping_file_to_dict,
+                               get_filtered_taxa_summary)
 
 TEST_DIR = dirname(realpath(__file__))
 TEST_MAPPING_FILE = join(TEST_DIR, 'files/test_mapping.txt')

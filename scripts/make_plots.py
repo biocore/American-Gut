@@ -15,8 +15,9 @@ import argparse
 import brewer2mpl
 
 from americangut.parse import get_filtered_taxa_summary
-from americangut.plots import make_stack_plot, \
-    make_pie_chart, make_legend
+from americangut.plots import (make_stack_plot,
+                               make_pie_chart,
+                               make_legend)
 
 
 def interface():
