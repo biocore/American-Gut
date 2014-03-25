@@ -10,7 +10,7 @@ __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
 
-from os.path import realpath, dirname
+from os.path import realpath, dirname, join
 
 from numpy import array, array_equal
 from unittest import TestCase, main
@@ -19,8 +19,8 @@ from americangut.parse import parse_mapping_file_to_dict, \
     get_filtered_taxa_summary
 
 TEST_DIR = dirname(realpath(__file__))
-TEST_MAPPING_FILE = TEST_DIR + '/files/test_mapping.txt'
-TEST_TAXA_FILE = TEST_DIR + '/files/test_taxa.txt'
+TEST_MAPPING_FILE = join(TEST_DIR, 'files/test_mapping.txt')
+TEST_TAXA_FILE = join(TEST_DIR, 'files/test_taxa.txt')
 
 
 class TestMappingFileParse(TestCase):
