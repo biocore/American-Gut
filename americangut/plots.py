@@ -43,7 +43,7 @@ def make_stack_plot(taxa_table, sample_ids, ylabel,
     x = arange(M)
     cumulative = cumsum(taxa_table, axis=0)
     fig = plt.figure()
-    ax1 = fig.add_subplot(111)
+    ax1 = fig.gca()
 
     # Get xticks, if any
     xticks = []
