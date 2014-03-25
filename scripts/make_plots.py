@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import division
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -63,14 +65,14 @@ def get_sample_ids_to_label(samples_file):
 
     """
     sample_label_tuples = []
-    samples = open(samples_file, 'U')
-    for line in samples:
+    lines = open(samples_file, 'U')
+    for line in lines:
         if line.startswith('#'):
             continue
         line_pieces = [x.strip() for x in line.split('\t')]
         if len(line_pieces) == 2:
             sample_label_tuples.append(tuple(line_pieces[0:2]))
-    samples.close()
+    lines.close()
 
     return sample_label_tuples
 
@@ -88,11 +90,13 @@ def get_key_taxa(key_taxa_file):
 
     """
     key_taxa = []
-    for line in open(key_taxa_file, 'U'):
+    lines = open(key_taxa_file, 'U')
+    for line in lines:
         line = line.strip()
         if not line or line.startswith('#'):
             continue
         key_taxa.append(line)
+    lines.close()
     return key_taxa
 
 

@@ -44,8 +44,8 @@ def get_filtered_taxa_summary(mapping_file, taxa_summary_file,
                        if v[metadata_category] == metadata_value])
 
     if not selected_ids:
-        raise ValueError('No sample ids match metadata_value="%s"'
-                         ' in metadata_category="%s"' %
+        raise ValueError("No sample ids match metadata_value='%s'"
+                         " in metadata_category='%s'" %
                          (metadata_value, metadata_category))
 
     sample_id_indices = [i for i, sample_id in enumerate(sample_ids)
@@ -57,6 +57,11 @@ def get_filtered_taxa_summary(mapping_file, taxa_summary_file,
         # If select_taxa is None, take the top N most abundant
         totals = filtered_taxa_table.sum(axis=1)
         taxa_indices = argsort(-totals)
+
+        if top_n_taxa > len(taxa_indices):
+            raise ValueError("Number of taxa to select exceeds "
+                             "actual count")
+
         top_taxa = taxa_indices[:top_n_taxa]
         other_taxa = taxa_indices[top_n_taxa:]
         taxa_labels = [taxa_ids[idx] for idx in top_taxa]
@@ -114,20 +119,21 @@ def parse_taxa_summary_table(taxa_summary, cast_as=float):
             raise ValueError("Error in taxa summary file - "
                              "number of values does not "
                              "match the number of samples")
+        # Cast row as cast_as elements and append row to table
         taxa_table.append(array(map(cast_as, line_pieces[1:])))
         taxa_ids.append(line_pieces[0])
 
     return sample_ids, taxa_ids, array(taxa_table)
 
 
-def parse_mapping_file_to_dict(mapping_file_fp):
+def parse_mapping_file_to_dict(mapping_file):
     """ Takes an open mapping file and parses it to a dictionary structure """
 
     metadata_dict = {}
     metadata_categories = []
     comments = []
 
-    for line in mapping_file_fp:
+    for line in mapping_file:
         line = line.strip()
         if not line:
             continue

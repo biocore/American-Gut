@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import division
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -66,7 +68,7 @@ def make_stack_plot(taxa_table, sample_ids, ylabel,
     ax1.set_yticks(yticks)
     ax1.set_yticklabels(ytick_labels)
     ax1.yaxis.set_tick_params(width=1, length=5, direction='out', right='off')
-    plt.ylabel('%s Frequency (%%)' % (ylabel), fontsize=16)
+    plt.ylabel('%s Frequency (%%)' % ylabel, fontsize=16)
     plt.ylim([0, 1])
     plt.xlim([1, M])
     plt.subplots_adjust(bottom=0.25)

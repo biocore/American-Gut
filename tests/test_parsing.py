@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import division
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -21,7 +23,7 @@ TEST_MAPPING_FILE = TEST_DIR + '/files/test_mapping.txt'
 TEST_TAXA_FILE = TEST_DIR + '/files/test_taxa.txt'
 
 
-class test_mapping_file_parse(TestCase):
+class TestMappingFileParse(TestCase):
     def setUp(self):
         self.categories = ['TEST_CATEGORY', 'AWESOME_CATEGORY']
         self.sample_ids = ['sample_a', 'sample_b']
@@ -34,7 +36,7 @@ class test_mapping_file_parse(TestCase):
 
     def test_mapping_file(self):
         mapping_dict, comments = \
-            parse_mapping_file_to_dict(open(TEST_MAPPING_FILE, 'rU'))
+            parse_mapping_file_to_dict(open(TEST_MAPPING_FILE, 'U'))
         for sample_id, sample_dict in mapping_dict.iteritems():
             # Does the sample dictionary contain
             # all of the metadata categories?
@@ -46,7 +48,7 @@ class test_mapping_file_parse(TestCase):
                                  self.metadata_dict[sample_id][category])
 
 
-class test_taxa_summary_file_parse(TestCase):
+class TestTaxaSummaryFileParse(TestCase):
     def setUp(self):
         self.sample_ids = ['sample_a', 'sample_b']
         self.table = array([[0.11, 0.15],
