@@ -1,0 +1,9 @@
+Taxon	sample_a	sample_b
+k__Bacteria; p__Testomatic	0.10	0.16
+k__Bacteria; p__Firmicutes	0.11	0.15
+k__Bacteria; p__Bacteroidetes	0.12	0.14
+k__Bacteria; p__Proteobacteria	0.13	0.13
+k__Bacteria; p__Verrucomicrobia	0.14	0.12
+k__Bacteria; p__Actinobacteria	0.15	0.11
+k__Bacteria; p__Tenericutes	0.16	0.10
+k__Bacteria; p__Cyanobacteria	0.09	0.09
