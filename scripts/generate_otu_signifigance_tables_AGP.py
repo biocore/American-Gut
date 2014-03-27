@@ -84,7 +84,9 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     FILE_EXTENSION = '.tex'
 
     DATE_FIELD = 'COLLECTION_DATE'
-    DATE_FORMAT = '%m/%d/%Y'
+    DATE_FORMAT_SHORT = '%m/%d/%y'
+    DATE_FORMAT_LONG = '%m/%d/%Y'
+    UNKNOWNS = set(['None', 'NONE', 'none', 'NA', 'na', 'UNKNOWN', 'unknown'])
     DATE_OUT = '%B %d, %Y'
     TIME_FIELD = 'SAMPLE_TIME'
 
@@ -167,11 +169,11 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                 "your sample."
 
         elif 0 < number_rare_tax <= NUM_TAXA_SHOW:
-            rare_formatted = 'Your sample contained the following rare %s '\
+            rare_formatted = 'Your sample contained the following rare%s '\
                 'taxa: %s.' % (unique_string, rare_formatted)
 
         else:
-            rare_formatted = 'Your sample contained %i rare and %s taxa, '\
+            rare_formatted = 'Your sample contained %i rare%s taxa, '\
                 'including the following: %s.' \
                 % (num_rare, unique_string,
                    rare_formatted)
@@ -224,21 +226,43 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                            categories=MACRO_CATS_SIGNIFICANCE,
                                            format=MACRO_FORM_SIGNIFICANCE)
 
-        # Gets the sample date and time
-        if mapping_dict is not None:
-            sample_date = format_date(mapping[samp],
-                                      date_field=DATE_FIELD,
-                                      d_form_in=DATE_FORMAT,
-                                      format_out=DATE_OUT)
-            sample_time = mapping[samp][TIME_FIELD].lower()
-            if sample_time[0] == '0':
-                sample_time = sample_time[1:]
+       # Handles date parsing
+        if mapping is not None and mapping[samp][DATE_FIELD] not in UNKNOWNS:
+            try:
+                sample_date = format_date(mapping[samp],
+                                          date_field=DATE_FIELD,
+                                          d_form_in=DATE_FORMAT_SHORT,
+                                          format_out=DATE_OUT)
+            except:
+                sample_date = format_date(mapping[samp],
+                                          date_field=DATE_FIELD,
+                                          d_form_in=DATE_FORMAT_LONG,
+                                          format_out=DATE_OUT)
 
-            sample_type_prelim = mapping[samp]['BODY_HABITAT'].split(':')[1]
-            sample_type = SAMPLE_CONVERTER[sample_type_prelim]
+            # Removes a zero character from the date
+            if sample_date[sample_date.index(',')-2] == '0':
+                zero_pos = sample_date.index(',')-2
+                sample_date = ''.join([sample_date[:zero_pos],
+                                       sample_date[zero_pos+1:]])
+
         else:
             sample_date = 'unknown'
+
+        # Handles sample parsing
+        if mapping is not None and mapping[samp][TIME_FIELD] not in UNKNOWNS:
+            sample_time = mapping[samp][TIME_FIELD].lower()
+        else:
             sample_time = 'unknown'
+
+        if mapping is not None:
+            sample_type_prelim = mapping[samp]['BODY_HABITAT'].split(':')[1]
+            if sample_type_prelim in SAMPLE_CONVERTER:
+                sample_type = SAMPLE_CONVERTER[sample_type_prelim]
+            elif sample_type in UNKNOWNS:
+                sample_time = 'unknown'
+            else:
+                sample_type = sample_type_prelim.lower()
+        else:
             sample_type = 'unknown'
 
         # Saves the file

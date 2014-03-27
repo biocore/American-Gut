@@ -78,7 +78,7 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
         cur_node = tree
 
         for taxon in tax_string:
-            if taxon.endswith('__'):
+            if taxon.endswith('__') or '[' in taxon:
                 break
 
             node = get_node(cur_node, taxon)
