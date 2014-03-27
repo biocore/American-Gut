@@ -119,7 +119,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     # Gets the category file dictionary summarized with the common categories
      # Generates the category file dictionary
     categories = parse_category_files(raw_tables=cat_tables,
-                                      common_groups=COMMON_TAXA,
+                                      common_groups=COMMON_TAXA[:8],
                                       level=LEVEL,
                                       metadata=CATEGORY)
 
@@ -134,7 +134,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     # Converts final taxa to a clean list
     common_phyla = []
     for taxon in new_common_taxa:
-        common_phyla.append(taxon[1].strip('p__').strip('[').strip(']'))
+        common_phyla.append(taxon[1].strip(' p__').strip('[').strip(']'))
     new_common_taxa = common_phyla
 
       # Checks that the crrect sample ids are plotted
@@ -153,9 +153,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     # Generates a figure for each sample
     for idx, sample_id in enumerate(whole_sample_ids):
         if sample_id in sample_ids:
-
             meta_data = map_dict[sample_id]
-
             # Prealocates a numpy array to hold the data
             tax_array = zeros((NUM_TAXA, NUM_CATS_TO_PLOT))
 
@@ -166,16 +164,10 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
             tax_array[:, 1] = table_average
             tax_array[:, -1] = mp_sample_taxa
 
-            # print tax_array
-            # print ''
-
             # Adds the categories to the table in the listed order
             for idx, cat in enumerate(order):
-                print cat
-                print idx
                 # Skips over undesired categories
                 if cat in SKIPSET:
-                    print 'skip'
                     continue
                 # Gets the sample metadata
                 mapping_key = meta_data[cat]
@@ -189,8 +181,6 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                     raise ValueError('The %s cannot be found in %s.'
                                      % (mapping_key, cat))
                 tax_array[:, idx] = tax_summary[:, mapping_col]
-                # print tax_array
-                # print ''
 
             # Sets up the file to save the data
             filename = pjoin(output_dir, '%s%s%s'
@@ -271,8 +261,9 @@ if __name__ == '__main__':
     if not args.categories:
         categories = {}
     else:
-        category_fp = {c.strip().split(':') for c in
-                       args.categories.split(',')}
+        cat_set = [c for c in args.categories.split(',')]
+        category_fp = {c.strip().split(':')[0]: c.strip().split(':')[1]
+                       for c in cat_set}
         categories = load_category_files(category_files=category_fp)
 
     # Deals with the sample list

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from numpy import mean, shape, argsort, sort, sum as nsum, delete, seterr
+from numpy import mean, shape, argsort, sort, sum as nsum, delete
 from scipy.stats import ttest_1samp
 from time import strftime, strptime, struct_time
 
@@ -298,7 +298,7 @@ def clean_greengenes_string(greengenes_string, render_mode, format=None,
 
         color -- a string describing the latex color to use to render colored
                     text. Valid colors can be found at
-                   <http://en.wikibooks.org/wiki/LaTeX/Colors#Predefined_colors>
+                    http://en.wikibooks.org/wiki/LaTeX/Colors#Predefined_colors
 
     OUTPUTS:
         cleaned_taxon -- a formatted string describing taxonomic information
