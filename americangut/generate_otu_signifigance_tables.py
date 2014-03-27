@@ -36,12 +36,12 @@ def calculate_abundance(sample, taxa, sum_min=0.95):
                     sample."""
 
     if len(sample) != len(taxa):
-        raise ValueError('The number of enteries in samples and taxa must be'
-                         ' equal.')
+        raise ValueError('The number of enteries in samples (%i) and taxa (%i)'
+                         ' must be equal.' % (len(sample), len(taxa)))
 
     # Sorts the sample by abundance
-    abundance_data = sort(sample)[::-1]
-    abundance_rank = argsort(sample)[::-1]
+    abundance_data = reversed(sort(sample))
+    abundance_rank = reversed(argsort(sample))
 
     # List comprehension; faster. Also possible in dictionaries?
     abundance_taxa = [taxa[rank] for rank in abundance_rank]

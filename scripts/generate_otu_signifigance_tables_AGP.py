@@ -57,7 +57,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
 
     # Sets table constants
     RENDERING = "LATEX"
-    RARE_THRESHHOLD = 0.1
+    RARE_THRESH = 0.1
 
     SUM_MIN = 1
 
@@ -112,22 +112,30 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
             raise ValueError("No samples!")
 
     # Generates lists and tables for each sample
-    for samp, filtered_table, rare, unique in \
-            sample_rare_unique(tree, taxa_table, all_taxa, RARE_THRESHHOLD):
-        filt_fun = lambda v, i, md: v.sum() > 0
-        filtered_table = filtered_table.filterObservations(filt_fun)
+    for samp, filtered_table, rare, unique in sample_rare_unique(tree,
+                                                                 tax_table,
+                                                                 all_taxa,
+                                                                 RARE_THRESH):
 
-#       # Sets up filename
+        # Sets up filename
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp,
                           FILE_EXTENSION))
 
-        # Gets sample information for other samples
-        taxa = filtered_table.ObservationIds
+        filt_fun = lambda v, i, md: v.sum() > 0
+        filtered_table = filtered_table.filterObservations(filt_fun)
+        abund_table = tax_table.filterObservations(filt_fun)
+
+        # Gets sample information for the whole table
+        abund_sample = abund_table.sampleData(samp)
+        abund_taxa = abund_table.ObservationIds
+
+        # Gets sample information for other filtered samples
+        filt_taxa = filtered_table.ObservationIds
         population = array([filtered_table.observationData(i) for i in
-            filtered_table.ObservationIds])
+                            filtered_table.ObservationIds])
 
         sample_position = filtered_table.getSampleIndex(samp)
-        sample = filtered_table.sampleData(samp)
+        filt_sample = filtered_table.sampleData(samp)
 
         population = delete(population, sample_position, 1)
 
@@ -179,7 +187,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                    rare_formatted)
 
         # Calculates abundance rank
-        (abundance) = calculate_abundance(sample, taxa,
+        (abundance) = calculate_abundance(abund_sample, abund_taxa,
                                           sum_min=SUM_MIN)
 
         # Generates formatted abundance table
@@ -192,9 +200,9 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                               categories=MACRO_CATS_ABUNDANCE,
                               format=MACRO_FORM_ABUNDANCE)
 
-        (high, low) = calculate_tax_rank_1(sample=sample,
+        (high, low) = calculate_tax_rank_1(sample=filt_sample,
                                            population=population,
-                                           taxa=taxa,
+                                           taxa=filt_taxa,
                                            critical_value=0.05)
 
         if len(high) == 0:
