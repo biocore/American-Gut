@@ -72,7 +72,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     FIG_LEG_OFFSET = [1.9, 0.5]
     # Sets up the the legend font
     LEG_FONT = FontProperties()
-    LEG_FONT.set_size(30)
+    LEG_FONT.set_size(28)
     LEG_FONT.set_family('sans-serif')
     # Sets the general font properties
     use_latex = True
@@ -130,8 +130,6 @@ def main(tax_table, output_dir, samples_to_analyze=None):
                                              unclassified=UNCLASSIFIED)
                      for tax in sample_tax]
         clean_tax.append('Other')
-        print samp
-        print clean_tax
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
