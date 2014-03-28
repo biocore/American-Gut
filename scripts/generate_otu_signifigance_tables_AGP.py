@@ -9,11 +9,11 @@ from generate_otu_signifigance_tables import (calculate_abundance,
                                               calculate_tax_rank_1,
                                               convert_taxa,
                                               convert_taxa_to_list,
-                                              build_latex_macro,
                                               clean_greengenes_string,
+                                              build_latex_macro,
                                               format_date)
+from taxtree import build_tree_from_taxontable, sample_rare_unique
 from make_phyla_plots import map_to_2D_dict
-from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -25,36 +25,43 @@ __email__ = "Justine.Debelius@colorado.edu"
 
 
 def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
-
     """Creates LaTeX formatted significant OTU lists
 
     INPUTS:
-        taxa -- a numpy vector with greengenes taxonomy strings
-
         tax_table -- a numpy array with the relative frequencies of taxonomies
             (rows) for each give sample (column)
 
-        samples_to_analyze -- a numpy vector of sample ids associated with the
-            tax_table values
-
         output_dir -- a directory where the final files should be saved.
 
+        mapping -- a 2D dictionary of mapping data where the sample id is keyed
+                    to a dictionary of metadata.
+
         samples_to_analyze -- a list of samples_to_analyze which should be used
-                    to generate data. If this is left empty, all the samples in
-                    the table will be used.
+                    to generate data. If None, all the samples will be used.
+                    DEFAULT: None
 
     OUTPUTS:
         Generates text files containing LaTex encoded strings which creates a
         LaTeX macro dictionary with the information for creating a table of
         most abundant taxa, most enriched taxa, and rare and unique taxa. Rare
-        defined as present in less than 10% of the total population. The
-        unique taxa are bolded in the lists."""
-
-    # Sets up the way samples should be converted
+        defined as present in less than 10% of the total population. The unique
+        taxa are bolded in the lists.
+    """
+     # Sets up the way samples should be converted
     SAMPLE_CONVERTER = {'feces': 'fecal',
                         'oral_cavity': 'oral',
                         'skin': 'skin'}
 
+    DUMMY = ['', '', '', '']
+    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
+
+     # Sets up the way samples should be converted
+    SAMPLE_CONVERTER = {'feces': 'fecal',
+                        'oral_cavity': 'oral',
+                        'skin': 'skin'}
+
+    DUMMY = ['', '', '', '']
+    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
     # Sets table constants
     RENDERING = "LATEX"
     RARE_THRESH = 0.1
@@ -86,6 +93,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     DATE_FIELD = 'COLLECTION_DATE'
     DATE_FORMAT_SHORT = '%m/%d/%y'
     DATE_FORMAT_LONG = '%m/%d/%Y'
+
     UNKNOWNS = set(['None', 'NONE', 'none', 'NA', 'na', 'UNKNOWN', 'unknown'])
     DATE_OUT = '%B %d, %Y'
     TIME_FIELD = 'SAMPLE_TIME'
@@ -143,9 +151,9 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         greengenes_rare = []
         greengenes_unique = []
         for taxon in rare:
-            greengenes_rare.append('; '.join(taxon))
+            greengenes_rare.append(';'.join(taxon))
         for taxon in unique:
-            greengenes_unique.append('; '.join(taxon))
+            greengenes_unique.append(';'.join(taxon))
 
         # Formats the rare and unique lists
         rare_format = []
@@ -221,10 +229,6 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                     break
                 formatted_high.append(DUMMY)
 
-            high_formatted = \
-                build_latex_macro(formatted_high,
-                                  categories=MACRO_CATS_SIGNIFICANCE)
-
         else:
             formatted_high = convert_taxa(high[0:NUM_TAXA_SHOW],
                                           formatting_keys=FORMAT_SIGNIFIGANCE,
@@ -247,8 +251,8 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                           d_form_in=DATE_FORMAT_LONG,
                                           format_out=DATE_OUT)
 
-            # Removes a zero character from the date
-            if sample_date[sample_date.index(',')-2] == '0':
+        # Removes a zero character from the date
+        if sample_date[sample_date.index(',')-2] == '0':
                 zero_pos = sample_date.index(',')-2
                 sample_date = ''.join([sample_date[:zero_pos],
                                        sample_date[zero_pos+1:]])
@@ -291,21 +295,21 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         file_for_editing.close()
 
 # Sets up command line parsing
-parser = ArgumentParser(description='Creates lists and tables of enriched, '
-                        'abundance and rare taxa')
+parser = ArgumentParser(description="Creates lists and tables of enriched, "
+                        "abundance and rare taxa")
 
 parser.add_argument('-i', '--input',
-                    help='Path to taxonomy table biom file. [REQUIRED]')
+                    help='Path to taxonomy table [REQUIRED]')
 parser.add_argument('-o', '--output',
                     help='Path to the output directory [REQUIRED]')
-parser.add_argument('-m', '--mapping',
-                    default=None,
-                    help='Path to the mapping file.')
 parser.add_argument('-s', '--samples',
                     default=None,
                     help='Sample IDs to be analyzed. If no value is '
                     'specified, all samples in the taxonomy file will be'
                     ' analyzed.')
+parser.add_argument('-m', '--mapping',
+                    default=None,
+                    help='Path to a mapping file')
 
 if __name__ == '__main__':
 
@@ -330,7 +334,7 @@ if __name__ == '__main__':
     if args.mapping and not isfile(args.mapping):
         parser.error('The supplied mapping file does not exist in the path.')
     elif args.mapping:
-        mapping_dict = map_to_2D_dict(open(args.mapping, 'U'))
+        mapping = map_to_2D_dict(open(args.mapping, 'U'))
 
     # Parses the sample IDs as a list
     if args.samples:
@@ -342,5 +346,5 @@ if __name__ == '__main__':
 
     main(taxa_table=tax_table,
          output_dir=output_dir,
-         mapping=mapping_dict,
+         mapping=mapping,
          samples_to_analyze=samples_to_analyze)

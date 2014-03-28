@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 from numpy import mean, shape, argsort, sort, sum as nsum, delete
 from scipy.stats import ttest_1samp
 from time import strftime, strptime, struct_time
@@ -58,10 +59,8 @@ def calculate_abundance(sample, taxa, sum_min=0.95):
     return abundant
 
 
-def calculate_tax_rank_1(sample, population, taxa, critical_value=0.05,
-                         round_to=None):
-    """Identifies unique and rare samples in the population and preforms a
-    case 1 t-test on common samples.
+def calculate_tax_rank_1(sample, population, taxa, critical_value=0.05):
+    """Preforms a case 1 t-test on common samples
 
     INPUTS:
         sample -- a one dimensional numpy array containing the taxonomic
@@ -102,7 +101,7 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value=0.05,
     pop_watch = [(idx, count) for (idx, count) in enumerate(population_count)]
     pop_watch = reversed(pop_watch)
 
-    for idx, count in pop_watch:
+    for (idx, count) in pop_watch:
         # Removes any line which is equal to zero
         if count == 0:
             population = delete(population, idx, 0)
@@ -111,7 +110,8 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value=0.05,
 
     # Determines the ratio
     population_mean = mean(population, 1)
-    ratio = sample.astype(float) / population_mean.astype(float)
+    ratio = sample/population_mean
+
     # preforms a case 1 t-test comparing the sample and population
     t_stat = []
     p_stat = []
@@ -142,51 +142,60 @@ def calculate_tax_rank_1(sample, population, taxa, critical_value=0.05,
 
 
 def convert_taxa(rough_taxa, formatting_keys='%1.2f', hundredx=False):
-    """Takes a dictionary of taxonomy and corresponding values and formats
-    for inclusion in an output table.
-
+    """Formats lists of numbers for table generation
     INPUTS:
 
-        rough_taxa -- a dictionary of greengenes taxonomy strings keyed to a
-                    list of numeric values.
-
-        render_mode -- a string describing the format for the table: "RAW",
-                    "HTML" or "LATEX".
+        rough_taxa -- a list of lists with a descriptor string followed by
+                   a list of corresponding values
 
         formatting_keys --  a string describing the way the value should be
                     formatting using string formats. For example, %1.2f, %2d,
                     %i. A value of 'SKIP' will ignore that value and remove it
                     from the output list.
-
     OUTPUTS:
         formatted_taxa -- a list of string with formatting for the final table.
     """
-    num_rough = len(rough_taxa)
-    key_class = formatting_keys.__class__
-    num_keys = len(formatting_keys)
-    hund_class = hundredx.__class__
-    num_hund = len(hundredx)
 
-    # Preforms sanity checks and sets up for constants
-    if not (key_class == list or key_class == bool):
-        raise TypeError('formatting_keys must be a list or bool.')
+    # Checks the rough_taxa argument is sane
+    if not isinstance(rough_taxa, list):
+        raise TypeError('rough_taxa must be a list of lists')
+    num_ent = len(rough_taxa[0])
+    for entry in rough_taxa:
+        if not isinstance(entry, list):
+            raise TypeError('rough_taxa must be a list of lists')
+        if not len(entry) == num_ent:
+            raise ValueError('list size is inconsistant')
+    num_rough = num_ent-1
 
-    elif not (hund_class == list or hund_class == bool):
+    if isinstance(formatting_keys, list):
+        num_keys = len(formatting_keys)
+    else:
+        num_keys = 1
+
+    if isinstance(hundredx, list):
+        num_hund = len(hundredx)
+    else:
+        num_hund = 1
+
+    if not isinstance(formatting_keys, (list, str)):
+        raise TypeError('formatting_keys must be a list or string.')
+    if not num_rough == num_keys and isinstance(formatting_keys, list):
+        raise ValueError('The number of elements in rough_taxa (%i) and the '
+                         'number of elements in formatting_keys (%i) must be '
+                         'equal.' % (num_rough, num_keys))
+
+    elif not isinstance(hundredx, (list, bool)):
         raise TypeError('hundredx must be a list or bool.')
-
-    if not num_rough == num_keys and not key_class == list:
-        raise ValueError('The number of elements in rough_taxa and the number'
-                         ' of elements in formatting_keys must be equal.')
-
-    elif not num_rough == num_hund and not hund_class == list:
-        raise ValueError('The number of elements in rough_taxa and the number'
-                         ' of elements in hundredx must be equal.')
+    elif not num_rough == num_hund and isinstance(hundredx, list):
+        raise ValueError('The number of elements in rough_taxa(%i) and the '
+                         'number of elements in hundredx(%i) must be equal.'
+                         % (num_rough, num_hund))
 
     # Converts formatting keys and hundredx to lists
-    if key_class == bool:
+    if isinstance(formatting_keys, str):
         formatting_keys = [formatting_keys]*num_rough
 
-    if hund_class == bool:
+    if isinstance(hundredx, bool):
         hundredx = [hundredx]*num_rough
 
     # Creates formatted list
@@ -220,7 +229,8 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma=False,
                     greengenes to be included in the final, formated output.
 
         tax_format -- a list specifiying if an argument should be bolded
-                        (denoted by "BOLD") or left alone ("REG")
+                        (denoted by "BOLD"), rendered in color ('COLOR'),
+                        or left alone ('REG').
 
         render_mode -- a python string describing the way the out should be
                     formatted. Options are LATEX, corresponding to LaTex code,
@@ -231,6 +241,12 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma=False,
         comma -- a binary value indicating whether the list should be single
                     line comma separated list (TRUE), or a list format with
                     each item on its own line (FALSE).
+
+        color -- a string identifying the shade latex should use for the text.
+                    DEFAULT: 'red'
+
+        color -- a string identifying the shade latex should use for the text.
+                    DEFAULT: 'red'
 
     OUTPUT:
         format_list -- a python string formatted to give a list of taxa
@@ -258,7 +274,6 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma=False,
                                         format=tax_format[idx].upper(),
                                         unclassified=True,
                                         color=color))
-
         format_list = ', '.join(format_list)
     else:
         format_list.append(prelist)
@@ -277,7 +292,7 @@ def convert_taxa_to_list(raw_taxa, tax_format, render_mode, comma=False,
 
 def clean_greengenes_string(greengenes_string, render_mode, format=None,
                             unclassified=False, color='red'):
-    """Distills a greengenes string to its high taxonomic resolution
+    """Distills a greengenes string to its highest taxonomic resolution
 
     INPUTS:
         greengenes_string -- a greengenes string describing taxonomy
@@ -301,9 +316,8 @@ def clean_greengenes_string(greengenes_string, render_mode, format=None,
                     http://en.wikibooks.org/wiki/LaTeX/Colors#Predefined_colors
 
     OUTPUTS:
-        cleaned_taxon -- a formatted string describing taxonomic information
+        cleaned_taxon -- a formatted string describing taxonomic information"""
 
-    """
     # Preallocates level descriptors
     TAX_DES = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus',
                'Species']
@@ -330,9 +344,10 @@ def clean_greengenes_string(greengenes_string, render_mode, format=None,
     else:
         classified = ''
 
+    greengenes_string = greengenes_string.replace(' ', '')
     # Splits the taxonomy at the ; and removes the designation header.
-    split_tax = [i.split('__', 1)[-1] for i in
-                 greengenes_string.strip().split('; ')]
+    split_tax = [field.strip().split('__', 1)[1] for field in
+                 greengenes_string.split(';')]
 
     # Identifies the highest level of resolution at which taxonomy is defined
     for id_, level in enumerate(split_tax):
@@ -415,7 +430,6 @@ def build_latex_macro(data, categories, format=None):
         if mode == 'single':
             fun = format[idx]
             macro.append('\\def\\%s{%s}' % (categories[idx], fun(entry)))
-
         if mode == 'multi' and len(entry[0]) == 0:
             for cat in categories:
                 macro.append('\\def\\%s%s{}' % (cat, ALPHABET[idx]))
@@ -426,6 +440,7 @@ def build_latex_macro(data, categories, format=None):
                 element = entry[id_]
                 macro.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx],
                              fun(element)))
+            
             macro.append('')
 
     # Inserts line breaks
@@ -434,11 +449,11 @@ def build_latex_macro(data, categories, format=None):
     return macro
 
 
-def format_date(meta, date_field=None, d_form_in=None, time_field=None,
+def format_date(mapping, date_field=None, d_form_in=None, time_field=None,
                 t_form_in=None, format_out='%b %d, %Y'):
-    """Formats the date information for a metadata dictionary
+    """Formats the date information from a mapping dictionary
     INPUTS:
-        meta -- a 2D dictionary where a sample ID is keyed to an metadata
+        mapping -- a 2D dictionary where a sample ID is keyed to an mappingdata
                 dictionary giving values associated with each sample
 
         date_filed -- the name of the category holding date information
@@ -458,23 +473,23 @@ def format_date(meta, date_field=None, d_form_in=None, time_field=None,
         raise ValueError('A date or time field must be supplied. '
                          'Neither is available.')
 
-    if date_field is not None and date_field not in meta:
-        raise ValueError('The date_field must be in the meta data.')
+    if date_field is not None and date_field not in mapping:
+        raise ValueError('The date_field must be in the mapping data.')
 
     if d_form_in is None and date_field is not None:
         raise ValueError('A date format must be supplied with a date field.')
 
-    if time_field is not None and time_field not in meta:
-        raise ValueError('The time_field must be in the meta data.')
+    if time_field is not None and time_field not in mapping:
+        raise ValueError('The time_field must be in the mapping data.')
 
     if t_form_in is None and time_field is not None:
         raise ValueError('A time format must be supplied with a time field.')
 
     # Gets the date information
     if date_field is not None:
-        date = strptime(meta[date_field], d_form_in)
+        date = strptime(mapping[date_field], d_form_in)
     if time_field is not None:
-        time = strptime(meta[time_field], t_form_in)
+        time = strptime(mapping[time_field], t_form_in)
 
     # Gets the date and time into a single structure
     if date_field is not None and time_field is not None:
