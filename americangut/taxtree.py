@@ -149,6 +149,7 @@ def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
             filtered = table.filterObservations(filter_f)
             yield (sample_id, filtered, rare, unique)
 
+
 if __name__ == '__main__':
     from sys import argv
     table = parse_biom_table(open(argv[1]))

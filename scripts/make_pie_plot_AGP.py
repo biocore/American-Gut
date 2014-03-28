@@ -24,7 +24,7 @@ __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
 
-def main(tax_table, output_dir, samples_to_plot=None):
+def main(tax_table, output_dir, samples_to_analyze=None):
     """Generates pie chart of the most abundant twelve taxa in the sample
     INPUTS:
         otu_table -- a biom formatted taxonomy table at the desired level of
@@ -33,8 +33,8 @@ def main(tax_table, output_dir, samples_to_plot=None):
         output_dir -- the location of the directory where output files should
                     be stored.
 
-        samples_to_plot -- a list of sample ids to plot. If no value is passed,
-                    then all samples in the biom table are analyzed.
+        samples_to_analyze -- a list of sample ids to plot. If no value is
+                    passed, then all samples in the biom table are analyzed.
 
     OUTPUTS:
         A pdf of the piechart summarizing the most abundant taxa will be
@@ -130,11 +130,14 @@ def main(tax_table, output_dir, samples_to_plot=None):
                                              unclassified=UNCLASSIFIED)
                      for tax in sample_tax]
         clean_tax.append('Other')
+        print samp
+        print clean_tax
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
         filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp,
                                                  FILENAME_AFTER))
+
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,
@@ -196,4 +199,4 @@ if __name__ == '__main__':
 
     main(tax_table=tax_table,
          output_dir=output_dir,
-         samples_to_plot=samples_to_analyze)
+         samples_to_analyze=samples_to_analyze)

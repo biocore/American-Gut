@@ -658,35 +658,43 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     if not plot_ccw:
         plt.axis([x_lims[1], x_lims[0], y_lims[0], y_lims[1]])
 
+    plt.draw()
+
     # Adds the legend if necessary
     if legend:
         leg = plt.legend(pie_patches, group_names,
                          loc='center right',
                          prop=legend_font,
                          frameon=legend_frame)
+        plt.draw()
 
         if not legend_offset is None:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
+
+    plt.draw()
 
     # Adds the title if desired
     if isinstance(title, str):
         plt.title(title, prop=title_font)
 
+    plt.draw()
+
     # Saves the output figure
     plt.savefig(file_out, format=filetype)
+    plt.clf()
 
 
 def render_barchart(data_table, group_names, sample_names, axis_dims,
-                    fig_dims, file_out='barchart', filetype='PDF', colors=None,
-                    show_edge=True, legend=True, title=None, match_legend=True,
-                    frame=True, bar_width=0.8, x_axis=True, x_label=None,
-                    x_min=-0.5, x_tick_interval=1.0, y_axis=True,
-                    y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None,
-                    y_label=None, legend_frame=False,
-                    legend_offset=None, font_angle=45, font_alignment='right',
-                    tick_font=None, label_font=None, legend_font=None,
-                    title_font=None, use_latex=False, rc_fam='sans-serif',
-                    rc_font=['Helvetica']):
+    fig_dims, file_out='barchart', filetype='PDF', colors=None,
+    show_edge=True, legend=True, title=None, match_legend=True,
+    frame=True, bar_width=0.8, x_axis=True, x_label=None,
+    x_min=-0.5, x_tick_interval=1.0, y_axis=True,
+    y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None,
+    y_label=None, legend_frame=False,
+    legend_offset=None, font_angle=45, font_alignment='right',
+    tick_font=None, label_font=None, legend_font=None,
+    title_font=None, use_latex=False, rc_fam='sans-serif',
+    rc_font=['Helvetica']):
     """Creates a stacked bar chart using the data in the category table.
 
     A single value bar chart can be created using a vector for data_table
