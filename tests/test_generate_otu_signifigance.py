@@ -3,13 +3,13 @@
 
 from unittest import TestCase, main
 from numpy import array
-from generate_otu_signifigance_tables import (calculate_abundance,
-                                              calculate_tax_rank_1,
-                                              convert_taxa,
-                                              clean_greengenes_string,
-                                              convert_taxa_to_list,
-                                              build_latex_macro,
-                                              format_date)
+from americangut.generate_otu_signifigance_tables import (calculate_abundance,
+                                                          calculate_tax_rank_1,
+                                                          convert_taxa,
+                                                          clean_greengenes_string,
+                                                          convert_taxa_to_list,
+                                                          build_latex_macro,
+                                                          format_date)
 
 
 class GenerateOTUSignifiganceTablesTest(TestCase):

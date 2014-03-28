@@ -5,15 +5,15 @@ from os import mkdir
 from numpy import array, delete
 from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
-from generate_otu_signifigance_tables import (calculate_abundance,
-                                              calculate_tax_rank_1,
-                                              convert_taxa,
-                                              convert_taxa_to_list,
-                                              clean_greengenes_string,
-                                              build_latex_macro,
-                                              format_date)
-from taxtree import build_tree_from_taxontable, sample_rare_unique
-from make_phyla_plots import map_to_2D_dict
+from americangut.generate_otu_signifigance_tables import (calculate_abundance,
+                                                          calculate_tax_rank_1,
+                                                          convert_taxa,
+                                                          convert_taxa_to_list,
+                                                          clean_greengenes_string,
+                                                          build_latex_macro,
+                                                          format_date)
+from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
+from americangut.make_phyla_plots import map_to_2D_dict
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -124,7 +124,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                                                  tax_table,
                                                                  all_taxa,
                                                                  RARE_THRESH):
-
+        print samp
         # Sets up filename
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp,
                           FILE_EXTENSION))

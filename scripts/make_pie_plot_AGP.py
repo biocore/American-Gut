@@ -7,13 +7,13 @@ from numpy import array, vstack
 from argparse import ArgumentParser
 from biom.parse import parse_biom_table
 from matplotlib.font_manager import FontProperties
-from make_phyla_plots import (translate_colors,
-                              calculate_dimensions_rectangle,
-                              render_single_pie)
-from generate_otu_signifigance_tables import(calculate_abundance,
-                                             clean_greengenes_string)
-from taxtree import (build_tree_from_taxontable,
-                     sample_rare_unique)
+from americangut.make_phyla_plots import (translate_colors,
+                                          calculate_dimensions_rectangle,
+                                          render_single_pie)
+from americangut.generate_otu_signifigance_tables import(calculate_abundance,
+                                                         clean_greengenes_string)
+from americangut.taxtree import (build_tree_from_taxontable,
+                                 sample_rare_unique)
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
