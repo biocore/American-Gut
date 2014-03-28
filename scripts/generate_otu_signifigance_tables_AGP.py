@@ -124,7 +124,6 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                                                  tax_table,
                                                                  all_taxa,
                                                                  RARE_THRESH):
-        print samp
         # Sets up filename
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp,
                           FILE_EXTENSION))
