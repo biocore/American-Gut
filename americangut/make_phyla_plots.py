@@ -668,8 +668,10 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
                          frameon=legend_frame)
         plt.draw()
 
-        if not legend_offset is None:
+        if not legend_offset is None and len(legend_offset) == 2:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
+        elif not legend_offset is None:
+            leg.set_bbox_to_anchor(tuple(legend_offset))
 
     plt.draw()
 

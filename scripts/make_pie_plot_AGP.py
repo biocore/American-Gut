@@ -58,7 +58,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     AXIS_LENGTH = 7.25
     AXIS_BORDER = 0.01
     AXIS_TITLE = 0
-    AXIS_LEGEND = 6.253
+    AXIS_LEGEND = 7
     # Modifies the axis limits
     AX_LIMS = [-1.05, 1.05]
     # Sets up constants for getting the colormap and plotting
@@ -69,7 +69,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     FIG_LEGEND = True
     FIG_COLOR_EDGE = False
     FIG_LEG_FRAME = False
-    FIG_LEG_OFFSET = [1.9, 0.5]
+    FIG_LEG_OFFSET = [0.95, 0.025, 1.0, 0.95]
     # Sets up the the legend font
     LEG_FONT = FontProperties()
     LEG_FONT.set_size(28)
