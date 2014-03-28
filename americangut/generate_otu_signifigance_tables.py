@@ -440,7 +440,7 @@ def build_latex_macro(data, categories, format=None):
                 element = entry[id_]
                 macro.append('\\def\\%s%s{%s}' % (cat, ALPHABET[idx],
                              fun(element)))
-            
+
             macro.append('')
 
     # Inserts line breaks
