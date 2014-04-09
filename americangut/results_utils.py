@@ -420,3 +420,49 @@ def test_filter_mapping_file(ag_gg_mm_fp):
         assert len(l) == 4
         assert l[test_sbs] == 'FECAL'
         assert l[test_acro] in ['AGP', 'GG']
+
+
+def construct_svg_smash_commands(files, ids, cmd_format, cmd_args):
+    """Format the SVG smashing commands"""
+    commands = []
+    for f in files:
+        if not f.startswith('Figure'):
+            continue
+
+        prefix, remainder = f.split('.', 1)
+
+        try:
+            id_, remainder = remainder.rsplit('_', 1)
+        except:
+            # GLOBAL SVG for each figure
+            assert remainder == 'GLOBAL'
+            continue
+
+        # ignore svgs for non-AG points
+        if id_ not in ids:
+            continue
+
+        args = cmd_args.copy()
+        args['sample_id'] = id_
+        args['prefix'] = prefix
+        commands.append(cmd_format % args)
+    return commands
+
+
+def chunk_list(items, chunk_size=25):
+    """Chunk up a list of items"""
+    start = 0
+    for end in range(chunk_size, len(items) + chunk_size, chunk_size):
+        chunk = items[start:end]
+        start = end
+        yield chunk
+
+
+def construct_phyla_plots_cmds(sample_ids, cmd_format, cmd_args):
+    """Constuct the phlya plots commands"""
+    commands = []
+    for chunk in chunk_list(sample_ids):
+        args = cmd_args.copy()
+        args['samples'] = ','.join(chunk)
+        commands.append(cmd_format % args)
+    return commands
