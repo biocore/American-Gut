@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 import os
 import shutil
 import zipfile
@@ -563,3 +564,93 @@ def construct_bootstap_and_latex_commands(ids, participants, rel_existing_path,
             latex_cmds.append(latex_cmd)
 
     return (indiv_cmds, latex_cmds)
+
+
+def harvest(path):
+    """harvest PDFs"""
+    harvest_path = os.path.join(path, 'harvested')
+    if not os.path.exists(harvest_path):
+        os.mkdir(harvest_path)
+
+    for dirpath, dirnames, filenames in os.walk(path):
+        try:
+            dirnames.remove('harvested')
+        except ValueError:
+            pass
+
+        try:
+            dirnames.remove('pdfs')
+        except ValueError:
+            pass
+
+        sample_suffix = re.search('\d+\.\d+', dirpath)
+        if sample_suffix is None:
+            continue
+        else:
+            sample = sample_suffix.group().split('.')[0]
+
+        pdf = os.path.join(path, dirpath, "%s.pdf" % sample)
+        if os.path.exists(pdf):
+            yield "mv %s %s" % (pdf, harvest_path)
+
+
+def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
+              previously_printed=None):
+    """Combine sets of PDFs into single documents
+
+    path : a path to where the PDFs are
+    tag : some tag to put on the file names
+    pdf_smash_fmt : command format to use
+    n_per_result : number of PDFs to smash together
+    previously_printed : set of previously printed barcodes or None
+    """
+    if previously_printed is None:
+        previously_printed = set([])
+
+    files = []
+    for f in os.listdir(path):
+        bc, extension = os.path.splitext(f)
+        if extension != '.pdf':
+            continue
+        if bc in previously_printed:
+            continue
+        files.append(os.path.join(path, f))
+
+    result_path = os.path.join(path, 'pdf_smash')
+    if not os.path.exists(result_path):
+        os.mkdir(result_path)
+
+    # sort and then filter out. filtering is by barcode without prefix
+    sort_key = lambda x: int(x.rsplit('/')[-1].split('.')[0])
+    files_ordered = sorted(files, key=sort_key)
+
+    smash_set = []
+    barcode_set = []
+    bc_f = lambda ch: '\n'.join([f.rsplit('/')[-1].split('.')[0] for f in ch])
+
+    for chunk in chunk_list(files_ordered, n_per_result):
+        smash_set.append(' '.join(chunk))
+        barcode_set.append(bc_f(chunk))
+
+    smash_cmds = []
+    smash_basename = os.path.join(result_path, "%s_smashset_%d")
+    for set_number, (pdfs, barcodes) in enumerate(zip(smash_set, barcode_set)):
+        filename_base = smash_basename % (tag, set_number)
+        filename_pdf = filename_base + '.pdf'
+        filename_txt = filename_base + '.txt'
+
+        f = open(filename_txt, 'w')
+        f.write(barcodes)
+        f.write('\n')
+        f.close()
+
+        smash_cmds.append(pdf_smash_fmt % {'output': filename_pdf,
+                                           'pdfs': pdfs})
+
+    ordered_barcodes_path = os.path.join(result_path, 'ordered_barcodes.txt')
+    ordered_barcodes = open(ordered_barcodes_path, 'w')
+    ordered_barcodes.write('\n'.join(barcode_set))
+    ordered_barcodes.write('\n')
+    ordered_barcodes.close()
+
+    return smash_cmds
