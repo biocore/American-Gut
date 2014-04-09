@@ -133,3 +133,15 @@ def parse_identifying_data(path, passwd, embedded_file='participants.txt'):
         participants = None
 
     return participants
+
+
+def parse_previously_printed(path):
+    """Returns the set of previously printed barcodes
+
+    The format of the file to be parsed is a single column of sample barcodes
+    """
+    if path is not None:
+        prev_printed = set([l.strip() for l in open(path)])
+    else:
+        prev_printed = set([])
+    return prev_printed
