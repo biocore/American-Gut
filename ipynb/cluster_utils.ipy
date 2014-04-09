@@ -310,3 +310,9 @@ def create_env(prj_name, basedir=None):
             not_created = False
 
     register_env(basedir, prj_name=name, working_dir=working_dir)
+
+def submit(prj_name, cmd):
+    """Submission wrapper for easily submitting jobs"""
+    return submit_qsub(cmd, job_name=prj_name, queue='memroute', 
+                       extra_args='-l pvmem=8gb')
+    
