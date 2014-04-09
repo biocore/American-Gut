@@ -8,9 +8,11 @@ __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
+import os
+
 def pick_rarifaction_level(id_, lookups):
     """Determine which lookup has the appropriate key
-    
+
     id_ is a barcode, e.g., '000001000'
     lookups is a list of tuples, e.g., [('10k',{'000001000':'000001000.123'})]
 
@@ -26,14 +28,14 @@ def pick_rarifaction_level(id_, lookups):
 
 def parse_mapping_file(open_file):
     """return (header, [(sample_id, all_other_fields)])
-    
+
     """
     header = open_file.readline().strip()
     res = []
 
     for l in open_file:
         res.append(l.strip().split('\t',1))
-    
+
     return (header, res)
 
 def verify_subset(table, mapping):
@@ -47,9 +49,15 @@ def slice_mapping_file(table, mapping):
     """Returns a new mapping corresponding to just the ids in the table"""
     t_ids = set(table.SampleIds)
     res = []
-    
+
     for id_, l in mapping:
         if id_ in t_ids:
             res.append('\t'.join([id_, l]))
 
     return res
+
+
+def check_file(f):
+    """Verify a file (or directory) exists"""
+    if not os.path.exists(f):
+        raise IOError("Cannot continue! The file %s does not exist!" % f)
