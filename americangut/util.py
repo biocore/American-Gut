@@ -4,7 +4,7 @@ from itertools import izip
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Daniel McDonald"]
+__credits__ = ["Daniel McDonald", "Adam Robbins-Pianka"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
@@ -65,6 +65,9 @@ def trim_fasta(input_fasta, output_fasta, length):
     length: what length to trim the sequences to. Sequences shorter than
             length will not be modified.
     """
+    # reads the FASTA file two lines at at a time
+    # Assumptions: 1) each FASTA record is two lines
+    #              2) There are no incomplete FASTA records
     for header, sequence in izip(input_fasta, input_fasta):
         header = header.strip()
         sequence = sequence.strip()[:length]
