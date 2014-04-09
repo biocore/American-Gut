@@ -425,8 +425,7 @@ def construct_phyla_plots_cmds(sample_ids, cmd_format, cmd_args):
 def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
     """Counts unique sequences per-OTU for a given set of OTUs
 
-    otu_ids: a set of OTU IDs (should be a set and not, e.g., a list, for quick
-             lookups)
+    otu_ids: a set of OTU IDs
     otu_map_file: file-like object in the format of an OTU map
     input_seqs_file: FASTA containing sequences that were used to generate
                      the otu_map_file
@@ -434,19 +433,19 @@ def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
     Returns a nested dict structure: {otu_id: {sequence: count}}
     """
     # This will hold the OTU map for the OTUs in otu_ids
-    otu_map = {x:set() for x in otu_ids}
+    otu_map = {x: set() for x in otu_ids}
 
     # go through the otu map and save the lines of interest to the otu_map
     # data structure above
     print "Reading OTU map..."
     for line in otu_map_file:
-        otu_id, seq_ids = line.strip().split('\t',1)
+        otu_id, seq_ids = line.strip().split('\t', 1)
         if otu_id in otu_ids:
             otu_map[otu_id] = set(seq_ids.split('\t'))
 
     # this will hold, for each OTU in otus, counts of each unique sequence
     # observed in that OTU
-    unique_counts = {x:defaultdict(int) for x in otu_ids}
+    unique_counts = {x: defaultdict(int) for x in otu_ids}
 
     # go through input fasta file TWO LINES AT A TIME, counting unique
     # sequences in each OTU of intrest
