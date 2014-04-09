@@ -462,3 +462,26 @@ def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
     print "Done."
 
     return unique_counts
+
+
+def write_contaminant_fasta(unique_counts, output_file, abundance_threshold):
+    """Writes a FASTA file of sequences determined to be contaminants
+
+    If one unique sequences composes more than abundance_threshold of the OTU,
+    that sequences is marked as a contaminant and written to output_file.
+
+    unique_counts: a nested dict of the form {otu_id: {sequence: count}}
+                   E.g., the output of count_unique_sequences_per_otu
+    output_file: a file-like object ready for writing
+    abundance_threshold: If a sequence composes more than this percent of an
+                         OTU, then it is marked as a contaminant
+    """
+    for otu_id, otu_counts in unique_counts.iteritems():
+        otu_total_count = sum([count for seq, count in otu_counts.iteritems()])
+        
+        counter = 0
+        for seq, count in sorted(otu_counts.items(), key=lambda x:x[1],
+                reverse=True):
+            counter += 1
+            if 1.0*count/otu_total_count > abundance_threshold:
+                output_file.write('>%s_%d\n%s\n' % (otu_id, counter, seq))
