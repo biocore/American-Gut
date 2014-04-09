@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import zipfile
 
 # These are the data files in the American-Gut repository that are used for
 # results processing
@@ -103,3 +104,32 @@ def stage_static_files(sample_type, working_dir):
     _stage_static_data(working_dir)
     _stage_static_latex(sample_type, working_dir)
     _stage_static_pdfs(sample_type, working_dir)
+
+
+# use participant names only if the data are available.
+# NOTE: these data are _not_ part of the github repository for
+#       privacy reasons.
+def parse_identifying_data(path, passwd, embedded_file='participants.txt'):
+    """Process identifying data if available
+
+    The expected format of the file is a passworded zipfile that contains
+    an embedded, tab delimited file. The format of the tab delimited file
+    is expected to be barcode TAB participant name
+    """
+    if path is not None:
+        zf = zipfile.ZipFile(path)
+        zf.setpassword(passwd)
+
+        participants = {}
+        for l in zf.read(embedded_file).splitlines():
+            if l.startswith('#'):
+                continue
+
+            bc, name = l.strip().split('\t')[:2]
+            participants[bc] = name.replace(",", "")
+
+        print "Using identified data!"
+    else:
+        participants = None
+
+    return participants
