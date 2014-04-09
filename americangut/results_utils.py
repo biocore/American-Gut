@@ -322,8 +322,8 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
 def filter_mapping_file(in_fp, out_fp, columns_to_keep):
     """Filter out columns in a mapping file
 
-    in_fp : the input file path
-    out_fp : the output file path
+    in_fp : the input file-like object
+    out_fp : the output file-like object
     columns_to_keep : a dict of the columns to keep, valued by specific category
         value if desired to filter out samples that don't meet a given
         criteria. In other words, a row is retained if the function associated
