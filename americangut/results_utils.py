@@ -3,7 +3,8 @@
 import os
 import shutil
 
-
+# These are the data files in the American-Gut repository that are used for
+# results processing
 _data_files = [
         ('AG', 'AG_100nt.biom.gz'),
         ('AG', 'AG_100nt.txt'),
@@ -16,14 +17,11 @@ _data_files = [
         ]
 
 
+# These are the Latex templates for the different results types
 _templates = {
         'fecal': ('template_gut.tex', 'macros_gut.tex'),
         'oralskin': ('template_oralskin.tex', 'macros_oralskin.tex')
         }
-
-
-_identified = ['fecal_identified.txt', 'oral_identified.txt',
-               'skin_identified.txt']
 
 
 def stage_static_files(sample_type, working_dir):
