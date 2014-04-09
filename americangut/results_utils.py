@@ -319,32 +319,6 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
     output.close()
 
 
-def test_massage_mapping(ag_100nt):
-    """Exercise the massage mapping code, verify expected results"""
-    # output test file
-    ag_100nt_m_TEST_fp = 'AG_100nt_TEST.txt'
-
-    massage_mapping(ag_100nt, ag_100nt_m_TEST_fp, 'body_site', 'AGP')
-
-    # verify the resulting header structure
-    test_mapping = [l.strip().split('\t') for l in open(ag_100nt_m_TEST_fp)]
-    test_header = test_mapping[0]
-    test_header_length = len(test_header)
-    assert test_header[-6:] == ['SIMPLE_BODY_SITE', 'TITLE_ACRONYM',
-                                'TITLE_BODY_SITE', 'HMP_SITE',
-                                'AGE_CATEGORY', 'BMI_CATEGORY']
-
-    # verify each line in the test file
-    for l in test_mapping[1:]:
-        assert l[-6] in ['FECAL', 'SKIN', 'ORAL']
-        assert l[-5] == 'AGP'
-        acro, site = l[-4].split('-')
-        assert acro == 'AGP'
-        assert site in ['FECAL', 'SKIN', 'ORAL']
-        assert l[-3] in ['FECAL', 'SKIN', 'ORAL']
-        assert len(l) == test_header_length
-
-
 def filter_mapping_file(in_fp, out_fp, columns_to_keep):
     """Filter out columns in a mapping file
 
@@ -356,7 +330,7 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
         with the key "foo" returns True, or the row is retained if the value
         associated with "foo" is None.
     """
-    lines = [l.strip().split('\t') for l in open(in_fp, 'U')]
+    lines = [l.strip().split('\t') for l in in_fp]
     header = lines[0][:]
     header_lower = [x.lower() for x in header]
 
@@ -390,38 +364,8 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
         if keep:
             new_lines.append(new_line)
 
-    with open(out_fp, 'w') as out:
-        out.write('\n'.join(['\t'.join(l) for l in new_lines]))
-        out.write('\n')
-
-
-def test_filter_mapping_file(ag_gg_mm_fp):
-    # test output file
-    fmf_TEST_fp = 'AG_GG_fmf_TEST.txt'
-
-    # filter to just fecal samples, keep the age and title_acronym columns
-    criteria = {'SIMPLE_BODY_SITE': lambda x: x == 'FECAL',
-                'AGE': None,
-                'TITLE_ACRONYM': None}
-    filter_mapping_file(ag_gg_mm_fp, fmf_TEST_fp, criteria)
-
-    # parse output
-    test_mapping = [l.strip().split('\t') for l in open(fmf_TEST_fp)]
-
-    # fish header, verify sanity of it
-    test_header = test_mapping[0]
-    assert len(test_header) == 4
-    assert test_header[0] == '#SampleID'
-    assert sorted(test_header) == sorted(['#SampleID', 'SIMPLE_BODY_SITE',
-                                          'AGE', 'TITLE_ACRONYM'])
-
-    # check each record
-    test_sbs = test_header.index('SIMPLE_BODY_SITE')
-    test_acro = test_header.index('TITLE_ACRONYM')
-    for l in test_mapping[1:]:
-        assert len(l) == 4
-        assert l[test_sbs] == 'FECAL'
-        assert l[test_acro] in ['AGP', 'GG']
+    out_fp.write('\n'.join(['\t'.join(l) for l in new_lines]))
+    out_fp.write('\n')
 
 
 def construct_svg_smash_commands(files, ids, cmd_format, cmd_args):
