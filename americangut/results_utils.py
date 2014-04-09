@@ -78,7 +78,7 @@ def _stage_static_latex(sample_type, working_dir):
     latex_dir = get_repository_latex()
 
     for item in _templates[sample_type]:
-        src = os.path.join(latex_dir, item)
+        src = get_path(latex_dir, item)
         shutil.copy(src, working_dir)
 
 
