@@ -175,6 +175,8 @@ simple_matter_map = {
 def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
     """Simplify the mapping file for use in figures
 
+    in_fp : input file-like object
+    out_fp : output file-like object
     body_site_column_name : specify the column name for body
     exp_acronym : short name for the study
 
@@ -201,7 +203,7 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
                    (35, 40,'Severely obese'),
                    (40, 99999,'Very severely obese')]
 
-    mapping_lines = [l.strip().split('\t') for l in open(in_fp)]
+    mapping_lines = [l.strip().split('\t') for l in in_fp]
 
     header = mapping_lines[0]
     header_low = [x.lower() for x in header]
@@ -263,7 +265,7 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
         if country.startswith('GAZ:'):
             country = country.split(':',1)[-1]
         else:
-            err_msg("Count not parse country %s" % country, new_line[0])
+            err_msg("Could not parse country %s" % country, new_line[0])
             continue
 
         if age_idx is not None:
@@ -313,10 +315,8 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
 
         new_mapping_lines.append(new_line)
 
-    output = open(out_fp,'w')
-    output.write('\n'.join(['\t'.join(l) for l in new_mapping_lines]))
-    output.write('\n')
-    output.close()
+    out_fp.write('\n'.join(['\t'.join(l) for l in new_mapping_lines]))
+    out_fp.write('\n')
 
 
 def filter_mapping_file(in_fp, out_fp, columns_to_keep):

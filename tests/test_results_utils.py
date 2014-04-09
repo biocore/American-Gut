@@ -35,30 +35,35 @@ class ResultsUtilsTests(TestCase):
             self.assertEqual(l[test_sbs], 'FECAL')
             self.assertTrue(float(l[test_age]) > 20)
 
-    def test_massage_mapping(ag_100nt):
+    def test_massage_mapping(self):
         """Exercise the massage mapping code, verify expected results"""
-        # output test file
-        ag_100nt_m_TEST_fp = 'AG_100nt_TEST.txt'
-
-        massage_mapping(ag_100nt, ag_100nt_m_TEST_fp, 'body_site', 'AGP')
+        out = StringIO()
+        massage_mapping(massage_mapping_testdata, out, 'body_site', 'test')
+        out.seek(0)
 
         # verify the resulting header structure
-        test_mapping = [l.strip().split('\t') for l in open(ag_100nt_m_TEST_fp)]
+        test_mapping = [l.strip().split('\t') for l in out]
         test_header = test_mapping[0]
-        test_header_length = len(test_header)
-        assert test_header[-6:] == ['SIMPLE_BODY_SITE', 'TITLE_ACRONYM',
-                                    'TITLE_BODY_SITE', 'HMP_SITE',
-                                    'AGE_CATEGORY', 'BMI_CATEGORY']
+        self.assertEqual(test_header[-6:], ['SIMPLE_BODY_SITE', 'TITLE_ACRONYM',
+                                            'TITLE_BODY_SITE', 'HMP_SITE',
+                                            'AGE_CATEGORY', 'BMI_CATEGORY'])
 
-        # verify each line in the test file
-        for l in test_mapping[1:]:
-            assert l[-6] in ['FECAL', 'SKIN', 'ORAL']
-            assert l[-5] == 'AGP'
-            acro, site = l[-4].split('-')
-            assert acro == 'AGP'
-            assert site in ['FECAL', 'SKIN', 'ORAL']
-            assert l[-3] in ['FECAL', 'SKIN', 'ORAL']
-            assert len(l) == test_header_length
+        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
+                                              'UBERON_mucosa_of_tongue', '5',
+                                              'ORAL', 'test', 'test-ORAL',
+                                              'ORAL', '40s', 'Underweight'])
+        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
+                                              'UBERON:FECES', '10',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL', '50s', 'Underweight'])
+        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
+                                              'UBERON_FECES', '15',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL', 'Child', 'Underweight'])
+        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
+                                              'UBERON:SKIN', '37',
+                                              'SKIN', 'test', 'test-SKIN',
+                                              'SKIN', '50s', 'Severely obese'])
 
 filter_mapping_testdata = StringIO(
 """#SampleID	COUNTRY	TITLE_ACRONYM	AGE	SIMPLE_BODY_SITE
@@ -67,6 +72,14 @@ B	United States of America	foo	51.0	FECAL
 C	United States of America	bar	12.0	FECAL
 D	United States of America	AGP	32.0	SKIN
 E	United States of America	AGP	56.0	FECAL
+""")
+massage_mapping_testdata = StringIO(
+"""#SampleID	COUNTRY	AGE	BODY_SITE	BMI
+A	GAZ:w00t	43.0	UBERON_mucosa_of_tongue	5
+B	GAZ:left	51.0	UBERON:FECES	10
+C	GAZ:right	12.0	UBERON_FECES	15
+D	GAZ:stuff	32.0	unknown	26
+E	GAZ:stuff	56.0	UBERON:SKIN	37
 """)
 if __name__ == '__main__':
     main()
