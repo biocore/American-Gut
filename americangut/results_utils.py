@@ -41,7 +41,7 @@ def get_repository_dir():
     """Get the root of the American-Gut repository"""
     expected = os.path.abspath(__file__).rsplit('/', 2)[0]
 
-    # get_path verifies the existance of these directoriest
+    # get_path verifies the existance of these directories
     _ = get_path(expected, 'data')
     _ = get_path(expected, 'latex')
 

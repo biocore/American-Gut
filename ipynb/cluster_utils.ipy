@@ -5,7 +5,6 @@
 import os
 import cPickle        
 import sys
-from functools import partial
 from time import sleep
 from IPython.core.display import clear_output
 
@@ -312,11 +311,8 @@ def create_env(prj_name, basedir=None):
 
     register_env(basedir, prj_name=name, working_dir=working_dir)
 
-# path wrapper
-get_path = lambda x: os.path.join(working_dir, x)
-
-# submission wrapper
 def submit(prj_name, cmd):
+    """Submission wrapper for easily submitting jobs"""
     return submit_qsub(cmd, job_name=prj_name, queue='memroute', 
                        extra_args='-l pvmem=8gb')
     
