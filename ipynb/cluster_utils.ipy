@@ -312,14 +312,11 @@ def create_env(prj_name, basedir=None):
 
     register_env(basedir, prj_name=name, working_dir=working_dir)
 
+# path wrapper
+get_path = lambda x: os.path.join(working_dir, x)
+
 # submission wrapper
 def submit(prj_name, cmd):
     return submit_qsub(cmd, job_name=prj_name, queue='memroute', 
-                       extra_args='-l pvmem=')
+                       extra_args='-l pvmem=8gb')
     
-# path wrapper
-get_path = lambda x: os.path.join(working_dir, x)
-    
-def check_file(f):
-    if not os.path.exists(f):
-        raise ValueError("Cannot continue! The file %s does not exist!" % f)
