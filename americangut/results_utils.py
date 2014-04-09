@@ -24,35 +24,13 @@ _templates = {
         }
 
 
-def stage_static_files(sample_type, working_dir):
-    """Stage static files in the current working directory"""
-    _stage_static_data(working_dir)
-    _stage_static_latex(sample_type, working_dir)
-    _stage_static_pdfs(sample_type, working_dir)
-
-
-def _stage_static_latex(sample_type, working_dir):
-    latex_dir = get_repository_latex()
-
-    for item in _templates[sample_type]:
-        src = os.path.join(latex_dir, item)
-        shutil.copy(src, working_dir)
-
-
-def _stage_static_pdfs(sample_type, working_dir):
-    pdfs_dir = get_repository_latex_pdfs(sample_type)
-
-    for f in os.listdir(pdfs_dir):
-        src = os.path.join(pdfs_dir, f)
-        shutil.copy(src, working_dir)
-
-
-def _stage_static_data(working_dir):
-    data_dir = get_repository_data()
-
-    for d, f in _data_files:
-        src = os.path.join(data_dir, d, f)
-        shutil.copy(src, working_dir)
+def get_path(d, f):
+    """Check and get a path, or throw IOError"""
+    path = os.path.join(d, f)
+    if not os.path.exists(path):
+        raise IOError("%s does not exist!" % path)
+    else:
+        return path
 
 
 def get_repository_dir():
@@ -69,20 +47,23 @@ def get_repository_dir():
 
 
 def get_repository_data():
-    return os.path.join(get_repository_dir(), 'data')
+    """Get the path to the data"""
+    return get_path(get_repository_dir(), 'data')
 
 
 def get_repository_latex():
-    return os.path.join(get_repository_dir(), 'latex')
+    """Get the path to the latex directory"""
+    return get_path(get_repository_dir(), 'latex')
 
 
 def get_repository_latex_pdfs(sample_type):
+    """Get the Latex static PDFs directory"""
     latex_dir = get_repository_latex()
 
     if sample_type == 'oralskin':
-        pdfs_dir = os.path.join(latex_dir, 'pdfs-oralskin')
+        pdfs_dir = get_path(latex_dir, 'pdfs-oralskin')
     elif sample_type == 'fecal':
-        pdfs_dir = os.path.join(latex_dir, 'pdfs-gut')
+        pdfs_dir = get_path(latex_dir, 'pdfs-gut')
     else:
         raise ValueError("Unknown sample type: %s" % sample_type)
 
@@ -92,9 +73,32 @@ def get_repository_latex_pdfs(sample_type):
     return pdfs_dir
 
 
-def get_path(d, f):
-    path = os.path.join(d, f)
-    if not os.path.exists(path):
-        raise IOError("%s does not exist!" % path)
-    else:
-        return path
+def _stage_static_latex(sample_type, working_dir):
+    latex_dir = get_repository_latex()
+
+    for item in _templates[sample_type]:
+        src = os.path.join(latex_dir, item)
+        shutil.copy(src, working_dir)
+
+
+def _stage_static_pdfs(sample_type, working_dir):
+    pdfs_dir = get_repository_latex_pdfs(sample_type)
+
+    for f in os.listdir(pdfs_dir):
+        src = get_path(pdfs_dir, f)
+        shutil.copy(src, working_dir)
+
+
+def _stage_static_data(working_dir):
+    data_dir = get_repository_data()
+
+    for d, f in _data_files:
+        src = get_path(get_path(data_dir, d), f)
+        shutil.copy(src, working_dir)
+
+
+def stage_static_files(sample_type, working_dir):
+    """Stage static files in the current working directory"""
+    _stage_static_data(working_dir)
+    _stage_static_latex(sample_type, working_dir)
+    _stage_static_pdfs(sample_type, working_dir)
