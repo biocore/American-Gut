@@ -24,24 +24,24 @@ _templates = {
         }
 
 
+def check_file(f):
+    """Verify a file (or directory) exists"""
+    if not os.path.exists(f):
+        raise IOError("Cannot continue! The file %s does not exist!" % f)
+
+
 def get_path(d, f):
     """Check and get a path, or throw IOError"""
     path = os.path.join(d, f)
-    if not os.path.exists(path):
-        raise IOError("%s does not exist!" % path)
-    else:
-        return path
+    check_file(path)
+    return path
 
 
 def get_repository_dir():
     """Get the root of the American-Gut repository"""
     expected = os.path.abspath(__file__).rsplit('/', 2)[0]
-
-    if not os.path.exists(os.path.join(expected, 'data')):
-        raise IOError("%s does not look like the AG repo!" % expected)
-
-    if not os.path.exists(os.path.join(expected, 'latex')):
-        raise IOError("%s does not look like the AG repo!" % expected)
+    _ = get_path(expected, 'data')
+    _ = get_path(expected, 'latex')
 
     return expected
 
@@ -67,8 +67,7 @@ def get_repository_latex_pdfs(sample_type):
     else:
         raise ValueError("Unknown sample type: %s" % sample_type)
 
-    if not os.path.exists(pdfs_dir):
-        raise IOError("PDFs dir %s doesn't appear to exist!" % pdfs_dir)
+    check_file(pdfs_dir)
 
     return pdfs_dir
 
