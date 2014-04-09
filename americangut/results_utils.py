@@ -204,7 +204,7 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
     mapping_lines = [l.strip().split('\t') for l in open(in_fp)]
 
     header = mapping_lines[0]
-    header_low = map(lambda x: x.lower(), header)
+    header_low = [x.lower() for x in header]
 
     bodysite_idx = header_low.index(body_site_column_name.lower())
     country_idx = header_low.index('country')
@@ -350,12 +350,15 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
 
     in_fp : the input file path
     out_fp : the output file path
-    columns_to_keep : a dict of the columns to keep, valued by specific category value
-        if desired to filter out samples that don't meet a given criteria
+    columns_to_keep : a dict of the columns to keep, valued by specific category
+        value if desired to filter out samples that don't meet a given
+        criteria. In other words, a row is retained if the function associated
+        with the key "foo" returns True, or the row is retained if the value
+        associated with "foo" is None.
     """
-    lines = [l.strip().split('\t') for l in open(in_fp)]
+    lines = [l.strip().split('\t') for l in open(in_fp, 'U')]
     header = lines[0][:]
-    header_lower = map(lambda x: x.lower(), header)
+    header_lower = [x.lower() for x in header]
 
     # ensure SampleID is always first
     new_header = ["#SampleID"]
@@ -387,10 +390,9 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
         if keep:
             new_lines.append(new_line)
 
-    out = open(out_fp, 'w')
-    out.write('\n'.join(['\t'.join(l) for l in new_lines]))
-    out.write('\n')
-    out.close()
+    with open(out_fp, 'w') as out:
+        out.write('\n'.join(['\t'.join(l) for l in new_lines]))
+        out.write('\n')
 
 
 def test_filter_mapping_file(ag_gg_mm_fp):
