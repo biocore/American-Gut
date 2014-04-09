@@ -4,7 +4,11 @@ import os
 from StringIO import StringIO
 from unittest import TestCase, main
 from americangut.results_utils import filter_mapping_file, massage_mapping
+from collections import defaultdict
 
+from americangut.results_utils import (
+    filter_mapping_file, massage_mapping, count_unique_sequences_per_otu
+)
 
 class ResultsUtilsTests(TestCase):
     def test_filter_mapping_file(self):
@@ -65,6 +69,23 @@ class ResultsUtilsTests(TestCase):
                                               'SKIN', 'test', 'test-SKIN',
                                               'SKIN', '50s', 'Severely obese'])
 
+
+    def test_count_unique_sequences_per_otu(self):
+        input_fasta = StringIO(test_fasta)
+        otu_map = StringIO(test_otu_map)
+
+        otu_ids = set(['otu1', 'otu2'])
+
+        result = count_unique_sequences_per_otu(otu_ids, otu_map, input_fasta)
+
+        expected = {x:defaultdict(int) for x in otu_ids}
+        expected['otu1']['ATCG'] = 3
+        expected['otu2']['AT'] = 2
+        expected['otu2']['A'] = 1
+
+        self.assertEqual(expected, result)
+
+
 filter_mapping_testdata = StringIO(
 """#SampleID	COUNTRY	TITLE_ACRONYM	AGE	SIMPLE_BODY_SITE
 A	United States of America	AGP	43.0	ORAL
@@ -81,5 +102,30 @@ C	GAZ:right	12.0	UBERON_FECES	15
 D	GAZ:stuff	32.0	unknown	26
 E	GAZ:stuff	56.0	UBERON:SKIN	37
 """)
+
+# Inputs for count_unique_seqs_per_otu
+test_fasta = """>sample1_1 yea
+ATCG
+>sample1_2 awyea
+ATCG
+>sample2_1 dumb
+ATCG
+>sample2_2 dummy
+AT
+>sample2_3 wow
+AT
+>sample2_4 wowagain
+A
+>sample9_1
+ATGC
+>sample9_2
+A
+"""
+
+test_otu_map = """otu1	sample1_1	sample1_2	sample2_1
+otu2	sample2_2	sample2_3	sample2_4
+otu3	sample9_1	smaple9_2
+"""
+
 if __name__ == '__main__':
     main()
