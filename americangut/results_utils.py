@@ -369,7 +369,13 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
 
 
 def construct_svg_smash_commands(files, ids, cmd_format, cmd_args):
-    """Format the SVG smashing commands"""
+    """Format the SVG smashing commands
+
+    files : list of files
+    ids : set of ids
+    cmd_format : a string to format
+    cmd_args : a dict of strings that can get filled into cmd_format
+    """
     commands = []
     for f in files:
         if not f.startswith('Figure'):
