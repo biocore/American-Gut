@@ -439,3 +439,76 @@ def per_sample_taxa_summaries(open_table, output_format):
             for sorted_v, taxa in sorted(zip(v, t.ObservationIds))[::-1]:
                 if sorted_v:
                     f.write("%s\t%f\n" % (taxa, sorted_v))
+
+class MissingFigure(Exception):
+    pass
+
+def bootstrap_result(sample_id, name, working_dir, rel_existing_path,
+                     static_paths, base_cmd_fmt, to_pdf_fmt):
+    """Stage for results"""
+    if name is None:
+        unidentified = rel_existing_path('unidentified')
+        bootstrap_path = lambda x: os.path.join(unidentified, x)
+    else:
+        identified = rel_existing_path('identified')
+        bootstrap_path = lambda x: os.path.join(identified, x)
+
+    template_path = rel_existing_path('template_files')
+    indiv_dir = bootstrap_path(sample_id)
+    pdf_dir = os.path.join(indiv_dir, 'pdfs-gut')
+    tex_path = lambda x: os.path.join(indiv_dir, x)
+    fig_pdf_path = lambda x: os.path.join(pdf_dir, x)
+    template_files_path = lambda x: os.path.join(template_path, x)
+
+    fig1_src = template_files_path("Figure_1.%s_huge.pdf" % sample_id)
+    fig2_src = template_files_path("Figure_2.%s_huge.pdf" % sample_id)
+    fig3_src = template_files_path("Figure_3.%s_huge.pdf" % sample_id)
+    fig4_src = template_files_path("Figure_4_%s.pdf" % sample_id)
+    fig6_src = template_files_path("Figure_6_%s.txt" % sample_id)
+    macros_src = template_files_path("macros_%s.tex" % sample_id)
+
+    fig1_dst = fig_pdf_path("figure1.pdf")
+    fig2_dst = fig_pdf_path("figure2.pdf")
+    fig3_dst = fig_pdf_path("figure3.pdf")
+    fig4_dst = fig_pdf_path("figure4.pdf")
+    fig6_dst = tex_path("%s_taxa.txt" % sample_id)
+    macros_dst = tex_path("macros_gut.tex")
+    template_dst = tex_path('%s.tex' % sample_id)
+
+    check_file(fig1_src, e=MissingFigure)
+    check_file(fig2_src, e=MissingFigure)
+    check_file(fig3_src, e=MissingFigure)
+    check_file(fig4_src, e=MissingFigure)
+    check_file(fig6_src, e=MissingFigure)
+    check_file(macros_src, e=MissingFigure)
+
+    cmds = []
+    cmds.append('mkdir -p %s' % pdf_dir)
+    cmds.append('cp %s %s' % (fig1_src, fig1_dst))
+    cmds.append('cp %s %s' % (fig2_src, fig2_dst))
+    cmds.append('cp %s %s' % (fig3_src, fig3_dst))
+    cmds.append('cp %s %s' % (fig4_src, fig4_dst))
+    cmds.append('cp %s %s' % (fig6_src, fig6_dst))
+    cmds.append('cp %s %s' % (macros_src, macros_dst))
+    cmds.append('cp %s %s' % (static_paths['template'], template_dst))
+    cmds.append('cp %s %s' % (static_paths['aglogo'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig1_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig2_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig2_2ndlegend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig3_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig4_overlay'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig1_ovals'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig2_ovals'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['ball_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['title'], pdf_dir))
+
+    name_fmt = "echo '\n\def\yourname{%s}\n' >> %s"
+    if name is None:
+        cmds.append(name_fmt % ("unidentified", macros_dst))
+    else:
+        cmds.append(name_fmt % (name, macros_dst))
+
+    indiv_cmd = base_cmd_fmt % (working_dir, '; '.join(cmds))
+    latex_cmd = to_pdf_fmt % {'path': indiv_dir, 'input': template_dst}
+
+    return (indiv_cmd, latex_cmd)
