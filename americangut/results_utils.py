@@ -4,6 +4,7 @@ import os
 import shutil
 import zipfile
 from americangut.util import check_file
+from biom.parse import parse_biom_table
 
 
 # These are the data files in the American-Gut repository that are used for
@@ -418,3 +419,23 @@ def construct_phyla_plots_cmds(sample_ids, cmd_format, cmd_args):
         args['samples'] = ','.join(chunk)
         commands.append(cmd_format % args)
     return commands
+
+
+def per_sample_taxa_summaries(open_table, output_format):
+    """Write out per-sample taxonomy summaries
+
+    open_table : an open file-like biom table
+    output_format : a path that supports a string format, eg:
+        foo/bar_%s.txt
+    """
+    t = parse_biom_table(open_table)
+    header = "#taxon\trelative_abundance\n"
+
+    for v, id_, md in t.iterSamples():
+        with open(output_format % id_, 'w') as f:
+            f = open(output_format % id_, 'w')
+            f.write(header)
+
+            for sorted_v, taxa in sorted(zip(v, t.ObservationIds))[::-1]:
+                if sorted_v:
+                    f.write("%s\t%f\n" % (taxa, sorted_v))
