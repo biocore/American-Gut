@@ -3,8 +3,10 @@
 import os
 import shutil
 import zipfile
-from americangut.util import check_file
+from itertools import izip
+from collections import defaultdict
 
+from americangut.util import check_file
 
 # These are the data files in the American-Gut repository that are used for
 # results processing
@@ -418,3 +420,67 @@ def construct_phyla_plots_cmds(sample_ids, cmd_format, cmd_args):
         args['samples'] = ','.join(chunk)
         commands.append(cmd_format % args)
     return commands
+
+
+def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
+    """Counts unique sequences per-OTU for a given set of OTUs
+
+    otu_ids: a set of OTU IDs
+    otu_map_file: file-like object in the format of an OTU map
+    input_seqs_file: FASTA containing sequences that were used to generate
+                     the otu_map_file
+
+    Returns a nested dict structure: {otu_id: {sequence: count}}
+    """
+    # This will hold the OTU map for the OTUs in otu_ids
+    otu_map = {x: set() for x in otu_ids}
+
+    # go through the otu map and save the lines of interest to the otu_map
+    # data structure above
+    print "Reading OTU map..."
+    for line in otu_map_file:
+        otu_id, seq_ids = line.strip().split('\t', 1)
+        if otu_id in otu_ids:
+            otu_map[otu_id] = set(seq_ids.split('\t'))
+
+    # this will hold, for each OTU in otus, counts of each unique sequence
+    # observed in that OTU
+    unique_counts = {x: defaultdict(int) for x in otu_ids}
+
+    # go through input fasta file TWO LINES AT A TIME, counting unique
+    # sequences in each OTU of intrest
+    print "Reading FASTA file and counting unique sequences..."
+    for header, sequence in izip(input_seqs_file, input_seqs_file):
+        header = header.strip()
+        sequence = sequence.strip()
+        seq_id = header.split(' ', 1)[0][1:]
+        for otu_id in otu_ids:
+            if seq_id in otu_map[otu_id]:
+                unique_counts[otu_id][sequence] += 1
+                break
+    print "Done."
+
+    return unique_counts
+
+
+def write_contaminant_fasta(unique_counts, output_file, abundance_threshold):
+    """Writes a FASTA file of sequences determined to be contaminants
+
+    If one unique sequences composes more than abundance_threshold of the OTU,
+    that sequences is marked as a contaminant and written to output_file.
+
+    unique_counts: a nested dict of the form {otu_id: {sequence: count}}
+                   E.g., the output of count_unique_sequences_per_otu
+    output_file: a file-like object ready for writing
+    abundance_threshold: If a sequence composes more than this percent of an
+                         OTU, then it is marked as a contaminant
+    """
+    for otu_id, otu_counts in unique_counts.iteritems():
+        otu_total_count = sum([count for seq, count in otu_counts.iteritems()])
+        
+        counter = 0
+        for seq, count in sorted(otu_counts.items(), key=lambda x:x[1],
+                reverse=True):
+            counter += 1
+            if 1.0*count/otu_total_count > abundance_threshold:
+                output_file.write('>%s_%d\n%s\n' % (otu_id, counter, seq))
