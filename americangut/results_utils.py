@@ -3,6 +3,7 @@
 import os
 import shutil
 import zipfile
+from functools import partial
 from americangut.util import check_file
 from biom.parse import parse_biom_table
 
@@ -443,9 +444,17 @@ def per_sample_taxa_summaries(open_table, output_format):
 class MissingFigure(Exception):
     pass
 
-def bootstrap_result(sample_id, name, working_dir, rel_existing_path,
-                     static_paths, base_cmd_fmt, to_pdf_fmt):
-    """Stage for results"""
+def bootstrap_result(rel_existing_path, static_paths, base_cmd_fmt,
+                     to_pdf_fmt, sample_id, name):
+    """Stage for results
+
+    sample_id : an id
+    name : None or str
+    rel_existing_path : a function that gets an existing path
+    static_paths : a dict of paths
+    base_cmd_fmt : base format for the commands to execute
+    to_pdf_fmt : base format for the call to construct the latex PDF
+    """
     if name is None:
         unidentified = rel_existing_path('unidentified')
         bootstrap_path = lambda x: os.path.join(unidentified, x)
@@ -508,7 +517,49 @@ def bootstrap_result(sample_id, name, working_dir, rel_existing_path,
     else:
         cmds.append(name_fmt % (name, macros_dst))
 
-    indiv_cmd = base_cmd_fmt % (working_dir, '; '.join(cmds))
+    indiv_cmd = base_cmd_fmt % (static_paths['working_dir'], '; '.join(cmds))
     latex_cmd = to_pdf_fmt % {'path': indiv_dir, 'input': template_dst}
 
     return (indiv_cmd, latex_cmd)
+
+
+def construct_bootstap_and_latex_commands(ids, participants, rel_existing_path,
+                                          static_paths, base_cmd_fmt,
+                                          to_pdf_fmt):
+    """Construct the commands to bootstrap results and latex generation
+
+    ids : an iterable of ids
+    participants : None or a dict mapping barcodes to participant names
+    rel_existing_path : a function that gets an existing path
+    static_paths : a dict of paths
+    base_cmd_fmt : base format for the commands to execute
+    to_pdf_fmt : base format for the call to construct the latex PDF
+    """
+    bs_f = partial(bootstrap_result, rel_existing_path, static_paths,
+                   base_cmd_fmt, to_pdf_fmt)
+    indiv_cmds = []
+    latex_cmds = []
+    for i in ids:
+        sample_id = i.split('.')[0]
+        name = None
+        if participants is not None:
+            bc = i.split('.')[0]
+            if bc in participants:
+                name = participants[bc]
+
+        # unidentified
+        try:
+            indiv_cmd, latex_cmd = bs_f(sample_id, None)
+        except MissingFigure:
+            continue
+
+        indiv_cmds.append(indiv_cmd)
+        latex_cmds.append(latex_cmd)
+
+        # identified
+        if name:
+            indiv_cmd, latex_cmd = bs_f(sample_id, name)
+            indiv_cmds.append(indiv_cmd)
+            latex_cmds.append(latex_cmd)
+
+    return (indiv_cmds, latex_cmds)
