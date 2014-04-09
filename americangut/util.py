@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+from itertools import izip
+
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Daniel McDonald"]
+__credits__ = ["Daniel McDonald", "Adam Robbins-Pianka"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
@@ -53,3 +55,32 @@ def slice_mapping_file(table, mapping):
             res.append('\t'.join([id_, l]))
 
     return res
+
+def trim_fasta(input_fasta, output_fasta, length):
+    """Trim FASTA sequences to a given length
+    
+    input_fasta: should be an open file. Every two lines should compose a
+                 complete FASTA record (header, sequence)
+    output_fasta: should be an open file ready for writing
+    length: what length to trim the sequences to. Sequences shorter than
+            length will not be modified.
+    """
+    # reads the FASTA file two lines at at a time
+    # Assumptions: 1) each FASTA record is two lines
+    #              2) There are no incomplete FASTA records
+    for header, sequence in izip(input_fasta, input_fasta):
+        header = header.strip()
+        sequence = sequence.strip()[:length]
+        output_fasta.write("%s\n%s\n" % (header, sequence))
+
+def concatenate_files(input_files, output_file, read_chunk=10000):
+    """Concatenate all input files and produce an output file
+
+    input_fps is a list of open files
+    output_fp is an open file ready for writing
+    """
+    for infile in input_files:
+        chunk = infile.read(read_chunk)
+        while chunk:
+            output_file.write(chunk)
+            chunk = infile.read(read_chunk)
