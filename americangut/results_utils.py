@@ -435,7 +435,6 @@ def per_sample_taxa_summaries(open_table, output_format):
 
     for v, id_, md in t.iterSamples():
         with open(output_format % id_, 'w') as f:
-            f = open(output_format % id_, 'w')
             f.write(header)
 
             for sorted_v, taxa in sorted(zip(v, t.ObservationIds))[::-1]:
@@ -639,18 +638,17 @@ def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
         filename_pdf = filename_base + '.pdf'
         filename_txt = filename_base + '.txt'
 
-        f = open(filename_txt, 'w')
-        f.write(barcodes)
-        f.write('\n')
-        f.close()
+        with open(filename_txt, 'w') as f:
+            f.write(barcodes)
+            f.write('\n')
 
         smash_cmds.append(pdf_smash_fmt % {'output': filename_pdf,
                                            'pdfs': pdfs})
 
     ordered_barcodes_path = os.path.join(result_path, 'ordered_barcodes.txt')
-    ordered_barcodes = open(ordered_barcodes_path, 'w')
-    ordered_barcodes.write('\n'.join(barcode_set))
-    ordered_barcodes.write('\n')
-    ordered_barcodes.close()
+
+    with open(ordered_barcodes_path, 'w') as ordered_barcodes:
+        ordered_barcodes.write('\n'.join(barcode_set))
+        ordered_barcodes.write('\n')
 
     return smash_cmds
