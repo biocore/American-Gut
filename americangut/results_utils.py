@@ -14,6 +14,7 @@ from collections import defaultdict
 # These are the data files in the American-Gut repository that are used for
 # results processing
 _data_files = [
+        # (directory, filename)
         ('AG', 'AG_100nt.biom.gz'),
         ('AG', 'AG_100nt.txt'),
         ('PGP', 'PGP_100nt.biom.gz'),
@@ -92,17 +93,19 @@ def _stage_static_pdfs(sample_type, working_dir):
         shutil.copy(src, working_dir)
 
 
-def _stage_static_data(working_dir):
+def _stage_static_data(working_dir, debug):
     data_dir = get_repository_data()
 
     for d, f in _data_files:
+        if debug:
+            d = d + '_debug'
         src = get_path(get_path(data_dir, d), f)
         shutil.copy(src, working_dir)
 
 
-def stage_static_files(sample_type, working_dir):
+def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
-    _stage_static_data(working_dir)
+    _stage_static_data(working_dir, debug)
     _stage_static_latex(sample_type, working_dir)
     _stage_static_pdfs(sample_type, working_dir)
 
@@ -149,33 +152,34 @@ def parse_previously_printed(path):
 
 
 simple_matter_map = {
-        'feces':'FECAL',
-        'sebum':'SKIN',
-        'tongue':'ORAL',
-        'skin':'SKIN',
-        'mouth':'ORAL',
-        'gingiva':'ORAL',
-        'gingival epithelium':'ORAL',
-        'nares':'SKIN',
-        'skin of hand':'SKIN',
-        'hand':'SKIN',
-        'skin of head':'SKIN',
-        'hand skin':'SKIN',
-        'throat':'ORAL',
-        'auricular region zone of skin':'SKIN',
-        'mucosa of tongue':'ORAL',
-        'mucosa of vagina':'SKIN',
-        'palatine tonsil':'ORAL',
-        'hard palate':'ORAL',
-        'saliva':'ORAL',
-        'stool':'FECAL',
-        'vagina':'SKIN',
-        'fossa':'SKIN',
-        'buccal mucosa':'ORAL',
-        'vaginal fornix':'SKIN',
-        'hair follicle':'SKIN',
-        'nostril':'SKIN'
+        'feces': 'FECAL',
+        'sebum': 'SKIN',
+        'tongue': 'ORAL',
+        'skin': 'SKIN',
+        'mouth': 'ORAL',
+        'gingiva': 'ORAL',
+        'gingival epithelium': 'ORAL',
+        'nares': 'SKIN',
+        'skin of hand': 'SKIN',
+        'hand': 'SKIN',
+        'skin of head': 'SKIN',
+        'hand skin': 'SKIN',
+        'throat': 'ORAL',
+        'auricular region zone of skin': 'SKIN',
+        'mucosa of tongue': 'ORAL',
+        'mucosa of vagina': 'SKIN',
+        'palatine tonsil': 'ORAL',
+        'hard palate': 'ORAL',
+        'saliva': 'ORAL',
+        'stool': 'FECAL',
+        'vagina': 'SKIN',
+        'fossa': 'SKIN',
+        'buccal mucosa': 'ORAL',
+        'vaginal fornix': 'SKIN',
+        'hair follicle': 'SKIN',
+        'nostril': 'SKIN'
         }
+
 
 def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
     """Simplify the mapping file for use in figures
