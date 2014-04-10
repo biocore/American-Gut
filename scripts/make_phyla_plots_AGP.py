@@ -7,11 +7,11 @@ from os import mkdir
 from numpy import zeros, mean, array
 from argparse import ArgumentParser
 from biom.parse import parse_biom_table
-from make_phyla_plots import (map_to_2D_dict,
-                              render_barchart,
-                              summarize_common_categories,
-                              load_category_files,
-                              parse_category_files)
+from americangut.make_phyla_plots import (map_to_2D_dict,
+                                          render_barchart,
+                                          summarize_common_categories,
+                                          load_category_files,
+                                          parse_category_files)
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
