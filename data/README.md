@@ -32,3 +32,8 @@ The provided [BIOM](http://biom-format.org) tables have a few different tags in 
 * even10k - The full table was rarified to 10000 sequences per sample
 
 The trimming is necessary when combining data from studies in which different sequences technologies were used (e.g., HiSeq vs. MiSeq).
+
+Debug data
+----------
+
+The debug data files are sourced from the main data files, but are 10% random subsets (by sample) of what is in them main files. The purpose of the debug files is to reduce processing load on the results framework for testing purposes. 
