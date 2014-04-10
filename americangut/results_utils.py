@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
+import re
 import os
 import shutil
 import zipfile
+from functools import partial
 from americangut.util import check_file
+from biom.parse import parse_biom_table
+from itertools import izip
+from collections import defaultdict
 
 
 # These are the data files in the American-Gut repository that are used for
@@ -418,3 +423,300 @@ def construct_phyla_plots_cmds(sample_ids, cmd_format, cmd_args):
         args['samples'] = ','.join(chunk)
         commands.append(cmd_format % args)
     return commands
+
+
+def per_sample_taxa_summaries(open_table, output_format):
+    """Write out per-sample taxonomy summaries
+
+    open_table : an open file-like biom table
+    output_format : a path that supports a string format, eg:
+        foo/bar_%s.txt
+    """
+    t = parse_biom_table(open_table)
+    header = "#taxon\trelative_abundance\n"
+
+    for v, id_, md in t.iterSamples():
+        with open(output_format % id_, 'w') as f:
+            f.write(header)
+
+            for sorted_v, taxa in sorted(zip(v, t.ObservationIds))[::-1]:
+                if sorted_v:
+                    f.write("%s\t%f\n" % (taxa, sorted_v))
+
+
+class MissingFigure(Exception):
+    pass
+
+
+def bootstrap_result(rel_existing_path, static_paths, base_cmd_fmt,
+                     to_pdf_fmt, sample_id, name):
+    """Stage for results
+
+    sample_id : an id
+    name : None or str
+    rel_existing_path : a function that gets an existing path
+    static_paths : a dict of paths
+    base_cmd_fmt : base format for the commands to execute
+    to_pdf_fmt : base format for the call to construct the latex PDF
+    """
+    if name is None:
+        unidentified = rel_existing_path('unidentified')
+        bootstrap_path = lambda x: os.path.join(unidentified, x)
+    else:
+        identified = rel_existing_path('identified')
+        bootstrap_path = lambda x: os.path.join(identified, x)
+
+    template_path = rel_existing_path('template_files')
+    indiv_dir = bootstrap_path(sample_id)
+    pdf_dir = os.path.join(indiv_dir, 'pdfs-gut')
+    tex_path = lambda x: os.path.join(indiv_dir, x)
+    fig_pdf_path = lambda x: os.path.join(pdf_dir, x)
+    template_files_path = lambda x: os.path.join(template_path, x)
+
+    fig1_src = template_files_path("Figure_1.%s_huge.pdf" % sample_id)
+    fig2_src = template_files_path("Figure_2.%s_huge.pdf" % sample_id)
+    fig3_src = template_files_path("Figure_3.%s_huge.pdf" % sample_id)
+    fig4_src = template_files_path("Figure_4_%s.pdf" % sample_id)
+    fig6_src = template_files_path("Figure_6_%s.txt" % sample_id)
+    macros_src = template_files_path("macros_%s.tex" % sample_id)
+
+    fig1_dst = fig_pdf_path("figure1.pdf")
+    fig2_dst = fig_pdf_path("figure2.pdf")
+    fig3_dst = fig_pdf_path("figure3.pdf")
+    fig4_dst = fig_pdf_path("figure4.pdf")
+    fig6_dst = tex_path("%s_taxa.txt" % sample_id)
+    macros_dst = tex_path("macros_gut.tex")
+    template_dst = tex_path('%s.tex' % sample_id)
+
+    check_file(fig1_src, e=MissingFigure)
+    check_file(fig2_src, e=MissingFigure)
+    check_file(fig3_src, e=MissingFigure)
+    check_file(fig4_src, e=MissingFigure)
+    check_file(fig6_src, e=MissingFigure)
+    check_file(macros_src, e=MissingFigure)
+
+    cmds = []
+    cmds.append('mkdir -p %s' % pdf_dir)
+    cmds.append('cp %s %s' % (fig1_src, fig1_dst))
+    cmds.append('cp %s %s' % (fig2_src, fig2_dst))
+    cmds.append('cp %s %s' % (fig3_src, fig3_dst))
+    cmds.append('cp %s %s' % (fig4_src, fig4_dst))
+    cmds.append('cp %s %s' % (fig6_src, fig6_dst))
+    cmds.append('cp %s %s' % (macros_src, macros_dst))
+    cmds.append('cp %s %s' % (static_paths['template'], template_dst))
+    cmds.append('cp %s %s' % (static_paths['aglogo'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig1_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig2_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig2_2ndlegend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig3_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig4_overlay'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig1_ovals'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['fig2_ovals'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['ball_legend'], pdf_dir))
+    cmds.append('cp %s %s' % (static_paths['title'], pdf_dir))
+
+    name_fmt = "echo '\n\def\yourname{%s}\n' >> %s"
+    if name is None:
+        cmds.append(name_fmt % ("unidentified", macros_dst))
+    else:
+        cmds.append(name_fmt % (name, macros_dst))
+
+    indiv_cmd = base_cmd_fmt % (static_paths['working_dir'], '; '.join(cmds))
+    latex_cmd = to_pdf_fmt % {'path': indiv_dir, 'input': template_dst}
+
+    return (indiv_cmd, latex_cmd)
+
+
+def construct_bootstap_and_latex_commands(ids, participants, rel_existing_path,
+                                          static_paths, base_cmd_fmt,
+                                          to_pdf_fmt):
+    """Construct the commands to bootstrap results and latex generation
+
+    ids : an iterable of ids
+    participants : None or a dict mapping barcodes to participant names
+    rel_existing_path : a function that gets an existing path
+    static_paths : a dict of paths
+    base_cmd_fmt : base format for the commands to execute
+    to_pdf_fmt : base format for the call to construct the latex PDF
+    """
+    bs_f = partial(bootstrap_result, rel_existing_path, static_paths,
+                   base_cmd_fmt, to_pdf_fmt)
+    indiv_cmds = []
+    latex_cmds = []
+    for i in ids:
+        sample_id = i.split('.')[0]
+        name = None
+        if participants is not None:
+            bc = i.split('.')[0]
+            if bc in participants:
+                name = participants[bc]
+
+        # unidentified
+        try:
+            indiv_cmd, latex_cmd = bs_f(sample_id, None)
+        except MissingFigure:
+            continue
+
+        indiv_cmds.append(indiv_cmd)
+        latex_cmds.append(latex_cmd)
+
+        # identified
+        if name:
+            indiv_cmd, latex_cmd = bs_f(sample_id, name)
+            indiv_cmds.append(indiv_cmd)
+            latex_cmds.append(latex_cmd)
+
+    return (indiv_cmds, latex_cmds)
+
+
+def harvest(path):
+    """harvest PDFs"""
+    harvest_path = os.path.join(path, 'harvested')
+    if not os.path.exists(harvest_path):
+        os.mkdir(harvest_path)
+
+    for dirpath, dirnames, filenames in os.walk(path):
+        try:
+            dirnames.remove('harvested')
+        except ValueError:
+            pass
+
+        try:
+            dirnames.remove('pdfs')
+        except ValueError:
+            pass
+
+        sample_suffix = re.search('\d+\.\d+', dirpath)
+        if sample_suffix is None:
+            continue
+        else:
+            sample = sample_suffix.group().split('.')[0]
+
+        pdf = os.path.join(path, dirpath, "%s.pdf" % sample)
+        if os.path.exists(pdf):
+            yield "mv %s %s" % (pdf, harvest_path)
+
+
+def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
+              previously_printed=None):
+    """Combine sets of PDFs into single documents
+
+    path : a path to where the PDFs are
+    tag : some tag to put on the file names
+    pdf_smash_fmt : command format to use
+    n_per_result : number of PDFs to smash together
+    previously_printed : set of previously printed barcodes or None
+    """
+    if previously_printed is None:
+        previously_printed = set([])
+
+    files = []
+    for f in os.listdir(path):
+        bc, extension = os.path.splitext(f)
+        if extension != '.pdf':
+            continue
+        if bc in previously_printed:
+            continue
+        files.append(os.path.join(path, f))
+
+    result_path = os.path.join(path, 'pdf_smash')
+    if not os.path.exists(result_path):
+        os.mkdir(result_path)
+
+    # sort and then filter out. filtering is by barcode without prefix
+    sort_key = lambda x: int(x.rsplit('/')[-1].split('.')[0])
+    files_ordered = sorted(files, key=sort_key)
+
+    smash_set = []
+    barcode_set = []
+    bc_f = lambda ch: '\n'.join([f.rsplit('/')[-1].split('.')[0] for f in ch])
+
+    for chunk in chunk_list(files_ordered, n_per_result):
+        smash_set.append(' '.join(chunk))
+        barcode_set.append(bc_f(chunk))
+
+    smash_cmds = []
+    smash_basename = os.path.join(result_path, "%s_smashset_%d")
+    for set_number, (pdfs, barcodes) in enumerate(zip(smash_set, barcode_set)):
+        filename_base = smash_basename % (tag, set_number)
+        filename_pdf = filename_base + '.pdf'
+        filename_txt = filename_base + '.txt'
+
+        with open(filename_txt, 'w') as f:
+            f.write(barcodes)
+            f.write('\n')
+
+        smash_cmds.append(pdf_smash_fmt % {'output': filename_pdf,
+                                           'pdfs': pdfs})
+
+    ordered_barcodes_path = os.path.join(result_path, 'ordered_barcodes.txt')
+
+    with open(ordered_barcodes_path, 'w') as ordered_barcodes:
+        ordered_barcodes.write('\n'.join(barcode_set))
+        ordered_barcodes.write('\n')
+
+    return smash_cmds
+
+
+def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
+    """Counts unique sequences per-OTU for a given set of OTUs
+
+    otu_ids: a set of OTU IDs
+    otu_map_file: file-like object in the format of an OTU map
+    input_seqs_file: FASTA containing sequences that were used to generate
+                     the otu_map_file
+
+    Returns a nested dict structure: {otu_id: {sequence: count}}
+    """
+    # This will hold the OTU map for the OTUs in otu_ids
+    otu_map = {x: set() for x in otu_ids}
+
+    # go through the otu map and save the lines of interest to the otu_map
+    # data structure above
+    print "Reading OTU map..."
+    for line in otu_map_file:
+        otu_id, seq_ids = line.strip().split('\t', 1)
+        if otu_id in otu_ids:
+            otu_map[otu_id] = set(seq_ids.split('\t'))
+
+    # this will hold, for each OTU in otus, counts of each unique sequence
+    # observed in that OTU
+    unique_counts = {x: defaultdict(int) for x in otu_ids}
+
+    # go through input fasta file TWO LINES AT A TIME, counting unique
+    # sequences in each OTU of intrest
+    print "Reading FASTA file and counting unique sequences..."
+    for header, sequence in izip(input_seqs_file, input_seqs_file):
+        header = header.strip()
+        sequence = sequence.strip()
+        seq_id = header.split(' ', 1)[0][1:]
+        for otu_id in otu_ids:
+            if seq_id in otu_map[otu_id]:
+                unique_counts[otu_id][sequence] += 1
+                break
+    print "Done."
+
+    return unique_counts
+
+
+def write_contaminant_fasta(unique_counts, output_file, abundance_threshold):
+    """Writes a FASTA file of sequences determined to be contaminants
+
+    If one unique sequences composes more than abundance_threshold of the OTU,
+    that sequences is marked as a contaminant and written to output_file.
+
+    unique_counts: a nested dict of the form {otu_id: {sequence: count}}
+                   E.g., the output of count_unique_sequences_per_otu
+    output_file: a file-like object ready for writing
+    abundance_threshold: If a sequence composes more than this percent of an
+                         OTU, then it is marked as a contaminant
+    """
+    for otu_id, otu_counts in unique_counts.iteritems():
+        otu_total_count = sum([count for seq, count in otu_counts.iteritems()])
+
+        counter = 0
+        for seq, count in sorted(otu_counts.items(), key=lambda x:x[1],
+                reverse=True):
+            counter += 1
+            if 1.0*count/otu_total_count > abundance_threshold:
+                output_file.write('>%s_%d\n%s\n' % (otu_id, counter, seq))
