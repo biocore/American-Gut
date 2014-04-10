@@ -249,9 +249,11 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                           date_field=DATE_FIELD,
                                           d_form_in=DATE_FORMAT_LONG,
                                           format_out=DATE_OUT)
+        else:
+            sample_date = 'unknown'
 
         # Removes a zero character from the date
-        if sample_date[sample_date.index(',')-2] == '0':
+        if ',' in sample_date and sample_date[sample_date.index(',')-2] == '0':
                 zero_pos = sample_date.index(',')-2
                 sample_date = ''.join([sample_date[:zero_pos],
                                        sample_date[zero_pos+1:]])
@@ -334,6 +336,8 @@ if __name__ == '__main__':
         parser.error('The supplied mapping file does not exist in the path.')
     elif args.mapping:
         mapping = map_to_2D_dict(open(args.mapping, 'U'))
+    else:
+        mapping = args.mapping
 
     # Parses the sample IDs as a list
     if args.samples:
