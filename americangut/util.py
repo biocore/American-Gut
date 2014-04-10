@@ -58,10 +58,10 @@ def slice_mapping_file(table, mapping):
 
     return res
 
-def check_file(f):
+def check_file(f, e=IOError):
     """Verify a file (or directory) exists"""
     if not os.path.exists(f):
-        raise IOError("Cannot continue! The file %s does not exist!" % f)
+        raise e("Cannot continue! The file %s does not exist!" % f)
 
 def trim_fasta(input_fasta, output_fasta, length):
     """Trim FASTA sequences to a given length
