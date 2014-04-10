@@ -25,7 +25,7 @@ SAMPLE_TYPES = set(('fecal', 'oral', 'skin'))
 
 
 def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
-         samples_to_plot=None, legend=False, xaxis=True):
+         samples_to_plot=None, legend=False, xaxis=True, debug=False):
     """Creates stacked bar plots for an otu table
 
     INPUTS:
@@ -43,6 +43,8 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
 
         samples_to_plot -- a list of sample ids to plot. If no value is passed,
                     then all samples in the biom table are analyzed.
+
+        debug -- ignore properly handling Michael Pollan's sample
 
     OUTPUTS:
         A pdf of stacked taxonomy will be generated for each sample and saved
@@ -144,7 +146,10 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
         sample_ids = samples_to_plot
 
     # Identifies Michael Pollan's pre-ABX sample
-    mp_sample_pos = whole_sample_ids.index(michael_pollan)
+    if debug:
+        mp_sample_pos = 0
+    else:
+        mp_sample_pos = whole_sample_ids.index(michael_pollan)
     mp_sample_taxa = whole_summary[:, mp_sample_pos]
 
     # Gets the table average
@@ -231,6 +236,10 @@ parser.add_argument('-t', '--sample_type',
                     help='Specifies the sample type: fecal, oral, or skin. '
                     'DEFAULT: fecal')
 
+parser.add_argument('-d', '--debug',
+                    default=False,
+                    help='Ignore handling of MPs sample')
+
 if __name__ == '__main__':
     args = parser.parse_args()
 
@@ -287,7 +296,8 @@ if __name__ == '__main__':
          output_dir=output_dir,
          cat_tables=categories,
          samples_to_plot=samples,
-         sample_type=sample_type)
+         sample_type=sample_type,
+         debug=args.debug)
 
 
 ### Commentary on the selection of common taxa:
