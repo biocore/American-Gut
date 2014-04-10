@@ -547,11 +547,11 @@ def construct_bootstrap_and_latex_commands(ids, participants, rel_existing_path,
                    base_cmd_fmt, to_pdf_fmt)
     indiv_cmds = []
     latex_cmds = []
-    for i in ids:
-        sample_id = i.split('.')[0]
+    missing = []
+    for sample_id in ids:
         name = None
         if participants is not None:
-            bc = i.split('.')[0]
+            bc = sample_id.split('.')[0]
             if bc in participants:
                 name = participants[bc]
 
@@ -559,6 +559,7 @@ def construct_bootstrap_and_latex_commands(ids, participants, rel_existing_path,
         try:
             indiv_cmd, latex_cmd = bs_f(sample_id, None)
         except MissingFigure:
+            missing.append(sample_id)
             continue
 
         indiv_cmds.append(indiv_cmd)
@@ -570,7 +571,7 @@ def construct_bootstrap_and_latex_commands(ids, participants, rel_existing_path,
             indiv_cmds.append(indiv_cmd)
             latex_cmds.append(latex_cmd)
 
-    return (indiv_cmds, latex_cmds)
+    return (indiv_cmds, latex_cmds, missing)
 
 
 def harvest(path):
