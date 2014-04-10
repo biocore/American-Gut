@@ -694,7 +694,6 @@ def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
             if seq_id in otu_map[otu_id]:
                 unique_counts[otu_id][sequence] += 1
                 break
-    print "Done."
 
     return unique_counts
 
