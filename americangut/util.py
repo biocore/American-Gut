@@ -105,7 +105,9 @@ def fetch_study_details(accession):
 
     yields [(secondary_accession, fastq_url)]
     """
-    url_fmt = "http://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=%(accession)s&result=read_run&fields=secondary_sample_accession,submitted_ftp"
+    url_fmt = "http://www.ebi.ac.uk/ena/data/warehouse/" \
+              "filereport?accession=%(accession)s&result=read_run&" \
+              "fields=secondary_sample_accession,submitted_ftp"
     res = fetch_url(url_fmt % {'accession': accession})
 
     return [tuple(l.strip().split('\t')) for l in res.readlines()[1:]]
