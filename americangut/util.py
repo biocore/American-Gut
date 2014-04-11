@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 
+import os
+import urllib2
+import gzip
+import time
 from itertools import izip
+from StringIO import StringIO
+from lxml import etree
+
+from skbio.parse.sequences import parse_fastq
+
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -10,7 +19,6 @@ __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
-import os
 
 def pick_rarifaction_level(id_, lookups):
     """Determine which lookup has the appropriate key
@@ -92,12 +100,6 @@ def concatenate_files(input_files, output_file, read_chunk=10000):
             output_file.write(chunk)
             chunk = infile.read(read_chunk)
 
-import urllib2
-import gzip
-from StringIO import StringIO
-from lxml import etree
-from skbio.parse.sequences import parse_fastq
-
 def fetch_study_details(accession):
     """Fetch secondary accession and FASTQ details
 
@@ -111,7 +113,22 @@ def fetch_study_details(accession):
 def fetch_url(url):
     """Return an open file handle"""
     # really should use requests instead of urllib2
-    res = urllib2.urlopen(url)
+    attempts = 0
+    res = None
+
+    while attempts < 5:
+        attempts += 1
+        try:
+            res = urllib2.urlopen(url)
+        except urllib2.HTTPError as e:
+            if e.code == 500:
+                time.sleep(5)
+                continue
+            else:
+                raise
+
+    if res is None:
+        raise ValueError("Failed at fetching %s" % url)
 
     return StringIO(res.read())
 
