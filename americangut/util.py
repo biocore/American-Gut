@@ -91,3 +91,91 @@ def concatenate_files(input_files, output_file, read_chunk=10000):
         while chunk:
             output_file.write(chunk)
             chunk = infile.read(read_chunk)
+
+import urllib2
+import gzip
+from StringIO import StringIO
+from lxml import etree
+from skbio.parse.sequences import parse_fastq
+
+def fetch_study_details(accession):
+    """Fetch secondary accession and FASTQ details
+
+    yields [(secondary_accession, fastq_url)]
+    """
+    url_fmt = "http://www.ebi.ac.uk/ena/data/warehouse/filereport?accession=%(accession)s&result=read_run&fields=secondary_sample_accession,submitted_ftp"
+    res = fetch_url(url_fmt % {'accession': accession})
+
+    return [tuple(l.strip().split('\t')) for l in res.readlines()[1:]]
+
+def fetch_url(url):
+    """Return an open file handle"""
+    # really should use requests instead of urllib2
+    res = urllib2.urlopen(url)
+
+    return StringIO(res.read())
+
+def fetch_seqs_fastq(url):
+    """Fetch a FTP item"""
+    # not using a url_fmt here as the directory structure has potential to
+    # be different between studies
+    if not url.startswith('ftp://'):
+        url = "ftp://%s" % url
+
+    res = fetch_url(url)
+
+    return gzip.GzipFile(fileobj=res)
+
+def fetch_metadata_xml(accession):
+    """Fetch sample metadata"""
+    url_fmt = "http://www.ebi.ac.uk/ena/data/view/%(accession)s&display=xml"
+    res = fetch_url(url_fmt % {'accession': accession})
+
+    root = etree.parse(res).getroot()
+    sample = root.getchildren()[0]
+    attributes = sample.find('SAMPLE_ATTRIBUTES')
+
+    metadata = {}
+    for node in attributes.iterfind('SAMPLE_ATTRIBUTE'):
+        tag, value = node.getchildren()
+        metadata[tag.text.strip('" ')] = value.text.strip('" ')
+    return metadata
+
+def fetch_study(accession, metadata_path, fasta_path):
+    """Fetch and dump a full study
+
+    Grab and dump a full study
+    """
+    all_md = {}
+    all_cols = set([])
+    md_f = open(metadata_path, 'w')
+    fasta_path = open(fasta_path, 'w')
+    #for sample, fastq_url in fetch_study_details(accession):
+    for sample, fastq_url in accession:
+        # in the form seqs_000007123.1075697.fastq.gz
+        # and unfortunately, the suffix (1075697) is missing and parts of the
+        # current results processing depend on the suffix.
+        fastq_filename = fastq_url.rsplit('/')[-1]
+        qiimedb_samplename = fastq_filename.split('_')[-1].rsplit('.', 2)[0]
+
+        md = fetch_metadata_xml(sample)
+        all_md[qiimedb_samplename] = md
+        all_cols.update(md)
+
+        # write out fasta
+        for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
+            fasta_path.write(">%s\n%s\n" % (id_, seq))
+
+    header = list(all_cols)
+    md_f.write('#SampleID\t')
+    md_f.write('\t'.join(header))
+    md_f.write('\n')
+    for sampleid, values in all_md.iteritems():
+        to_write = [values.get(k, "no_data") for k in header]
+        to_write.insert(0, sampleid)
+        md_f.write('\t'.join(to_write))
+        md_f.write('\n')
+
+    md_f.close()
+    fasta_path.close()
+
