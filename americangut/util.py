@@ -150,8 +150,7 @@ def fetch_study(accession, metadata_path, fasta_path):
     all_cols = set([])
     md_f = open(metadata_path, 'w')
     fasta_path = open(fasta_path, 'w')
-    #for sample, fastq_url in fetch_study_details(accession):
-    for sample, fastq_url in accession:
+    for sample, fastq_url in fetch_study_details(accession):
         # in the form seqs_000007123.1075697.fastq.gz
         # and unfortunately, the suffix (1075697) is missing and parts of the
         # current results processing depend on the suffix.
