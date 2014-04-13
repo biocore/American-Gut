@@ -20,7 +20,7 @@ import colorbrewer
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Justine Debelius"]
+__credits__ = ["Justine Debelius", "Daniel McDonald"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
@@ -306,7 +306,9 @@ def summarize_common_categories(biom_table, level, common_categories,
         new_bin = tuple(new_bin)
 
         if new_bin in common_categories:
-            cat_summary[common_categories.index(new_bin)] = table.sum('sample')
+            current = cat_summary[common_categories.index(new_bin)]
+            cat_summary[common_categories.index(new_bin)] \
+                = table.sum('sample') + current
         else:
             cat_other = vstack((cat_other, table.sum('sample')))
 

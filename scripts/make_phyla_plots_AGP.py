@@ -297,7 +297,7 @@ if __name__ == '__main__':
          cat_tables=categories,
          samples_to_plot=samples,
          sample_type=sample_type,
-         debug=args.debug)
+         debug=eval(args.debug))
 
 
 ### Commentary on the selection of common taxa:
