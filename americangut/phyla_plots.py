@@ -19,12 +19,22 @@ __email__ = "mcdonadt@colorado.edu"
 
 
 def table_by_category_value(table, cat):
-    """Get normalized tables by category value
+    """Get tables by category value
 
-    Tables are first filtered to the respective category value, dropping
-    all samples that do not hold the category value. The tables are then
-    converted into relative abundance. The tables and the order of the
+    Tables are filtered to the respective category value, dropping all samples
+    that do not hold the category value. The tables and the order of the
     category values is returned.
+
+    Parameters
+    ----------
+
+    table : Table, the table to operate on
+    cat : str, the category to operate on
+
+    Returns
+    -------
+    tuple : (tables, values) where tables is a list of Table and values is
+        a list of str
     """
     values = sorted({md[cat] for md in table.SampleMetadata})
     tables = []
@@ -36,7 +46,18 @@ def table_by_category_value(table, cat):
 def category_value_lookup(table, categories):
     """Construct a lookup for each category and value of interest
 
-    Return a lookup {category: {value: table}}
+    Parameters
+    ----------
+
+    table : Table, the table to operate on
+    categories : list of str, the categories to operate on
+
+    Returns
+    -------
+
+    dict of dict : the outer dict is keyed by the category and valued by a
+        dict. the inner dict is keyed by the category value and valued by the
+        corresponding table
     """
     lookup = defaultdict(dict)
     for cat in categories:
@@ -47,19 +68,55 @@ def category_value_lookup(table, categories):
 
 
 def drop_sample(table, sample):
-    """Drop a sample from a table"""
+    """Drop a sample from a table
+
+    Parameters
+    ----------
+
+    table : Table, the table to operate on
+    sample : str, a sample ID
+
+    Returns
+    -------
+
+    Table : the table without the sample
+    """
     return table.filterSamples(lambda v, i, md: i != sample)
 
 
 def sort_by_taxa(vector, vector_order, desired_order):
-    """Sort the vector by the desired order"""
+    """Sort the vector by the desired order
+
+    Parameters
+    ----------
+
+    vector : np.array, a vector of abundances
+    vector_order : the order of the labels represented
+    desired_order : the desired order of the vector
+
+    Returns
+    -------
+
+    np.array : the abundances in the desired order
+    """
     lookup = {v: i for i, v in enumerate(vector_order)}
     order = np.array([lookup[v] for v in desired_order])
     return vector[order]
 
 
 def average_per_observation(table):
-    """Returns the average value of an observation in the table"""
+    """Returns the average value of an observation in the table
+
+    Parameters
+    ----------
+
+    table : Table, the table to operate on
+
+    Returns
+    -------
+
+    np.array : the average abundance per observation
+    """
     normalized_sums = table.sum('observation')
     mean_values = normalized_sums / len(table.SampleIds)
 
@@ -70,7 +127,18 @@ def average_per_observation(table):
 
 
 def most_common_taxa(table, n):
-    """Determine the most common taxa by relative abundance in the table"""
+    """Determine the most common taxa by relative abundance in the table
+
+    Parameters
+    ----------
+
+    table : Table, the table to operate on
+    n : int, the number of taxa to return
+
+    Returns
+    -------
+    list : the n most common taxa sorted by abundance
+    """
     obs_ids = np.array(table.ObservationIds)
     avg = np.array([v.mean() for v in table.iterObservationData()])
     sort_order = np.argsort(avg)[::-1]
@@ -84,6 +152,17 @@ def make_collapse_f(taxa):
     This will create a collapsing function such that the taxa of interest will
     be represented by a single observation, and all other taxa will be lumped
     into a single "other" observation
+
+    Parameters
+    ----------
+
+    taxa : iterable of str, the tax to care about
+
+    Returns
+    -------
+
+    function : a function that can be applied to
+        Table.collapseObservationsByMetadata
     """
     taxa = set(taxa)
     def f(md):
@@ -103,6 +182,9 @@ def _make_plots_debug_printer(name, vector):
 def make_plot(sample, sample_vector, cat_vectors, categories, taxa_order,
               identified_vector, identified_person, debug=True):
     """Construct a stacked bar chart the vectors of interest
+
+    Parameters
+    ----------
 
     sample : str, the sample ID
     sample_vector : np.array, the taxa abundances in the sample
