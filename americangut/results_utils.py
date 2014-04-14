@@ -298,7 +298,7 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
                     continue
 
         if bmi_idx is not None:
-            if new_line[bmi_idx] in ['NA','', 'None']:
+            if new_line[bmi_idx] in ['NA','', 'None', 'no_data']:
                 bmi_cat = 'Unknown'
             else:
                 bmi = float(new_line[bmi_idx])
