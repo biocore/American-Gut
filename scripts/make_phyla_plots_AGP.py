@@ -238,6 +238,7 @@ parser.add_argument('-t', '--sample_type',
 
 parser.add_argument('-d', '--debug',
                     default=False,
+                    action='store_true',
                     help='Ignore handling of MPs sample')
 
 if __name__ == '__main__':
