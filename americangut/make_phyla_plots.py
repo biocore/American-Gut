@@ -20,7 +20,7 @@ import colorbrewer
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Justine Debelius"]
+__credits__ = ["Justine Debelius", "Daniel McDonald"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
@@ -295,7 +295,6 @@ def summarize_common_categories(biom_table, level, common_categories,
     # Prealocates numpy objects (because that makes life fun!). tax_other is
     # set up as a row array because this is ultimately summed
     cat_summary = zeros([num_cats, num_samples])
-    cat_other = zeros([1, num_samples])
 
     # Collapses the OTU table using the category at the correct level
     bin_fun = lambda x: x[metadata_category][:level]
@@ -306,11 +305,11 @@ def summarize_common_categories(biom_table, level, common_categories,
         new_bin = tuple(new_bin)
 
         if new_bin in common_categories:
-            cat_summary[common_categories.index(new_bin)] = table.sum('sample')
-        else:
-            cat_other = vstack((cat_other, table.sum('sample')))
+            current = cat_summary[common_categories.index(new_bin)]
+            cat_summary[common_categories.index(new_bin)] \
+                = table.sum('sample') + current
 
-    cat_summary = vstack((cat_summary, sum(cat_other, 0)))
+    cat_summary = vstack((cat_summary, 1 - sum(cat_summary)))
     common_cats = common_categories
 
     common_cats.extend(other_name)
