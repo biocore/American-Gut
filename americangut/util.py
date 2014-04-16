@@ -6,7 +6,7 @@ import gzip
 import time
 from itertools import izip
 from StringIO import StringIO
-from lxml import etree
+from xml import etree
 
 from skbio.parse.sequences import parse_fastq
 
