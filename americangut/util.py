@@ -157,7 +157,7 @@ def fetch_metadata_xml(accession):
     metadata = {}
     for node in attributes.iterfind('SAMPLE_ATTRIBUTE'):
         tag, value = node.getchildren()
-        metadata[tag.text.strip('" ')] = value.text.strip('" ')
+        metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
     return metadata
 
 def fetch_study(accession, metadata_path, fasta_path):
