@@ -8,7 +8,7 @@ from collections import defaultdict
 
 from americangut.results_utils import (
     filter_mapping_file, massage_mapping, count_unique_sequences_per_otu,
-    write_contaminant_fasta
+    write_bloom_fasta
 )
 
 class ResultsUtilsTests(TestCase):
@@ -87,7 +87,7 @@ class ResultsUtilsTests(TestCase):
         self.assertEqual(expected, result)
 
 
-    def test_write_contaminant_fasta(self):
+    def test_write_bloom_fasta(self):
         otu_ids = set(['otu1', 'otu2'])
         unique_counts = {x:defaultdict(int) for x in otu_ids}
         unique_counts['otu1']['ATCG'] = 3
@@ -95,7 +95,7 @@ class ResultsUtilsTests(TestCase):
         unique_counts['otu2']['A'] = 1
 
         result = StringIO()
-        write_contaminant_fasta(unique_counts, result, 0.67)
+        write_bloom_fasta(unique_counts, result, 0.67)
 
         result.seek(0)
         self.assertEqual(result.read(), '>otu1_1\nATCG\n')
