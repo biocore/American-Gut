@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
-import os
 from StringIO import StringIO
 from unittest import TestCase, main
-from americangut.results_utils import filter_mapping_file, massage_mapping
 from collections import defaultdict
 
 from americangut.results_utils import (
-    filter_mapping_file, massage_mapping, count_unique_sequences_per_otu,
-    write_bloom_fasta
+    filter_mapping_file, clean_and_reformat_mapping,
+    count_unique_sequences_per_otu, write_bloom_fasta
 )
 
 class ResultsUtilsTests(TestCase):
@@ -40,10 +38,11 @@ class ResultsUtilsTests(TestCase):
             self.assertEqual(l[test_sbs], 'FECAL')
             self.assertTrue(float(l[test_age]) > 20)
 
-    def test_massage_mapping(self):
-        """Exercise the massage mapping code, verify expected results"""
+    def test_clean_and_reformat_mapping(self):
+        """Exercise the reformat mapping code, verify expected results"""
         out = StringIO()
-        massage_mapping(massage_mapping_testdata, out, 'body_site', 'test')
+        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
+                                   'test')
         out.seek(0)
 
         # verify the resulting header structure
@@ -109,7 +108,7 @@ C	United States of America	bar	12.0	FECAL
 D	United States of America	AGP	32.0	SKIN
 E	United States of America	AGP	56.0	FECAL
 """)
-massage_mapping_testdata = StringIO(
+reformat_mapping_testdata = StringIO(
 """#SampleID	COUNTRY	AGE	BODY_SITE	BMI
 A	GAZ:w00t	43.0	UBERON_mucosa_of_tongue	5
 B	GAZ:left	51.0	UBERON:FECES	10

@@ -181,7 +181,8 @@ simple_matter_map = {
         }
 
 
-def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
+def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
+                               exp_acronym):
     """Simplify the mapping file for use in figures
 
     in_fp : input file-like object
