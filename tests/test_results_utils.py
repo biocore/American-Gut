@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
-import os
 from StringIO import StringIO
 from unittest import TestCase, main
-from americangut.results_utils import filter_mapping_file, massage_mapping
 from collections import defaultdict
 
 from americangut.results_utils import (
-    filter_mapping_file, massage_mapping, count_unique_sequences_per_otu,
-    write_contaminant_fasta
+    filter_mapping_file, clean_and_reformat_mapping,
+    count_unique_sequences_per_otu, write_bloom_fasta
 )
 
 class ResultsUtilsTests(TestCase):
@@ -40,10 +38,11 @@ class ResultsUtilsTests(TestCase):
             self.assertEqual(l[test_sbs], 'FECAL')
             self.assertTrue(float(l[test_age]) > 20)
 
-    def test_massage_mapping(self):
-        """Exercise the massage mapping code, verify expected results"""
+    def test_clean_and_reformat_mapping(self):
+        """Exercise the reformat mapping code, verify expected results"""
         out = StringIO()
-        massage_mapping(massage_mapping_testdata, out, 'body_site', 'test')
+        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
+                                   'test')
         out.seek(0)
 
         # verify the resulting header structure
@@ -87,7 +86,7 @@ class ResultsUtilsTests(TestCase):
         self.assertEqual(expected, result)
 
 
-    def test_write_contaminant_fasta(self):
+    def test_write_bloom_fasta(self):
         otu_ids = set(['otu1', 'otu2'])
         unique_counts = {x:defaultdict(int) for x in otu_ids}
         unique_counts['otu1']['ATCG'] = 3
@@ -95,7 +94,7 @@ class ResultsUtilsTests(TestCase):
         unique_counts['otu2']['A'] = 1
 
         result = StringIO()
-        write_contaminant_fasta(unique_counts, result, 0.67)
+        write_bloom_fasta(unique_counts, result, 0.67)
 
         result.seek(0)
         self.assertEqual(result.read(), '>otu1_1\nATCG\n')
@@ -109,7 +108,7 @@ C	United States of America	bar	12.0	FECAL
 D	United States of America	AGP	32.0	SKIN
 E	United States of America	AGP	56.0	FECAL
 """)
-massage_mapping_testdata = StringIO(
+reformat_mapping_testdata = StringIO(
 """#SampleID	COUNTRY	AGE	BODY_SITE	BMI
 A	GAZ:w00t	43.0	UBERON_mucosa_of_tongue	5
 B	GAZ:left	51.0	UBERON:FECES	10

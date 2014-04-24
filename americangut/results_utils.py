@@ -181,7 +181,8 @@ simple_matter_map = {
         }
 
 
-def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
+def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
+                               exp_acronym):
     """Simplify the mapping file for use in figures
 
     in_fp : input file-like object
@@ -298,7 +299,7 @@ def massage_mapping(in_fp, out_fp, body_site_column_name, exp_acronym):
                     continue
 
         if bmi_idx is not None:
-            if new_line[bmi_idx] in ['NA','', 'None']:
+            if new_line[bmi_idx] in ['NA','', 'None', 'no_data']:
                 bmi_cat = 'Unknown'
             else:
                 bmi = float(new_line[bmi_idx])
@@ -703,17 +704,17 @@ def count_unique_sequences_per_otu(otu_ids, otu_map_file, input_seqs_file):
     return unique_counts
 
 
-def write_contaminant_fasta(unique_counts, output_file, abundance_threshold):
-    """Writes a FASTA file of sequences determined to be contaminants
+def write_bloom_fasta(unique_counts, output_file, abundance_threshold):
+    """Writes a FASTA file of sequences determined to be the result of a bloom
 
     If one unique sequences composes more than abundance_threshold of the OTU,
-    that sequences is marked as a contaminant and written to output_file.
+    that sequences is marked as a bloom sequence and written to output_file.
 
     unique_counts: a nested dict of the form {otu_id: {sequence: count}}
                    E.g., the output of count_unique_sequences_per_otu
     output_file: a file-like object ready for writing
     abundance_threshold: If a sequence composes more than this percent of an
-                         OTU, then it is marked as a contaminant
+                         OTU, then it is marked as a bloom sequence
     """
     for otu_id, otu_counts in unique_counts.iteritems():
         otu_total_count = sum([count for seq, count in otu_counts.iteritems()])
