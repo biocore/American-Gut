@@ -147,14 +147,14 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
 
     # Identifies Michael Pollan's pre-ABX sample
     if debug:
-        mp_sample_pos = 0
+        mp_sample_pos = 2
     else:
         mp_sample_pos = whole_sample_ids.index(michael_pollan)
     mp_sample_taxa = whole_summary[:, mp_sample_pos]
 
     # Gets the table average
     table_average = mean(whole_summary, 1)
-
+    
     # Generates a figure for each sample
     for idx, sample_id in enumerate(whole_sample_ids):
         if sample_id in sample_ids:
@@ -186,7 +186,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                     raise ValueError('The %s cannot be found in %s.'
                                      % (mapping_key, cat))
                 tax_array[:, idx] = tax_summary[:, mapping_col]
-
+            
             # Sets up the file to save the data
             filename = pjoin(output_dir, '%s%s%s'
                              % (FILEPREFIX, sample_id, FILE_END))
@@ -243,7 +243,7 @@ parser.add_argument('-d', '--debug',
 
 if __name__ == '__main__':
     args = parser.parse_args()
-
+    
     # Checks the biom table is sane
     if not args.input:
         parser.error("An input BIOM table is required.")
