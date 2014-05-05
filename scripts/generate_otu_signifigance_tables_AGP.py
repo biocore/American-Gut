@@ -197,8 +197,6 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         (abundance) = calculate_abundance(abund_sample, abund_taxa,
                                           sum_min=SUM_MIN)
 
-        # print 'abundance: ', abundance[0:NUM_TAXA_SHOW]
-
         # Generates formatted abundance table
         formatted_abundance = convert_taxa(abundance[0:NUM_TAXA_SHOW],
                                            formatting_keys=FORMAT_ABUNDANCE,
