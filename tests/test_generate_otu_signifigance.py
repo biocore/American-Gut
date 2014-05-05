@@ -267,6 +267,10 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
         # Checks that errors are called correctly
         with self.assertRaises(TypeError):
             convert_taxa('test_value', test_keys, test_hund)
+        with self.assertRaises(ValueError):
+            convert_taxa([], test_keys, test_hund)
+        with self.assertRaises(TypeError):
+            convert_taxa(test_value[0], test_keys, test_hund)
 
         with self.assertRaises(TypeError):
             convert_taxa(test_value.append('Cats'), test_keys, test_hund)

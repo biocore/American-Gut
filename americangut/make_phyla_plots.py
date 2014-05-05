@@ -904,7 +904,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
     # Sets up the x ticks.
     # Bar width is divided by two because the tick is assumed to be at the
     # center of the bar.
-    x_tick = arange(num_samples)
+    x_tick = arange(num_samples*x_tick_interval)
     x_max = x_min + num_samples*x_tick_interval
     bar_left = x_tick - bar_width/2
 

@@ -158,7 +158,15 @@ def convert_taxa(rough_taxa, formatting_keys='%1.2f', hundredx=False):
 
     # Checks the rough_taxa argument is sane
     if not isinstance(rough_taxa, list):
-        raise TypeError('rough_taxa must be a list of lists')
+        raise TypeError('rough_taxa must have be a list of at least one '
+                        'lists.\nrough_taxa is a %s.' % rough_taxa.__class__)
+    elif len(rough_taxa) == 0:
+        raise ValueError('rough taxa must have be a list of at least one '
+                         'lists.\nrough_taxa does not have any elements.')
+    elif not isinstance(rough_taxa[0], list):
+        raise TypeError('rough taxa must have be a list of at least one '
+                        'lists.\nThe first element in rough taxa is a %s.'
+                        % rough_taxa[0].__class__)
     num_ent = len(rough_taxa[0])
     for entry in rough_taxa:
         if not isinstance(entry, list):
