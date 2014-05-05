@@ -215,7 +215,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         if len(high) == 0:
             formatted_high = [['', '', '', '']]*NUM_TAXA_SHOW
 
-        if len(high) < NUM_TAXA_SHOW:
+        elif len(high) < NUM_TAXA_SHOW:
             # Formats the known high taxa
             formatted_high = \
                 convert_taxa(high[0:NUM_TAXA_SHOW],
