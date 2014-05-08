@@ -596,11 +596,14 @@ def harvest(path):
         if sample_suffix is None:
             continue
         else:
-            sample = sample_suffix.group().split('.')[0]
+            sample_suffix = sample_suffix.group()
+            sample = sample_suffix.split('.')[0]
 
-        pdf = os.path.join(path, dirpath, "%s.pdf" % sample)
-        if os.path.exists(pdf):
-            yield "mv %s %s" % (pdf, harvest_path)
+        src = os.path.join(path, dirpath, "%s.pdf" % sample_suffix)
+        dst = os.path.join(harvest_path, "%s.pdf" % sample)
+        
+        if os.path.exists(src):
+            yield "mv %s %s" % (src, dst)
 
 
 def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
