@@ -32,11 +32,12 @@ def get_filtered_taxa_summary(mapping_file, taxa_summary_file,
         taxa_labels - taxonomic labels (including "Other")
         collapsed_taxa_table - simplified taxonomy table
     """
+    with open(mapping_file, 'rU') as mapping_fp:
+        mapping_dict, comments = parse_mapping_file_to_dict(mapping_fp)
 
-    mapping_fp = open(mapping_file, 'rU')
-    mapping_dict, comments = parse_mapping_file_to_dict(mapping_fp)
-    taxa_fp = open(taxa_summary_file, 'rU')
-    sample_ids, taxa_ids, taxa_table = parse_taxa_summary_table(taxa_fp)
+    with open(taxa_summary_file, 'rU') as taxa_fp:
+        sample_ids, taxa_ids, taxa_table = parse_taxa_summary_table(taxa_fp)
+
     taxa_ids = [taxa_id.split('__')[-1] for taxa_id in taxa_ids]
 
     selected_ids = [key for key in mapping_dict

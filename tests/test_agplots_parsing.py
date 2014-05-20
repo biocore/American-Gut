@@ -11,6 +11,7 @@ __email__ = "samuel.way@colorado.edu"
 from americangut.agplots_parse import (parse_mapping_file_to_dict,
                                        get_filtered_taxa_summary)
 from numpy import array, array_equal
+import numpy.testing as npt
 from unittest import TestCase, main
 
 
@@ -28,8 +29,8 @@ class test_mapping_file_parse(TestCase):
                                            'AWESOME_CATEGORY': 'totally'}}
 
     def test_mapping_file(self):
-        mapping_dict, comments = parse_mapping_file_to_dict(
-            open(TEST_MAPPING_FILE, 'rU'))
+        with open(TEST_MAPPING_FILE) as f:
+            mapping_dict, comments = parse_mapping_file_to_dict(f)
 
         for sample_id, sample_dict in mapping_dict.iteritems():
             # Does the sample dictionary contain all of the metadata
@@ -37,7 +38,7 @@ class test_mapping_file_parse(TestCase):
             self.assertEqual(set(sample_dict.keys()), set(self.categories))
 
             # Are all metadata values correct?
-            for category in sample_dict.keys():
+            for category in sample_dict:
                 self.assertEqual(sample_dict[category],
                                  self.metadata_dict[sample_id][category])
 
@@ -76,8 +77,7 @@ class test_taxa_summary_file_parse(TestCase):
 
         # Should get the slide of the table corresponding to the matching
         # sample
-        self.assertTrue(array_equal(collapsed_taxa_table,
-                                    self.table[:, 0, None]))
+        npt.assert_equal(collapsed_taxa_table, self.table[:, 0, None])
 
 if __name__ == '__main__':
     main()
