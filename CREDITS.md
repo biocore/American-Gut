@@ -52,6 +52,7 @@ American Gut Credits
 * Luke Ursell
 * Yoshiki Vazquez-Baeza
 * Tim Vigers
+* Sam Way
 * Tony Walters
 * Sophie Weiss
 * Doug Wendel
