@@ -1,0 +1,553 @@
+{
+    "sources": {
+        "HMP_fecal": {
+            "display": "HMP",
+            "mapping": "data/HMP/HMPv35_100nt.txt",
+            "restrict": {
+                "column": "@mapping bodysite",
+                "values": [
+                    "UBERON_stool"
+                ],
+                "unique": "hostsubjectid"
+            }
+        },
+        "GG_fecal": {
+            "display": "GG",
+            "mapping": "data/GG/GG_100nt.txt",
+            "restrict": {
+                "column": "@mapping BODY_SITE",
+                "values": [
+                    "UBERON:feces"
+                ],
+                "unique": "HOST_SUBJECT_ID"
+            }
+        },
+        "PGP_fecal": {  
+            "display": "PGP",
+            "mapping": "data/PGP/PGP_100nt.txt",
+            "restrict": {
+                "column": "@mapping body_product",
+                "values": [
+                    "UBERON:feces"
+                ],
+                "unique": "host_subject_id"
+            }
+        },
+        "AG_fecal": {
+            "display": "AG",
+            "mapping": "data/AG/AG_100nt.txt",
+            "biom": "data/AG/AG_100nt.biom.gz",
+            "restrict": {
+                "column": "@mapping BODY_PRODUCT",
+                "values": [
+                    "UBERON:feces"
+                ],
+                "unique": "HOST_SUBJECT_ID"
+            }
+        },
+        "AG": {
+            "display": "AG",
+            "mapping": "data/AG/AG_100nt.txt"
+        }
+    },
+
+    "colors": {
+        "c0": "#797979",
+        "c1": "#9e0142",
+        "c2": "#d53e4f",
+        "c3": "#f46d63",
+        "c4": "#fdae61",
+        "c5": "#fee08b",
+        "c6": "#ffffbf",
+        "c7": "#e6f598",
+        "c8": "#abdda4",
+        "c9": "#66c2a5",
+        "c10": "#3288bd",
+        "c11": "#000000"
+    },
+
+
+    "stratifications": {
+        "fig2_gender_strata": [
+            {
+                "name":"Unknown",
+                "display":"Unknown",
+                "color": "c0"
+            },
+            {
+                "name":"females",
+                "display":"Females",
+                "color": "c2"
+            },
+            {
+                "name":"males",
+                "display":"Males",
+                "color": "c10"
+            }
+        ],
+        "fig2_age_strata": [
+            {
+                "name":"Unknown",
+                "display":"Unknown",
+                "color": "c0"
+            },
+            {
+                "name":"eighty",
+                "display":"80+",
+                "color": "c1"
+            },
+            {
+                "name":"seventy",
+                "display":"70-79",
+                "color": "c2"
+            },
+            {
+                "name":"sixty",
+                "display":"60-69",
+                "color": "c3"
+            },
+            {
+                "name":"fifty",
+                "display":"50-59",
+                "color": "c4"
+            },
+            {
+                "name":"fourty",
+                "display":"40-49",
+                "color": "c5"
+            },
+            {
+                "name":"thirty",
+                "display":"30-39",
+                "color": "c6"
+            },
+            {
+                "name":"twenty",
+                "display":"20-29",
+                "color": "c7"
+            },
+            {
+                "name":"teen",
+                "display":"13-19",
+                "color": "c8"
+            },
+            {
+                "name":"child",
+                "display":"3-13",
+                "color": "c9"
+            },
+            {
+                "name":"baby",
+                "display":"0-2",
+                "color": "c10"
+            }
+        ],
+        "fig2_bmi_strata": [
+            {
+                "name":"Unknown",
+                "display":"Unknown",
+                "color": "c0"
+            },
+            {
+                "name":"vso",
+                "display":"Very severely obese",
+                "color": "c1"
+            },
+            {
+                "name":"so",
+                "display":"Severely obese",
+                "color": "c2"
+            },
+            {
+                "name":"mo",
+                "display":"Moderately obese",
+                "color": "c3"
+            },
+            {
+                "name":"o",
+                "display":"Overweight",
+                "color": "c4"
+            },
+            {
+                "name":"n",
+                "display":"Normal",
+                "color": "c5"
+            },
+            {
+                "name":"u",
+                "display":"Underweight",
+                "color": "c7"
+            },
+            {
+                "name":"su",
+                "display":"Severely underweight",
+                "color": "c9"
+            },
+            {
+                "name":"vsu",
+                "display":"Very severely underweight",
+                "color": "c10"
+            }
+        ],
+        "fig3_diet_strata": [
+            
+            {
+                "name":"omnivore",
+                "display":"Omnivore",
+                "color": "c11"
+            },
+            {
+                "name":"nrm",
+                "display":"No red meat",
+                "color": "c11"
+            },
+            {
+                "name":"pescetarian",
+                "display":"Pescetarian",
+                "color": "c11"
+            },
+            {
+                "name":"vegetarian",
+                "display":"Vegetarian",
+                "color": "c11"
+            },
+            {
+                "name":"vegan",
+                "display":"Vegan",
+                "color": "c11"
+            },
+            {
+                "name":"Unknown",
+                "display":"Unknown",
+                "color": "c11"
+            }
+        ],
+        "fig3_exercise_strata": [
+            
+            {
+                "name":"never",
+                "display":"Never",
+                "color": "c11"
+            },
+            {
+                "name":"rarely",
+                "display":"Rarely",
+                "color": "c11"
+            },
+            {
+                "name":"occasionally",
+                "display":"Occasionally",
+                "color": "c11"
+            },
+            {
+                "name":"regularly",
+                "display":"Regularly",
+                "color": "c11"
+            },
+            {
+                "name":"daily",
+                "display":"Daily",
+                "color": "c11"
+            },
+            {
+                "name":"Unknown",
+                "display":"Unknown",
+                "color": "c11"
+            }
+        ],
+        "fig3_vitamin_strata": [
+            {
+                "name":"no",
+                "display":"No",
+                "color": "c11"
+            },
+            {
+                "name":"yes",
+                "display":"Yes",
+                "color": "c11"
+            },
+            {
+                "name":"Unknown",
+                "display":"Unknown",
+                "color": "c11"
+            }
+        ],
+        "observation_strata": [
+            {
+                "name":"p8",
+                "display":"Other",
+                "color": "c0"
+            },
+            {
+                "name":"p1",
+                "display":"Firmicutes",
+                "color": "c1"
+            },
+            {
+                "name":"p2",
+                "display":"Bacteroidetes",
+                "color": "c2"
+            },
+            {
+                "name":"p3",
+                "display":"Proteobacteria",
+                "color": "c4"
+            },
+            {
+                "name":"p4",
+                "display":"Actinobacteria",
+                "color": "c5"
+            },
+            {
+                "name":"p5",
+                "display":"Verrucomicrobia",
+                "color": "c7"
+            },
+            {
+                "name":"p6",
+                "display":"Tenericutes",
+                "color": "c9"
+            },
+            {
+                "name":"p7",
+                "display":"Cyanobacteria",
+                "color": "c10"
+            }
+        ]
+    },
+
+    "graphs": [
+        {
+            "name": "fig2_gender",
+            "title": "Gender",
+            "type": "stackedbar",
+            "scaled": true,
+            "legend": true,
+            "figsize": [4,4],
+            "dpi": 300,
+            "legend_size":7,
+            "y_label": "Number of Participants",
+            "y_stratification": "fig2_gender_strata",
+            "data": [
+                {
+                    "display": "HMP",
+                    "source": "HMP_fecal",
+                    "group-by": "id",
+                    "column": "sex",
+                    "aliases": {
+                        "male": "males",
+                        "female": "females"
+                    },
+                    "default": "Unknown"
+                },
+                {
+                    "display": "GG",
+                    "source": "GG_fecal",
+                    "group-by": "id",
+                    "column": "SEX",
+                    "aliases": {
+                        "male": "males",
+                        "female": "females"
+                    },
+                    "default": "Unknown"
+                },
+                {
+                    "display": "PGP",
+                    "source": "PGP_fecal",
+                    "group-by": "id",
+                    "column": "Sex/Gender",
+                    "aliases": {
+                        "Male": "males",
+                        "Female": "females"
+                    },
+                    "default": "Unknown"
+                },
+                {
+                    "display": "AG",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "column": "SEX",
+                    "aliases": {
+                        "male": "males",
+                        "female": "females"
+                    },
+                    "default": "Unknown"
+                }
+            ]           
+        },
+        {
+            "name": "fig2_age",
+            "title": "Age",
+            "type": "stackedbar",
+            "scaled": true,
+            "legend": true,
+            "figsize": [4,4],
+            "dpi": 300,
+            "legend_size":7,
+            "y_label": "Number of Participants",
+            "y_stratification": "fig2_age_strata",
+            "@var bins": {
+                "80": "eighty",
+                "70": "seventy",
+                "60": "sixty",
+                "50": "fifty",
+                "40": "fourty",
+                "30": "thirty",
+                "20": "twenty",
+                "13": "teen",
+                "3": "child",
+                "0": "baby"
+            },
+            "data": [
+                {
+                    "display": "HMP",
+                    "source": "HMP_fecal",
+                    "group-by": "bin",
+                    "column": "AGE",
+                    "bins": "@var bins",
+                    "default": "Unknown"
+                },
+                {
+                    "display": "GG",
+                    "source": "GG_fecal",
+                    "group-by": "bin",
+                    "column": "AGE_IN_YEARS",
+                    "bins": "@var bins",
+                    "default": "Unknown"
+                },
+                {
+                    "display": "PGP",
+                    "source": "PGP_fecal",
+                    "group-by": "id",
+                    "column": "Age",
+                    "aliases": {
+                        "90-99 years":"eighty",
+                        "80-89 years":"eighty",
+                        "70-79 years":"seventy",
+                        "60-69 years":"sixty",
+                        "50-59 years":"fifty",
+                        "40-49 years":"fourty",
+                        "30-39 years":"thirty",
+                        "21-29 years":"twenty"
+                    },
+                    "default": "Unknown"
+                },
+                {
+                    "display": "AG",
+                    "source": "AG_fecal",
+                    "group-by": "bin",
+                    "column": "AGE",
+                    "bins": "@var bins",
+                    "default": "Unknown"
+                }
+            ]           
+        },
+        {
+            "name": "fig2_bmi",
+            "title": "BMI",
+            "type": "stackedbar",
+            "scaled": true,
+            "legend": true,
+            "figsize": [3.5,4],
+            "dpi": 300,
+            "legend_size":6,
+            "y_label": "Number of Participants",
+            "y_stratification": "fig2_bmi_strata",
+            "@var bins": {
+                "40": "vso",
+                "35": "vo",
+                "30": "mo",
+                "25": "o",
+                "18.5": "n",
+                "16": "u",
+                "15": "su",
+                "1": "vsu",
+                "0": "Unknown"
+            },
+            "data": [
+                {
+                    "display": "HMP",
+                    "source": "HMP_fecal",
+                    "group-by": "bin",
+                    "column": "bmi",
+                    "bins": "@var bins",
+                    "default": "Unknown"
+                },
+                {
+                    "display": "AG",
+                    "source": "AG_fecal",
+                    "group-by": "bin",
+                    "column": "BMI",
+                    "bins": "@var bins",
+                    "default": "Unknown"
+                }
+            ]           
+        },
+        {
+            "name": "fig3_diet",
+            "title": "Diet",
+            "type": "bar",
+            "x_stratification": "fig3_diet_strata",
+            "figsize": [3.5,4],
+            "dpi": 300,
+            "y_label": "Number of Participants",
+            "data": {
+                "source": "AG_fecal",
+                "column": "DIET_TYPE",
+                "group-by": "id",
+                "aliases": {
+                    "Omnivore":"omnivore",
+                    "Omnivore but no red meat":"nrm",
+                    "Vegetarian but eat seafood":"pescetarian",
+                    "Vegetarian":"vegetarian",
+                    "Vegan":"vegan"
+                },
+                "default": "Unknown"
+            }
+        },
+        {
+            "name": "fig3_exercise",
+            "title": "Exercise Frequency",
+            "type": "bar",
+            "x_stratification": "fig3_exercise_strata",
+            "y_label": "Number of Participants",
+            "figsize": [3.5,4],
+            "dpi": 300,
+            "data": {
+                "source": "AG_fecal",
+                "column": "EXERCISE_FREQUENCY",
+                "group-by": "id",
+                "aliases": {
+                    "Never":"never",
+                    "Rarely (few times/month)":"rarely",
+                    "Rarely few times/month":"rarely",
+                    "Occasionally (1-2 times/week)":"occasionally",
+                    "Occasionally 1-2 times/week":"occasionally",
+                    "Regularly (3-5 times/week)":"regularly",
+                    "Regularly 3-5 times/week":"regularly",
+                    "Daily":"daily"
+                },
+                "default": "Unknown"
+            }
+        },
+        {
+            "name": "fig3_vitamin",
+            "title": "Vitamin Use",
+            "type": "bar",
+            "y_label": "Number of Participants",
+            "x_stratification": "fig3_vitamin_strata",
+            "figsize": [3,4],
+            "dpi": 300,
+            "data": {
+                "source": "AG_fecal",
+                "column": "MULTIVITAMIN",
+                "group-by": "id",
+                "aliases": {
+                    "yes":"yes",
+                    "no":"no"
+                },
+                "default": "Unknown"
+            }
+        }
+    ]
+}

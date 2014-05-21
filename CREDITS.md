@@ -11,6 +11,7 @@ American Gut Credits
 * Dr. Katie Amato
 * Dr. Amnon Amir
 * Donna Berg-Lyons
+* Evan Bolyen
 * Jeff DeReus
 * Justine Debelius
 * Dr. Rob Dunn
