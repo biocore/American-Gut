@@ -27,6 +27,7 @@ American Gut Credits
 * Dr. Jim Huntley
 * Zehra Esra Ilhan
 * Jerry Kennedy
+* Elijah Lovelace
 * Dr. Cathy Lozupone
 * Dr. Sebastién Matamoros
 * Daniel Mayer
