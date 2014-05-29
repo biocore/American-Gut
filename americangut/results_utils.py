@@ -15,8 +15,6 @@ from collections import defaultdict
 # results processing
 _data_files = [
         # (directory, filename)
-        ('AG', 'AG_100nt.biom.gz'),
-        ('AG', 'AG_100nt.txt'),
         ('PGP', 'PGP_100nt.biom.gz'),
         ('PGP', 'PGP_100nt.txt'),
         ('HMP', 'HMPv35_100nt.biom.gz'),
@@ -601,7 +599,7 @@ def harvest(path):
 
         src = os.path.join(path, dirpath, "%s.pdf" % sample_suffix)
         dst = os.path.join(harvest_path, "%s.pdf" % sample)
-        
+
         if os.path.exists(src):
             yield "mv %s %s" % (src, dst)
 
