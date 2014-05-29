@@ -31,7 +31,8 @@ _templates = {
         }
 
 
-_mod1_bits = ['metadata_charts.json']
+_mod1_bits = ['metadata_charts.json',
+              'fecal_identified.txt']
 
 
 def get_path(d, f):
