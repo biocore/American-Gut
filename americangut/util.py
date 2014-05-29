@@ -197,3 +197,14 @@ def fetch_study(accession, metadata_path, fasta_path):
     md_f.close()
     fasta_path.close()
 
+
+def count_seqs(seqs_fp):
+    """Could the number of FASTA records"""
+    return sum(1 for line in seqs_fp if line.startswith(">"))
+
+
+def count_unique_participants(metadata_fp):
+    """Could the number of unique participants"""
+    header = metadata_fp.next().strip().lower().split('\t')
+    host_subject_id = header.index('host_subject_id')
+    return len({ln.strip().split('\t')[host_subject_id] for ln in metadata_fp})
