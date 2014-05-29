@@ -31,6 +31,9 @@ _templates = {
         }
 
 
+_mod1_bits = ['metadata_charts.json']
+
+
 def get_path(d, f):
     """Check and get a path, or throw IOError"""
     path = os.path.join(d, f)
@@ -101,11 +104,20 @@ def _stage_static_data(working_dir, debug):
         shutil.copy(src, working_dir)
 
 
+def _stage_static_mod1(working_dir):
+    latex_dir = get_repository_latex()
+
+    for f in _mod1_bits:
+        src = get_path(latex_dir, f)
+        shutil.copy(src, working_dir)
+
+
 def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
     _stage_static_data(working_dir, debug)
     _stage_static_latex(sample_type, working_dir)
     _stage_static_pdfs(sample_type, working_dir)
+    _stage_static_mod1(working_dir)
 
 
 # use participant names only if the data are available.
