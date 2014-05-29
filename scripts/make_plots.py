@@ -8,6 +8,9 @@ __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
 
+from matplotlib import use
+use('Agg')
+
 import argparse
 import brewer2mpl
 import matplotlib.pyplot as plt
