@@ -313,7 +313,6 @@
             "figsize": [4,4],
             "dpi": 300,
             "legend_size":7,
-            "y_label": "Number of Participants",
             "y_stratification": "fig2_gender_strata",
             "data": [
                 {
