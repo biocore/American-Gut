@@ -204,7 +204,12 @@ def count_seqs(seqs_fp):
 
 
 def count_unique_participants(metadata_fp):
-    """Could the number of unique participants"""
+    """Count the number of unique participants"""
     header = metadata_fp.next().strip().lower().split('\t')
     host_subject_id = header.index('host_subject_id')
     return len({ln.strip().split('\t')[host_subject_id] for ln in metadata_fp})
+
+
+def count_samples(metadata_fp):
+    """Count the number of samples"""
+    return sum(1 for line in metadata_fp if not line.startswith('#'))
