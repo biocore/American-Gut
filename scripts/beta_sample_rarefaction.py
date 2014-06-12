@@ -28,6 +28,12 @@ script_info['output_description'] = ""
 script_info['required_options'] = [
     make_option('-i', '--input_path', type="existing_filepaths",
                 help='the input distance matrix file(s)'),
+    make_option('-l', '--labels', type=str,
+                help='legend labels for the input files'),
+    make_option('-t', '--title', type=str,
+                help='plot title'),
+    make_option('-y', '--ylabel', type=str,
+                help='ylabel'),
     make_option('-o', '--output_path', type="new_filepath",
                 help='the output file [default: %default]',
                 default='plot.pdf'),
@@ -51,6 +57,7 @@ def main():
     iterations = opts.iterations
     verbose = opts.verbose
     y_max = opts.y_max
+    labels = opts.labels.split(',')
 
     results = {}
     for input_file in input_path:
@@ -80,8 +87,12 @@ def main():
                                std(result_iteration, axis=0)]
 
         if verbose:
-            print '\t'.join(map(str, results[input_file][0]))
-            print '\t'.join(map(str, results[input_file][1]))
+            f = open(output_path + '.txt', 'a')
+            f.write('\t'.join(map(str,results[input_file][0])))
+            f.write('\n')
+            f.write('\t'.join(map(str,results[input_file][1])))
+            f.write('\n')
+            f.close()
 
     # generating plot, some parts taken from
     # http://stackoverflow.com/questions/4700614
@@ -89,7 +100,7 @@ def main():
     ax = subplot(111)
 
     max_x, max_y = -inf, -inf
-    for i, input_file in enumerate(input_path):
+    for i, (label, input_file) in enumerate(zip(labels, input_path)):
         len_x = len(results[input_file][0])
         len_y = max(results[input_file][0])
         if max_x < len_x:
@@ -103,7 +114,7 @@ def main():
 
         ax.errorbar(range(1, len_x+1), results[input_file][0],
                     yerr=results[input_file][1], fmt='o', color=coloring,
-                    label=input_file)
+                    label=label)
 
     if y_max:
         axis([0, max_x, 0, max_y])
@@ -116,9 +127,9 @@ def main():
     # Put a legend to the right of the current axis
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-    title('Beta diversity added by sampled microbial communities')
-    xlabel('Samples (people)')
-    ylabel('Diversity (weighted UniFrac)')
+    title(opts.title)
+    xlabel('Samples')
+    ylabel(opts.ylabel)
     grid(True)
     savefig(output_path)
 
