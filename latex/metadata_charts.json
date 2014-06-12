@@ -306,12 +306,12 @@
     "graphs": [
         {
             "name": "fig2_gender",
-            "title": "Gender",
             "type": "stackedbar",
             "scaled": true,
             "legend": true,
             "figsize": [4,4],
             "dpi": 300,
+            "format": 'pdf',
             "legend_size":7,
             "y_stratification": "fig2_gender_strata",
             "data": [
@@ -363,13 +363,13 @@
         },
         {
             "name": "fig2_age",
-            "title": "Age",
             "type": "stackedbar",
             "scaled": true,
             "legend": true,
             "figsize": [4,4],
             "dpi": 300,
             "legend_size":7,
+            "format": 'pdf',
             "y_label": "Number of Participants",
             "y_stratification": "fig2_age_strata",
             "@var bins": {
@@ -430,12 +430,12 @@
         },
         {
             "name": "fig2_bmi",
-            "title": "BMI",
             "type": "stackedbar",
             "scaled": true,
             "legend": true,
             "figsize": [3.5,4],
             "dpi": 300,
+            "format": 'pdf',
             "legend_size":6,
             "y_label": "Number of Participants",
             "y_stratification": "fig2_bmi_strata",
@@ -476,6 +476,7 @@
             "x_stratification": "fig3_diet_strata",
             "figsize": [3.5,4],
             "dpi": 300,
+            "format": 'pdf',
             "y_label": "Number of Participants",
             "data": {
                 "source": "AG",
@@ -498,6 +499,7 @@
             "x_stratification": "fig3_exercise_strata",
             "y_label": "Number of Participants",
             "figsize": [3.5,4],
+            "format": 'pdf',
             "dpi": 300,
             "data": {
                 "source": "AG",
@@ -520,6 +522,7 @@
             "name": "fig3_vitamin",
             "title": "Vitamin Use",
             "type": "bar",
+            "format": 'pdf',
             "y_label": "Number of Participants",
             "x_stratification": "fig3_vitamin_strata",
             "figsize": [3,4],
