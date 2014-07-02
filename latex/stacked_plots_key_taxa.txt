@@ -1,0 +1,8 @@
+Firmicutes
+Bacteroidetes
+Proteobacteria
+Verrucomicrobia
+Actinobacteria
+Tenericutes
+Cyanobacteria
+Fusobacteria

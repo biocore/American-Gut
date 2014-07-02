@@ -140,8 +140,8 @@
         ],
         "fig2_bmi_strata": [
             {
-                "name":"Unknown",
-                "display":"Unknown",
+                "name":"Unk",
+                "display":"Unk",
                 "color": "c0"
             },
             {
@@ -313,40 +313,25 @@
     },
     "graph_sets": {
         "fig3": {"subplot_shape": [4, 10]},
-        "fig2": {"subplot_shape": [4, 10]}
+        "fig2": {"subplot_shape": [4, 10]},
+        "fig6_a": {"subplot_shape": [4, 10]},
+        "fig6_b": {"subplot_shape": [4, 13]}
     },
     "graphs": [
   {
-            "name": "fig6_legend",
-            "title": "",
-            "type": "legend",
-            "format": "pdf",
-			"font_family": "Liberation Sans",
-			"fontsize": 20,
-            "y_stratification": "observation_strata",
-            "@var aliases": {
-                "Firmicutes":"p1",
-                "Bacteroidetes": "p2",
-                "Proteobacteria":"p3",
-                "Actinobacteria":"p4",
-                "Verrucomicrobia":"p5",
-                "Tenericutes":"p6",
-                "Cyanobacteria":"p7"
-            }},
-  {
-            "name": "fig6_antibiotic",
-            "title": "",
+            "name": "fig6_a",
+            "title": "Antibiotic use",
             "type": "stackedbar",
-			"fontsize": 20,
             "scaled": false,
             "legend": false,
+            "graph_set": "fig6_a",
 			"font_family": "Liberation Sans",
-			"fontsize": 20,
             "ylim": [0.0, 1.0],
             "ygrid": true,
-            "dimension": [10,10],
+            "dimension": [4,5],
             "x_label_rotation": 45,
 			"x_label_alignment": "right",
+            "y_label": "Fraction of the microbiome",
             "format": "pdf",
             "y_stratification": "observation_strata",
             "@var aliases": {
@@ -432,15 +417,15 @@
 
 		{
             "name": "fig6_diet",
-            "title": "",
+            "title": "Diet type",
             "type": "stackedbar",
             "scaled": false,
 			"font_family": "Liberation Sans",
-			"fontsize": 20,
             "legend": false,
             "ylim": [0.0, 1.0],
             "ygrid": true,
-            "dimension": [10,10],
+            "graph_set": "fig6_a",
+            "dimension": [4,5],
             "x_label_rotation": 45,
 			"x_label_alignment": "right",
             "format": "pdf",
@@ -525,17 +510,37 @@
                     "aliases": "@var aliases",
                     "default": "p8"
                 }]},
+        {
+            "name": "fig6_legend",
+            "title": "",
+            "type": "legend",
+            "legend_loc": "center left",
+            "legend_size": 12,
+            "dimension": [4,4],
+            "format": "pdf",
+			"font_family": "Liberation Sans",
+            "y_stratification": "observation_strata",
+            "@var aliases": {
+                "Firmicutes":"p1",
+                "Bacteroidetes": "p2",
+                "Proteobacteria":"p3",
+                "Actinobacteria":"p4",
+                "Verrucomicrobia":"p5",
+                "Tenericutes":"p6",
+                "Cyanobacteria":"p7"
+            }},
 {
-    "name": "fig6_age",
-    "title": "",
+    "name": "fig6_b",
+    "title": "Age",
     "type": "stackedbar",
+    "y_label": "Fraction of the microbiome",
     "scaled": false,
+    "graph_set": "fig6_b",
 	"font_family": "Liberation Sans",
-	"fontsize": 20,
     "legend": false,
     "ylim": [0.0, 1.0],
     "ygrid": true,
-    "dimension": [20,10],
+    "dimension": [4,8],
     "x_label_rotation": 45,
 	"x_label_alignment": "right",
     "format": "pdf",
@@ -692,15 +697,15 @@
         }]},
 		{
 		    "name": "fig6_exercise_frequency",
-		    "title": "",
+		    "title": "Exercise frequency",
 		    "type": "stackedbar",
 		    "scaled": false,
+            "graph_set": "fig6_b",
 		    "legend": false,
 		    "ylim": [0.0, 1.0],
 		    "ygrid": true,
 			"font_family": "Liberation Sans",
-			"fontsize": 20,
-		    "dimension": [10,10],
+		    "dimension": [4,5],
 		    "x_label_rotation": 45,
 			"x_label_alignment": "right",
 		    "format": "pdf",
@@ -787,18 +792,19 @@
 		        }
 			]},
       {
-            "name": "fig2_gender",
+            "name": "fig2",
             "type": "stackedbar",
-            "title": "",
+            "title": "Gender",
             "scaled": true,
             "graph_set": "fig2",
 			"font_family": "Liberation Sans",
+            "fontsize": 16,
             "legend": true,
             "x_label_rotation": 45,
 			"x_label_alignment": "right",
             "dimension": [4,4],
             "dpi": 300,
-            "legend_size":7,
+            "legend_size": 9,
             "format": "pdf",
 			"ygrid": true,
 			"ylim": [0, 3500],
@@ -845,7 +851,9 @@
                     "column": "SEX",
                     "aliases": {
                         "male": "males",
-                        "female": "females"
+                        "female": "females",
+                        "48": "females",
+                        "47": "males"
                     },
                     "default": "Unknown"
                 }
@@ -854,8 +862,9 @@
         {
             "name": "fig2_age",
             "type": "stackedbar",
+            "fontsize": 16,
             "scaled": true,
-            "title": "",
+            "title": "Age",
 			"ygrid": true,
             "legend": true,
             "graph_set": "fig2",
@@ -867,7 +876,7 @@
 			"ylim": [0, 3500],
             "format": "pdf",
             "dpi": 300,
-            "legend_size":7,
+            "legend_size": 9,
             "y_stratification": "fig2_age_strata",
             "@var bins": {
                 "80": "eighty",
@@ -929,7 +938,8 @@
             "name": "fig2_bmi",
             "type": "stackedbar",
             "scaled": true,
-            "title": "",
+            "title": "BMI",
+            "fontsize": 16,
 			"ygrid": true,
             "legend": true,
 			"legend_loc": "upper left",
@@ -942,10 +952,10 @@
             "ylim": [0, 3500],
             "format": "pdf",
             "dpi": 300,
-            "legend_size":6,
+            "legend_size": 8,
             "y_stratification": "fig2_bmi_strata",
             "@var bins": {
-                "40": "vso",
+                "100": "vso",
                 "35": "vo",
                 "30": "mo",
                 "25": "o",
@@ -953,7 +963,7 @@
                 "16": "u",
                 "15": "su",
                 "1": "vsu",
-                "0": "Unknown"
+                "0": "Unk"
             },
             "data": [
                 {
@@ -962,7 +972,7 @@
                     "group-by": "bin",
                     "column": "bmi",
                     "bins": "@var bins",
-                    "default": "Unknown"
+                    "default": "Unk"
                 },
                 {
                     "display": "AG",
@@ -970,19 +980,20 @@
                     "group-by": "bin",
                     "column": "BMI",
                     "bins": "@var bins",
-                    "default": "Unknown"
+                    "default": "Unk"
                 }
             ]           
         },
         {
-            "name": "fig3_diet",
+            "name": "fig3",
             "type": "bar",
             "x_stratification": "fig3_diet_strata",
 			"ylim": [0, 3000],
 			"graph_set": "fig3",
             "dimension": [4,4],
-            "title": "",
+            "title": "Diet type",
 			"ygrid": true,
+            "fontsize": 16,
 			"font_family": "Liberation Sans",
             "x_label_rotation": 45,
 			"x_label_alignment": "right",
@@ -1012,11 +1023,12 @@
 			"graph_set": "fig3",
             "format": "pdf",
 			"font_family": "Liberation Sans",
+            "fontsize": 16,
             "x_label_rotation": 45,
 			"x_label_alignment": "right",
 			"ygrid": true,
 			"y_ticks": false,
-            "title": "",
+            "title": "Exercise frequency",
             "dpi": 300,
             "data": {
                 "source": "AG",
@@ -1043,12 +1055,13 @@
             "dimension": [4,2],
 			"font_family": "Liberation Sans",
             "x_label_rotation": 45,
+            "fontsize": 16,
 			"x_label_alignment": "right",
             "format": "pdf",
 			"graph_set": "fig3",
 			"ygrid": true,
 			"y_ticks": false,
-            "title": "",
+            "title": "Vitamin use",
             "dpi": 300,
             "data": {
                 "source": "AG",
