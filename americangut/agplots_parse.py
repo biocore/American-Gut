@@ -65,7 +65,7 @@ def get_filtered_taxa_summary(mapping_file, taxa_summary_file,
         top_taxa = [taxa_ids.index(x) for x in select_taxa]
         other_taxa = [t for t in xrange(len(taxa_ids)) if t not in top_taxa]
         taxa_labels = select_taxa
-
+    print taxa_labels
     taxa_labels.append('Other')
     N = len(taxa_labels)  # Number of classes/labels
     M = filtered_taxa_table.shape[1]  # Number of samples after filtering
