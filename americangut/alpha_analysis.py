@@ -384,7 +384,6 @@ def post_hoc_pandas(grouped, cat, order=None):
 
     # Preforms ad-hoc comparisons
     comparison = {}
-    print num_comparisons
     for g1_name in order[:-1]:
         # Determines the position of the group
         pos = order.index(g1_name)
