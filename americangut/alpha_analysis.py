@@ -52,7 +52,8 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
     Returns
     -------
     df : dataframe
-        the dataframe with an appropriate index column"""
+        the dataframe with an appropriate index column
+    """
 
     # Gets the sample IDs
     samples = df[index_col].values
@@ -345,6 +346,25 @@ def pretty_boxplot(grouped, order, cat, **kwargs):
     return fig, features
 
 
+def bonferroni(p, n):
+    """Corrects p-value for mutliple hypotheses
+
+    Parameters
+    ----------
+    p : float
+        uncorrected p-value
+    n : {int, float}
+        number of hypotheses tested
+
+    Returns
+    -------
+    p_corr : float
+        the corrected p value, such that 0 < p < 1.
+
+    """
+    return min((p*n, 1))
+
+
 def post_hoc_pandas(grouped, cat, order=None):
     """Preforms an ad-hoc comparison between groups
 
@@ -363,7 +383,7 @@ def post_hoc_pandas(grouped, cat, order=None):
 
     Returns
     -------
-    post_hoc : dataframe
+    post_hoc : DataFrame
         Provides descriptive statitics (n, mean, standard deviation, and
         median) for each group, along with a bonferroni-correct p-value
         comparison to other groups.
@@ -375,6 +395,7 @@ def post_hoc_pandas(grouped, cat, order=None):
 
     # Prealocates an output frame
     stats = DataFrame({'Counts': grouped[cat].count(),
+
                        'Mean':  grouped[cat].mean(),
                        'Stdv': grouped[cat].std(),
                        'Median': grouped[cat].median()})
@@ -398,7 +419,7 @@ def post_hoc_pandas(grouped, cat, order=None):
                 g2_data = grouped.get_group(g2_name)[cat]
                 index.append(g2_name)
                 h, p = kruskal(g1_data, g2_data)
-                compare.append(min((p*num_comparisons, 1)))
+                compare.append(bonferroni(p, num_comparisons))
         add_series = Series(compare, index=index)
         comparison[g1_name] = add_series
 

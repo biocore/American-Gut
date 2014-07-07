@@ -317,7 +317,7 @@ def summarize_common_categories(biom_table, level, common_categories,
     return sample_ids, cat_summary, common_cats
 
 
-def translate_colorbrewer(num_colors, map_name='Spectral'):
+def translate_colors(num_colors, map_name='Spectral'):
     """Gets a colorbrewer colormap and sets it up for plotting in matplotlib
 
     OUTPUTS:
