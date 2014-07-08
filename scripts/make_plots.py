@@ -49,7 +49,7 @@ def make_stacked_plot(output_file, filtered_sample_ids, taxa_labels,
     cumulative = cumsum(collapsed_taxa_table, axis=0)
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
-   
+
     # Get xticks, if any
     xticks = []
     xtick_labels = []

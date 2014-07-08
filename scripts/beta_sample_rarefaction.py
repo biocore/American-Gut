@@ -49,8 +49,7 @@ script_info['version'] = __version__
 
 
 def main():
-    option_parser, opts, args =\
-        parse_command_line_parameters(**script_info)
+    option_parser, opts, args = parse_command_line_parameters(**script_info)
 
     input_path = opts.input_path
     output_path = opts.output_path
@@ -121,7 +120,7 @@ def main():
     else:
         axis([0, max_x, 0, y_max])
 
-    # Shink current axis by 20%
+    # Shrink current axis by 20%
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     # Put a legend to the right of the current axis
