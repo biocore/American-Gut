@@ -5,12 +5,11 @@ from unittest import TestCase, main
 from os import rmdir
 from os.path import realpath, dirname, join as pjoin, exists
 from numpy import array
-from numpy.testing import assert_almost_equal
 from pandas import Series, DataFrame, Index
 from pandas.util.testing import assert_index_equal
 from matplotlib import use
 use('agg', warn=False)
-from americangut.alpha_analysis import pad_index, check_dir, bonferroni
+from americangut.alpha_analysis import pad_index, check_dir
 
 
 __author__ = "Justine Debelius"
@@ -416,19 +415,6 @@ class AlphaAnalysisTest(TestCase):
         self.assertTrue(exists(does_not_exist))
         # Removes the directory
         rmdir(does_not_exist)
-
-    def test_bonferroni_corr(self):
-        """Checks a p-value can be corrected sanely"""
-        p = 0.05
-        n = 3
-        assert_almost_equal(0.15, bonferroni(p, n), 5)
-
-    def test_bonferroni_over_1(self):
-        """Checks the p-value can be returned sanely when p_corr > 1"""
-        p = 0.5
-        n = 3
-        assert_almost_equal(1.0, bonferroni(p, n), 5)
-  
 
 if __name__ == '__main__':
     main()

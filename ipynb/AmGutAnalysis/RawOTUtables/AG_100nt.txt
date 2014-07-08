@@ -1,1 +1,0 @@
-<html><body>You are being <a href="https://raw.githubusercontent.com/biocore/American-Gut/master/data/AG/AG_100nt.txt">redirected</a>.</body></html>
