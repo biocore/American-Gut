@@ -8,7 +8,7 @@ from itertools import izip
 from StringIO import StringIO
 from lxml import etree
 
-from skbio.parse.sequences import parse_fastq
+from skbio.parse.sequences import parse_fastq, parse_fasta
 
 
 __author__ = "Daniel McDonald"
@@ -197,3 +197,65 @@ def fetch_study(accession, metadata_path, fasta_path):
     md_f.close()
     fasta_path.close()
 
+
+def count_seqs(seqs_fp, subset=None):
+    """Could the number of FASTA records"""
+    if subset is None:
+        return sum(1 for line in seqs_fp if line.startswith(">"))
+    else:
+        subset = set(subset)
+        count = 0
+        for id_, seq in parse_fasta(seqs_fp):
+            parts = id_.split()
+
+            # check if the ID is there, and handle the qiimedb suffix case
+            if parts[0] in subset:
+                count += 1
+            elif parts[0].split('.')[0] in subset:
+                count += 1
+        return count
+
+def count_unique_participants(metadata_fp, criteria=None):
+    """Count the number of unique participants"""
+    if criteria is None:
+        criteria = {}
+
+    header = {k: i for i, k in enumerate(
+              metadata_fp.next().strip().split('\t'))}
+    
+    count = set()
+    for line in metadata_fp:
+        line = line.strip().split('\t')
+        keep = True
+        for crit, val in criteria.items():
+            if line[header[crit]] != val:
+                keep = False
+        if keep:
+            count.add(line[header['HOST_SUBJECT_ID']])
+    
+    return len(count)
+
+
+def count_samples(metadata_fp, criteria=None):
+    """Count the number of samples
+    
+    criteria : dict
+        Header keys and values to restrict by
+    """
+    if criteria is None:
+        criteria = {}
+
+    header = {k: i for i, k in enumerate(
+              metadata_fp.next().strip().split('\t'))}
+    
+    count = 0
+    for line in metadata_fp:
+        line = line.strip().split('\t')
+        keep = True
+        for crit, val in criteria.items():
+            if line[header[crit]] != val:
+                keep = False
+        if keep:
+            count += 1
+
+    return count
