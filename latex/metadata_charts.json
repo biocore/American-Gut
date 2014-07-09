@@ -1,53 +1,49 @@
 {
     "sources": {
-        "HMP_fecal": {
+        "HMP": {
             "display": "HMP",
-            "mapping": "data/HMP/HMPv35_100nt.txt",
+            "mapping": "../../data/HMP/HMPv35_100nt.txt",
             "restrict": {
-                "column": "@mapping bodysite",
-                "values": [
-                    "UBERON_stool"
-                ],
+                "column": "#SampleID",
+                "values": "*",
                 "unique": "hostsubjectid"
             }
         },
-        "GG_fecal": {
+        "GG": {
             "display": "GG",
-            "mapping": "data/GG/GG_100nt.txt",
+            "mapping": "../../data/GG/GG_100nt.txt",
             "restrict": {
-                "column": "@mapping BODY_SITE",
-                "values": [
-                    "UBERON:feces"
-                ],
+                "column": "#SampleID",
+                "values": "*",
                 "unique": "HOST_SUBJECT_ID"
             }
         },
-        "PGP_fecal": {  
+        "PGP": {  
             "display": "PGP",
-            "mapping": "data/PGP/PGP_100nt.txt",
+            "mapping": "../../data/PGP/PGP_100nt.txt",
             "restrict": {
-                "column": "@mapping body_product",
-                "values": [
-                    "UBERON:feces"
-                ],
+                "column": "#SampleID",
+                "values": "*",
                 "unique": "host_subject_id"
-            }
-        },
-        "AG_fecal": {
-            "display": "AG",
-            "mapping": "data/AG/AG_100nt.txt",
-            "biom": "data/AG/AG_100nt.biom.gz",
-            "restrict": {
-                "column": "@mapping BODY_PRODUCT",
-                "values": [
-                    "UBERON:feces"
-                ],
-                "unique": "HOST_SUBJECT_ID"
             }
         },
         "AG": {
             "display": "AG",
-            "mapping": "data/AG/AG_100nt.txt"
+            "mapping": "combined_mapping.txt",
+            "restrict": {
+                "column": "#SampleID",
+                "values": "*",
+                "unique": "HOST_SUBJECT_ID"
+            }
+        },
+        "AG_fecal": {
+            "display": "AG",
+            "mapping": "AG_100nt_massaged.txt",
+            "biom": "ag_fecal_even1k.biom",
+            "restrict": {
+                "column": "BODY_SITE",
+                "values": "UBERON:feces"
+            }
         }
     },
 
@@ -144,48 +140,48 @@
         ],
         "fig2_bmi_strata": [
             {
-                "name":"Unknown",
-                "display":"Unknown",
+                "name":"Unk",
+                "display":"Unk",
                 "color": "c0"
             },
             {
                 "name":"vso",
-                "display":"Very severely obese",
+                "display":"VSO",
                 "color": "c1"
             },
             {
                 "name":"so",
-                "display":"Severely obese",
+                "display":"SO",
                 "color": "c2"
             },
             {
                 "name":"mo",
-                "display":"Moderately obese",
+                "display":"MO",
                 "color": "c3"
             },
             {
                 "name":"o",
-                "display":"Overweight",
+                "display":"O",
                 "color": "c4"
             },
             {
                 "name":"n",
-                "display":"Normal",
+                "display":"N",
                 "color": "c5"
             },
             {
                 "name":"u",
-                "display":"Underweight",
+                "display":"U",
                 "color": "c7"
             },
             {
                 "name":"su",
-                "display":"Severely underweight",
+                "display":"SU",
                 "color": "c9"
             },
             {
                 "name":"vsu",
-                "display":"Very severely underweight",
+                "display":"VSU",
                 "color": "c10"
             }
         ],
@@ -315,23 +311,509 @@
             }
         ]
     },
-
+    "graph_sets": {
+        "fig3": {"subplot_shape": [4, 10]},
+        "fig2": {"subplot_shape": [4, 10]},
+        "fig6_a": {"subplot_shape": [4, 10]},
+        "fig6_b": {"subplot_shape": [4, 13]}
+    },
     "graphs": [
-        {
-            "name": "fig2_gender",
-            "title": "Gender",
+  {
+            "name": "fig6_a",
+            "title": "Antibiotic use",
             "type": "stackedbar",
+            "scaled": false,
+            "legend": false,
+            "graph_set": "fig6_a",
+			"font_family": "Liberation Sans",
+            "ylim": [0.0, 1.0],
+            "ygrid": true,
+            "dimension": [4,5],
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
+            "y_label": "Fraction of the microbiome",
+            "format": "pdf",
+            "y_stratification": "observation_strata",
+            "@var aliases": {
+                "Firmicutes":"p1",
+                "Bacteroidetes": "p2",
+                "Proteobacteria":"p3",
+                "Actinobacteria":"p4",
+                "Verrucomicrobia":"p5",
+                "Tenericutes":"p6",
+                "Cyanobacteria":"p7"
+            },
+            "data": [
+                {
+                    "display": "In the past week",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "ANTIBIOTIC_SELECT",
+                        "values": [
+                            "In the past week"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "In the past month",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "ANTIBIOTIC_SELECT",
+                        "values": [
+                            "In the past month"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "In the past 6 months",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "ANTIBIOTIC_SELECT",
+                        "values": [
+                            "In the past 6 months"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "In the past year",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "ANTIBIOTIC_SELECT",
+                        "values": [
+                            "In the past year"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "Not in the last year",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "ANTIBIOTIC_SELECT",
+                        "values": [
+                            "Not in the last year"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                }]},
+
+		{
+            "name": "fig6_diet",
+            "title": "Diet type",
+            "type": "stackedbar",
+            "scaled": false,
+			"font_family": "Liberation Sans",
+            "legend": false,
+            "ylim": [0.0, 1.0],
+            "ygrid": true,
+            "graph_set": "fig6_a",
+            "dimension": [4,5],
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
+            "format": "pdf",
+            "y_stratification": "observation_strata",
+            "@var aliases": {
+                "Firmicutes":"p1",
+                "Bacteroidetes": "p2",
+                "Proteobacteria":"p3",
+                "Actinobacteria":"p4",
+                "Verrucomicrobia":"p5",
+                "Tenericutes":"p6",
+                "Cyanobacteria":"p7"
+            },
+            "data": [
+                {
+                    "display": "Omnivore",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "DIET_TYPE",
+                        "values": [
+                            "Omnivore"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "No red meat",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "DIET_TYPE",
+                        "values": [
+                            "Omnivore but no red meat"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "Pescetarian",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "DIET_TYPE",
+                        "values": [
+                            "Vegetarian but eat seafood"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "Vegetarian",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "DIET_TYPE",
+                        "values": [
+                            "Vegetarian"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                },
+                {
+                    "display": "Vegan",
+                    "source": "AG_fecal",
+                    "group-by": "id",
+                    "restrict": {
+                        "column": "DIET_TYPE",
+                        "values": [
+                            "Vegan"
+                        ]
+                    },
+                    "column": "@biom @taxa 1",
+                    "aliases": "@var aliases",
+                    "default": "p8"
+                }]},
+        {
+            "name": "fig6_legend",
+            "title": "",
+            "type": "legend",
+            "legend_loc": "center left",
+            "legend_size": 12,
+            "dimension": [4,4],
+            "format": "pdf",
+			"font_family": "Liberation Sans",
+            "y_stratification": "observation_strata",
+            "@var aliases": {
+                "Firmicutes":"p1",
+                "Bacteroidetes": "p2",
+                "Proteobacteria":"p3",
+                "Actinobacteria":"p4",
+                "Verrucomicrobia":"p5",
+                "Tenericutes":"p6",
+                "Cyanobacteria":"p7"
+            }},
+{
+    "name": "fig6_b",
+    "title": "Age",
+    "type": "stackedbar",
+    "y_label": "Fraction of the microbiome",
+    "scaled": false,
+    "graph_set": "fig6_b",
+	"font_family": "Liberation Sans",
+    "legend": false,
+    "ylim": [0.0, 1.0],
+    "ygrid": true,
+    "dimension": [4,8],
+    "x_label_rotation": 45,
+	"x_label_alignment": "right",
+    "format": "pdf",
+    "y_stratification": "observation_strata",
+    "@var aliases": {
+        "Firmicutes":"p1",
+        "Bacteroidetes": "p2",
+        "Proteobacteria":"p3",
+        "Actinobacteria":"p4",
+        "Verrucomicrobia":"p5",
+        "Tenericutes":"p6",
+        "Cyanobacteria":"p7"
+    },
+    "data": [
+        {
+            "display": "Baby",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "Baby"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "Child",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "Child"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "Teen",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "Teen"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "20s",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "20s"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "30s",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "30s"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "40s",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "40s"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "50s",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "50s"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "60s",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "60s"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "70s",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "70s"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        },
+        {
+            "display": "80+",
+            "source": "AG_fecal",
+            "group-by": "id",
+            "restrict": {
+                "column": "AGE_CATEGORY",
+                "values": [
+                    "Older than 80"
+                ]
+            },
+            "column": "@biom @taxa 1",
+            "aliases": "@var aliases",
+            "default": "p8"
+        }]},
+		{
+		    "name": "fig6_exercise_frequency",
+		    "title": "Exercise frequency",
+		    "type": "stackedbar",
+		    "scaled": false,
+            "graph_set": "fig6_b",
+		    "legend": false,
+		    "ylim": [0.0, 1.0],
+		    "ygrid": true,
+			"font_family": "Liberation Sans",
+		    "dimension": [4,5],
+		    "x_label_rotation": 45,
+			"x_label_alignment": "right",
+		    "format": "pdf",
+		    "y_stratification": "observation_strata",
+		    "@var aliases": {
+		        "Firmicutes":"p1",
+		        "Bacteroidetes": "p2",
+		        "Proteobacteria":"p3",
+		        "Actinobacteria":"p4",
+		        "Verrucomicrobia":"p5",
+		        "Tenericutes":"p6",
+		        "Cyanobacteria":"p7"
+		    },
+		    "data": [
+		        {
+		            "display": "Never",
+		            "source": "AG_fecal",
+		            "group-by": "id",
+		            "restrict": {
+		                "column": "EXERCISE_FREQUENCY",
+		                "values": [
+		                    "Never"
+		                ]
+		            },
+		            "column": "@biom @taxa 1",
+		            "aliases": "@var aliases",
+		            "default": "p8"
+		        },
+		        {
+		            "display": "Rarely",
+		            "source": "AG_fecal",
+		            "group-by": "id",
+		            "restrict": {
+		                "column": "EXERCISE_FREQUENCY",
+		                "values": [
+		                    "Rarely (few times/month)"
+		                ]
+		            },
+		            "column": "@biom @taxa 1",
+		            "aliases": "@var aliases",
+		            "default": "p8"
+		        },
+		        {
+		            "display": "Occasionally",
+		            "source": "AG_fecal",
+		            "group-by": "id",
+		            "restrict": {
+		                "column": "EXERCISE_FREQUENCY",
+		                "values": [
+		                    "Occasionally (1-2 times/week)"
+		                ]
+		            },
+		            "column": "@biom @taxa 1",
+		            "aliases": "@var aliases",
+		            "default": "p8"
+		        },
+		        {
+		            "display": "Regularly",
+		            "source": "AG_fecal",
+		            "group-by": "id",
+		            "restrict": {
+		                "column": "EXERCISE_FREQUENCY",
+		                "values": [
+		                    "Regularly (3-5 times/week)"
+		                ]
+		            },
+		            "column": "@biom @taxa 1",
+		            "aliases": "@var aliases",
+		            "default": "p8"
+		        },
+		        {
+		            "display": "Daily",
+		            "source": "AG_fecal",
+		            "group-by": "id",
+		            "restrict": {
+		                "column": "EXERCISE_FREQUENCY",
+		                "values": [
+		                    "Daily"
+		                ]
+		            },
+		            "column": "@biom @taxa 1",
+		            "aliases": "@var aliases",
+		            "default": "p8"
+		        }
+			]},
+      {
+            "name": "fig2",
+            "type": "stackedbar",
+            "title": "Gender",
             "scaled": true,
+            "graph_set": "fig2",
+			"font_family": "Liberation Sans",
+            "fontsize": 16,
             "legend": true,
-            "figsize": [4,4],
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
+            "dimension": [4,4],
             "dpi": 300,
-            "legend_size":7,
+            "legend_size": 9,
+            "format": "pdf",
+			"ygrid": true,
+			"ylim": [0, 3500],
             "y_label": "Number of Participants",
             "y_stratification": "fig2_gender_strata",
             "data": [
                 {
                     "display": "HMP",
-                    "source": "HMP_fecal",
+                    "source": "HMP",
                     "group-by": "id",
                     "column": "sex",
                     "aliases": {
@@ -342,7 +824,7 @@
                 },
                 {
                     "display": "GG",
-                    "source": "GG_fecal",
+                    "source": "GG",
                     "group-by": "id",
                     "column": "SEX",
                     "aliases": {
@@ -353,7 +835,7 @@
                 },
                 {
                     "display": "PGP",
-                    "source": "PGP_fecal",
+                    "source": "PGP",
                     "group-by": "id",
                     "column": "Sex/Gender",
                     "aliases": {
@@ -364,12 +846,14 @@
                 },
                 {
                     "display": "AG",
-                    "source": "AG_fecal",
+                    "source": "AG",
                     "group-by": "id",
                     "column": "SEX",
                     "aliases": {
                         "male": "males",
-                        "female": "females"
+                        "female": "females",
+                        "48": "females",
+                        "47": "males"
                     },
                     "default": "Unknown"
                 }
@@ -377,14 +861,22 @@
         },
         {
             "name": "fig2_age",
-            "title": "Age",
             "type": "stackedbar",
+            "fontsize": 16,
             "scaled": true,
+            "title": "Age",
+			"ygrid": true,
             "legend": true,
-            "figsize": [4,4],
+            "graph_set": "fig2",
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
+			"y_ticks": false,
+			"font_family": "Liberation Sans",
+            "dimension": [4,4],
+			"ylim": [0, 3500],
+            "format": "pdf",
             "dpi": 300,
-            "legend_size":7,
-            "y_label": "Number of Participants",
+            "legend_size": 9,
             "y_stratification": "fig2_age_strata",
             "@var bins": {
                 "80": "eighty",
@@ -401,7 +893,7 @@
             "data": [
                 {
                     "display": "HMP",
-                    "source": "HMP_fecal",
+                    "source": "HMP",
                     "group-by": "bin",
                     "column": "AGE",
                     "bins": "@var bins",
@@ -409,7 +901,7 @@
                 },
                 {
                     "display": "GG",
-                    "source": "GG_fecal",
+                    "source": "GG",
                     "group-by": "bin",
                     "column": "AGE_IN_YEARS",
                     "bins": "@var bins",
@@ -417,7 +909,7 @@
                 },
                 {
                     "display": "PGP",
-                    "source": "PGP_fecal",
+                    "source": "PGP",
                     "group-by": "id",
                     "column": "Age",
                     "aliases": {
@@ -434,7 +926,7 @@
                 },
                 {
                     "display": "AG",
-                    "source": "AG_fecal",
+                    "source": "AG",
                     "group-by": "bin",
                     "column": "AGE",
                     "bins": "@var bins",
@@ -444,17 +936,26 @@
         },
         {
             "name": "fig2_bmi",
-            "title": "BMI",
             "type": "stackedbar",
             "scaled": true,
+            "title": "BMI",
+            "fontsize": 16,
+			"ygrid": true,
             "legend": true,
-            "figsize": [3.5,4],
+			"legend_loc": "upper left",
+			"font_family": "Liberation Sans",
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
+			"y_ticks": false,
+            "dimension": [4,2],
+            "graph_set": "fig2",
+            "ylim": [0, 3500],
+            "format": "pdf",
             "dpi": 300,
-            "legend_size":6,
-            "y_label": "Number of Participants",
+            "legend_size": 8,
             "y_stratification": "fig2_bmi_strata",
             "@var bins": {
-                "40": "vso",
+                "100": "vso",
                 "35": "vo",
                 "30": "mo",
                 "25": "o",
@@ -462,37 +963,45 @@
                 "16": "u",
                 "15": "su",
                 "1": "vsu",
-                "0": "Unknown"
+                "0": "Unk"
             },
             "data": [
                 {
                     "display": "HMP",
-                    "source": "HMP_fecal",
+                    "source": "HMP",
                     "group-by": "bin",
                     "column": "bmi",
                     "bins": "@var bins",
-                    "default": "Unknown"
+                    "default": "Unk"
                 },
                 {
                     "display": "AG",
-                    "source": "AG_fecal",
+                    "source": "AG",
                     "group-by": "bin",
                     "column": "BMI",
                     "bins": "@var bins",
-                    "default": "Unknown"
+                    "default": "Unk"
                 }
             ]           
         },
         {
-            "name": "fig3_diet",
-            "title": "Diet",
+            "name": "fig3",
             "type": "bar",
             "x_stratification": "fig3_diet_strata",
-            "figsize": [3.5,4],
+			"ylim": [0, 3000],
+			"graph_set": "fig3",
+            "dimension": [4,4],
+            "title": "Diet type",
+			"ygrid": true,
+            "fontsize": 16,
+			"font_family": "Liberation Sans",
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
             "dpi": 300,
+            "format": "pdf",
             "y_label": "Number of Participants",
             "data": {
-                "source": "AG_fecal",
+                "source": "AG",
                 "column": "DIET_TYPE",
                 "group-by": "id",
                 "aliases": {
@@ -507,14 +1016,22 @@
         },
         {
             "name": "fig3_exercise",
-            "title": "Exercise Frequency",
             "type": "bar",
+			"ylim": [0, 3000],
             "x_stratification": "fig3_exercise_strata",
-            "y_label": "Number of Participants",
-            "figsize": [3.5,4],
+            "dimension": [4,4],
+			"graph_set": "fig3",
+            "format": "pdf",
+			"font_family": "Liberation Sans",
+            "fontsize": 16,
+            "x_label_rotation": 45,
+			"x_label_alignment": "right",
+			"ygrid": true,
+			"y_ticks": false,
+            "title": "Exercise frequency",
             "dpi": 300,
             "data": {
-                "source": "AG_fecal",
+                "source": "AG",
                 "column": "EXERCISE_FREQUENCY",
                 "group-by": "id",
                 "aliases": {
@@ -532,14 +1049,22 @@
         },
         {
             "name": "fig3_vitamin",
-            "title": "Vitamin Use",
             "type": "bar",
-            "y_label": "Number of Participants",
+			"ylim": [0, 3000],
             "x_stratification": "fig3_vitamin_strata",
-            "figsize": [3,4],
+            "dimension": [4,2],
+			"font_family": "Liberation Sans",
+            "x_label_rotation": 45,
+            "fontsize": 16,
+			"x_label_alignment": "right",
+            "format": "pdf",
+			"graph_set": "fig3",
+			"ygrid": true,
+			"y_ticks": false,
+            "title": "Vitamin use",
             "dpi": 300,
             "data": {
-                "source": "AG_fecal",
+                "source": "AG",
                 "column": "MULTIVITAMIN",
                 "group-by": "id",
                 "aliases": {
