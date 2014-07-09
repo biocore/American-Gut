@@ -26,6 +26,7 @@ American Gut Credits
 * Kathy Holt
 * Greg Humphrey
 * Dr. Jim Huntley
+* Dr. Embriette Hyde
 * Zehra Esra Ilhan
 * Jerry Kennedy
 * Elijah Lovelace
