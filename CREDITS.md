@@ -48,6 +48,7 @@ American Gut Credits
 * Adam Robbins-Pianka
 * Jennifer Smilowitz
 * Dr. Se Jin Song
+* Josh Shorenstein
 * Emily TerAvest
 * Dr. Luke Thompson
 * Kumar Thurimella
