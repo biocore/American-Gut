@@ -37,6 +37,7 @@ American Gut Credits
 * Daniel McDonald
 * Dr. Jess Metcalf
 * Mike Minson
+* Jamie Morton
 * Jose Navas
 * Catherine Nicholas
 * Dr. Sarah Owens
