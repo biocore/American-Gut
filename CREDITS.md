@@ -37,6 +37,7 @@ American Gut Credits
 * Daniel McDonald
 * Dr. Jess Metcalf
 * Mike Minson
+* Jamie Morton
 * Jose Navas
 * Catherine Nicholas
 * Dr. Sarah Owens
@@ -48,6 +49,7 @@ American Gut Credits
 * Adam Robbins-Pianka
 * Jennifer Smilowitz
 * Dr. Se Jin Song
+* Josh Shorenstein
 * Emily TerAvest
 * Dr. Luke Thompson
 * Kumar Thurimella
@@ -73,6 +75,7 @@ American Gut Collaborators
 * Frederic Bushman, Professor, Department of Microbiology, University of Pennsylvania
 * J. Gregory Caporaso, Assistant Professor, Department of Biology, Northern Arizona University, and Argonne National Labs
 * Patrice Cani, Group Leader, Faculté de pharmacie et des sciences biomédicales, Universite Catholique de Louvain
+* Nicholas Chia, Associate Director - Microbiome Program, Center for Individualized Medicine, Mayo Clinic, Associate Consultant - Department of Surgery, Mayo Clinic, Assistant Professor ­ Biophysics, Department of Biomedical Engineering, Mayo College
 * George Church, Founder, Personal Genome Project, Professor, Department of Genetics,  Harvard Medical School, Founding Core Faculty Member, Wyss Institute, Professor of Health Sciences and Technology, Harvard and MIT
 * Jose Clemente, Assistant Professor, Department of Genetics and Genomic Sciences, and Department of Medicine, Division of Clinical Immunology, Mount Sinai School of Medicine, New York
 * Maria Gloria Dominguez, Associate Professor, Department of Medicine, New York University, and Department of Biology, University of Puerto Rico Rio Pedras
@@ -88,6 +91,7 @@ American Gut Collaborators
 * Phil Hugenholtz, Director, Australian Center for Ecogenomics, University of Queensland
 * Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health
 * Janet Jansson, Professor and Senior Staff Scientist, Department of Ecology, Earth Sciences Division, Lawrence Berkeley National Laboratory
+* Purna Kashyap, Associate Director - Microbiome Program, Center for Individualized Medicine, Senior Associate Consultant - Department of Gastroenterology and Hepatology, Assistant Professor ­ Department of Medicine, Mayo Clinic
 * Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry & Biochemistry and Department of Computer Science, University of Colorado at Boulder
 * Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota
 * Rosa Krajmalnik-Brown, Assistant Professor, Engineering Research Director, School of Sustainable Engineering and the Built Environment, Biodesign Institute at Arizona State University
