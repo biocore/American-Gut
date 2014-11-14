@@ -213,8 +213,8 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
     body_site_column_name : specify the column name for body
     exp_acronym : short name for the study
     pgp_ids : the list of IDs that are associated with PGP kits. If False, then
-        all IDs are assumed to not be PGP. If a list or set, then the 
-        corresponding IDs will be described as PGP. If True, then all IDs will 
+        all IDs are assumed to not be PGP. If a list or set, then the
+        corresponding IDs will be described as PGP. If True, then all IDs will
         be considered PGP.
     Returns False on failure, True on success
     """
@@ -414,10 +414,6 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
             try:
                 value = l[index]
             except:
-                print l
-                print len(l)
-                print index
-                print column
                 raise
             if columns_to_keep[column] is None:
                 new_line.append(value)
