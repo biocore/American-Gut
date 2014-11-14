@@ -21,7 +21,8 @@ _data_files = [
         ('HMP', 'HMPv35_100nt.txt'),
         ('GG', 'GG_100nt.biom.gz'),
         ('GG', 'GG_100nt.txt'),
-        ('AG', 'pgp_agp_barcodes.txt')
+        ('AG', 'pgp_agp_barcodes.txt'),
+        ('AG', 'BLOOM.fasta')
         ]
 
 
@@ -249,7 +250,7 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
                    (35, 40,'Severely obese'),
                    (40, 99999,'Very severely obese')]
 
-    mapping_lines = [l.strip().split('\t') for l in in_fp]
+    mapping_lines = [l.strip('\n').split('\t') for l in in_fp]
 
     header = mapping_lines[0]
     header_low = [x.lower() for x in header]
@@ -346,7 +347,7 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
                     continue
 
         if bmi_idx is not None:
-            if new_line[bmi_idx] in ['NA','', 'None', 'no_data']:
+            if new_line[bmi_idx] in ['NA','', 'None', 'no_data', 'unknown']:
                 bmi_cat = 'Unknown'
             else:
                 bmi = float(new_line[bmi_idx])
@@ -410,7 +411,14 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
         keep = True
         # fetch values from specific columns
         for column, index in zip(new_header, indices):
-            value = l[index]
+            try:
+                value = l[index]
+            except:
+                print l
+                print len(l)
+                print index
+                print column
+                raise
             if columns_to_keep[column] is None:
                 new_line.append(value)
             elif not columns_to_keep[column](value):
@@ -488,11 +496,11 @@ def per_sample_taxa_summaries(open_table, output_format):
     t = parse_biom_table(open_table)
     header = "#taxon\trelative_abundance\n"
 
-    for v, id_, md in t.iterSamples():
+    for v, id_, md in t.iter():
         with open(output_format % id_, 'w') as f:
             f.write(header)
 
-            for sorted_v, taxa in sorted(zip(v, t.ObservationIds))[::-1]:
+            for sorted_v, taxa in sorted(zip(v, t.ids(axis='observation')))[::-1]:
                 if sorted_v:
                     f.write("%s\t%f\n" % (taxa, sorted_v))
 
@@ -629,32 +637,26 @@ def harvest(path):
     if not os.path.exists(harvest_path):
         os.mkdir(harvest_path)
 
-    for dirpath, dirnames, filenames in os.walk(path):
-        try:
-            dirnames.remove('harvested')
-        except ValueError:
-            pass
-
-        try:
-            dirnames.remove('pdfs')
-        except ValueError:
-            pass
-
-        sample_suffix = re.search('\d+\.\d+', dirpath)
-        if sample_suffix is None:
+    for name in os.listdir(path):
+        if 'harvested' in name:
             continue
-        else:
-            sample_suffix = sample_suffix.group()
-            sample = sample_suffix.split('.')[0]
+        if 'pdfs' in name:
+            continue
+        try:
+            float(name)  # should work for 000001111.123123 and 000001111
+        except ValueError:
+            continue
 
-        src = os.path.join(path, dirpath, "%s.pdf" % sample_suffix)
-        dst = os.path.join(harvest_path, "%s.pdf" % sample)
+        dst_name = name.split('.')[0] if '.' in name else name
+
+        src = os.path.join(path, name, "%s.pdf" % name)
+        dst = os.path.join(harvest_path, "%s.pdf" % dst_name)
 
         if os.path.exists(src):
             yield "mv %s %s" % (src, dst)
 
-        src = os.path.join(path, dirpath, "%s_taxa.txt" % sample_suffix)
-        dst = os.path.join(harvest_path, "%s.txt" % sample)
+        src = os.path.join(path, name, "%s_taxa.txt" % name)
+        dst = os.path.join(harvest_path, "%s.txt" % dst_name)
 
         if os.path.exists(src):
             yield "mv %s %s" % (src, dst)

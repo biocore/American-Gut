@@ -110,7 +110,17 @@ def fetch_study_details(accession):
               "fields=secondary_sample_accession,submitted_ftp"
     res = fetch_url(url_fmt % {'accession': accession})
 
-    return [tuple(l.strip().split('\t')) for l in res.readlines()[1:]]
+    for line in res.readlines()[1:]:
+        if 'ERA371447' in line:
+            continue
+
+        parts = line.strip().split('\t')
+        if len(parts) != 2:
+            continue
+        else:
+            yield tuple(parts)
+
+    #return [tuple(l.strip().split('\t')) for l in res.readlines()[1:]]
 
 def fetch_url(url):
     """Return an open file handle"""
@@ -166,7 +176,7 @@ def fetch_study(accession, metadata_path, fasta_path):
     Grab and dump a full study
     """
     all_md = {}
-    all_cols = set([])
+    all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
     md_f = open(metadata_path, 'w')
     fasta_path = open(fasta_path, 'w')
     for sample, fastq_url in fetch_study_details(accession):
@@ -181,8 +191,11 @@ def fetch_study(accession, metadata_path, fasta_path):
         all_cols.update(md)
 
         # write out fasta
-        for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
-            fasta_path.write(">%s\n%s\n" % (id_, seq))
+        try:
+            for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
+                fasta_path.write(">%s\n%s\n" % (id_, seq))
+        except:
+            continue
 
     header = list(all_cols)
     md_f.write('#SampleID\t')

@@ -5,6 +5,7 @@ from matplotlib import use
 use('agg')
 from os.path import isfile
 from biom.parse import parse_biom_table
+from biom.util import biom_open
 from numpy import (array, zeros, mean, ones, vstack, arange, ndarray)
 import matplotlib.pyplot as plt
 from matplotlib.transforms import Bbox
@@ -67,7 +68,8 @@ def load_category_files(category_files):
 
     for (category, category_file) in category_files.iteritems():
         if isfile(category_file):
-            cat_table = parse_biom_table(open(category_file, 'U'))
+            with biom_open(category_file, 'U') as fp:
+                cat_table = parse_biom_table(fp)
             category_tables[category] = cat_table
         else:
             watch_list.append('The summarized OTU table file cannot be found '
@@ -177,7 +179,7 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
                          "'COUNTS', or 'NONE'.")
 
     # Gets the Sample IDs
-    sample_ids = list(biom_table.SampleIds)
+    sample_ids = list(biom_table.ids())
     num_samples = len(sample_ids)
 
     # Prealocates output objects
@@ -186,11 +188,11 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
 
     # Normalizes the data by the number of observations so relative frequencies
     # are used.
-    biom_table_norm = biom_table.normObservationBySample()
+    biom_table_norm = biom_table.norm(inplace=False) #biom_table.normObservationBySample()
 
     # Collapses the OTUs into category summaries using the correct levels
-    bin_fun = lambda x: x[metadata_category][:level]
-    for (bin, table) in biom_table_norm.binObservationsByMetadata(bin_fun):
+    bin_fun = lambda y, x: x[metadata_category][:level]
+    for (bin, table) in biom_table_norm.partition(bin_fun, axis='observation'): #binObservationsByMetadata(bin_fun):
         # Pulls out the sample data for the group
         group_value = array(table.sum('sample'))
         group_binary = group_value > 0
@@ -255,7 +257,7 @@ def summarize_common_categories(biom_table, level, common_categories,
                     category appended."""
 
     # Checks that input biom table can be processed
-    all_cats = biom_table.ObservationMetadata
+    all_cats = biom_table.metadata(axis='observation')
     cats_zip = zip(*all_cats)
 
     # Gets the set of all categories
@@ -278,7 +280,7 @@ def summarize_common_categories(biom_table, level, common_categories,
             temp_cat.append(i.strip())
         common_categories[idx] = tuple(temp_cat)
 
-    sample_ids = biom_table.SampleIds
+    sample_ids = biom_table.ids()
     num_samples = len(sample_ids)
 
     # Sets up the "other category name"
@@ -290,15 +292,15 @@ def summarize_common_categories(biom_table, level, common_categories,
     other_name = [tuple(other_name)]
 
     # Normalizes the biom table
-    biom_norm = biom_table.normObservationBySample()
+    biom_norm = biom_table.norm(inplace=False) #normObservationBySample()
 
     # Prealocates numpy objects (because that makes life fun!). tax_other is
     # set up as a row array because this is ultimately summed
     cat_summary = zeros([num_cats, num_samples])
 
     # Collapses the OTU table using the category at the correct level
-    bin_fun = lambda x: x[metadata_category][:level]
-    for (bin_, table) in biom_norm.binObservationsByMetadata(bin_fun):
+    bin_fun = lambda y, x: x[metadata_category][:level]
+    for (bin_, table) in biom_norm.partition(bin_fun, axis='observation'):#.binObservationsByMetadata(bin_fun):
         new_bin = []
         for item in bin_:
             new_bin.append(item.strip())
