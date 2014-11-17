@@ -338,8 +338,11 @@ def clean_otu_string(greengenes_string, render_mode, format=False, \
     else:
         cleaned_taxon = '%sKingdom %s' % (classified, split_tax)
 
-    cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
-    cleaned_taxon = cleaned_taxon.replace('_','-')
+    if '[' in cleaned taxon:
+        cleaned_taxon = 'cont. %s' % cleaned_taxon.replace('[', ''
+                                                           ).replace(']', '')
+
+    cleaned_taxon = cleaned_taxon.replace('_', '-')
 
     # Bolds taxon if necessary
     if format == 'BOLD':
