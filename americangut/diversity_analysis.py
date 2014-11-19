@@ -1141,7 +1141,7 @@ def split_taxa(taxa, level=7):
 
             # Cleans the taxa
             for t in rough[:level]:
-                val = t.split('__')[1]
+                val = t.split('__')[1].replace('_', ' ').replace('-', ' ')
                 if val == '':
                     clean.append(last)
                 elif '[' in val:
@@ -1292,6 +1292,7 @@ def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
 
     return ax, cbar
 
+
 def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
     """Creates side by side abundance and log ratio heatmaps"""
 
@@ -1301,7 +1302,7 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
             'mode': 'RAW',
             'ref': None,
             '_ref_loc': None,
-            'ratio_base': np.e,
+            'ratio_base': 10,
             'cmap1': 'Greens',
             'cmap2': 'RdBu_r',
             'clims1': None,
@@ -1312,8 +1313,8 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
             'xfont_align': 'center',
             'yfont_angle': 0,
             'yfont_align': 'right',
-            'xfont_size': 12,
-            'yfont_size': 12,
+            'xfont_size': 9,
+            'yfont_size': 9,
             'cbar_size': 11}
     for key, value in kwargs.iteritems():
         if key not in kwds:
@@ -1336,7 +1337,7 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
         kwds['_ref_loc'] = order.index[kwds['ref']]
 
     # Sets up the group labels
-    g_labels = [o.replace('_mean', '').replace('_', ' ').title()
+    g_labels = [o.replace('_mean', '').replace('_', ' ')
                 for o in order]
 
     # Gets the signifigant data frame
