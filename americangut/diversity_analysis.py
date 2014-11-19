@@ -1302,7 +1302,7 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
             'mode': 'RAW',
             'ref': None,
             '_ref_loc': None,
-            'ratio_base': 10,
+            'ratio_base': np.e,
             'cmap1': 'Greens',
             'cmap2': 'RdBu_r',
             'clims1': None,
