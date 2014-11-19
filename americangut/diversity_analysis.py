@@ -1,14 +1,17 @@
 from __future__ import division
+
 from os import mkdir
 from os.path import exists
+
 import numpy as np
 import pandas as pd
-from scipy.stats import kruskal
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
-from statsmodels.sandbox.stats.multicomp import multipletests
 import skbio
+
+from matplotlib import rcParams
+from scipy.stats import kruskal
 from skbio.stats.power import _check_strs
+from statsmodels.sandbox.stats.multicomp import multipletests
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
@@ -25,7 +28,6 @@ __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
 
-# Creates a quick inline function
 def check_dir(dir_):
     """Creates the specified directory if it does not exist
 
@@ -66,7 +68,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
     for samp in samples:
         if not isinstance(samp, str):
             samp = str(samp)
-        splits = samp.split('.')
+        splits = samp.split('.', 1)
         first_clean = [splits[0].zfill(nzeros)]
         first_clean.extend(splits[1:])
         new_samples.append('.'.join(first_clean))
