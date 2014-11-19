@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from statsmodels.sandbox.stats.multicomp import multipletests
 import skbio
+from skbio.stats.power import _check_strs
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
@@ -394,12 +395,12 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     return ax, feats
 
 
-def post_hoc_pandas(df, group, cat, order=None, correct=None):
+def post_hoc_pandas(meta, group, cat, order=None, correct=None):
     """Preforms an post-hoc comparison between two groups
 
     Parameters
     ----------
-    df : pandas DataFrame
+    meta : pandas DataFrame
         the metadata object for the data
     group : str
         the metadata category being interograted
@@ -418,7 +419,7 @@ def post_hoc_pandas(df, group, cat, order=None, correct=None):
     """
 
     # Groups the data
-    grouped = df.groupby(group)
+    grouped = meta.groupby(group)
 
     # Gets the order
     if order is None:
@@ -605,6 +606,8 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None, **kwargs):
             'show_ygrid': False,
             'title': '',
             'title_size': 18,
+            'text_ticks': None,
+            'ebar_ticks': None,
             'xlabel': '',
             'xticklabels': None,
             'xfont_align': 'center',
@@ -896,8 +899,8 @@ def get_distance_vectors(dm, df, group, order=None):
 def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     num_iter=999, p_crit=0.01, p_table=None,
     p_tab_col='Parametric p-value (Bonferroni-corrected)',
-    tails="two", ax=None, interval=0.1, width=0.1,
-    bar_props={}):
+    tails="two", ax=None, interval=0.1, width=0.1, show_seperation=True,
+    hide_axes=True, bar_props={}):
     """
     Parameters
     ----------
@@ -954,7 +957,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     """
 
     # Removes any undefined groups
-    map_ = meta.groupby(meta[group].apply(skbio.stats.power._check_strs)
+    map_ = meta.groupby(meta[group].apply(_check_strs)
                         ).get_group(True)
     dm = dm.filter(map_.index)
 
@@ -1036,6 +1039,9 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
                 raise ValueError('%s vs. %s is not a defined group'
                                  % (ref_group, group))
 
+    if 'ytick_size' not in bar_props:
+        bar_props['ytick_size'] = 12
+
     dist_bar = np.array(dist_bar)
     dist_std = np.array(dist_std)
 
@@ -1069,6 +1075,20 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     feats['error_bars'] = bars
     feats['mean_height'] = dist_bar
     feats['height_std'] = dist_std
+
+    if show_seperation:
+        ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
+                np.array([0.4725, 0.4775]*50), 'k-', linewidth=7)
+        ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
+                np.array([0.4725, 0.4775]*50), 'w-', linewidth=3)
+        yticklabels = ax.get_yticks()
+        yticklabels[0] = 0
+        ax.set_yticklabels(yticklabels, size=bar_props['ytick_size'])
+
+    if hide_axes:
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        ax.yaxis.set_ticks_position('left')
 
     return ax, feats
 
@@ -1237,7 +1257,7 @@ def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
     # Plots the data
     im = ax.pcolor(data, cmap=cmap)
     if clims is not None:
-        im.set_clims(clims)
+        im.set_clim(clims)
     cbar = fig.colorbar(im, ax=ax)
 
     # Formats the x-axis
@@ -1272,21 +1292,20 @@ def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
 
     return ax, cbar
 
-
 def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
     """Creates side by side abundance and log ratio heatmaps"""
 
     # Handles the keyword arguments
-    kwds = {'p_value': 'Bonferroni_P',
+    kwds = {'p_column': 'Bonferroni_P',
             'p_crit': 0.05,
             'mode': 'RAW',
             'ref': None,
             '_ref_loc': None,
             'ratio_base': np.e,
-            'cmap1': 'Spectral_r',
+            'cmap1': 'Greens',
             'cmap2': 'RdBu_r',
-            'clims1': 'AUTO',
-            'clims2': 'AUTO',
+            'clims1': None,
+            'clims2': [-2, 2],
             'label': 'INDEX',
             'sort_by_taxa': True,
             'xfont_angle': 0,
@@ -1294,7 +1313,8 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
             'yfont_angle': 0,
             'yfont_align': 'right',
             'xfont_size': 12,
-            'yfont_size': 12}
+            'yfont_size': 12,
+            'cbar_size': 11}
     for key, value in kwargs.iteritems():
         if key not in kwds:
             raise ValueError('%s is not a supported keyword argument.' % key)
@@ -1320,7 +1340,7 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
                 for o in order]
 
     # Gets the signifigant data frame
-    crit = gs[kwds['p_value']] < kwds[['p_crit']]
+    crit = gs[kwds['p_column']] < kwds['p_crit']
     if not crit.any():
         raise ValueError('There are no signifigant taxa')
     sig = gs.loc[crit]
@@ -1342,8 +1362,10 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
                         'genus', 'species'])
 
     # Gets the raw data values
-    raw = sig[order]
-    ratio = get_ratio_heatmap(sig[order], kwds['_ref_loc'], kwds['ratio_base'])
+    raw = sig[order].values
+    ratio = get_ratio_heatmap(sig[order].values, kwds['_ref_loc'],
+                              kwds['ratio_base'])
+    ratio[np.isinf(ratio)] = np.nan
 
     # Plots the data on a heatmap
     ax1, cbar1 = heatmap(data=raw,
@@ -1351,9 +1373,9 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
                          xticklabels=g_labels,
                          yticklabels=sig['label'].values,
                          cmap=kwds['cmap1'],
-                         clims=kwds['clim1'],
+                         clims=kwds['clims1'],
                          xfont_angle=kwds['xfont_angle'],
-                         xfont_align=kwds['xfont_angle'],
+                         xfont_align=kwds['xfont_align'],
                          yfont_angle=kwds['yfont_angle'],
                          yfont_align=kwds['yfont_align'],
                          xfont_size=kwds['xfont_size'],
@@ -1362,11 +1384,11 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
     ax2, cbar2 = heatmap(data=ratio,
                          ax=ax2,
                          xticklabels=g_labels,
-                         yticklabels=sig['label'].values,
+                         yticklabels=['']*len(sig['label'].values),
                          cmap=kwds['cmap2'],
-                         clims=kwds['clim2'],
+                         clims=kwds['clims2'],
                          xfont_angle=kwds['xfont_angle'],
-                         xfont_align=kwds['xfont_angle'],
+                         xfont_align=kwds['xfont_align'],
                          yfont_angle=kwds['yfont_angle'],
                          yfont_align=kwds['yfont_align'],
                          xfont_size=kwds['xfont_size'],
@@ -1383,7 +1405,6 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
              'cbar2': cbar2}
 
     return [ax1, ax2], feats
-
 
 # def pretty_boxplot(grouped, order, cat, **kwargs):
 #     """
