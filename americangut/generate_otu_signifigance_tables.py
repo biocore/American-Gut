@@ -375,14 +375,9 @@ def clean_greengenes_string(greengenes_string, render_mode, format=None,
     else:
         cleaned_taxon = '%sKingdom %s' % (classified, split_tax)
 
-<<<<<<< HEAD
     if '[' in cleaned_taxon:
         cleaned_taxon = 'cont. %s' % cleaned_taxon.replace('[', ''
                                                            ).replace(']', '')
-
-=======
-    cleaned_taxon = cleaned_taxon.replace('[', '').replace(']', '')
->>>>>>> bbad007d5d6fc5b9b2737c3d90b2d4b5d8dcc0b4
     cleaned_taxon = cleaned_taxon.replace('_', '-')
 
     # Bolds taxon if necessary
