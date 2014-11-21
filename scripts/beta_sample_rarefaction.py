@@ -11,6 +11,7 @@ __maintainer__ = "Antonio Gonzalez Pena"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
+import numpy as np
 from matplotlib import use
 use('Agg')
 from qiime.util import parse_command_line_parameters, make_option
@@ -66,21 +67,33 @@ def main():
         # Reading OTU/biom table
         samples, distmat = parse_distmat(open(input_file, 'U'))
         possible_samples = range(len(distmat[0]))
+        mask = np.ones(distmat.shape)
 
-        result_iteration = []
-        for iteration in range(iterations):
-            iter_vals = []
-            for n in possible_samples:
+        n_possible_samples = len(possible_samples)
+        result_iteration = np.zeros((iterations, n_possible_samples))
+
+        for iter_idx, iteration in enumerate(range(iterations)):
+            #iter_vals = []
+            iter_vals = np.zeros(n_possible_samples)
+            for idx, n in enumerate(possible_samples):
                 if n < 1:
                     continue
                 curr_samples = sample(possible_samples, n+1)
 
-                curr_vals = []
-                for curr_i, i in enumerate(curr_samples):
-                    for j in curr_samples[curr_i+1:]:
-                        curr_vals.append(distmat[i][j])
-                iter_vals.append(min(curr_vals))
-            result_iteration.append(iter_vals)
+                # masked arrays are inverted apparently, so 0 means to keep
+                mask.fill(1)
+                mask[curr_samples] = 0
+                mask[:, curr_samples] = 0
+                np.fill_diagonal(mask, 1)
+
+                # distmat is symmetric, so min in either triangle is the same
+                # as min over the full matrix. Doing the masking to get a tri
+                # and to compress seems to require more time then simply doing
+                # a min over the full matrix
+                masked_array = np.ma.array(distmat, mask=mask)
+                iter_vals[idx] = masked_array.min()
+
+            result_iteration[iter_idx] = iter_vals
 
         results[input_file] = [mean(result_iteration, axis=0),
                                std(result_iteration, axis=0)]
@@ -134,4 +147,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import cProfile
+    cProfile.run("main()", "bdiv_subsample_np.stats")
