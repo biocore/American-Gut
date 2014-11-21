@@ -310,3 +310,19 @@ def create_env(prj_name, basedir=None):
             not_created = False
 
     register_env(basedir, prj_name=name, working_dir=working_dir)
+
+def submit(prj_name, cmd):
+    """Submission wrapper for easily submitting jobs"""
+    return submit_qsub(cmd, job_name=prj_name, queue='memroute', 
+                       extra_args='-l pvmem=8gb')
+
+def farm_commands(commands, chunk_size):
+    """Chunk up commands, and submit each chunk for serial processing"""
+    commands = list(commands)
+    start = 0
+    jobs = []
+    for end in range(chunk_size, len(commands) + chunk_size, chunk_size):
+        chunk = commands[start:end]
+        start = end
+        jobs.append(submit(chunk)) 
+    return wait_on(jobs) 

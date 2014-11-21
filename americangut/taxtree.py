@@ -10,13 +10,16 @@ __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
+
 def create_node(name):
     """Create and return a new node"""
-    return {'name':name, 'popcount':0, 'children':[]}
+    return {'name': name, 'popcount': 0, 'children': []}
+
 
 def add_node(cur_node, node):
     """Add a node as a child to an existing node"""
     cur_node['children'].append(node)
+
 
 def get_node(cur_node, name):
     """Fetch a node from an existing node, return None if not found"""
@@ -24,6 +27,7 @@ def get_node(cur_node, name):
         if c['name'] == name:
             return c
     return None
+
 
 def update_tree(tree, taxa_by_sample):
     """Updates a nightmare nested tree structure
@@ -45,9 +49,9 @@ def update_tree(tree, taxa_by_sample):
             for taxon in tax_string:
                 if taxon.endswith('__') or '[' in taxon:
                     break
-                
+
                 node = get_node(cur_node, taxon)
-                
+
                 if node is None:
                     node = create_node(taxon)
                     add_node(cur_node, node)
@@ -58,6 +62,7 @@ def update_tree(tree, taxa_by_sample):
 
                 cur_node = node
     return tree
+
 
 def get_rare_unique(tree, sample_taxa, rare_threshold):
     """Returns the rare and unique taxa in a sample
@@ -73,7 +78,7 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
         cur_node = tree
 
         for taxon in tax_string:
-            if taxon.endswith('__'):
+            if taxon.endswith('__') or '[' in taxon:
                 break
 
             node = get_node(cur_node, taxon)
@@ -82,7 +87,7 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
                 raise ValueError("%s doesn't exist!" % taxon)
 
             cur_node = node
-        
+
         if cur_node['popcount'] == 1:
             unique.append(tax_string)
         elif cur_node['popcount'] / popsize <= rare_threshold:
@@ -90,12 +95,14 @@ def get_rare_unique(tree, sample_taxa, rare_threshold):
 
     return (rare, unique)
 
+
 def traverse(node):
     """Post-order traversal of the full tree"""
     for c in node['children']:
         for gc in traverse(c):
             yield gc
     yield node
+
 
 def build_tree_from_taxontable(table):
     """Construct a tree from a taxon table
@@ -115,24 +122,25 @@ def build_tree_from_taxontable(table):
 
     return tree, sample_taxa_lookup
 
+
 def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
     """Get the rare and unique taxa per sample
 
     returns (sample_id, biom table w/o rare and uniques, rare, unique)
     """
-    def make_filter_f(r,u):
+    def make_filter_f(r, u):
         r = ['; '.join(i) for i in r]
         u = ['; '.join(i) for i in u]
         to_remove = set(r).union(set(u))
 
-        def f(v,i,md):
+        def f(v, i, md):
             if i in to_remove:
                 return False
             return True
         return f
 
     for sample_id, sample_taxa in all_sample_taxa.iteritems():
-        rare, unique = get_rare_unique(tree, sample_taxa,rare_threshold)
+        rare, unique = get_rare_unique(tree, sample_taxa, rare_threshold)
         filter_f = make_filter_f(rare, unique)
 
         if table is None:
@@ -140,6 +148,7 @@ def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
         else:
             filtered = table.filterObservations(filter_f)
             yield (sample_id, filtered, rare, unique)
+
 
 if __name__ == '__main__':
     from sys import argv
