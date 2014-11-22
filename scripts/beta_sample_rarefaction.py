@@ -147,5 +147,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import cProfile
-    cProfile.run("main()", "bdiv_subsample_np.stats")
+    main()
