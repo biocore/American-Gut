@@ -2,15 +2,15 @@
 
 from __future__ import division
 from unittest import TestCase, main
-from os import rmdir
-from os.path import realpath, dirname, join as pjoin, exists
+
 import numpy as np
 import numpy.testing as npt
+import skbio
+
+from os import rmdir
+from os.path import realpath, dirname, join as pjoin, exists
 from pandas import Series, DataFrame, Index
 from pandas.util.testing import assert_index_equal, assert_frame_equal
-import skbio
-from matplotlib import use
-use('agg', warn=False)
 from americangut.diversity_analysis import (pad_index,
                                             check_dir,
                                             post_hoc_pandas,
@@ -407,7 +407,7 @@ class DiversityAnalysisTest(TestCase):
                           0.450, 0.492, 0.000]])
         self.dm = skbio.DistanceMatrix(dist, self.ids)
         self.taxa = ['k__Bacteria; p__[Proteobacteria]; '
-                     'c__Gammaproteobacteria',
+                     'c__Gammaproteobacteria; o__; f__; g__; s__',
                      'k__Bacteria; p__Proteobacteria; '
                      'c__Gammaproteobacteria; o__Enterobacteriales; '
                      'f__Enterbacteriaceae; g__Escherichia; s__coli']
@@ -509,14 +509,22 @@ class DiversityAnalysisTest(TestCase):
         npt.assert_array_equal(known_wdist[1], test_wdist[1])
         npt.assert_array_equal(known_bdist[0], test_bdist[0])
 
+    def test_split_taxa_error(self):
+        with self.assertRaises(ValueError):
+            split_taxa(['k__Bacteria; p__[Proteobacteria]; '
+                        'c__Gammaproteobacteria'], 7)
+
     def test_split_taxa(self):
         known_taxa = np.array([['Bacteria', 'cont. Proteobacteria',
-                                'Gammaproteobacteria', 'Gammaproteobacteria',
-                                'Gammaproteobacteria', 'Gammaproteobacteria',
-                                'Gammaproteobacteria'],
+                                'Gammaproteobacteria',
+                                'c. Gammaproteobacteria',
+                                'c. Gammaproteobacteria',
+                                'c. Gammaproteobacteria',
+                                'c. Gammaproteobacteria'],
                                ['Bacteria', 'Proteobacteria',
                                 'Gammaproteobacteria', 'Enterobacteriales',
-                                'Enterbacteriaceae', 'Escherichia', 'coli']])
+                                'Enterbacteriaceae', 'Escherichia', 'coli']],
+                              dtype='|S32')
         known_levels = ['kingdom', 'phylum', 'p_class', 'p_order', 'family',
                         'genus', 'species']
         test_taxa, test_levels = split_taxa(self.taxa, 7)

@@ -1,5 +1,4 @@
 from __future__ import division
-
 from os import mkdir
 from os.path import exists
 
@@ -81,7 +80,8 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
     return df
 
 
-def boxplot(vecs, ax=None, **kwargs):
+def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
+    show_counts=True, **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -96,7 +96,7 @@ def boxplot(vecs, ax=None, **kwargs):
         The spacing between the boxplot instances on the axes
     notch : bool, optional
         Displays the parametric 95% confidence interval around the mean.
-    show_n : bool, optional
+    show_counts : bool, optional
         Shows the size of the groups below each plot on the x-axis
     p_value : float, optional
         Default is None. When supplied, the signfigance value will be displayed
@@ -133,7 +133,7 @@ def boxplot(vecs, ax=None, **kwargs):
     p_y : float
         The y position of the critical value text
     p_size : int
-        The font size for hte critical value text
+        The font size for the critical value text
     title_size: int
         The font size for the title
     xticklabels : list
@@ -161,173 +161,45 @@ def boxplot(vecs, ax=None, **kwargs):
     if ax is None:
         ax = plt.axes()
 
-    # Handles keyword arguments
-    kwds = {'boxplot_props': {},
-            'hide_xticks': False,
-            'hide_yticks': False,
-            'interval': 0.5,
-            'notch': True,
-            'n_xs': None,
-            'n_y': None,
-            'n_size': 11,
-            'p_value': None,
-            'p_x': None,
-            'p_y': None,
-            'p_size': 12,
-            'show_n': True,
-            'show_xgrid': False,
-            'show_ygrid': True,
-            'title': '',
-            'title_size': 18,
-            'xlabel': '',
-            'xticklabels': None,
-            'xfont_align': 'center',
-            'xfont_angle': 0,
-            'xtick_size': 12,
-            'xlabel_size': 15,
-            'ylims': None,
-            'yticks': None,
-            'yticklabels': None,
-            'ylabel': '',
-            'ylabel_size': 15,
-            'ytick_size': 12}
-
-    for key, val in kwargs.iteritems():
-        if key in kwds:
-            kwds[key] = val
-        else:
-            raise ValueError('%s is not an input for boxplot.' % key)
-
-    features = {}
-
     # Determines the plotting locations
     num_cats = len(vecs)
-    xlim = [-kwds['interval']/2,
-            kwds['interval']*(num_cats-1)+kwds['interval']/2]
+    xlim = [-interval/2,
+            interval*(num_cats-1)+interval/2]
 
     # Sets up the plotting constants
-    ticks = np.arange(0, kwds['interval']*num_cats, kwds['interval'])
+    ticks = np.arange(0, interval*num_cats, interval)
     counts = []
 
-    boxes = []
     # Loops through the data
     for idx, vec in enumerate(vecs):
         # Gets vector characteristics
         tick = [ticks[idx]]
         counts.append(len(vec))
         # Plots the data
-        bp = ax.boxplot(vec,
-                        positions=tick,
-                        notch=kwds['notch'],
-                        **kwds['boxplot_props'])
-        boxes.append(bp)
+        ax.boxplot(vec,
+                   positions=tick,
+                   notch=notch,
+                   **boxplot_props)
 
-    features['boxplot'] = boxes
+    # Sets up axis formatting
+    if show_counts:
+        kwargs['counts'] = counts
+    if 'xlim' not in kwargs:
+        kwargs['xlim'] = xlim
+    if 'xticks' not in kwargs:
+        kwargs['xticks'] = ticks
 
-    # Sets axis limits
-    ax.set_xlim(xlim)
-    if kwds['ylims'] is not None:
-        ax.set_ylim(kwds['ylims'])
-    else:
-        ylim = ax.get_ylim()
-        ax.set_ylim([ylim[0], ylim[1]*1.2])
+    _format_axis(ax, **kwargs)
 
-    # Adds axis ticks
-    ax.set_xticks(ticks)
-    if kwds['yticks'] is not None:
-        ax.set_yticks(kwds['yticks'])
-
-    # Handles x-axis tick names
-    if kwds['xticklabels'] is None:
-        xtl = ''
-    else:
-        xtl = kwds['xticklabels']
-    ax.set_xticklabels(xtl,
-                       ha=kwds['xfont_align'],
-                       rotation=kwds['xfont_angle'],
-                       size=kwds['xtick_size'])
-    if kwds['yticklabels'] is None:
-        ax.set_yticklabels(ax.get_yticks(), size=kwds['ytick_size'])
-    else:
-        ax.set_yticklabels(kwds['yticklabels'], size=kwds['ytick_size'])
-
-    # Sets the axis labels
-    ax.set_xlabel(kwds['xlabel'], size=kwds['xlabel_size'])
-    ax.set_ylabel(kwds['ylabel'], size=kwds['ylabel_size'])
-
-    # Adds a grid, if appropriate
-    if kwds['show_xgrid']:
-        ax.xaxis.grid()
-    if kwds['show_ygrid']:
-        ax.yaxis.grid()
-
-    # Hides axis ticks, if desired
-    if kwds['hide_xticks']:
-        for tic in ax.xaxis.get_major_ticks():
-            tic.tick1On = False
-            tic.tick2On = False
-
-    if kwds['hide_yticks']:
-        for tic in ax.yaxis.get_major_ticks():
-            tic.tick1On = False
-            tic.tick2On = False
-
-    # Adds a title, if appropriate
-    ax.set_title(kwds['title'], size=kwds['title_size'])
-
-    # Adds group counts, if desired
-    txt = []
-    if kwds['show_n']:
-        # Gets the positions for the count labels
-        ylim = ax.get_ylim()
-        if kwds['n_xs'] is None:
-            kwds['n_xs'] = ticks
-        if kwds['n_y'] is None:
-            kwds['n_y'] = ylim[0]+(ylim[1]-ylim[0])*0.025
-
-        # Adds the count labels
-        for idx, count in enumerate(counts):
-            txt.append(ax.text(kwds['n_xs'][idx],
-                               kwds['n_y'],
-                               '(%i)' % count,
-                               horizontalalignment='center',
-                               size=kwds['n_size']))
-        features['n_text'] = txt
-    else:
-        features['n_text'] = None
-
-    # Adds the p-value, if desired
-    if kwds['p_value'] is not None:
-        p = kwds['p_value']
-        # Auto-calculates the position, if necessary
-        if kwds['p_x'] is None:
-            x = ax.get_xlim()[1] - (ax.get_xlim()[1] - ax.get_xlim()[0])/100
-        else:
-            x = kwds['p_x']
-        if kwds['p_y'] is None:
-            yticks = ax.get_yticks()
-            y = ax.get_ylim()[1] - (yticks[-1] - yticks[-2])/2.5
-        else:
-            y = kwds['p_y']
-
-        # Adds the text
-        if p >= 0.005:
-            p_str = 'p = %1.2f' % p
-        else:
-            p_str = 'p = %1.1e' % p
-        p_text = ax.text(x, y, p_str,
-                         size=kwds['p_size'],
-                         horizontalalignment='right')
-        features['p_text'] = p_text
-    else:
-        features['p_text'] = None
-
-    return ax, features
+    return ax
 
 
 def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     **boxplot_props):
     """Creates a more attractive poxplot than pandas
+
+    Mostly, this gives me a notched boxplot, and I really like the notches,
+    since they help create a frame of refernce. 
 
     Parameters
     ----------
@@ -436,9 +308,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
     # Preforms ad-hoc comparisons
     comparison = {}
 
-    for g1_name in order[:-1]:
-        # Determines the position of the group
-        pos = order.index(g1_name)
+    for pos, g1_name in enumerate(order[:-1]):
         g1_data = grouped.get_group(g1_name)[cat]
         compare = []
         index = []
@@ -501,7 +371,9 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
     return raw_ph
 
 
-def barchart(height, interval=0.5, width=0.4, ax=None, errors=None, **kwargs):
+def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
+    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
+    **kwargs):
     """Renders a barchart
 
     Parameters
@@ -543,9 +415,6 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None, **kwargs):
     -------
     ax : axes
         A matplotlib axes containing the plotted data
-    feats : dict
-        A dictionary with features of the plot, including the boxplot handles
-        and text objects.
     xpos : array
         the center position for each bar
 
@@ -564,7 +433,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None, **kwargs):
     p_y : float
         The y position of the critical value text
     p_size : int
-        The font size for hte critical value text
+        The font size for the critical value text
     title_size: int
         The font size for the title
     xticklabels : list
@@ -591,67 +460,27 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None, **kwargs):
     if ax is None:
         ax = plt.axes()
 
-    # Handles keyword arguments
-    kwds = {'colormap': None,
-            'edgecolors': None,
-            'elinewidth': 2,
-            'e_capthickness': 2,
-            'hide_xticks': True,
-            'hide_yticks': False,
-            'ebar_ticks': None,
-            'match_colors': True,
-            'p_value': None,
-            'p_x': None,
-            'p_y': None,
-            'p_size': 12,
-            'show_xgrid': False,
-            'show_ygrid': False,
-            'title': '',
-            'title_size': 18,
-            'text_ticks': None,
-            'ebar_ticks': None,
-            'xlabel': '',
-            'xticklabels': None,
-            'xfont_align': 'center',
-            'xfont_angle': 0,
-            'xtick_size': 12,
-            'xlabel_size': 15,
-            'ylims': None,
-            'yticks': None,
-            'yticklabels': None,
-            'ylabel': '',
-            'ylabel_size': 15,
-            'ytick_size': 12}
-
-    for key, val in kwargs.iteritems():
-        if key in kwds:
-            kwds[key] = val
-        else:
-            raise ValueError('%s is not an input for boxplot.' % key)
-
     # Sets the colormap and egdecolor, if necessary
-    if kwds['colormap'] is None:
-        kwds['colormap'] = np.array([[0.5, 0.5, 0.5]]*len(height))
+    if colormap is None:
+        colormap = np.array([[0.5, 0.5, 0.5]]*len(height))
 
-    if kwds['match_colors']:
-        kwds['edgecolors'] = kwds['colormap']
+    if match_colors:
+        edgecolors = colormap
     else:
-        kwds['edgecolors'] = np.array([[0, 0, 0]]*len(height))
+        edgecolors = np.array([[0, 0, 0]]*len(height))
 
     # Gets an axis instance
     if ax is None:
         ax = plt.axes()
 
-    feats = {}
+    # Gets the xposition, for errorbars
+    xpos = np.arange(0, len(height))*interval + interval/2
 
-    # Gets the xposition, for errorbars, if unspecified.
-    if kwds['ebar_ticks'] is None:
-        kwds['ebar_ticks'] = np.arange(0, len(height))*interval + interval/2
-    if kwds['text_ticks'] is None:
-        kwds['text_ticks'] = kwds['ebar_ticks']
-    xpos = kwds['ebar_ticks']
     xleft = np.arange(0, len(height)) * interval + (interval - width)/2
     xlims = [0, len(height)*interval]
+
+    if kwargs['xlims'] is not None:
+        kwargs['xlim'] = xlims
 
     # Plots the errorbars
     if errors is not None:
@@ -661,85 +490,20 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None, **kwargs):
                              y=height[idx],
                              yerr=err,
                              fmt='none',
-                             ecolor=kwds['edgecolors'][idx, :],
-                             elinewidth=kwds['elinewidth'],
-                             capthick=kwds['e_capthickness'])
+                             ecolor=edgecolors[idx, :],
+                             elinewidth=elinewidth,
+                             capthick=ecapwidth)
         e_bars.append(eb)
 
     # Plots the bars
     bars = ax.bar(xleft, height, width=width)
     for idx, bar in enumerate(bars):
-        bar.set_facecolor(kwds['colormap'][idx, :])
-        bar.set_edgecolor(kwds['edgecolors'][idx, :])
+        bar.set_facecolor(colormap[idx, :])
+        bar.set_edgecolor(edgecolors[idx, :])
 
-    feats['errorbars'] = e_bars
-    feats['bars'] = bars
+    _format_axis(ax)
 
-    # Sets x-axis properties
-    ax.set_xlim(xlims)
-    ax.set_xticks(kwds['text_ticks'])
-    if kwds['xticklabels'] is None:
-        xtl = ''
-    else:
-        xtl = kwds['xticklabels']
-    ax.set_xticklabels(xtl,
-                       ha=kwds['xfont_align'],
-                       rotation=kwds['xfont_angle'],
-                       size=kwds['xtick_size'])
-    ax.set_xlabel(kwds['xlabel'], size=kwds['xlabel_size'])
-    if kwds['show_xgrid']:
-        ax.xaxis.grid()
-    if kwds['hide_xticks']:
-        for tic in ax.xaxis.get_major_ticks():
-            tic.tick1On = False
-            tic.tick2On = False
-
-    # Sets the y-axis parameters
-    ax.set_ylim(kwds['ylims'])
-    if kwds['yticks'] is not None:
-        ax.set_yticks(kwds['yticks'])
-    if kwds['yticklabels'] is None:
-        ax.set_yticklabels(ax.get_yticks(), size=kwds['ytick_size'])
-    else:
-        ax.set_yticklabels(kwds['yticklabels'], size=kwds['ytick_size'])
-    ax.set_ylabel(kwds['ylabel'], size=kwds['ylabel_size'])
-    if kwds['show_ygrid']:
-        ax.yaxis.grid()
-    if kwds['hide_yticks']:
-        for tic in ax.yaxis.get_major_ticks():
-            tic.tick1On = False
-            tic.tick2On = False
-
-    # Adds a title, if appropriate
-    ax.set_title(kwds['title'], size=kwds['title_size'])
-
-    # Adds p-value text
-    if kwds['p_value'] is not None:
-        p = kwds['p_value']
-        # Auto-calculates the position, if necessary
-        if kwds['p_x'] is None:
-            x = ax.get_xlim()[1] - (ax.get_xlim()[1] - ax.get_xlim()[0])/100
-        else:
-            x = kwds['p_x']
-        if kwds['p_y'] is None:
-            yticks = ax.get_yticks()
-            y = ax.get_ylim()[1] - (yticks[-1] - yticks[-2])/2.5
-        else:
-            y = kwds['p_y']
-
-        # Adds the text
-        if p >= 0.005:
-            p_str = 'p = %1.2f' % p
-        else:
-            p_str = 'p = %1.1e' % p
-        p_text = ax.text(x, y, p_str,
-                         size=kwds['p_size'],
-                         horizontalalignment='right')
-        feats['p_text'] = p_text
-    else:
-        feats['p_text'] = None
-
-    return ax, feats, xpos
+    return ax, xpos
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
@@ -795,7 +559,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     if interval is None:
         interval = correct/3.
 
-    # Sets the tops of hte bars
+    # Sets the tops of the bars
     bar_levels = np.arange(0., len(p_values))*interval + first
     # Identifies the center positions for the p text
     p_cents = [(centers[1] - centers[0])/2. + centers[0]]
@@ -869,27 +633,27 @@ def get_distance_vectors(dm, df, group, order=None):
 
     # Gets the sample ids associated with the group
     if order is None:
-        order = df.groupby(group).groups
-    else:
-        order = {o: df.groupby(group).groups[o] for o in order}
+        order = list(df.groupby(group).groups)
+    ordered_ids = {o: df.groupby(group).groups[o] for o in order}
 
-    dist_ids = dm.ids
+    # Gets the data
+    dist_ids = np.array(list(dm.ids))
     dist_data = dm.data
 
+    # Prealocates objects for return
     within = []
     w_dist = []
     between = []
     b_dist = []
-    for id1, o1 in enumerate(order.keys()):
 
+    # Loops through the groups
+    for id1, o1 in enumerate(order):
         # Gets the intragroup distance
         within.append(o1)
-        w_dist.append(dm.filter(order[o1]).condensed_form())
-
-        # Gets the intergroup distances
-        for o2 in order.keys()[(id1+1):]:
-            loc1 = [dist_ids.index(i) for i in order[o1]]
-            loc2 = [dist_ids.index(i) for i in order[o2]]
+        w_dist.append(dm.filter(ordered_ids[o1]).condensed_form())
+        for o2 in order[(id1+1):]:
+            loc1 = np.array([dist_ids == i for i in ordered_ids[o1]]).any(0)
+            loc2 = np.array([dist_ids == i for i in ordered_ids[o2]]).any(0)
             data1 = dist_data[loc1, :]
             # Adds the intragroup distance
             between.append({o1, o2})
@@ -901,8 +665,9 @@ def get_distance_vectors(dm, df, group, order=None):
 def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     num_iter=999, p_crit=0.01, p_table=None,
     p_tab_col='Parametric p-value (Bonferroni-corrected)',
-    tails="two", ax=None, interval=0.1, width=0.1, show_seperation=True,
-    hide_axes=True, bar_props={}):
+    tails="two", ax=None, interval=0.1, width=0.1,
+    show_seperation=True, colormap=None, match_colors=True,
+    elinewidth=2, ecapwidth=2, show_p=False, **kwargs):
     """
     Parameters
     ----------
@@ -945,8 +710,21 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
         The spacing between the bars
     width : float, optional
         The width of each bars. Should be less than or equal to the interal.
-    boxplot_props : dict, optional
-        Features of the barchart.
+    show_seperation : bool, optional
+        Inserts a set of wavy lines to suggest the bottom of the distance
+        axes is at 0, and not whatever convenient x-lim is used.
+    colormap : array, optional
+        The colors to be used for the barchart. This must be an nx3 or nx4
+        array.
+    match_color: bool, optional
+        When True, the edges and errorbar lines are the same color as the
+        bar fills. When False, these are outlined in black.
+    elinewidth : int, optional
+        The linethickness for the errorbar
+    ecapwidth: int, optional
+        The width of the line on top of the errorbar
+    show_p: bool, optional
+
 
     Returns
     -------
@@ -969,7 +747,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     if ref_group is None:
         ref_group = order[0]
 
-    # Determines hte position of the reference group
+    # Determines the position of the reference group
     ref_loc = order.index(ref_group)
 
     # Checks for an overall signifigant differences
@@ -978,8 +756,14 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     if all_p > p_crit:
         raise ValueError('There is not a signfigant difference at p < %s.'
                          '\np = %1.2f' % (p_crit, all_p))
-    if 'p_value' not in bar_props:
-        bar_props['p_value'] = all_p
+    if show_p:
+        kwargs['p_value'] = all_p
+
+    # Formats the axis if desired
+    if 'show_frame' not in kwargs:
+        kwargs['show_frame'] = False
+    if 'ytick_size' not in kwargs:
+        kwargs['ytick_size'] = 12
 
     # Gets the distance vectors
     w_groups, w_dist, b_groups, b_dist = \
@@ -1041,9 +825,6 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
                 raise ValueError('%s vs. %s is not a defined group'
                                  % (ref_group, group))
 
-    if 'ytick_size' not in bar_props:
-        bar_props['ytick_size'] = 12
-
     dist_bar = np.array(dist_bar)
     dist_std = np.array(dist_std)
 
@@ -1053,7 +834,8 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
                                interval=interval,
                                width=width,
                                xticklabels=order,
-                               **bar_props)
+                               **kwargs)
+
     if p_values is not None and (ref_loc == 0 or len(dist_bar) == 2):
         bars = add_comparison_bars(xpos, dist_bar+dist_std, p_values, ax)
     elif p_values is not None and ref_loc == (len(dist_bar) - 1):
@@ -1074,10 +856,6 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     else:
         bars = None
 
-    feats['error_bars'] = bars
-    feats['mean_height'] = dist_bar
-    feats['height_std'] = dist_std
-
     if show_seperation:
         ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
                 np.array([0.4725, 0.4775]*50), 'k-', linewidth=7)
@@ -1085,14 +863,9 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
                 np.array([0.4725, 0.4775]*50), 'w-', linewidth=3)
         yticklabels = ax.get_yticks()
         yticklabels[0] = 0
-        ax.set_yticklabels(yticklabels, size=bar_props['ytick_size'])
+        ax.set_yticklabels(yticklabels, size=kwargs['ytick_size'])
 
-    if hide_axes:
-        ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
-        ax.yaxis.set_ticks_position('left')
-
-    return ax, feats
+    return ax
 
 
 def split_taxa(taxa, level=7):
@@ -1121,7 +894,7 @@ def split_taxa(taxa, level=7):
         raise ValueError('%r is not a supported taxonomic level.' % level)
 
     # Prealocates a holding object
-    splits = np.zeros((1, level))
+    splits = np.zeros((1, (level)))
 
     # Sets up the names of phylogenetic levels
     levels = ['kingdom', 'phylum', 'p_class', 'p_order', 'family', 'genus',
@@ -1133,16 +906,18 @@ def split_taxa(taxa, level=7):
             clean = ['Unassigned']*level
         else:
             # Splits the greengenes string
-            rough = taxon.split(';')
-            while len(rough) < level:
-                rough.append(rough[-1])
-
+            rough = [v.strip() for v in taxon.split(';')]
             # Watches the last space in the data
-            last = rough[0].replace('__', '. ')
+            try:
+                last = rough[level - 1].replace('__', '. ')
+            except:
+                raise ValueError('There are %i levels in your taxa string and'
+                                 ' you would like to look at %i levels.'
+                                 % (len(rough), level))
             clean = []
 
             # Cleans the taxa
-            for t in rough[:level]:
+            for t in rough[:(level)]:
                 val = t.split('__')[1].replace('_', ' ').replace('-', ' ')
                 if val == '':
                     clean.append(last)
@@ -1197,10 +972,7 @@ def get_ratio_heatmap(data, ref_pos=None, log=None):
     return ratio
 
 
-def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
-    cmap='RdBu_r', clims=None, xfont_angle=0, xfont_align='center',
-    yfont_angle=0, yfont_align='right', xfont_size=12, yfont_size=12,
-    cbar_size=11):
+def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     """Wraps matplotlib's heatmap and formats the colorbar
 
     Parameters
@@ -1246,9 +1018,13 @@ def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
     """
     # Checks the shape of the data is sane
     mat_shape = data.shape
-    if xticklabels is not None and not len(xticklabels) == mat_shape[1]:
-        raise ValueError('There must be a label for each column in data.')
-    if yticklabels is not None and not len(yticklabels) == mat_shape[0]:
+    if ('xticklabels' in kwargs and kwargs['xticklabels'] is not None and not
+        len(kwargs['xticklabels']) == mat_shape[1]):
+        raise ValueError('There must be a label for each column in '
+                         'data.')
+
+    if ('yticklabels' in kwargs and kwargs['yticklabels'] is not None and not
+        len(kwargs['yticklabels']) == mat_shape[0]):
         raise ValueError('There must be a label for each row in data.')
 
     # Gets the axis
@@ -1262,29 +1038,14 @@ def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
         im.set_clim(clims)
     cbar = fig.colorbar(im, ax=ax)
 
-    # Formats the x-axis
-    xlim = [0, mat_shape[1]]
-    ax.set_xlim(xlim)
-    ax.set_xticks(np.arange(0.5, mat_shape[1], 1))
-    if xticklabels is None:
-        xticklabels = ['']*len(ax.get_xticks())
-    ax.set_xticklabels(xticklabels, rotation=xfont_angle, ha=xfont_align,
-                       size=xfont_size)
-    for tic in ax.xaxis.get_major_ticks():
-        tic.tick1On = False
-        tic.tick2On = False
+    # Gets the axis limits
+    if 'xlim' not in kwargs:
+        kwargs['xlim'] = [0, mat_shape[1]]
+    if 'ylim' not in kwargs:
+        kwargs['ylim'] = [mat_shape[0], 0]
 
-    # Formats the y axis
-    ylim = [mat_shape[0], 0]
-    ax.set_ylim(ylim)
-    ax.set_yticks(np.arange(0.5, mat_shape[0], 1))
-    if yticklabels is None:
-        yticklabels = ['']*len(ax.get_xticks())
-    ax.set_yticklabels(yticklabels, rotation=yfont_angle, ha=yfont_align,
-                       size=yfont_size)
-    for tic in ax.yaxis.get_major_ticks():
-        tic.tick1On = False
-        tic.tick2On = False
+    # Formats the axis
+    _format_axis(ax, **kwargs)
 
     # Formats the colorbar ylabels
     new_labels = ['%s' % t.get_text() for t in cbar.ax.get_yticklabels()]
@@ -1295,7 +1056,7 @@ def heatmap(data, ax=None, xticklabels=None, yticklabels=None,
     return ax, cbar
 
 
-def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
+def make_dual_heatmaps(gs, order=None, axes=None, **kwargs):
     """Creates side by side abundance and log ratio heatmaps"""
 
     # Handles the keyword arguments
@@ -1409,271 +1170,275 @@ def make_duel_heatmaps(gs, order=None, axes=None, **kwargs):
 
     return [ax1, ax2], feats
 
-# def pretty_boxplot(grouped, order, cat, **kwargs):
-#     """
-#     Creates a more attractive boxplot than pandas
 
-#     Parameters
-#     ----------
-#     grouped : pandas grouped object
-#         the dataframe grouped by the category of interest
+def _format_axis(ax, **kwargs):
+    """Beautifies the axis
 
-#     order : {list, None}
-#         if category order matters, this argument sets the order. Otherwise,
-#         default sorting is used.
+    Parameters
+    ----------
+    ax : matplotlib axis
+        The axis where data should be plotted. If none, a new axis instance
+        will be created.
+    counts: array_like, optional
+        A list of the number of samples in each plotting location, for use
+        with a barchart or boxplt
+    p_value : float, optional
+        Default is None. When supplied, the signfigance value will be displayed
+        on the plot in the upper right hand corner by default.
+    show_frame: bool, optional
+        When true, the frame around the axis is displayed. When false, only the
+        lower and left axes will be dispalyed.
+    show_xticks : bool, optional
+        Default is True. Display a small black tick symbol at the top and
+        bottom of the graph at each major tick mark. This does not affect
+        whether text will be displayed at the same location.
+    show_yticks : bool, optional
+        Default is True. Display a small black tick symbol at the top and
+        bottom of the graph at each major tick mark. This does not affect
+        whether text will be displayed at the same location.
+    show_xgrid: bool, optional
+        Default is False. Adds vertical grid lines at each major x-tick.
+    show_ygrid: bool, optional
+        Default is True. Adds horizonal grid lines at each major y-tick.
+    title: str, optional
+        The title to be placed on the graph.
+    xlim : list, optional
+        The limits for the x-axis
+    ylim : list, optional
+        The limits for the y-axis.
+    xlabel : str
+        The label text describing the contents of the x-axis.
+    ylabel : str
+        The label text for the y-axis. Every time you leave off appropriate
+        labels and units, a science grad student grading lab reports cries
+        another bitter tear into their bottle of craft beer.
+    xticklabels : None, "text", list, optional
+        The labels to be displayed at the x-tick positions. If None, no
+        labels will be shown. If "text", the numeric value of each tick
+        will be displayed according to the mapping given in `xtick_format`.
+        Otherwise, the listed values will be used.
+        Text labels will be formatted using the rotation supplied by
+        `xfont_angle` and, the alignment from `xfont_align` and the font size
+        given by `xfont_size`. It is recommended that rotated labels are
+        right aligned.
+    yticklabels : None, "text", list, optional
+        The labels to be displayed at the y-tick positions. If None, no
+        labels will be shown. If "text", the numeric value of each tick
+        will be displayed according to the mapping given in `ytick_format`.
+        Otherwise, the listed values will be used.
+        Text labels will be formatted using the rotation supplied by
+        `yfont_angle` and, the alignment from `yfont_align` and the font size
+        given by `yfont_size`. It is recommended that rotated labels are
+        right aligned.
+    n_xs : array_like, optional
+        The position for the count values. If none is supplied, a connt will
+        be plotted at each x tick position.
+    n_y : float, optional
+        The y-position for the count values. If none is supplied, counts will
+        be displayed just above the lower axis.
+    n_size : int, optional
+        Default is 12. The font size for the counts text in points.
+    p_x : float, optional
+        The x position of the critical value text. Default is to place the
+        text in the upper-right hand corner.
+    p_y : float, optional
+        The y position of the critical value text. By default, the text will
+        be placed 90% of the way up the plot.
+    p_size : int, optional
+        Default is 12. The font size for the critical value text in points.
+    title_size: int, optional
+        Default is 18. The font size for the title text.
+    xtick_size : int, optional
+        Default is 12. The font size for the x-tick labels.
+    xlabel_size : int, optional
+        Default is 15. The fontsize for the x-axis label.
+    ytick_size : int, optional
+        Default is 12. The font size for the y-tick labels.
+    ylabel_size : int, optional
+        Default is 15. The fontsize for the y-axis label.
+    xfont_angle : float
+        The angle in degrees for the x-tick label text.
+    xfont_align : {'left', 'right', 'center'}
+        The horizonal alignment of the x-tick label text. For rotated text,
+        an alignment or 'right' is recommended.
+    yfont_angle : float
+        The angle in degrees for the x-tick label text.
+    yfont_align : {'left', 'right', 'center'}
+        The horizonal alignment of the x-tick label text. For rotated text,
+        an alignment or 'right' is recommended.
+    xtick_format : class, optional
+        Default is str. The format for xtick label text if using the
+        default tick values as the tick labels.
+    ytick_format : class, optional
+        Default is str. The format for xtick label text if using the
+        default tick values as the tick labels.
+    """
+    kwds = {'counts': None,
+            'n_xs': None,
+            'n_y': None,
+            'n_size': 11,
+            ''
+            'p_value': None,
+            'p_x': None,
+            'p_y': None,
+            'p_size': 12,
+            'show_frame': True,
+            'show_xticks': True,
+            'show_yticks': True,
+            'show_xgrid': False,
+            'show_ygrid': False,
+            'title': '',
+            'title_size': 18,
+            'xlim': None,
+            'xlabel': '',
+            'xticks': None,
+            'xticklabels': None,
+            'xtick_format': '%s',
+            'xfont_align': 'center',
+            'xfont_angle': 0,
+            'xtick_size': 12,
+            'xlabel_size': 15,
+            'ylim': None,
+            'yticks': None,
+            'yticklabels': "text",
+            'ytick_format': '%s',
+            'ylabel': '',
+            'yfont_angle': 0,
+            'yfont_align': 'right',
+            'ylabel_size': 15,
+            'ytick_size': 12}
 
-#     cat : str
-#         the dataframe column header being plotted. Ideally, this should be
-#         continous data.
+    for key, val in kwargs.iteritems():
+        if key in kwds:
+            kwds[key] = val
+        else:
+            raise ValueError('%s is not an input for axis formatting.' % key)
 
-#     Returns
-#     -------
-#     fig : matplotlib figure
-#         the figure object displaying the graph
+    # Sets axis ticks
+    if kwds['xticks'] is not None:
+        ax.set_xticks(kwds['xticks'])
 
-#     features : dictionary
-#         a dictionary keyed to the axis, boxplot features, kruskal-wallis test
-#         statitics, numerical test objects, and p-value text.
+    if kwds['yticks'] is not None:
+        ax.set_yticks(kwds['yticks'])
 
-#     Other Parameters
-#     ----------------
-#     axis_dims : {tuple}
-#         the portion of the figure covered by the axis. The four element tuple
-#         provides the positions of the (Left, Bottom, Width, Height) for the
-#         axis.
+    # Checks the max and min values values
+    if kwds['xlim'] is not None and not len(kwds['xlim']) == 2:
+        raise ValueError('xlim must specify a xmin and xmax value.')
 
-#     fig_dims : {None, tuple}
-#         the size of the figure, in inches
+    if kwds['ylim'] is not None and not len(kwds['ylim']) == 2:
+        raise ValueError('xlim must specify a ymin and ymax value.')
 
-#     interval : {0.5, float}
-#         Spacing between each boxplot
+    # Sets axis limits
+    if kwds['xlim'] is not None:
+        ax.set_xlim(kwds['xlim'])
+    if kwds['ylim'] is not None:
+        ax.set_ylim(kwds['ylim'])
 
-#     notch : {True, False}
-#         Have the boxplot display the 95% confidence interval notch
+    # Formats the tick labels
+    if kwds['xticklabels'] is None:
+        xtls = ['']*len(ax.get_xticks())
+    elif (isinstance(kwds['xticklabels'], str) and
+          kwds['xticklabels'].lower() == 'text'):
+        xtls = [kwds['xtick_format'] % t for t in ax.get_xticks()]
+    elif not isinstance(kwds['xticklabels'], (list, tuple, np.ndarray)):
+        raise TypeError('xticklabels must be None, "text" or an iterable.')
+    elif not len(kwds['xticklabels']) == len(ax.get_xticks()):
+        raise ValueError('There must be a label for each xtick.')
+    else:
+        xtls = kwds['xticklabels']
 
-#     show_n : {True, False}
-#         display group sizes on the figure
+    ax.set_xticklabels(xtls,
+                       ha=kwds['xfont_align'],
+                       rotation=kwds['xfont_angle'],
+                       size=kwds['xtick_size'])
 
-#     n_xs : {None, list}
-#         the x-positions to display counts. None will place the counts at the
-#         x-ticks.
+    if kwds['yticklabels'] is None:
+        ytls = ['']*len(ax.get_yticks())
+    elif (isinstance(kwds['yticklabels'], str) and
+          kwds['yticklabels'].lower() == 'text'):
+        ytls = [kwds['ytick_format'] % t for t in ax.get_yticks()]
+    elif not isinstance(kwds['yticklabels'], (list, tuple, np.ndarray)):
+        raise TypeError('yticklabels must be None, "text" or an iterable.')
+    elif not len(kwds['yticklabels']) == len(ax.get_yticks()):
+        raise ValueError('There must be a label for each ytick.')
+    else:
+        ytls = kwds['yticklabels']
 
-#     n_y : {None, float}
-#         the y-position to display the counts. None will place the counts at the
-#         bottom of the axis.
+    ax.set_yticklabels(ytls,
+                       ha=kwds['yfont_align'],
+                       rotation=kwds['yfont_angle'],
+                       size=kwds['ytick_size'])
 
-#     n_size : {12, int}
-#         the text size for the displayed counts
+    # Adds axis labels, if appropriate
+    ax.set_xlabel(kwds['xlabel'], size=kwds['xlabel_size'])
+    ax.set_ylabel(kwds['ylabel'], size=kwds['ylabel_size'])
 
-#     show_p : {True, False}
-#         display the p value on the axis
+    # Adds a grid, if appropriate
+    if kwds['show_xgrid']:
+        ax.xaxis.grid()
+    if kwds['show_ygrid']:
+        ax.yaxis.grid()
 
-#     p_x : {None, float}
-#         the x-position for the p-value string. None will place it to the far
-#         right
+    # Hides the axis tick marks, if desirable
+    if not kwds['show_xticks']:
+        for tic in ax.xaxis.get_major_ticks():
+            tic.tick1On = False
+            tic.tick2On = False
+    if not kwds['show_yticks']:
+        for tic in ax.yaxis.get_major_ticks():
+            tic.tick1On = False
+            tic.tick2On = False
 
-#     p_y : {None, float}
-#         the y-position for the p-value string. None will place the p text at
-#         the top of the figure.
+    # Removes the axis frame, if desired.
+    if not kwds['show_frame']:
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
 
-#     p-size : {12, int}
-#         the font size for the displayed p-value
+    # Adds a title, if appropriate
+    ax.set_title(kwds['title'], size=kwds['title_size'])
 
-#     title : {'', str}
-#         title for the figure
+    # Adds group-size text
+    if kwds['counts'] is not None:
+        # Gets the positions for the count labels
+        ylim = ax.get_ylim()
+        if kwds['n_xs'] is None:
+            kwds['n_xs'] = ax.get_xticks()
+        if kwds['n_y'] is None:
+            kwds['n_y'] = ylim[0]+(ylim[1]-ylim[0])*0.03
 
-#     title_size : {15, int}
-#         the font size for the displayed title
+        # Checks there is a position for each count
+        if not len(kwds['counts']) == len(kwds['n_xs']):
+            raise ValueError('There must be a position for each count '
+                             'being displayed.')
+        elif not len(kwds['n_xs']) == len(ax.get_xticks()):
+            raise ValueError('There must be a count position for each xtick.')
 
-#     xtick_size : {12, int}
-#         the text size for xtick labels
+        # Adds the count labels
+        for idx, count in enumerate(kwds['counts']):
+            ax.text(kwds['n_xs'][idx],
+                    kwds['n_y'],
+                    '(%i)' % count,
+                    horizontalalignment='center',
+                    size=kwds['n_size'])
 
-#     xfont_align : {'left', 'center', 'right'}
-#         the alignment for the xtick labels. Right alignment is recommend with
-#         rotated text
+    # Adds the p-value, if desired
+    if kwds['p_value'] is not None:
+        p = kwds['p_value']
+        # Auto-calculates the position, if necessary
+        if kwds['p_x'] is None:
+            x = ax.get_xlim()[1] - (ax.get_xlim()[1] - ax.get_xlim()[0])/100
+        else:
+            x = kwds['p_x']
+        if kwds['p_y'] is None:
+            y = ax.get_ylim()[1] - (ax.get_ylim()[1] - ax.get_ylim()[0])*0.1
+        else:
+            y = kwds['p_y']
 
-#     xfont_angle : {0, int}
-#         the angle for xtick labels.
-
-#     xlabel : {'', str}
-#         x-axis label
-
-#     xlabel_size : {15, int}
-#         the text size for the xlabel
-
-#     show_xgrid : {False, True}
-#         display vertical grid lines on the axis
-
-#     ylims : {list, tuple, array}
-#         Upper and lower limits for the y-axis
-
-#     ytick_size : {12, int}
-#         the text size for ytick labels
-
-#     ylabel : {'', str}
-#         y-axis label
-
-#     ylabel_size : {15, int}
-#         the font size for the y axis label
-
-#     show_ygrid : {True, False}
-#         display horizontal grid lines on the axis
-
-#     Also See
-#     --------
-#     boxplot : maplotlib.pyplot.boxplot
-
-#     kruskal-wallis : scipy.stats.kruskal
-#     """
-
-#     # Handles keyword arguemnts
-#     keywords = {'fig_dims': None,
-#                 'axis_dims': (0.1, 0.1, 0.8, 0.8),
-#                 'notch': True,
-#                 'interval': 0.5,
-#                 'show_p': True,
-#                 'show_n': True,
-#                 'title': '',
-#                 'tick_names': None,
-#                 'xlabel': '',
-#                 'ylabel': '',
-#                 'ylims': None,
-#                 'p_size': 12,
-#                 'p_x': None,
-#                 'p_y': None,
-#                 'n_xs': None,
-#                 'n_y': None,
-#                 'n_size': 12,
-#                 'title_size': 15,
-#                 'xtick_size': 12,
-#                 'xlabel_size': 15,
-#                 'xfont_align': 'center',
-#                 'xfont_angle': 0,
-#                 'ytick_size': 12,
-#                 'ylabel_size': 15,
-#                 'show_xgrid': False,
-#                 'show_ygrid': True}
-
-#     for key, val in kwargs.iteritems():
-#         if key in keywords:
-#             keywords[key] = val
-#         else:
-#             raise ValueError('%s is not an input for plot_with_dist.' % key)
-
-#     # Prealocates a dictionary of plotting features
-#     features = {}
-
-#     # Calculates plotting features
-#     if order is None:
-#         order = grouped.groups.keys()
-
-#     num_cats = len(order)
-#     xlim = [-keywords['interval']/2,
-#             keywords['interval']*(num_cats-1)+keywords['interval']/2]
-
-#     # Creates the figure
-#     fig = plt.figure()
-#     if keywords['fig_dims'] is not None:
-#         fig.set_size_inches(keywords['fig_dims'])
-#     ax = fig.add_axes(keywords['axis_dims'])
-
-#     # Sets up plotting constants
-#     ticks = arange(0, keywords['interval']*num_cats, keywords['interval'])
-#     names = []
-#     values = []
-#     counts = []
-
-#     # Appends the information to the features
-#     features['fig'] = fig
-#     features['axis'] = ax
-
-#     for idx, group in enumerate(order):
-#         tick = [ticks[idx]]
-#         value = grouped.get_group(group)[cat].values
-#         values.append(value)
-#         counts.append(len(value))
-#         bp = ax.boxplot(value,
-#                         positions=tick,
-#                         notch=keywords['notch'])
-
-#         # Handles group naming
-#         if keywords['tick_names'] is not None:
-#             names.append(keywords['tick_names'][group])
-#         else:
-#             names.append(group)
-
-#     # Adds the boxplot to the features dictionary
-#     features['boxplot'] = bp
-
-#     # Calculates the test statitics
-#     (features['h'], features['p']) = kruskal(*values)
-
-#     # Sets up the axis properties
-#     ax.set_xlim(xlim)
-#     if keywords['ylims'] is not None:
-#         ax.set_ylim(keywords['ylims'])
-#     ax.set_xticks(ticks)
-#     ax.set_xticklabels(names,
-#                        rotation=keywords['xfont_angle'],
-#                        horizontalalignment=keywords['xfont_align'],
-#                        size=keywords['xtick_size'])
-#     ax.set_yticklabels(ax.get_yticks(), size=keywords['ytick_size'])
-#     ax.set_xlabel(keywords['xlabel'], size=keywords['xlabel_size'])
-#     ax.set_ylabel(keywords['ylabel'], size=keywords['ylabel_size'])
-
-#     # Adds grid, if appropriate
-#     if keywords['show_xgrid']:
-#         ax.xaxis.grid()
-#     if keywords['show_ygrid']:
-#         ax.yaxis.grid()
-
-#     # Adds the title, if appropriate
-#     ax.set_title(keywords['title'], size=keywords['title_size'])
-
-#     text = []
-#     # Adds the group counts if desired
-#     if keywords['show_n']:
-#         ylim = ax.get_ylim()
-#         if keywords['n_xs'] is None:
-#             keywords['n_xs'] = ticks
-#         if keywords['n_y'] is None:
-#             keywords['n_y'] = ylim[0]+(ylim[1]-ylim[0])*0.025
-
-#         for idx, count in enumerate(counts):
-#             text.append(ax.text(x=keywords['n_xs'][idx],
-#                                 y=keywords['n_y'],
-#                                 s='(%i)' % count,
-#                                 horizontalalignment='center',
-#                                 size=keywords['n_size']))
-
-#     # Adds a p-value to the plot if desired
-#     if keywords['show_p']:
-#         # Gets the positions if necessary
-#         if keywords['p_x'] is None:
-#             xticks = ax.get_xticks()
-#             x = ax.get_xlim()[1] - (xticks[-1] - xticks[-2])/20
-#         else:
-#             x = keywords['p_x']
-
-#         if keywords['p_y'] is None:
-#             yticks = ax.get_yticks()
-#             y = yticks[-2]+(yticks[-1]-yticks[-2])/2
-#         else:
-#             y = keywords['p_y']
-
-#         # Adds the text
-#         if features['p'] >= 0.005:
-#             p_text = ax.text(s='p = %1.2f' % features['p'],
-#                              x=x, y=y,
-#                              size=keywords['p_size'],
-#                              horizontalalignment='right')
-#         else:
-#             p_text = ax.text(s='p = %1.1e' % features['p'],
-#                              x=x, y=y,
-#                              size=keywords['p_size'],
-#                              horizontalalignment='right')
-#         features['p_text'] = p_text
-
-#     fig = plt.gcf()
-
-#     return fig, features
+        # Adds the text
+        if p >= 0.005:
+            p_str = 'p = %1.2f' % p
+        else:
+            p_str = 'p = %1.1e' % p
+        ax.text(x, y, p_str,
+                size=kwds['p_size'],
+                horizontalalignment='right')
