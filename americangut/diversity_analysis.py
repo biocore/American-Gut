@@ -81,7 +81,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
 
 
 def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
-    show_counts=True, **kwargs):
+            show_counts=True, **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -195,11 +195,8 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
 
 
 def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
-    **boxplot_props):
+                          **boxplot_props):
     """Creates a more attractive poxplot than pandas
-
-    Mostly, this gives me a notched boxplot, and I really like the notches,
-    since they help create a frame of refernce. 
 
     Parameters
     ----------
@@ -336,7 +333,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
 
 
 def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
-    method='bonferroni'):
+                              method='bonferroni'):
     """Performs multiple hypothesis correction on post hoc test matrices"""
     # Gets the positon matrix
     num_rows = len(order)
@@ -372,8 +369,8 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
-    **kwargs):
+             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
+             **kwargs):
     """Renders a barchart
 
     Parameters
@@ -507,7 +504,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
-    interval=None):
+                        interval=None):
     """Adds p_value bars
 
     The assumes that comparison bars are being introduced for a
@@ -663,11 +660,11 @@ def get_distance_vectors(dm, df, group, order=None):
 
 
 def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
-    num_iter=999, p_crit=0.01, p_table=None,
-    p_tab_col='Parametric p-value (Bonferroni-corrected)',
-    tails="two", ax=None, interval=0.1, width=0.1,
-    show_seperation=True, colormap=None, match_colors=True,
-    elinewidth=2, ecapwidth=2, show_p=False, **kwargs):
+                        num_iter=999, p_crit=0.01, p_table=None,
+                        p_tab_col='Parametric p-value (Bonferroni-corrected)',
+                        tails="two", ax=None, interval=0.1, width=0.1,
+                        show_seperation=True, colormap=None, match_colors=True,
+                        elinewidth=2, ecapwidth=2, show_p=False, **kwargs):
     """
     Parameters
     ----------
@@ -798,32 +795,23 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
             elif tails == 'right' and dist_bar[idx] > dist_bar[0]:
                 p_values = np.hstack((p_values, np.array([1])))
             elif '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
-                p_values = np.hstack((p_values,
-                                      sub_p.loc[sub_p['Group 2'] ==
-                                                '%s vs. %s'
-                                                % (ref_group, group),
-                                                p_tab_col]))
+                ref = 'Group 2'
+                comparison = (ref_group, group)
             elif '%s vs. %s' % (ref_group, group) in sub_p['Group 1'].values:
-                p_values = np.hstack((p_values,
-                                      sub_p.loc[sub_p['Group 1'] ==
-                                                '%s vs. %s'
-                                                % (ref_group, group),
-                                                p_tab_col]))
+                ref = 'Group 1'
+                comparison = (ref_group, group)
             elif '%s vs. %s' % (group, ref_group) in sub_p['Group 2'].values:
-                p_values = np.hstack((p_values,
-                                      sub_p.loc[sub_p['Group 2'] ==
-                                                '%s vs. %s'
-                                                % (group, ref_group),
-                                                p_tab_col]))
+                ref = 'Group 2'
+                comparison = (group, ref_group)
             elif '%s vs. %s' % (group, ref_group) in sub_p['Group 1'].values:
-                p_values = np.hstack((p_values,
-                                      sub_p.loc[sub_p['Group 1'] ==
-                                                '%s vs. %s'
-                                                % (group, ref_group),
-                                                p_tab_col]))
+                ref = 'Group 1'
+                comparison = (group, ref_group)
             else:
                 raise ValueError('%s vs. %s is not a defined group'
                                  % (ref_group, group))
+            p_values = np.hstack((p_values,
+                                  sub_p.loc[sub_p[ref] == '%s vs. %s'
+                                            % comparison, p_tab_col]))
 
     dist_bar = np.array(dist_bar)
     dist_std = np.array(dist_std)
