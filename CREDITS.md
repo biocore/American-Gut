@@ -90,7 +90,7 @@ American Gut Collaborators
 * Susan Holmes, Professor, Department of Statistics, Stanford University
 * Phil Hugenholtz, Director, Australian Center for Ecogenomics, University of Queensland
 * Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health
-* Janet Jansson, Professor and Senior Staff Scientist, Department of Ecology, Earth Sciences Division, Lawrence Berkeley National Laboratory
+* Janet Jansson, Manager, Fundamental & Computational Sciences Directorate, Pacific Northwest National Laboratory
 * Purna Kashyap, Associate Director - Microbiome Program, Center for Individualized Medicine, Senior Associate Consultant - Department of Gastroenterology and Hepatology, Assistant Professor ­ Department of Medicine, Mayo Clinic
 * Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry & Biochemistry and Department of Computer Science, University of Colorado at Boulder
 * Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota
@@ -105,6 +105,7 @@ American Gut Collaborators
 * Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine
 * Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium
 * Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine
+* Tim Spector, Head, Department of Twin Research and Genetic Epidemiology, King's College London
 * Jan Suchodolski, Clinical Assistant Professor & Associate Director, Gastrointestinal Laboratory, Texas A&M University
 * Kelly Swanson, Associate Professor, Department of Animal Sciences, University of Illinois at Urbana-Champaign
 * Owen White, Director, Department of Bioinformatics, University of Maryland School of Medicine; PI, Human Microbiome Project Data Analysis and Coordination Center
