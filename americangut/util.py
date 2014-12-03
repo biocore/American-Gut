@@ -112,6 +112,9 @@ def fetch_study_details(accession):
 
     for line in res.readlines()[1:]:
         if 'ERA371447' in line:
+            # Corrupt sequence files were uploaded to EBI for one of the AG
+            # rounds. Ignoring entries associated with this accession works
+            # around the corruption
             continue
 
         parts = line.strip().split('\t')
@@ -119,8 +122,6 @@ def fetch_study_details(accession):
             continue
         else:
             yield tuple(parts)
-
-    #return [tuple(l.strip().split('\t')) for l in res.readlines()[1:]]
 
 def fetch_url(url):
     """Return an open file handle"""
@@ -235,7 +236,7 @@ def count_unique_participants(metadata_fp, criteria=None):
 
     header = {k: i for i, k in enumerate(
               metadata_fp.next().strip().split('\t'))}
-    
+
     count = set()
     for line in metadata_fp:
         line = line.strip().split('\t')
@@ -245,13 +246,13 @@ def count_unique_participants(metadata_fp, criteria=None):
                 keep = False
         if keep:
             count.add(line[header['HOST_SUBJECT_ID']])
-    
+
     return len(count)
 
 
 def count_samples(metadata_fp, criteria=None):
     """Count the number of samples
-    
+
     criteria : dict
         Header keys and values to restrict by
     """
@@ -260,7 +261,7 @@ def count_samples(metadata_fp, criteria=None):
 
     header = {k: i for i, k in enumerate(
               metadata_fp.next().strip().split('\t'))}
-    
+
     count = 0
     for line in metadata_fp:
         line = line.strip().split('\t')
