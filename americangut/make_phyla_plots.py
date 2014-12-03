@@ -188,11 +188,11 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
 
     # Normalizes the data by the number of observations so relative frequencies
     # are used.
-    biom_table_norm = biom_table.norm(inplace=False) #biom_table.normObservationBySample()
+    biom_table_norm = biom_table.norm(inplace=False)
 
     # Collapses the OTUs into category summaries using the correct levels
     bin_fun = lambda y, x: x[metadata_category][:level]
-    for (bin, table) in biom_table_norm.partition(bin_fun, axis='observation'): #binObservationsByMetadata(bin_fun):
+    for (bin, table) in biom_table_norm.partition(bin_fun, axis='observation'):
         # Pulls out the sample data for the group
         group_value = array(table.sum('sample'))
         group_binary = group_value > 0
@@ -292,7 +292,7 @@ def summarize_common_categories(biom_table, level, common_categories,
     other_name = [tuple(other_name)]
 
     # Normalizes the biom table
-    biom_norm = biom_table.norm(inplace=False) #normObservationBySample()
+    biom_norm = biom_table.norm(inplace=False)
 
     # Prealocates numpy objects (because that makes life fun!). tax_other is
     # set up as a row array because this is ultimately summed
@@ -300,7 +300,7 @@ def summarize_common_categories(biom_table, level, common_categories,
 
     # Collapses the OTU table using the category at the correct level
     bin_fun = lambda y, x: x[metadata_category][:level]
-    for (bin_, table) in biom_norm.partition(bin_fun, axis='observation'):#.binObservationsByMetadata(bin_fun):
+    for (bin_, table) in biom_norm.partition(bin_fun, axis='observation'):
         new_bin = []
         for item in bin_:
             new_bin.append(item.strip())
