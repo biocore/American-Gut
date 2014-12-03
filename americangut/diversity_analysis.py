@@ -81,7 +81,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
 
 
 def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
-            show_counts=True, **kwargs):
+    show_counts=True, **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -118,9 +118,6 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
     -------
     ax : axes
         A matplotlib axes containing the plotted data
-    feats : dict
-        A dictionary with features of the plot, including the boxplot handles
-        and text objects.
 
     Other Parameters
     ----------------
@@ -195,7 +192,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
 
 
 def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
-                          **boxplot_props):
+    **boxplot_props):
     """Creates a more attractive poxplot than pandas
 
     Parameters
@@ -239,9 +236,7 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     -------
     ax : axes
         A matplotlib axes containing the plotted data
-    feats : dict
-        A dictionary with features of the plot, including the boxplot handles
-        and text objects.
+
     """
 
     grouped = meta.groupby(group)
@@ -253,17 +248,21 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     # Gets the data vectors
     vecs = [grouped.get_group(g)[cat].values for g in order]
 
-    # Checks the group names
+    # Formats the axis, if not already done
     if 'xticklabels' not in boxplot_props:
         boxplot_props['xticklabels'] = order
+    if 'show_xticks' not in boxplot_props:
+        boxplot_props['show_xticks'] = False
+    if 'show_ygrid' not in boxplot_props:
+        boxplot_props['show_ygrid'] = True
 
     # Calculates the p value
     h, p = kruskal(*vecs)
 
     # Sets the boxplot properties
-    ax, feats = boxplot(vecs=vecs, ax=ax, p_value=p, **boxplot_props)
+    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **boxplot_props)
 
-    return ax, feats
+    return ax
 
 
 def post_hoc_pandas(meta, group, cat, order=None, correct=None):
@@ -287,6 +286,10 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
     Returns
     -------
     post_hoc : dataframe
+        `post_hoc` summarizes the results of the post-hoc test. It includes
+        statitics about each distribution, as well as the comparison matrix
+        of p-values.
+
     """
 
     # Groups the data
@@ -333,7 +336,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
 
 
 def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
-                              method='bonferroni'):
+    method='bonferroni'):
     """Performs multiple hypothesis correction on post hoc test matrices"""
     # Gets the positon matrix
     num_rows = len(order)
@@ -369,8 +372,8 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
-             **kwargs):
+    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
+    **kwargs):
     """Renders a barchart
 
     Parameters
@@ -476,7 +479,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
     xleft = np.arange(0, len(height)) * interval + (interval - width)/2
     xlims = [0, len(height)*interval]
 
-    if kwargs['xlims'] is not None:
+    if 'xlim' not in kwargs or kwargs['xlim'] is None:
         kwargs['xlim'] = xlims
 
     # Plots the errorbars
@@ -504,7 +507,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
-                        interval=None):
+    interval=None, lowest=None, factor=5):
     """Adds p_value bars
 
     The assumes that comparison bars are being introduced for a
@@ -527,6 +530,13 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         The y-distance between each the comparison line.
     interval : float
         The space between the bars
+    lowest : float, optional
+        If mutliple sets of comparison bars are being added, this allows
+        the user to set the position of the lowest bar in the group
+    factor : unsigned int, optional
+        The ones-place value to which values will be rounded. For example,
+        for a `factor` of 5, a value of 0.12 will be rounded to 0.15 and a
+        value of 2.7 will be rounded to 3.0.
 
     Returns
     -------
@@ -534,7 +544,6 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         A list of the lines and text objects which have been plotted
 
     """
-
     # Checks the shapes of the inputs
     if not centers.shape == tops.shape:
         raise ValueError('centers and tops must be the same length')
@@ -542,22 +551,22 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         raise ValueError('there must be a p-value for each center')
 
     # Deterines the bar locations
-    max_hi = tops.max()
-    if max_hi < 1:
-        fudge = np.power(10, -np.floor(np.log(max_hi)))
+    if lowest is None:
+        lowest, fudge = _get_bar_height(tops, factor)
     else:
-        fudge = np.power(10, -np.ceil(np.log(max_hi)))
-    first = np.ceil(max_hi * fudge)/fudge
+        __, fudge = _get_bar_height(tops, factor)
 
     correct = np.power(10, -np.log10(fudge))
+
     # Sets the spacing
     if space is None:
-        space = correct/10.
+        space = correct/15.
     if interval is None:
         interval = correct/3.
 
-    # Sets the tops of the bars
-    bar_levels = np.arange(0., len(p_values))*interval + first
+    # Sets the tops of hte bars
+    bar_levels = np.arange(0., len(p_values))*interval + lowest
+
     # Identifies the center positions for the p text
     p_cents = [(centers[1] - centers[0])/2. + centers[0]]
     if len(centers) > 2:
@@ -595,6 +604,51 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
             lines.append(ln)
 
     return lines
+
+
+def _get_bar_height(tops, factor=5):
+    """Calculates the lowest bar height"""
+    max_hi = tops.max()
+    # Gets the correct order of magnitdue
+    if max_hi < 1:
+        fudge = np.power(10, -np.floor(np.log(max_hi)))
+    else:
+        fudge = np.power(10, -np.ceil(np.log(max_hi)))
+    # Gets the correct rounding of the factor
+    if int(max_hi*fudge) < 5:
+        lowest = np.ceil(max_hi*fudge/factor)/(fudge)*factor
+    else:
+        lowest = np.ceil(max_hi*fudge*10/factor)/(fudge*10)*factor
+
+    return lowest, fudge
+
+
+def _get_p_value(sub_p, ref_group, group, p_tab_col):
+    """ """
+    if '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
+        p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
+                            % (ref_group, group), p_tab_col].values[0]
+    elif '%s vs. %s' % (ref_group, group) in sub_p['Group 1'].values:
+        p_value = sub_p.loc[sub_p['Group 1'] == '%s vs. %s'
+                            % (ref_group, group), p_tab_col].values[0]
+    elif '%s vs. %s' % (group, ref_group) in sub_p['Group 2'].values:
+        p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
+                            % (group, ref_group), p_tab_col].values[0]
+    elif '%s vs. %s' % (group, ref_group) in sub_p['Group 1'].values:
+        p_value = sub_p.loc[sub_p['Group 1'] == '%s vs. %s'
+                            % (group, ref_group), p_tab_col].values[0]
+    else:
+        raise ValueError('%s vs. %s is not a defined group'
+                         % (ref_group, group))
+
+    return p_value
+
+
+def _correct_p_value(tail, p_value, ref_val, current_val):
+    if tail and ref_val > current_val:
+        return 1
+    else:
+        return p_value
 
 
 def get_distance_vectors(dm, df, group, order=None):
@@ -662,10 +716,13 @@ def get_distance_vectors(dm, df, group, order=None):
 def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
                         num_iter=999, p_crit=0.01, p_table=None,
                         p_tab_col='Parametric p-value (Bonferroni-corrected)',
-                        tails="two", ax=None, interval=0.1, width=0.1,
+                        ref_less=True, ax=None, interval=0.1, width=0.1,
                         show_seperation=True, colormap=None, match_colors=True,
-                        elinewidth=2, ecapwidth=2, show_p=False, **kwargs):
-    """
+                        elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
+                        sep_size=0.035, adj_ax_size=True, **kwargs):
+    """Creates a barchart of the beta diversity distances
+
+
     Parameters
     ----------
     dm : skbio DistanceMatrix
@@ -694,12 +751,11 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     p_tab_col : str
         The column containing the p value to be used. Default is
         'Parametric p-value (Bonferroni-corrected)'.
-    tails : {'two', 'left', 'right'}
-        Describes the way p values should be calculated with reguard to the
-        critical value. Critical values are calculated as two-tailed, but
-        will be converted to one tailed, so that if `tail` is "left",
-        the mean for the ref_group must be smaller than the mean for the
-        group being compared.
+    ref_less : bool, optional
+        Indicates the reference group should be the smallest bar among the
+        others, and p_values are caluclated accordingly. That is, even if a
+        difference is signifigant, if the reference group is greater than the
+        group being examined, the returned p-value will be 1.
     ax : matplotlib axis, optional
         The axis where data should be plotted. If none, a new axis instance
         will be created.
@@ -721,16 +777,35 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     ecapwidth: int, optional
         The width of the line on top of the errorbar
     show_p: bool, optional
+        When True, displays the overall p value on the plot
+    lowest : float, optional
+        The position for the lowest comparison bar, if showing comparison bars
+        on the plot. If None, this will be calculated.
+    sep_size : float, optional
+        When `show_seperation` is true, this is used to set the size of the
+        seperation lines.
+    adj_ax_size : bool, optional
+        To maintain a consistant size among bars from different groups,
+        `adj_ax_size` will allow the function to automatically resize the
+        axes to account for a constant bar width.
+    show_xgrid: bool, optional
+        Default is False. Adds vertical lines at each major x-tick.
+    show_ygrid: bool, optional
+        Default is True. Adds horizonal lines at each major y-tick.
+    title: str, optional
+        The title to be placed on the graph.
+    ylims : list
+        The limits for the y-axis.
+    ylabel : str
+        The label text for the y-axis. Every time you leave off appropriate
+        labels and units, a science grad student grading lab reports cries
+        another bitter tear into their bottle of craft beer.
 
 
     Returns
     -------
     ax : axes
         A matplotlib axes containing the plotted data
-    feats : dict
-        A dictionary with features of the plot, including the boxplot handles
-        and text objects.
-
     """
 
     # Removes any undefined groups
@@ -756,12 +831,6 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     if show_p:
         kwargs['p_value'] = all_p
 
-    # Formats the axis if desired
-    if 'show_frame' not in kwargs:
-        kwargs['show_frame'] = False
-    if 'ytick_size' not in kwargs:
-        kwargs['ytick_size'] = 12
-
     # Gets the distance vectors
     w_groups, w_dist, b_groups, b_dist = \
         get_distance_vectors(dm, meta, group, order)
@@ -786,72 +855,90 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     for idx, group in enumerate(order):
         if group == ref_group:
             continue
+        # Gets the distance vector
         dist_bar[idx] = b_dist[b_groups.index({ref_group, group})].mean()
         dist_std[idx] = b_dist[b_groups.index({ref_group, group})].std()
-
-        if p_table is not None:
-            if tails == 'left' and dist_bar[idx] < dist_bar[0]:
-                p_values = np.hstack((p_values, np.array([1])))
-            elif tails == 'right' and dist_bar[idx] > dist_bar[0]:
-                p_values = np.hstack((p_values, np.array([1])))
-            elif '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
-                ref = 'Group 2'
-                comparison = (ref_group, group)
-            elif '%s vs. %s' % (ref_group, group) in sub_p['Group 1'].values:
-                ref = 'Group 1'
-                comparison = (ref_group, group)
-            elif '%s vs. %s' % (group, ref_group) in sub_p['Group 2'].values:
-                ref = 'Group 2'
-                comparison = (group, ref_group)
-            elif '%s vs. %s' % (group, ref_group) in sub_p['Group 1'].values:
-                ref = 'Group 1'
-                comparison = (group, ref_group)
-            else:
-                raise ValueError('%s vs. %s is not a defined group'
-                                 % (ref_group, group))
-            p_values = np.hstack((p_values,
-                                  sub_p.loc[sub_p[ref] == '%s vs. %s'
-                                            % comparison, p_tab_col]))
+        p_value = _get_p_value(sub_p, ref_group, group, p_tab_col)
+        p_values = np.hstack((p_values,
+                              _correct_p_value(ref_less, p_value,
+                                               dist_bar[ref_loc],
+                                               dist_bar[idx])))
 
     dist_bar = np.array(dist_bar)
     dist_std = np.array(dist_std)
 
-    ax, feats, xpos = barchart(dist_bar,
-                               ax=ax,
-                               errors=dist_std,
-                               interval=interval,
-                               width=width,
-                               xticklabels=order,
-                               **kwargs)
+    # Creates the boxplot
+    ax, xpos = barchart(dist_bar,
+                        ax=ax,
+                        errors=dist_std,
+                        interval=interval,
+                        width=width,
+                        xticklabels=order,
+                        colormap=colormap,
+                        match_colors=match_colors,
+                        elinewidth=elinewidth,
+                        ecapwidth=ecapwidth)
 
+    # Sets up axis formatting defaults, if not supplied
+    if 'show_frame' not in kwargs:
+        kwargs['show_frame'] = False
+    if 'ytick_size' not in kwargs:
+        kwargs['ytick_size'] = 12
+    if 'show_xticks' not in kwargs:
+        kwargs['show_xticks'] = False
+    if 'xticks' not in kwargs:
+        kwargs['xticks'] = xpos
+    if 'xticklabels' not in kwargs:
+        kwargs['xticklabels'] = order
+    if 'xlims' not in kwargs:
+        kwargs['xlim'] = [xpos[0] - interval*0.75, xpos[-1] + interval*0.75]
+
+    # Gets the critical lines to display on the figure
+    if lowest is None:
+        lowest, __ = _get_bar_height(dist_bar+dist_std)
     if p_values is not None and (ref_loc == 0 or len(dist_bar) == 2):
-        bars = add_comparison_bars(xpos, dist_bar+dist_std, p_values, ax)
+        bars = add_comparison_bars(xpos, dist_bar+dist_std, p_values, ax,
+                                   lowest=lowest)
     elif p_values is not None and ref_loc == (len(dist_bar) - 1):
-        print 'last'
         bars = add_comparison_bars(xpos[::-1], (dist_bar+dist_std)[::-1],
-                                   p_values[::-1], ax)
+                                   p_values[::-1], ax, lowest=lowest)
     elif p_values is not None:
         bars = add_comparison_bars(xpos[ref_loc:],
                                    dist_bar[ref_loc:] + dist_std[ref_loc:],
                                    p_values[(ref_loc):],
-                                   ax)
+                                   ax, lowest=lowest)
         bars2 = add_comparison_bars(xpos[:(ref_loc+1)][::-1],
                                     dist_bar[:(ref_loc+1)][::-1] +
                                     dist_std[:(ref_loc+1)][::-1],
                                     p_values[:(ref_loc)][::-1],
-                                    ax)
+                                    ax, lowest=lowest)
         bars.extend(bars2)
-    else:
-        bars = None
+
+    # Formats the axis, to make it pretty
+    _format_axis(ax, **kwargs)
 
     if show_seperation:
+        xlim = ax.get_xlim()
+        lower_y, upper_y = ax.get_ylim()
+        tick_dist = (upper_y - lower_y)/5.
         ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
-                np.array([0.4725, 0.4775]*50), 'k-', linewidth=7)
+                np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) + lower_y + tick_dist*0.4,
+                'k-', linewidth=7)
         ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
-                np.array([0.4725, 0.4775]*50), 'w-', linewidth=3)
+                np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) + lower_y + tick_dist*0.4,
+                'w-', linewidth=3)
+
+    # Checks the format, just to be sure... Formats the axis, to make it pretty
+    ax.set_xlim(xlim)
+
+    # Formats the yaxis to show seperation
+    if show_seperation:
         yticklabels = ax.get_yticks()
         yticklabels[0] = 0
         ax.set_yticklabels(yticklabels, size=kwargs['ytick_size'])
+
+    if adj_ax_size:
+        ax.set_position((0.125, 0.125, 0.075*len(xpos), 0.9))
 
     return ax
 
@@ -1381,6 +1468,10 @@ def _format_axis(ax, **kwargs):
     if not kwds['show_frame']:
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
+        for tic in ax.xaxis.get_major_ticks():
+            tic.tick2On = False
+        for tic in ax.yaxis.get_major_ticks():
+            tic.tick2On = False
 
     # Adds a title, if appropriate
     ax.set_title(kwds['title'], size=kwds['title_size'])

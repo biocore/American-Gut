@@ -16,6 +16,9 @@ from americangut.diversity_analysis import (pad_index,
                                             post_hoc_pandas,
                                             multiple_correct_post_hoc,
                                             get_distance_vectors,
+                                            _get_bar_height,
+                                            _get_p_value,
+                                            _correct_p_value,
                                             split_taxa,
                                             get_ratio_heatmap)
 
@@ -412,6 +415,17 @@ class DiversityAnalysisTest(TestCase):
                      'c__Gammaproteobacteria; o__Enterobacteriales; '
                      'f__Enterbacteriaceae; g__Escherichia; s__coli']
 
+        self.sub_p = DataFrame(np.array([['ref_group1 vs. ref_group1',
+                                          'ref_group1 vs. group1', 0.01],
+                                         ['ref_group2 vs. group2',
+                                          'ref_group2 vs. ref_group2', 0.02],
+                                         ['group3 vs. ref_group3',
+                                          'ref_group3 vs. ref_group3', 0.03],
+                                         ['ref_group4 vs. ref_group4',
+                                          'group4 vs. ref_group4', 0.04]]),
+                               columns=['Group 1', 'Group 2', 'p_value'])
+        self.sub_p.p_value = self.sub_p.p_value.astype(float)
+
     def test_pad_index_default(self):
         """Tests that a set of sample ids can be update sanely for defaults"""
         # Creates a data frame with raw ids and no sample column
@@ -484,6 +498,47 @@ class DiversityAnalysisTest(TestCase):
         order = np.arange(0, 3)
         test_df = multiple_correct_post_hoc(raw_ph, order, 'fdr_bh')
         assert_frame_equal(known_df, test_df)
+
+    def test_get_bar_height(self):
+        test_lowest, test_fudge = \
+            _get_bar_height(np.array([0.01, 0.02, 0.3, 0.52]))
+        npt.assert_almost_equal(test_lowest, 0.55, 3)
+        self.assertEqual(test_fudge, 10)
+
+    def test_get_bar_height_fudge(self):
+        test_lowest, test_fudge = \
+            _get_bar_height(np.array([0.01, 0.02, 0.3, 0.52]), factor=3)
+        self.assertEqual(test_lowest, 0.54)
+        self.assertEqual(test_fudge, 10)
+
+    def test_get_p_value(self):
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group1', 'group1',
+                                      'p_value'), 0.01)
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group2', 'group2',
+                                      'p_value'), 0.02)
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group3', 'group3',
+                                      'p_value'), 0.03)
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group4', 'group4',
+                                      'p_value'), 0.04)
+
+    def test_get_p_value_error(self):
+        with self.assertRaises(ValueError):
+            _get_p_value(self.sub_p, 'ref_group', 'group', 'p_value')
+
+    def test_correct_p_value_no_tail(self):
+        p_value = 0.05
+        tail = False
+        self.assertEqual(_correct_p_value(tail, p_value, 1, 1), p_value)
+
+    def test_correct_p_value_no_greater_ref(self):
+        p_value = 0.05
+        tail = True
+        self.assertEqual(_correct_p_value(tail, p_value, 2, 1), 1)
+
+    def test_correct_p_value_no_less_ref(self):
+        p_value = 0.05
+        tail = True
+        self.assertEqual(_correct_p_value(tail, p_value, 1, 2), p_value)
 
     def test_get_distance_vectors(self):
         known_within = ['twitter', 'reddit']
