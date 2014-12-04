@@ -81,7 +81,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
 
 
 def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
-    show_counts=True, **kwargs):
+            show_counts=True, **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -191,8 +191,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
     return ax
 
 
-def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
-    **boxplot_props):
+def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None, **kwargs):
     """Creates a more attractive poxplot than pandas
 
     Parameters
@@ -249,18 +248,18 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     vecs = [grouped.get_group(g)[cat].values for g in order]
 
     # Formats the axis, if not already done
-    if 'xticklabels' not in boxplot_props:
-        boxplot_props['xticklabels'] = order
-    if 'show_xticks' not in boxplot_props:
-        boxplot_props['show_xticks'] = False
-    if 'show_ygrid' not in boxplot_props:
-        boxplot_props['show_ygrid'] = True
+    if 'xticklabels' not in kwargs:
+        kwargs['xticklabels'] = order
+    if 'show_xticks' not in kwargs:
+        kwargs['show_xticks'] = False
+    if 'show_ygrid' not in kwargs:
+        kwargs['show_ygrid'] = True
 
     # Calculates the p value
     h, p = kruskal(*vecs)
 
     # Sets the boxplot properties
-    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **boxplot_props)
+    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **kwargs)
 
     return ax
 
@@ -336,7 +335,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
 
 
 def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
-    method='bonferroni'):
+                              method='bonferroni'):
     """Performs multiple hypothesis correction on post hoc test matrices"""
     # Gets the positon matrix
     num_rows = len(order)
@@ -372,8 +371,8 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
-    **kwargs):
+             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
+             **kwargs):
     """Renders a barchart
 
     Parameters
@@ -507,7 +506,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
-    interval=None, lowest=None, factor=5):
+                        interval=None, lowest=None, factor=5):
     """Adds p_value bars
 
     The assumes that comparison bars are being introduced for a
@@ -624,7 +623,7 @@ def _get_bar_height(tops, factor=5):
 
 
 def _get_p_value(sub_p, ref_group, group, p_tab_col):
-    """ """
+    """Retrives a p value from a `make_distance_boxplots` table"""
     if '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
         p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
                             % (ref_group, group), p_tab_col].values[0]
@@ -645,6 +644,7 @@ def _get_p_value(sub_p, ref_group, group, p_tab_col):
 
 
 def _correct_p_value(tail, p_value, ref_val, current_val):
+    """Corrects the p_value if the reference group must me smaller"""
     if tail and ref_val > current_val:
         return 1
     else:
@@ -1277,6 +1277,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
     ax2.set_xlabel('Ratio Data', size=15)
 
     return [ax1, ax2], [cbar1, cbar2]
+
 
 def _format_axis(ax, **kwargs):
     """Beautifies the axis
