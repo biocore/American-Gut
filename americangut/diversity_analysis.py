@@ -922,10 +922,12 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
         lower_y, upper_y = ax.get_ylim()
         tick_dist = (upper_y - lower_y)/5.
         ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
-                np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) + lower_y + tick_dist*0.4,
+                np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) +
+                lower_y + tick_dist*0.4,
                 'k-', linewidth=7)
         ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(xpos))/10),
-                np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) + lower_y + tick_dist*0.4,
+                np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) +
+                lower_y + tick_dist*0.4,
                 'w-', linewidth=3)
 
     # Checks the format, just to be sure... Formats the axis, to make it pretty
@@ -1118,6 +1120,10 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
         kwargs['xlim'] = [0, mat_shape[1]]
     if 'ylim' not in kwargs:
         kwargs['ylim'] = [mat_shape[0], 0]
+    if 'xticks' not in kwargs:
+        kwargs['xticks'] = np.arange(0, mat_shape[1]) + 0.5
+    if 'yticks' not in kwargs:
+        kwargs['yticks'] = np.arange(0, mat_shape[0]) + 0.5
 
     # Formats the axis
     _format_axis(ax, **kwargs)
@@ -1131,34 +1137,77 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     return ax, cbar
 
 
-def make_dual_heatmaps(gs, order=None, axes=None, **kwargs):
-    """Creates side by side abundance and log ratio heatmaps"""
+def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
+                       p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
+                       cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
+                       label='INDEX', sort_by_taxa=True, cbar_size=12,
+                       **kwargs):
+    """Creates side by side abundance and log ratio heatmaps
 
-    # Handles the keyword arguments
-    kwds = {'p_column': 'Bonferroni_P',
-            'p_crit': 0.05,
-            'mode': 'RAW',
-            'ref': None,
-            '_ref_loc': None,
-            'ratio_base': np.e,
-            'cmap1': 'Greens',
-            'cmap2': 'RdBu_r',
-            'clims1': None,
-            'clims2': [-2, 2],
-            'label': 'INDEX',
-            'sort_by_taxa': True,
-            'xfont_angle': 0,
-            'xfont_align': 'center',
-            'yfont_angle': 0,
-            'yfont_align': 'right',
-            'xfont_size': 9,
-            'yfont_size': 9,
-            'cbar_size': 11}
-    for key, value in kwargs.iteritems():
-        if key not in kwds:
-            raise ValueError('%s is not a supported keyword argument.' % key)
-        else:
-            kwds[key] = value
+    Parameters
+    ----------
+    gs : pandas DataFrame
+        The results of Qiime's `group_signifigance.py` read into pandas.
+    order : list, optional
+        The order in which columns from `gs` should be plotted in the heatmap.
+        Groups in order should contain the suffix, `'_mean'`, which is
+        standard in the group_signifigance output.
+    p_column : {'Bonferroni_P', 'FDR_P', 'P'}, optional
+        The column name from which signifigance values should be drawn. It is
+        recommended that 'Bonferroni_P' or 'FDR_P' be used.
+    p_crit : float, optional
+        The critical p value. Comparison p values must be less than this
+        for the comparisons to be displayed on the heatmap.
+    ref : str, optional
+        The name of the column which should serve as the refence for the ratio
+        heatmap. If none is supplied, the arethmatic mean will be used.
+    ratio_base : float, optional
+        The logarthemic base for the ratio heatmap. If `None`, then no
+        logarthem will be taken.
+    cmap1 : str, optional
+        A name of a matplotlib colormap instance, used for the display of the
+        raw data heatmap.
+    cmap2 : str, optional
+        A name of a matplotlib colormap instance, used for the display of the
+        ratio data heatmap.
+    clims1 : list, optional
+        The limits on the colormap for the raw heatmap
+    clims2 : list, optional
+        The limits on the colormap for the ratio data heatmap. If using a two
+        color, diversing colormap (i.e `RdBu`), it is suggested that these be
+        positive and negative values of the same magnitude (i.e. `[-2, 2]`).
+    label : str, optional
+        The name of the column to be used as the label. The string, `INDEX`
+        indicates that the OTU ID should be used, in conjunction with a
+        genus-level taxonomic description.
+    sort_by_taxa : bool, optional
+        Orders the groups using some taxonomic information, so OTUs are grouped
+        alphabetically by phylum, class, order, family, genus, and species.
+    cbar_size : int, optional
+        Font size for the colorbar text.
+    xfont_angle : float, optional
+        The angle in degrees for the x tick label text.
+    xfont_align : {'left', 'right', 'center'}, optional
+        The horizonal alignment of the x tick label text. For rotated text,
+        an alignment or 'right' is recommended.
+    yfont_angle : float, optional
+        The angle in degrees for the x tick label text.
+    yfont_align : {'left', 'right', 'center'}, optional
+        The horizonal alignment of the x tick label text. For rotated text,
+        an alignment or 'right' is recommended.
+    xfont_size : int, optional
+        Default is 12. The size of the x tick labels
+    yfont_size : int, optional
+        Default is 12. The size of the y tick labels
+
+    Returns
+    -------
+    ax1, ax2 : matplotlib axes
+        The matplotlib axis instances with the raw and ratio data, respectively
+    cbar1, cbar2 : matplotlib colorbars
+        The colobar instances for the raw and ratio data, respectively.
+
+    """
 
     # Creates axes if not specified
     if axes is None:
@@ -1171,15 +1220,17 @@ def make_dual_heatmaps(gs, order=None, axes=None, **kwargs):
     # Checks the order is sane
     if order is None:
         order = list(gs.columns[4:-1].values)
-    if kwds['ref'] is not None:
-        kwds['_ref_loc'] = order.index[kwds['ref']]
+    if ref is not None:
+        ref_loc = order.index[ref]
+    else:
+        ref_loc = ref
 
     # Sets up the group labels
     g_labels = [o.replace('_mean', '').replace('_', ' ')
                 for o in order]
 
     # Gets the signifigant data frame
-    crit = gs[kwds['p_column']] < kwds['p_crit']
+    crit = gs[p_column] < p_crit
     if not crit.any():
         raise ValueError('There are no signifigant taxa')
     sig = gs.loc[crit]
@@ -1189,62 +1240,43 @@ def make_dual_heatmaps(gs, order=None, axes=None, **kwargs):
     sig = sig.join(pd.DataFrame(taxa, columns=levels, index=sig.index))
 
     # Creates an index column
-    if kwds['label'] == 'INDEX':
+    if label == 'INDEX':
         sig['label'] = sig['genus'] + '(' + \
             sig['OTU'].apply(lambda x: str((x))) + ')'
     else:
-        sig['label'] = sig[kwds['label']]
+        sig['label'] = sig[label]
 
     # If approprate orders the tables taxonomically
-    if kwds['sort_by_taxa']:
+    if sort_by_taxa:
         sig = sig.sort(['phylum', 'p_class', 'p_order', 'family',
                         'genus', 'species'])
 
     # Gets the raw data values
     raw = sig[order].values
-    ratio = get_ratio_heatmap(sig[order].values, kwds['_ref_loc'],
-                              kwds['ratio_base'])
+    ratio = get_ratio_heatmap(sig[order].values, ref_loc, ratio_base)
     ratio[np.isinf(ratio)] = np.nan
 
     # Plots the data on a heatmap
     ax1, cbar1 = heatmap(data=raw,
                          ax=ax1,
+                         cmap=cmap1,
+                         clims=clims1,
+                         cbar_size=cbar_size,
                          xticklabels=g_labels,
                          yticklabels=sig['label'].values,
-                         cmap=kwds['cmap1'],
-                         clims=kwds['clims1'],
-                         xfont_angle=kwds['xfont_angle'],
-                         xfont_align=kwds['xfont_align'],
-                         yfont_angle=kwds['yfont_angle'],
-                         yfont_align=kwds['yfont_align'],
-                         xfont_size=kwds['xfont_size'],
-                         yfont_size=kwds['yfont_size'],
-                         cbar_size=kwds['cbar_size'])
+                         **kwargs)
     ax2, cbar2 = heatmap(data=ratio,
                          ax=ax2,
+                         cmap=cmap2,
+                         clims=clims2,
+                         cbar_size=cbar_size,
                          xticklabels=g_labels,
                          yticklabels=['']*len(sig['label'].values),
-                         cmap=kwds['cmap2'],
-                         clims=kwds['clims2'],
-                         xfont_angle=kwds['xfont_angle'],
-                         xfont_align=kwds['xfont_align'],
-                         yfont_angle=kwds['yfont_angle'],
-                         yfont_align=kwds['yfont_align'],
-                         xfont_size=kwds['xfont_size'],
-                         yfont_size=kwds['yfont_size'],
-                         cbar_size=kwds['cbar_size'])
+                         **kwargs)
     ax1.set_xlabel('Raw Data', size=15)
     ax2.set_xlabel('Ratio Data', size=15)
 
-    feats = {'raw_data': raw,
-             'ratio_data': ratio,
-             'row_labels': sig['label'].values,
-             'col_labels': g_labels,
-             'cbar1': cbar1,
-             'cbar2': cbar2}
-
-    return [ax1, ax2], feats
-
+    return [ax1, ax2], [cbar1, cbar2]
 
 def _format_axis(ax, **kwargs):
     """Beautifies the axis
