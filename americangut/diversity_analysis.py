@@ -4,19 +4,19 @@ from os.path import exists
 
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import skbio
 
-from matplotlib import rcParams
 from scipy.stats import kruskal
 from skbio.stats.power import _check_strs
 from statsmodels.sandbox.stats.multicomp import multipletests
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
-rcParams['font.family'] = 'sans-serif'
-rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
-rcParams['text.usetex'] = True
+mpl.rcParams['font.family'] = 'sans-serif'
+mpl.rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
+mpl.rcParams['text.usetex'] = True
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2014, The American Gut Project"
@@ -81,7 +81,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
 
 
 def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
-            show_counts=True, **kwargs):
+    show_counts=True, **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -191,7 +191,8 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
     return ax
 
 
-def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None, **kwargs):
+def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
+    **boxplot_props):
     """Creates a more attractive poxplot than pandas
 
     Parameters
@@ -248,18 +249,18 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None, **kwargs):
     vecs = [grouped.get_group(g)[cat].values for g in order]
 
     # Formats the axis, if not already done
-    if 'xticklabels' not in kwargs:
-        kwargs['xticklabels'] = order
-    if 'show_xticks' not in kwargs:
-        kwargs['show_xticks'] = False
-    if 'show_ygrid' not in kwargs:
-        kwargs['show_ygrid'] = True
+    if 'xticklabels' not in boxplot_props:
+        boxplot_props['xticklabels'] = order
+    if 'show_xticks' not in boxplot_props:
+        boxplot_props['show_xticks'] = False
+    if 'show_ygrid' not in boxplot_props:
+        boxplot_props['show_ygrid'] = True
 
     # Calculates the p value
     h, p = kruskal(*vecs)
 
     # Sets the boxplot properties
-    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **kwargs)
+    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **boxplot_props)
 
     return ax
 
@@ -335,7 +336,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
 
 
 def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
-                              method='bonferroni'):
+    method='bonferroni'):
     """Performs multiple hypothesis correction on post hoc test matrices"""
     # Gets the positon matrix
     num_rows = len(order)
@@ -371,8 +372,8 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
-             **kwargs):
+    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
+    **kwargs):
     """Renders a barchart
 
     Parameters
@@ -462,6 +463,8 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
     # Sets the colormap and egdecolor, if necessary
     if colormap is None:
         colormap = np.array([[0.5, 0.5, 0.5]]*len(height))
+    elif isinstance(colormap, str):
+        colormap = segment_colormap(colormap, len(height))
 
     if match_colors:
         edgecolors = colormap
@@ -506,7 +509,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
-                        interval=None, lowest=None, factor=5):
+    interval=None, lowest=None, factor=5):
     """Adds p_value bars
 
     The assumes that comparison bars are being introduced for a
@@ -605,6 +608,44 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     return lines
 
 
+def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
+    """Segments a matplotlib colormap into descrete colors
+
+    Parameters
+    ----------
+    cm_name : str
+        The name of the continous matplotlib colormap which will be segmented.
+    n_colors : int
+        The number of colors needed in the colormap
+    n_pad : int, optional
+        The number of total colors to have in the colormap. By default, this
+        will be one more than the number of colors provided.
+    start : int, optional
+        The number of colors to skip over before display starts. By default,
+        this is `n_pad` - `n_colors`.
+
+    Returns
+    -------
+    new_map : array
+        A segmented array containing the colormap
+
+    """
+
+    # Sets parameters if necessary
+    if n_pad is None:
+        n_pad = n_colors + 1
+    if start is None:
+        start = n_pad - n_colors
+
+    # Gets the colormap
+    cm = mpl.cm.get_cmap(cm_name)
+    # Sets up the new map
+    new_map = np.array([list(cm(1. * (i + start) / n_pad)) for i in
+                        xrange(n_colors)])
+
+    return new_map
+
+
 def _get_bar_height(tops, factor=5):
     """Calculates the lowest bar height"""
     max_hi = tops.max()
@@ -623,7 +664,7 @@ def _get_bar_height(tops, factor=5):
 
 
 def _get_p_value(sub_p, ref_group, group, p_tab_col):
-    """Retrives a p value from a `make_distance_boxplots` table"""
+    """ """
     if '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
         p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
                             % (ref_group, group), p_tab_col].values[0]
@@ -644,7 +685,6 @@ def _get_p_value(sub_p, ref_group, group, p_tab_col):
 
 
 def _correct_p_value(tail, p_value, ref_val, current_val):
-    """Corrects the p_value if the reference group must me smaller"""
     if tail and ref_val > current_val:
         return 1
     else:
@@ -714,12 +754,12 @@ def get_distance_vectors(dm, df, group, order=None):
 
 
 def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
-                        num_iter=999, p_crit=0.01, p_table=None,
-                        p_tab_col='Parametric p-value (Bonferroni-corrected)',
-                        ref_less=True, ax=None, interval=0.1, width=0.1,
-                        show_seperation=True, colormap=None, match_colors=True,
-                        elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
-                        sep_size=0.035, adj_ax_size=True, **kwargs):
+    num_iter=999, p_crit=0.01, p_table=None,
+    p_tab_col='Parametric p-value (Bonferroni-corrected)',
+    ref_less=True, ax=None, interval=0.1, width=0.1,
+    show_seperation=True, colormap=None, match_colors=True,
+    elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
+    sep_size=0.035, adj_ax_size=True, **kwargs):
     """Creates a barchart of the beta diversity distances
 
 
@@ -1141,7 +1181,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
                        p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
                        cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
                        label='INDEX', sort_by_taxa=True, cbar_size=12,
-                       **kwargs):
+                       consistant_size=True, width=11, height=8.5, **kwargs):
     """Creates side by side abundance and log ratio heatmaps
 
     Parameters
@@ -1241,7 +1281,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
 
     # Creates an index column
     if label == 'INDEX':
-        sig['label'] = sig['genus'] + '(' + \
+        sig['label'] = sig['genus'] + ' (' + \
             sig['OTU'].apply(lambda x: str((x))) + ')'
     else:
         sig['label'] = sig[label]
@@ -1275,6 +1315,52 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
                          **kwargs)
     ax1.set_xlabel('Raw Data', size=15)
     ax2.set_xlabel('Ratio Data', size=15)
+
+    if consistant_size:
+        # Checks lower padding needed for the figure. If text is not horizonal,
+        # an extra inch of padding is provided.
+        xangled = ('xfont_angle' in kwargs and
+                   ((isinstance(kwargs['xfont_angle'], int) and not
+                    kwargs['xfont_angle'] == 0) or kwargs['xfont_angle'] ==
+                    'vertical'))
+        if xangled:
+            bottom_pad = 2.0
+        else:
+            bottom_pad = 1.0
+        # The left side is padded with 2.5 inches
+        left_pad = 2.5
+        if len(order) > 6:
+            ax_width = 0.25*len(order)
+        else:
+            ax_width = 0.50*len(order)
+        cbar_pad = 0.1
+        cbar_width = 0.25
+        total_pad = 0.85 + ax_width + left_pad
+        ax_height = 0.12*sig.shape[0]
+
+        if ax_height < 2:
+            cbar_height = 2
+        else:
+            cbar_height = ax_height
+
+        if (ax_height + bottom_pad + 0.5) > height:
+            height = (ax_height + bottom_pad + 0.5)
+
+        a1p = (left_pad/width, bottom_pad/height,
+               ax_width/width, ax_height/height)
+        a2p = (total_pad/width, bottom_pad/height,
+               ax_width/width, ax_height/height)
+        c1p = ((left_pad + ax_width + cbar_pad)/width, bottom_pad/height,
+               cbar_width/width, cbar_height/height)
+        c2p = ((total_pad + ax_width + cbar_pad)/width, bottom_pad/height,
+               cbar_width/width, cbar_height/height)
+
+        fig = ax1.get_figure()
+        fig.set_size_inches((width, height))
+        ax1.set_position(a1p)
+        ax2.set_position(a2p)
+        cbar1.ax.set_position(c1p)
+        cbar2.ax.set_position(c2p)
 
     return [ax1, ax2], [cbar1, cbar2]
 
@@ -1542,7 +1628,7 @@ def _format_axis(ax, **kwargs):
         else:
             x = kwds['p_x']
         if kwds['p_y'] is None:
-            y = ax.get_ylim()[1] - (ax.get_ylim()[1] - ax.get_ylim()[0])*0.1
+            y = ax.get_ylim()[1] - (ax.get_ylim()[1] - ax.get_ylim()[0])*0.075
         else:
             y = kwds['p_y']
 

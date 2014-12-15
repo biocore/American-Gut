@@ -16,6 +16,7 @@ from americangut.diversity_analysis import (pad_index,
                                             post_hoc_pandas,
                                             multiple_correct_post_hoc,
                                             get_distance_vectors,
+                                            segment_colormap,
                                             _get_bar_height,
                                             _get_p_value,
                                             _correct_p_value,
@@ -37,7 +38,6 @@ TEST_DIR = dirname(realpath(__file__))
 class DiversityAnalysisTest(TestCase):
 
     def setUp(self):
-        """Initializes data for each test instance"""
         # Sets up lists for the data frame
         self.ids = ['000001181.5654', '000001096.8485', '000001348.2238',
                     '000001239.2471', '000001925.5603', '000001098.6354',
@@ -427,7 +427,6 @@ class DiversityAnalysisTest(TestCase):
         self.sub_p.p_value = self.sub_p.p_value.astype(float)
 
     def test_pad_index_default(self):
-        """Tests that a set of sample ids can be update sanely for defaults"""
         # Creates a data frame with raw ids and no sample column
         df = DataFrame({'#SampleID': self.raw_ids,
                         'WEBSITE': Series(self.website),
@@ -437,7 +436,6 @@ class DiversityAnalysisTest(TestCase):
         assert_index_equal(self.df.index, df.index)
 
     def test_pad_index_custom_index(self):
-        """Tests index column can be set with pad index"""
         # Creates a data frame with raw ids and no sample column
         df = DataFrame({'RawID': self.raw_ids,
                         'WEBSITE': Series(self.website),
@@ -447,7 +445,6 @@ class DiversityAnalysisTest(TestCase):
         assert_index_equal(self.df.index, df.index)
 
     def test_pad_index_number(self):
-        """Tests index column can be padded with """
         # Creates a data frame with raw ids and no sample column
         df = DataFrame({'#SampleID': self.raw_ids,
                         'WEBSITE': Series(self.website),
@@ -457,7 +454,6 @@ class DiversityAnalysisTest(TestCase):
         assert_index_equal(Index(self.raw_ids), df.index)
 
     def test_check_dir(self):
-        """Checks a directory is created if appropriate"""
         # Sets up a dummy directory that does not exist
         does_not_exist = pjoin(TEST_DIR, 'this_dir_does_not_exist')
         # Checks the directory does not currently exist
@@ -498,6 +494,15 @@ class DiversityAnalysisTest(TestCase):
         order = np.arange(0, 3)
         test_df = multiple_correct_post_hoc(raw_ph, order, 'fdr_bh')
         assert_frame_equal(known_df, test_df)
+
+    def test_segemented_colormap(self):
+        known_cmap = np.array([[0.88207613, 0.95386390, 0.69785469, 1.],
+                               [0.59215687, 0.84052289, 0.72418302, 1.],
+                               [0.25268744, 0.71144946, 0.76838141, 1.],
+                               [0.12026144, 0.50196080, 0.72156864, 1.],
+                               [0.14136102, 0.25623991, 0.60530568, 1.]])
+        test_cmap = segment_colormap('YlGnBu', 5)
+        npt.assert_array_equal(test_cmap, known_cmap)
 
     def test_get_bar_height(self):
         test_lowest, test_fudge = \
