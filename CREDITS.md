@@ -8,12 +8,14 @@ American Gut Credits
 ====================
 
 * Dr. Gail Ackermann
+* Dr. Nadim Ajami
 * Dr. Katie Amato
 * Dr. Amnon Amir
 * Donna Berg-Lyons
 * Evan Bolyen
 * Jeff DeReus
 * Justine Debelius
+* Dr. Chandni Desai
 * Dr. Rob Dunn
 * Dr. Merete Eggesbo
 * James Gaffney
@@ -23,6 +25,7 @@ American Gut Credits
 * Dr. Antonio Gonzalez
 * Julia Goodrich
 * Steve Green
+* Dr. Scott Handley
 * Kathy Holt
 * Greg Humphrey
 * Dr. Jim Huntley
