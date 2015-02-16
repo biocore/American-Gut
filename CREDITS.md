@@ -15,7 +15,7 @@ American Gut Credits
 * Evan Bolyen
 * Jeff DeReus
 * Justine Debelius
-* Dr. Chandni Desai
+* Chandni Desai
 * Dr. Rob Dunn
 * Dr. Merete Eggesbo
 * James Gaffney
