@@ -14,12 +14,12 @@ from statsmodels.sandbox.stats.multicomp import multipletests
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
-mpl.rcParams['font.family'] = 'sans-serif'
-mpl.rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
-mpl.rcParams['text.usetex'] = True
+# mpl.rcParams['font.family'] = 'sans-serif'
+# mpl.rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
+# mpl.rcParams['text.usetex'] = True
 
 __author__ = "Justine Debelius"
-__copyright__ = "Copyright 2014, The American Gut Project"
+__copyright__ = "Copyright 2015, The American Gut Project"
 __credits__ = ["Justine Debelius"]
 __license__ = "BSD"
 __version__ = "unversioned"
@@ -265,7 +265,8 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     return ax
 
 
-def post_hoc_pandas(meta, group, cat, order=None, correct=None):
+def post_hoc_pandas(meta, group, cat, order=None, correct=None,
+                    show_stats=True):
     """Preforms an post-hoc comparison between two groups
 
     Parameters
@@ -276,12 +277,15 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
         the metadata category being interograted
     cat : str
         the name of the column with the result
-    order : None, list
+    order : None, list, optional
         Default is None. The order of groups in the category.
-    correct : None, str
+    correct : None, str, optional
         Method for multiple hypothesis correction using
         `statsmodels.sandbox.stats.multicomp.multipletests`. Methods you're
         likely to use are `bonferroni` and `fdr_bh`.
+    show_stats : bool, optional
+        When `show_stats` is True, a summary of each group will be displayed
+        along with the p values. 
 
     Returns
     -------
@@ -300,10 +304,11 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
         order = grouped.groups.keys()
 
     # Prealocates an output frame
-    stats = pd.DataFrame({'Counts': grouped[cat].count(),
-                          'Mean':  grouped[cat].mean(),
-                          'Stdv': grouped[cat].std(),
-                          'Median': grouped[cat].median()})
+    if show_stats:
+        stats = pd.DataFrame({'Counts': grouped[cat].count(),
+                              'Mean':  grouped[cat].mean(),
+                              'Stdv': grouped[cat].std(),
+                              'Median': grouped[cat].median()})
 
     # Preforms ad-hoc comparisons
     comparison = {}
@@ -325,7 +330,10 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None):
 
     # Converts the data to a dataframe
     compare = pd.DataFrame(comparison)
-    post_hoc = stats.join(compare[order[:-1]])
+    if show_stats:
+        post_hoc = stats.join(compare[order[:-1]])
+    else:
+        post_hoc = compare[order[:-1]]
     post_hoc = post_hoc.reindex(order)
 
     # Performs the multiple hypothesis correction
@@ -664,7 +672,7 @@ def _get_bar_height(tops, factor=5):
 
 
 def _get_p_value(sub_p, ref_group, group, p_tab_col):
-    """ """
+    """Determines the comparison value within a post-hoc table"""
     if '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
         p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
                             % (ref_group, group), p_tab_col].values[0]
@@ -685,6 +693,7 @@ def _get_p_value(sub_p, ref_group, group, p_tab_col):
 
 
 def _correct_p_value(tail, p_value, ref_val, current_val):
+    """Determines if p-values should be tail corrected"""
     if tail and ref_val > current_val:
         return 1
     else:
@@ -759,9 +768,8 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     ref_less=True, ax=None, interval=0.1, width=0.1,
     show_seperation=True, colormap=None, match_colors=True,
     elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
-    sep_size=0.035, adj_ax_size=True, **kwargs):
+    sep_size=0.035, adj_ax_size=True, bar_width=0.075, **kwargs):
     """Creates a barchart of the beta diversity distances
-
 
     Parameters
     ----------
@@ -863,13 +871,9 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
     ref_loc = order.index(ref_group)
 
     # Checks for an overall signifigant differences
-    perma_res = skbio.stats.distance.permanova(dm, map_, group, num_iter)
-    all_p = perma_res['p-value']
-    if all_p > p_crit:
-        raise ValueError('There is not a signfigant difference at p < %s.'
-                         '\np = %1.2f' % (p_crit, all_p))
     if show_p:
-        kwargs['p_value'] = all_p
+        perma_res = skbio.stats.distance.permanova(dm, map_, group, num_iter)
+        kwargs['p_value'] = perma_res['p-value']
 
     # Gets the distance vectors
     w_groups, w_dist, b_groups, b_dist = \
@@ -930,7 +934,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
         kwargs['xticks'] = xpos
     if 'xticklabels' not in kwargs:
         kwargs['xticklabels'] = order
-    if 'xlims' not in kwargs:
+    if 'xlim' not in kwargs:
         kwargs['xlim'] = [xpos[0] - interval*0.75, xpos[-1] + interval*0.75]
 
     # Gets the critical lines to display on the figure
@@ -969,6 +973,8 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
                 np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) +
                 lower_y + tick_dist*0.4,
                 'w-', linewidth=3)
+    else:
+        xlim = ax.get_xlim()
 
     # Checks the format, just to be sure... Formats the axis, to make it pretty
     ax.set_xlim(xlim)
@@ -980,7 +986,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_group=None,
         ax.set_yticklabels(yticklabels, size=kwargs['ytick_size'])
 
     if adj_ax_size:
-        ax.set_position((0.125, 0.125, 0.075*len(xpos), 0.9))
+        ax.set_position((0.125, 0.125, bar_width*len(xpos), 0.9))
 
     return ax
 
@@ -1178,10 +1184,10 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
 
 
 def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
-                       p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
-                       cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
-                       label='INDEX', sort_by_taxa=True, cbar_size=12,
-                       consistant_size=True, width=11, height=8.5, **kwargs):
+    p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
+    cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
+    label='INDEX', sort_by_taxa=True, cbar_size=12,
+    consistant_size=True, width=11, height=8.5, **kwargs):
     """Creates side by side abundance and log ratio heatmaps
 
     Parameters
@@ -1471,7 +1477,6 @@ def _format_axis(ax, **kwargs):
             'n_xs': None,
             'n_y': None,
             'n_size': 11,
-            ''
             'p_value': None,
             'p_x': None,
             'p_y': None,

@@ -1,5 +1,13 @@
 from numpy import nan
 
+__author__ = "Justine Debelius"
+__copyright__ = "Copyright 2015, The American Gut Project"
+__credits__ = ["Justine Debelius"]
+__license__ = "BSD"
+__version__ = "unversioned"
+__maintainer__ = "Justine Debelius"
+__email__ = "Justine.Debelius@colorado.edu"
+
 # Adapted from the information in
 #   Wikipedia. "List of US state abbreviations." Updated 14 May 2014.
 #       acessed 7 June 2014.

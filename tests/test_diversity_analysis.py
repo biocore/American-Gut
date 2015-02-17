@@ -384,7 +384,7 @@ class DiversityAnalysisTest(TestCase):
                              'DWELL_TIME': Series(self.time, index=self.ids)})
 
         # Creates the distance matrix object
-        self.ids = ['000001181.5654', '000001096.8485', '000001348.2238',
+        self.ids2 = ['000001181.5654', '000001096.8485', '000001348.2238',
                     '000001239.2471', '000001925.5603', '000001148.4367',
                     '000001551.0986', '000001047.9434', '000001160.0422',
                     '000001621.3736']
@@ -408,7 +408,7 @@ class DiversityAnalysisTest(TestCase):
                           0.257, 0.000, 0.492],
                          [0.904, 0.756, 1.000, 0.638, 1.000, 0.385, 0.530,
                           0.450, 0.492, 0.000]])
-        self.dm = skbio.DistanceMatrix(dist, self.ids)
+        self.dm = skbio.DistanceMatrix(dist, self.ids2)
         self.taxa = ['k__Bacteria; p__[Proteobacteria]; '
                      'c__Gammaproteobacteria; o__; f__; g__; s__',
                      'k__Bacteria; p__Proteobacteria; '
