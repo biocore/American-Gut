@@ -27,14 +27,14 @@
 	div.text_cell_render h3{
 		font-size: 16pt;
 		font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-		color: #484848;
+		color: #808080;
 		text-decoration: underline;	
 	}
 
 	div.text_cell_render h4{
 		font-size: 15pt;
 		font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-		color: #484848;
+		color: #808080;
 		font-style: italic;	
 	}
 
