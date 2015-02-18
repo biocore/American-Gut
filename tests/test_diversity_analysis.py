@@ -384,10 +384,12 @@ class DiversityAnalysisTest(TestCase):
                              'DWELL_TIME': Series(self.time, index=self.ids)})
 
         # Creates the distance matrix object
-        self.ids2 = ['000001181.5654', '000001096.8485', '000001348.2238',
-                    '000001239.2471', '000001925.5603', '000001148.4367',
-                    '000001551.0986', '000001047.9434', '000001160.0422',
-                    '000001621.3736']
+        self.ids2 = np.array(['000001181.5654', '000001096.8485',
+                              '000001348.2238', '000001239.2471',
+                              '000001925.5603', '000001148.4367',
+                              '000001551.0986', '000001047.9434',
+                              '000001160.0422', '000001621.3736'])
+        self.map = self.df.loc[self.ids2]
         dist = np.array([[0.000, 0.297, 0.257, 0.405, 0.131, 0.624, 0.934,
                           0.893, 0.519, 0.904],
                          [0.297, 0.000, 0.139, 0.130, 0.348, 1.000, 0.796,
@@ -559,7 +561,7 @@ class DiversityAnalysisTest(TestCase):
                                  1.000])]
         test_within, test_wdist, test_between, test_bdist = \
             get_distance_vectors(dm=self.dm,
-                                 df=self.df.loc[self.ids],
+                                 df=self.map,
                                  group='WEBSITE',
                                  order=['twitter', 'reddit'])
         # Tests the results
