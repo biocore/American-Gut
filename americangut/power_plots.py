@@ -157,12 +157,33 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
 
     """
     # Sets up the html for the header
-    table = ['<table id="counts">',
-             "<tr>",
-             "\t<th>Category</th>",
-             "\t<th colspan=3>Alpha</th>",
-             "\t<th colspan=3>Beta</th>",
-             "</tr>"]
+    table = ['<table style="border-style:hidden;',
+             '              border-collapse:collapse',
+             '              line-height:120%',
+             '              ">',
+             '\t<tr>',
+             '\t\t<th style="text-align:center;',
+             '\t\t           background-color:black;',
+             '\t\t           color:white',
+             '\t\t           ">',
+             '\t\t\tCategory'
+             '\t\t</th>',
+             '\t\t<th style="text-align:center;',
+             '\t\t           background-color:black;',
+             '\t\t           color:white";',
+             '\t\t    colspan=3>',
+             '\t\t\tAlpha',
+             '\t\t</th>',
+             '\t\t<td style="border-hidden;',
+             '\t\t           background-color:black;',
+             '\t\t           padding:20px">',
+             '\t\t<th style="text-align:center;',
+             '\t\t           background-color:black;',
+             '\t\t         color:white";',
+             '\t\t  colspan=3>',
+             '\t\t\tBeta',
+             '\t\t</th>',
+             '\t</tr>']
     # Loops through each row
     for idx in order:
         # Gets the effect sizes
@@ -186,16 +207,73 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                                    ft.solve_power(b_eff_m - b_eff_b, nobs=None,
                                                   power=0.8, alpha=0.05))/5.)*5
         # Fills in the html text
-        table.append("<tr>")
-        table.append("\t<td>%s</td>" % cat.replace('_', ' ').title())
-        table.append("\t<td>%i</td> " % a_eff_fit)
-        table.append("\t<td>&plusmn;</td>")
-        table.append("\t<td>%i</td>" % a_eff_rnd)
-        table.append("\t<td>%i</td> " % b_eff_fit)
-        table.append("\t<td>&plusmn;</td>")
-        table.append("\t<td>%i</td>" % b_eff_rnd)
-        table.append("</tr>")
-    table.append("</table>")
+        row = ['\t<tr>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           padding:10px;',
+               '\t\t           text-align:left',
+               '\t\t          ">',
+               '\t\t\t%s' % cat.replace('_', ' ').title(),
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           text-align:right',
+               '\t\t          ">',
+               '\t\t\t%i' % a_eff_fit,
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           text-align:center',
+               '\t\t          ">',
+               '\t\t\t&plusmn;',
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           text-align:right',
+               '\t\t          ">',
+               '\t\t\t%i' % a_eff_rnd,
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           padding:20px">',
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           text-align:right',
+               '\t\t          ">',
+               '\t\t\t%i' % b_eff_fit,
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           text-align:center',
+               '\t\t          ">',
+               '\t\t\t&plusmn;',
+               '\t\t</td>',
+               '\t\t<td style="border-top:hidden;',
+               '\t\t           border-bottom:hidden;',
+               '\t\t           border-left: hidden;',
+               '\t\t           border-bottom: hidden;',
+               '\t\t           text-align:right',
+               '\t\t          ">',
+               '\t\t\t%i' % b_eff_rnd,
+               '\t\t</td>',
+               ]
+        table.append('\n'.join(row))
+    table.append('</table>')
 
     return '\n'.join(table)
 
