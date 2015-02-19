@@ -2,15 +2,26 @@
 
 from __future__ import division
 from unittest import TestCase, main
+
+import numpy as np
+import numpy.testing as npt
+import skbio
+
 from os import rmdir
 from os.path import realpath, dirname, join as pjoin, exists
-from numpy import array
 from pandas import Series, DataFrame, Index
-from pandas.util.testing import assert_index_equal
-from matplotlib import use
-use('agg', warn=False)
-from americangut.alpha_analysis import pad_index, check_dir
-
+from pandas.util.testing import assert_index_equal, assert_frame_equal
+from americangut.diversity_analysis import (pad_index,
+                                            check_dir,
+                                            post_hoc_pandas,
+                                            multiple_correct_post_hoc,
+                                            get_distance_vectors,
+                                            segment_colormap,
+                                            _get_bar_height,
+                                            _get_p_value,
+                                            _correct_p_value,
+                                            split_taxa,
+                                            get_ratio_heatmap)
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2014"
@@ -24,10 +35,9 @@ __email__ = "Justine.Debelius@colorado.edu"
 TEST_DIR = dirname(realpath(__file__))
 
 
-class AlphaAnalysisTest(TestCase):
+class DiversityAnalysisTest(TestCase):
 
     def setUp(self):
-        """Initializes data for each test instance"""
         # Sets up lists for the data frame
         self.ids = ['000001181.5654', '000001096.8485', '000001348.2238',
                     '000001239.2471', '000001925.5603', '000001098.6354',
@@ -268,113 +278,155 @@ class AlphaAnalysisTest(TestCase):
                         'reddit', 'reddit', 'reddit', 'reddit', 'reddit',
                         'reddit', 'reddit', 'reddit', 'reddit', 'reddit',
                         'reddit', 'reddit', 'reddit', 'reddit', 'reddit']
-        self.time = array([43.75502506, 32.09982846, 66.44821015,
-                           54.67751100, 74.43663107, 64.91509381,
-                           101.03624273, 42.50120543, 35.92898678,
-                           50.84800153, 46.32394154, 55.82813196,
-                           63.90361272, 77.13825762, 78.76436441,
-                           53.64704526, 64.75223193, 58.39207272,
-                           52.44353642, 60.38707826, 56.51714085,
-                           55.72374379, 59.52585080, 62.99625025,
-                           40.04902494, 89.02585909, 63.23240605,
-                           47.06553888, 73.00190315, 83.80903794,
-                           43.41851989, 25.83410322, 68.21623464,
-                           50.43442676, 49.98389215, 40.24409163,
-                           73.12600309, 59.26529974, 61.66301113,
-                           82.24776146, 69.88472085, 55.33333433,
-                           40.29625976, 68.09510810, 66.85545440,
-                           66.44002527, 72.37790419, 72.81679314,
-                           55.09080142, 48.37538346, 47.60326036,
-                           51.52223083, 56.51417473, 83.04863572,
-                           52.14761947, 81.71073287, 40.88456188,
-                           61.76308339, 75.31540245, 64.41482716,
-                           52.36763551, 64.48863043, 42.46265519,
-                           76.41626766, 73.35103300, 60.13966132,
-                           55.09395578, 72.26945197, 64.14173225,
-                           59.39558958, 54.92166432, 56.15937888,
-                           35.82839971, 80.22338349, 52.03277136,
-                           30.46794613, 58.48158453, 51.08064303,
-                           67.56882508, 64.67001088, 70.31701029,
-                           69.69418892, 45.40860831, 68.72559847,
-                           57.18659048, 79.66512776, 54.12521925,
-                           81.23543425, 79.58214820, 34.09101162,
-                           34.07926981, 53.68661297, 84.73351889,
-                           76.98667389, 83.91038109, 66.35125602,
-                           43.38243470, 60.07458569, 64.01561208,
-                           70.66573983, 193.40761370, 149.46771172,
-                           178.54940784, 146.81737462, 112.67080963,
-                           105.79566831, 169.60015351, 18.16782312,
-                           32.33793705, 161.72043630, 136.65935083,
-                           23.99200240, 124.30215961, 82.66230873,
-                           181.53122374, 96.73843934, 149.75297762,
-                           119.92104479, 29.30535556, 88.98066487,
-                           82.18281694, 99.76251178, 120.62310261,
-                           136.15837651, 140.85019656, 117.06990731,
-                           163.65366512, 214.50717765, 79.72206954,
-                           138.03112015, 144.45114437, 16.41512219,
-                           72.08551518, 85.46372630, 149.13372767,
-                           76.92212059, 109.55645713, 141.65595764,
-                           119.18734692, 51.20662038, 183.75411201,
-                           132.56555213, 101.55378472, 177.69500317,
-                           130.27160521, 143.13166882, 107.23696643,
-                           212.72330518, 130.66925461, 210.11532010,
-                           118.65653641, 77.25638890, 153.29389237,
-                           146.97514023, 0, 105.83704268,
-                           200.05768527, 166.46158871, 135.60586892,
-                           111.06739555, 71.50642636, 21.58216051,
-                           183.15691697, 38.58822892, 38.84706613,
-                           119.36492288, 108.77038019, 88.70541115,
-                           12.61048676, 0, 157.77516036,
-                           43.70631550, 193.87291179, 203.26411137,
-                           179.20054809, 148.37792309, 170.38620220,
-                           102.23651707, 63.46142967, 82.33043919,
-                           258.68968847, 223.94730803, 281.46276889,
-                           350.40078080, 281.53639290, 305.90987647,
-                           286.22932832, 356.53308940, 276.81798226,
-                           305.04298118, 299.13866751, 310.41638501,
-                           347.77589112, 278.37912458, 295.00398672,
-                           292.23076451, 348.14209652, 289.14551826,
-                           288.86118512, 299.21300848, 264.29449774,
-                           353.26294987, 275.68453639, 279.45885854,
-                           287.79470948, 303.34990705, 324.73398364,
-                           337.50702196, 326.59649321, 307.14724645,
-                           300.13203731, 335.28447725, 273.59560986,
-                           315.71949943, 268.86100671, 309.44822617,
-                           357.67123883, 313.70684577, 311.99209985,
-                           277.87145259, 316.89239037, 254.39694340,
-                           300.02140552, 237.21539997, 329.92714491,
-                           318.32432005, 326.65600788, 305.40145477,
-                           326.78894825, 318.92641904, 320.59443395,
-                           308.26919092, 300.00328438, 294.61849344,
-                           284.55947774, 277.63798594, 359.44015820,
-                           292.55982554, 322.71946292, 318.60262991,
-                           307.93128984, 282.51266904, 304.74114309,
-                           285.30356994, 240.53264849, 252.69086070,
-                           289.49431273, 284.68590654, 317.95577632,
-                           288.39433522, 303.55186227, 286.21794163,
-                           281.11550530, 297.15770465, 307.37441274,
-                           290.21885096, 297.39693356, 325.12591032,
-                           340.14615302, 314.10755364, 321.41818630,
-                           302.46825284, 272.60859596, 285.02155314,
-                           260.57728373, 301.01186081, 314.01532677,
-                           301.39435122, 301.53108663, 290.81233377,
-                           331.20632569, 329.26192444, 252.12513671,
-                           294.17604509, 314.25160994, 260.22225619,
-                           296.06068483, 328.70473699, 293.72532762,
-                           323.92449714, 279.36077985, 327.10547840,
-                           332.33552711, 244.70073987, 368.94370441,
-                           288.52914183, 270.96734651, 321.09234466,
-                           395.74872017, 311.64415600, 314.81990465,
-                           319.70690366, 313.96061624, 275.38526052,
-                           338.02460670, 286.98781666, 353.55909038,
-                           306.62353307, 306.92733543, 273.74222557])
+        self.time = np.array([43.75502506, 32.09982846, 66.44821015,
+                              54.67751100, 74.43663107, 64.91509381,
+                              101.03624273, 42.50120543, 35.92898678,
+                              50.84800153, 46.32394154, 55.82813196,
+                              63.90361272, 77.13825762, 78.76436441,
+                              53.64704526, 64.75223193, 58.39207272,
+                              52.44353642, 60.38707826, 56.51714085,
+                              55.72374379, 59.52585080, 62.99625025,
+                              40.04902494, 89.02585909, 63.23240605,
+                              47.06553888, 73.00190315, 83.80903794,
+                              43.41851989, 25.83410322, 68.21623464,
+                              50.43442676, 49.98389215, 40.24409163,
+                              73.12600309, 59.26529974, 61.66301113,
+                              82.24776146, 69.88472085, 55.33333433,
+                              40.29625976, 68.09510810, 66.85545440,
+                              66.44002527, 72.37790419, 72.81679314,
+                              55.09080142, 48.37538346, 47.60326036,
+                              51.52223083, 56.51417473, 83.04863572,
+                              52.14761947, 81.71073287, 40.88456188,
+                              61.76308339, 75.31540245, 64.41482716,
+                              52.36763551, 64.48863043, 42.46265519,
+                              76.41626766, 73.35103300, 60.13966132,
+                              55.09395578, 72.26945197, 64.14173225,
+                              59.39558958, 54.92166432, 56.15937888,
+                              35.82839971, 80.22338349, 52.03277136,
+                              30.46794613, 58.48158453, 51.08064303,
+                              67.56882508, 64.67001088, 70.31701029,
+                              69.69418892, 45.40860831, 68.72559847,
+                              57.18659048, 79.66512776, 54.12521925,
+                              81.23543425, 79.58214820, 34.09101162,
+                              34.07926981, 53.68661297, 84.73351889,
+                              76.98667389, 83.91038109, 66.35125602,
+                              43.38243470, 60.07458569, 64.01561208,
+                              70.66573983, 193.40761370, 149.46771172,
+                              178.54940784, 146.81737462, 112.67080963,
+                              105.79566831, 169.60015351, 18.16782312,
+                              32.33793705, 161.72043630, 136.65935083,
+                              23.99200240, 124.30215961, 82.66230873,
+                              181.53122374, 96.73843934, 149.75297762,
+                              119.92104479, 29.30535556, 88.98066487,
+                              82.18281694, 99.76251178, 120.62310261,
+                              136.15837651, 140.85019656, 117.06990731,
+                              163.65366512, 214.50717765, 79.72206954,
+                              138.03112015, 144.45114437, 16.41512219,
+                              72.08551518, 85.46372630, 149.13372767,
+                              76.92212059, 109.55645713, 141.65595764,
+                              119.18734692, 51.20662038, 183.75411201,
+                              132.56555213, 101.55378472, 177.69500317,
+                              130.27160521, 143.13166882, 107.23696643,
+                              212.72330518, 130.66925461, 210.11532010,
+                              118.65653641, 77.25638890, 153.29389237,
+                              146.97514023, 0, 105.83704268,
+                              200.05768527, 166.46158871, 135.60586892,
+                              111.06739555, 71.50642636, 21.58216051,
+                              183.15691697, 38.58822892, 38.84706613,
+                              119.36492288, 108.77038019, 88.70541115,
+                              12.61048676, 0, 157.77516036,
+                              43.70631550, 193.87291179, 203.26411137,
+                              179.20054809, 148.37792309, 170.38620220,
+                              102.23651707, 63.46142967, 82.33043919,
+                              258.68968847, 223.94730803, 281.46276889,
+                              350.40078080, 281.53639290, 305.90987647,
+                              286.22932832, 356.53308940, 276.81798226,
+                              305.04298118, 299.13866751, 310.41638501,
+                              347.77589112, 278.37912458, 295.00398672,
+                              292.23076451, 348.14209652, 289.14551826,
+                              288.86118512, 299.21300848, 264.29449774,
+                              353.26294987, 275.68453639, 279.45885854,
+                              287.79470948, 303.34990705, 324.73398364,
+                              337.50702196, 326.59649321, 307.14724645,
+                              300.13203731, 335.28447725, 273.59560986,
+                              315.71949943, 268.86100671, 309.44822617,
+                              357.67123883, 313.70684577, 311.99209985,
+                              277.87145259, 316.89239037, 254.39694340,
+                              300.02140552, 237.21539997, 329.92714491,
+                              318.32432005, 326.65600788, 305.40145477,
+                              326.78894825, 318.92641904, 320.59443395,
+                              308.26919092, 300.00328438, 294.61849344,
+                              284.55947774, 277.63798594, 359.44015820,
+                              292.55982554, 322.71946292, 318.60262991,
+                              307.93128984, 282.51266904, 304.74114309,
+                              285.30356994, 240.53264849, 252.69086070,
+                              289.49431273, 284.68590654, 317.95577632,
+                              288.39433522, 303.55186227, 286.21794163,
+                              281.11550530, 297.15770465, 307.37441274,
+                              290.21885096, 297.39693356, 325.12591032,
+                              340.14615302, 314.10755364, 321.41818630,
+                              302.46825284, 272.60859596, 285.02155314,
+                              260.57728373, 301.01186081, 314.01532677,
+                              301.39435122, 301.53108663, 290.81233377,
+                              331.20632569, 329.26192444, 252.12513671,
+                              294.17604509, 314.25160994, 260.22225619,
+                              296.06068483, 328.70473699, 293.72532762,
+                              323.92449714, 279.36077985, 327.10547840,
+                              332.33552711, 244.70073987, 368.94370441,
+                              288.52914183, 270.96734651, 321.09234466,
+                              395.74872017, 311.64415600, 314.81990465,
+                              319.70690366, 313.96061624, 275.38526052,
+                              338.02460670, 286.98781666, 353.55909038,
+                              306.62353307, 306.92733543, 273.74222557])
 
         # # Creates a data frame object
         self.df = DataFrame({'WEBSITE': Series(self.website, index=self.ids),
                              'DWELL_TIME': Series(self.time, index=self.ids)})
 
+        # Creates the distance matrix object
+        self.ids = ['000001181.5654', '000001096.8485', '000001348.2238',
+                    '000001239.2471', '000001925.5603', '000001148.4367',
+                    '000001551.0986', '000001047.9434', '000001160.0422',
+                    '000001621.3736']
+        dist = np.array([[0.000, 0.297, 0.257, 0.405, 0.131, 0.624, 0.934,
+                          0.893, 0.519, 0.904],
+                         [0.297, 0.000, 0.139, 0.130, 0.348, 1.000, 0.796,
+                          1.000, 0.647, 0.756],
+                         [0.257, 0.139, 0.000, 0.384, 0.057, 0.748, 0.599,
+                          0.710, 0.528, 1.000],
+                         [0.405, 0.130, 0.384, 0.000, 0.303, 0.851, 0.570,
+                          0.698, 1.000, 0.638],
+                         [0.131, 0.348, 0.057, 0.303, 0.000, 0.908, 1.000,
+                          0.626, 0.891, 1.000],
+                         [0.624, 1.000, 0.748, 0.851, 0.908, 0.000, 0.264,
+                          0.379, 0.247, 0.385],
+                         [0.934, 0.796, 0.599, 0.570, 1.000, 0.264, 0.000,
+                          0.336, 0.326, 0.530],
+                         [0.893, 1.000, 0.710, 0.698, 0.626, 0.379, 0.336,
+                          0.000, 0.257, 0.450],
+                         [0.519, 0.647, 0.528, 1.000, 0.891, 0.247, 0.326,
+                          0.257, 0.000, 0.492],
+                         [0.904, 0.756, 1.000, 0.638, 1.000, 0.385, 0.530,
+                          0.450, 0.492, 0.000]])
+        self.dm = skbio.DistanceMatrix(dist, self.ids)
+        self.taxa = ['k__Bacteria; p__[Proteobacteria]; '
+                     'c__Gammaproteobacteria; o__; f__; g__; s__',
+                     'k__Bacteria; p__Proteobacteria; '
+                     'c__Gammaproteobacteria; o__Enterobacteriales; '
+                     'f__Enterbacteriaceae; g__Escherichia; s__coli']
+
+        self.sub_p = DataFrame(np.array([['ref_group1 vs. ref_group1',
+                                          'ref_group1 vs. group1', 0.01],
+                                         ['ref_group2 vs. group2',
+                                          'ref_group2 vs. ref_group2', 0.02],
+                                         ['group3 vs. ref_group3',
+                                          'ref_group3 vs. ref_group3', 0.03],
+                                         ['ref_group4 vs. ref_group4',
+                                          'group4 vs. ref_group4', 0.04]]),
+                               columns=['Group 1', 'Group 2', 'p_value'])
+        self.sub_p.p_value = self.sub_p.p_value.astype(float)
+
     def test_pad_index_default(self):
-        """Tests that a set of sample ids can be update sanely for defaults"""
         # Creates a data frame with raw ids and no sample column
         df = DataFrame({'#SampleID': self.raw_ids,
                         'WEBSITE': Series(self.website),
@@ -384,7 +436,6 @@ class AlphaAnalysisTest(TestCase):
         assert_index_equal(self.df.index, df.index)
 
     def test_pad_index_custom_index(self):
-        """Tests index column can be set with pad index"""
         # Creates a data frame with raw ids and no sample column
         df = DataFrame({'RawID': self.raw_ids,
                         'WEBSITE': Series(self.website),
@@ -394,7 +445,6 @@ class AlphaAnalysisTest(TestCase):
         assert_index_equal(self.df.index, df.index)
 
     def test_pad_index_number(self):
-        """Tests index column can be padded with """
         # Creates a data frame with raw ids and no sample column
         df = DataFrame({'#SampleID': self.raw_ids,
                         'WEBSITE': Series(self.website),
@@ -404,7 +454,6 @@ class AlphaAnalysisTest(TestCase):
         assert_index_equal(Index(self.raw_ids), df.index)
 
     def test_check_dir(self):
-        """Checks a directory is created if appropriate"""
         # Sets up a dummy directory that does not exist
         does_not_exist = pjoin(TEST_DIR, 'this_dir_does_not_exist')
         # Checks the directory does not currently exist
@@ -415,6 +464,134 @@ class AlphaAnalysisTest(TestCase):
         self.assertTrue(exists(does_not_exist))
         # Removes the directory
         rmdir(does_not_exist)
+
+    def test_post_hoc_pandas(self):
+        known_index = Index(['twitter', 'facebook', 'reddit'],
+                            name='WEBSITE')
+        known_df = DataFrame(np.array([[100,  60.435757,  60.107124, 14.632637,
+                                        np.nan, np.nan],
+                                       [80, 116.671135, 119.642984, 54.642403,
+                                        7.010498e-14, np.nan],
+                                       [120, 302.615690, 301.999670,
+                                        28.747101, 2.636073e-37,
+                                        5.095701e-33]]),
+                             index=known_index,
+                             columns=['Counts', 'Mean', 'Median', 'Stdv',
+                                      'twitter', 'facebook'])
+        known_df.Counts = known_df.Counts.astype('int64')
+        test_df = post_hoc_pandas(self.df, 'WEBSITE', 'DWELL_TIME')
+        assert_frame_equal(known_df, test_df)
+
+    def test_multiple_correct_post_hoc(self):
+        known_df = DataFrame(np.array([[np.nan, 4e-2, 1e-3],
+                                       [4e-4, np.nan, 1e-6],
+                                       [4e-7, 4e-8, np.nan]]),
+                             columns=[0, 1, 2])
+        raw_ph = DataFrame(np.power(10, -np.array([[np.nan, 2, 3],
+                                                   [4, np.nan, 6],
+                                                   [7, 8, np.nan]])),
+                           columns=[0, 1, 2])
+        order = np.arange(0, 3)
+        test_df = multiple_correct_post_hoc(raw_ph, order, 'fdr_bh')
+        assert_frame_equal(known_df, test_df)
+
+    def test_segemented_colormap(self):
+        known_cmap = np.array([[0.88207613, 0.95386390, 0.69785469, 1.],
+                               [0.59215687, 0.84052289, 0.72418302, 1.],
+                               [0.25268744, 0.71144946, 0.76838141, 1.],
+                               [0.12026144, 0.50196080, 0.72156864, 1.],
+                               [0.14136102, 0.25623991, 0.60530568, 1.]])
+        test_cmap = segment_colormap('YlGnBu', 5)
+        npt.assert_array_equal(test_cmap, known_cmap)
+
+    def test_get_bar_height(self):
+        test_lowest, test_fudge = \
+            _get_bar_height(np.array([0.01, 0.02, 0.3, 0.52]))
+        npt.assert_almost_equal(test_lowest, 0.55, 3)
+        self.assertEqual(test_fudge, 10)
+
+    def test_get_bar_height_fudge(self):
+        test_lowest, test_fudge = \
+            _get_bar_height(np.array([0.01, 0.02, 0.3, 0.52]), factor=3)
+        self.assertEqual(test_lowest, 0.54)
+        self.assertEqual(test_fudge, 10)
+
+    def test_get_p_value(self):
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group1', 'group1',
+                                      'p_value'), 0.01)
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group2', 'group2',
+                                      'p_value'), 0.02)
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group3', 'group3',
+                                      'p_value'), 0.03)
+        self.assertEqual(_get_p_value(self.sub_p, 'ref_group4', 'group4',
+                                      'p_value'), 0.04)
+
+    def test_get_p_value_error(self):
+        with self.assertRaises(ValueError):
+            _get_p_value(self.sub_p, 'ref_group', 'group', 'p_value')
+
+    def test_correct_p_value_no_tail(self):
+        p_value = 0.05
+        tail = False
+        self.assertEqual(_correct_p_value(tail, p_value, 1, 1), p_value)
+
+    def test_correct_p_value_no_greater_ref(self):
+        p_value = 0.05
+        tail = True
+        self.assertEqual(_correct_p_value(tail, p_value, 2, 1), 1)
+
+    def test_correct_p_value_no_less_ref(self):
+        p_value = 0.05
+        tail = True
+        self.assertEqual(_correct_p_value(tail, p_value, 1, 2), p_value)
+
+    def test_get_distance_vectors(self):
+        known_within = ['twitter', 'reddit']
+        known_between = [{'twitter', 'reddit'}]
+        known_wdist = [np.array([0.297, 0.257, 0.405, 0.131, 0.139, 0.130,
+                                 0.348, 0.384, 0.057, 0.303]),
+                       np.array([0.264, 0.379, 0.247, 0.385, 0.336, 0.326,
+                                 0.530, 0.257, 0.450, 0.492])]
+        known_bdist = [np.array([0.624, 0.934, 0.893, 0.519, 0.904, 1.000,
+                                 0.796, 1.000, 0.647, 0.756, 0.748, 0.599,
+                                 0.710, 0.528, 1.000, 0.851, 0.570, 0.698,
+                                 1.000, 0.638, 0.908, 1.000, 0.626, 0.891,
+                                 1.000])]
+        test_within, test_wdist, test_between, test_bdist = \
+            get_distance_vectors(dm=self.dm,
+                                 df=self.df.loc[self.ids],
+                                 group='WEBSITE',
+                                 order=['twitter', 'reddit'])
+        # Tests the results
+        self.assertEqual(known_within, test_within)
+        self.assertEqual(known_between, test_between)
+        npt.assert_array_equal(known_wdist[0], test_wdist[0])
+        npt.assert_array_equal(known_wdist[1], test_wdist[1])
+        npt.assert_array_equal(known_bdist[0], test_bdist[0])
+
+    def test_split_taxa_error(self):
+        with self.assertRaises(ValueError):
+            split_taxa(['k__Bacteria; p__[Proteobacteria]; '
+                        'c__Gammaproteobacteria'], 7)
+
+    def test_split_taxa(self):
+        known_taxa = np.array([['Bacteria', 'cont. Proteobacteria',
+                                'Gammaproteobacteria',
+                                'c. Gammaproteobacteria',
+                                'c. Gammaproteobacteria',
+                                'c. Gammaproteobacteria',
+                                'c. Gammaproteobacteria'],
+                               ['Bacteria', 'Proteobacteria',
+                                'Gammaproteobacteria', 'Enterobacteriales',
+                                'Enterbacteriaceae', 'Escherichia', 'coli']],
+                              dtype='|S32')
+        known_levels = ['kingdom', 'phylum', 'p_class', 'p_order', 'family',
+                        'genus', 'species']
+        test_taxa, test_levels = split_taxa(self.taxa, 7)
+        self.assertEqual(known_levels, test_levels)
+        npt.assert_array_equal(known_taxa, test_taxa)
+
+
 
 if __name__ == '__main__':
     main()
