@@ -9,7 +9,8 @@ from biom.table import table_factory
 
 from americangut.util import (
     pick_rarifaction_level, slice_mapping_file,parse_mapping_file,
-    verify_subset, concatenate_files, trim_fasta
+    verify_subset, concatenate_files, trim_fasta, count_samples,
+    count_seqs, count_unique_participants 
 )
 
 __author__ = "Daniel McDonald"
@@ -21,6 +22,58 @@ __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
 class UtilTests(TestCase):
+    def test_count_samples(self):
+        test_mapping = ["#SampleID\tfoo\tbar",
+                        "A\t1\t2",
+                        "B\t1\t3",
+                        "C\t2\t4",
+                        "D\t3\t5",
+                        "E\t2\t6"]
+        obs = count_samples(iter(test_mapping))
+        exp = 5
+        self.assertEqual(obs, exp)
+        
+        obs = count_samples(iter(test_mapping), criteria={'foo': '2'})
+        exp = 2
+
+    def test_count_seqs(self):
+        test_seqs = [">a b",
+                     "aattggcc",
+                     ">b.xyz stuff",
+                     "asdasd",
+                     ">c",
+                     "qweasd",
+                     ">d.foo",
+                     "qweasdasd"]
+
+        obs = count_seqs(iter(test_seqs))
+        exp = 4
+        self.assertEqual(obs, exp)
+        obs = count_seqs(iter(test_seqs), subset=['b', 'c', 'foo'])
+        exp = 2
+        self.assertEqual(obs, exp)
+
+    def test_count_unique_participants(self):
+        test_mapping = ["#SampleID\tfoo\tbar\tHOST_SUBJECT_ID",
+                        "A\t1\t2\tx",
+                        "B\t1\t3\tx",
+                        "C\t2\t4\ty",
+                        "D\t3\t5\tz",
+                        "E\t2\t6\tw"]
+        obs = count_unique_participants(iter(test_mapping))
+        exp = 4
+        self.assertEqual(obs, exp)
+
+        obs = count_unique_participants(iter(test_mapping), 
+                                        criteria={'foo': '1'})
+        exp = 1
+        self.assertEqual(obs, exp)
+
+        obs = count_unique_participants(iter(test_mapping), 
+                                        criteria={'foo': '2'})
+        exp = 2
+        self.assertEqual(obs, exp)
+
     def test_pick_rarifaction_level(self):
         ids_10k = {'a':'a.1', '000001000':'000001000.123'}
         ids_1k = {'a':'a.1', '000001000':'000001000.123', 'b':123}

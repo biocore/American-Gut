@@ -8,6 +8,9 @@ __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
 
+from matplotlib import use
+use('Agg')
+
 import argparse
 import brewer2mpl
 import matplotlib.pyplot as plt
@@ -64,16 +67,17 @@ def make_stacked_plot(output_file, filtered_sample_ids, taxa_labels,
     yticks = arange(0.0, 1.25, .25)
     ytick_labels = [str(int(ytick*100)) for ytick in yticks]
     ax1.set_xticks(xticks)
-    ax1.set_xticklabels(xtick_labels, rotation=40, ha='right')
+    ax1.set_xticklabels(xtick_labels, rotation=40, ha='right', fontsize=12)
     ax1.xaxis.set_tick_params(width=1, length=10, pad=7, direction='out',
                               top='off')
     ax1.set_yticks(yticks)
-    ax1.set_yticklabels(ytick_labels)
+    ax1.set_yticklabels(ytick_labels, fontsize=16)
     ax1.yaxis.set_tick_params(width=1, length=5, direction='out', right='off')
     plt.ylabel('%s Frequency (%%)' % (ylabel), fontsize=16)
     plt.ylim([0, 1])
     plt.xlim([1, M])
     plt.subplots_adjust(bottom=0.25)
+    plt.tight_layout()
     plt.savefig(output_file)
 
 

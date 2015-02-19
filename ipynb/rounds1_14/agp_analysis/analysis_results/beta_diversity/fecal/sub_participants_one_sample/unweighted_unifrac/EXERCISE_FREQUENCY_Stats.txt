@@ -1,0 +1,53 @@
+# The tests of significance were performed using a two-sided Student's two-sample t-test.
+# Alternative hypothesis: Group 1 mean != Group 2 mean
+# The nonparametric p-values were calculated using 999 Monte Carlo permutations.
+# The nonparametric p-values contain the correct number of significant digits.
+# Entries marked with "N/A" could not be calculated because at least one of the groups
+# of distances was empty, both groups each contained only a single distance, or
+# the test could not be performed (e.g. no variance in groups with the same mean).
+Group 1	Group 2	t statistic	Parametric p-value	Parametric p-value (Bonferroni-corrected)	Nonparametric p-value	Nonparametric p-value (Bonferroni-corrected)
+Regularly vs. Regularly	Rarely vs. Rarely	-7.62463180276	2.49747586019e-14	1.12386413709e-12	0.001	0.045
+Regularly vs. Regularly	Daily vs. Daily	-1.77084792122	0.0765914523229	1	0.082	1.000
+Regularly vs. Regularly	Occasionally vs. Occasionally	-1.48940604596	0.136386724475	1	0.135	1.000
+Regularly vs. Regularly	Regularly vs. Rarely	-11.8847134657	1.54558281534e-32	6.95512266903e-31	0.001	0.045
+Regularly vs. Regularly	Regularly vs. Daily	-2.59889922371	0.00935383892636	0.420922751686	0.014	0.630
+Regularly vs. Regularly	Regularly vs. Occasionally	-0.960704349878	0.336703718522	1	0.344	1.000
+Regularly vs. Regularly	Rarely vs. Daily	-14.7077932613	7.18680696473e-49	3.23406313413e-47	0.001	0.045
+Regularly vs. Regularly	Rarely vs. Occasionally	-8.81097208075	1.27934052421e-18	5.75703235893e-17	0.001	0.045
+Regularly vs. Regularly	Daily vs. Occasionally	-4.33545590262	1.45676372356e-05	0.000655543675601	0.001	0.045
+Rarely vs. Rarely	Daily vs. Daily	6.57763481228	4.91660673797e-11	2.21247303208e-09	0.001	0.045
+Rarely vs. Rarely	Occasionally vs. Occasionally	6.30812207384	2.92366266957e-10	1.31564820131e-08	0.001	0.045
+Rarely vs. Rarely	Regularly vs. Rarely	2.58092710227	0.00986003412078	0.443701535435	0.009	0.405
+Rarely vs. Rarely	Regularly vs. Daily	6.86902444421	6.53664175769e-12	2.94148879096e-10	0.001	0.045
+Rarely vs. Rarely	Regularly vs. Occasionally	7.34400585194	2.11017525913e-13	9.49578866611e-12	0.001	0.045
+Rarely vs. Rarely	Rarely vs. Daily	0.365442868892	0.714786324564	1	0.721	1.000
+Rarely vs. Rarely	Rarely vs. Occasionally	2.68226067418	0.00732283208882	0.329527443997	0.009	0.405
+Rarely vs. Rarely	Daily vs. Occasionally	5.87773066088	4.2087992645e-09	1.89395966902e-07	0.001	0.045
+Daily vs. Daily	Occasionally vs. Occasionally	0.00450913263316	0.99640228118	1	0.999	1.000
+Daily vs. Daily	Regularly vs. Rarely	-7.96084423783	1.76070048721e-15	7.92315219245e-14	0.001	0.045
+Daily vs. Daily	Regularly vs. Daily	-0.0535978390534	0.957255743416	1	0.962	1.000
+Daily vs. Daily	Regularly vs. Occasionally	1.06364974499	0.287492060671	1	0.305	1.000
+Daily vs. Daily	Rarely vs. Daily	-11.0570367622	2.33339886658e-28	1.05002948996e-26	0.001	0.045
+Daily vs. Daily	Rarely vs. Occasionally	-6.39160771589	1.67096209955e-10	7.51932944797e-09	0.001	0.045
+Daily vs. Daily	Daily vs. Occasionally	-1.76777376491	0.0771064690434	1	0.083	1.000
+Occasionally vs. Occasionally	Regularly vs. Rarely	-6.91878879137	4.64921589912e-12	2.0921471546e-10	0.001	0.045
+Occasionally vs. Occasionally	Regularly vs. Daily	-0.0501871836298	0.95997339315	1	0.950	1.000
+Occasionally vs. Occasionally	Regularly vs. Occasionally	0.893474937254	0.3716072083	1	0.357	1.000
+Occasionally vs. Occasionally	Rarely vs. Daily	-9.83728490673	8.68688887773e-23	3.90909999498e-21	0.001	0.045
+Occasionally vs. Occasionally	Rarely vs. Occasionally	-5.78090840799	7.54472986105e-09	3.39512843747e-07	0.001	0.045
+Occasionally vs. Occasionally	Daily vs. Occasionally	-1.52957166149	0.126132067467	1	0.130	1.000
+Regularly vs. Rarely	Regularly vs. Daily	10.2554080835	1.16547381648e-24	5.24463217418e-23	0.001	0.045
+Regularly vs. Rarely	Regularly vs. Occasionally	11.1251778887	1.01004296371e-28	4.54519333667e-27	0.001	0.045
+Regularly vs. Rarely	Rarely vs. Daily	-4.14876286481	3.35159430871e-05	0.00150821743892	0.001	0.045
+Regularly vs. Rarely	Rarely vs. Occasionally	0.340481533748	0.733496396064	1	0.719	1.000
+Regularly vs. Rarely	Daily vs. Occasionally	7.1283788766	1.03123590588e-12	4.64056157646e-11	0.001	0.045
+Regularly vs. Daily	Regularly vs. Occasionally	1.58454603475	0.113073035639	1	0.113	1.000
+Regularly vs. Daily	Rarely vs. Daily	-13.3900670635	7.88457230863e-41	3.54805753888e-39	0.001	0.045
+Regularly vs. Daily	Rarely vs. Occasionally	-7.43423948287	1.06583201899e-13	4.79624408546e-12	0.001	0.045
+Regularly vs. Daily	Daily vs. Occasionally	-2.27549810494	0.0228789073724	1	0.034	1.000
+Regularly vs. Occasionally	Rarely vs. Daily	-14.0945242558	4.97090237153e-45	2.23690606719e-43	0.001	0.045
+Regularly vs. Occasionally	Rarely vs. Occasionally	-8.24016216534	1.76140111275e-16	7.92630500739e-15	0.001	0.045
+Regularly vs. Occasionally	Daily vs. Occasionally	-3.50269723279	0.000460884678709	0.0207398105419	0.001	0.045
+Rarely vs. Daily	Rarely vs. Occasionally	3.84710895242	0.000119867270285	0.00539402716281	0.001	0.045
+Rarely vs. Daily	Daily vs. Occasionally	10.5426051174	5.99318185078e-26	2.69693183285e-24	0.001	0.045
+Rarely vs. Occasionally	Daily vs. Occasionally	5.38897069045	7.13346486692e-08	3.21005919012e-06	0.001	0.045

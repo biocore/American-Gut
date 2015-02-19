@@ -15,14 +15,13 @@ from collections import defaultdict
 # results processing
 _data_files = [
         # (directory, filename)
-        ('AG', 'AG_100nt.biom.gz'),
-        ('AG', 'AG_100nt.txt'),
         ('PGP', 'PGP_100nt.biom.gz'),
         ('PGP', 'PGP_100nt.txt'),
         ('HMP', 'HMPv35_100nt.biom.gz'),
         ('HMP', 'HMPv35_100nt.txt'),
         ('GG', 'GG_100nt.biom.gz'),
-        ('GG', 'GG_100nt.txt')
+        ('GG', 'GG_100nt.txt'),
+        ('AG', 'pgp_agp_barcodes.txt')
         ]
 
 
@@ -31,6 +30,14 @@ _templates = {
         'fecal': ('template_gut.tex', 'macros_gut.tex'),
         'oralskin': ('template_oralskin.tex', 'macros_oralskin.tex')
         }
+
+
+_mod1_bits = ['metadata_charts.json',
+              'mod1_main.tex',
+              'stacked_plots_key_taxa.txt',
+              'fecal_identified.txt',
+              'skin_identified.txt',
+              'oral_identified.txt']
 
 
 def get_path(d, f):
@@ -69,6 +76,8 @@ def get_repository_latex_pdfs(sample_type):
         pdfs_dir = get_path(latex_dir, 'pdfs-oralskin')
     elif sample_type == 'fecal':
         pdfs_dir = get_path(latex_dir, 'pdfs-gut')
+    elif sample_type == 'mod1':
+        pdfs_dir = get_path(latex_dir, 'pdfs-mod1')
     else:
         raise ValueError("Unknown sample type: %s" % sample_type)
 
@@ -103,11 +112,24 @@ def _stage_static_data(working_dir, debug):
         shutil.copy(src, working_dir)
 
 
+def _stage_static_mod1(working_dir):
+    latex_dir = get_repository_latex()
+    statics = get_repository_latex_pdfs('mod1')
+
+    for f in _mod1_bits:
+        src = get_path(latex_dir, f)
+        shutil.copy(src, working_dir)
+
+    for f in os.listdir(statics):
+        src = get_path(statics, f)
+        shutil.copy(src, working_dir)
+
 def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
     _stage_static_data(working_dir, debug)
     _stage_static_latex(sample_type, working_dir)
     _stage_static_pdfs(sample_type, working_dir)
+    _stage_static_mod1(working_dir)
 
 
 # use participant names only if the data are available.
@@ -182,19 +204,33 @@ simple_matter_map = {
 
 
 def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
-                               exp_acronym):
+                               exp_acronym, pgp_ids=False):
     """Simplify the mapping file for use in figures
 
     in_fp : input file-like object
     out_fp : output file-like object
     body_site_column_name : specify the column name for body
     exp_acronym : short name for the study
-
+    pgp_ids : the list of IDs that are associated with PGP kits. If False, then
+        all IDs are assumed to not be PGP. If a list or set, then the 
+        corresponding IDs will be described as PGP. If True, then all IDs will 
+        be considered PGP.
     Returns False on failure, True on success
     """
+    class AlwaysContains(object):
+        def __contains__(self, other):
+            return True
+
     def err_msg(issue, id_):
         print "SampleID: %s, %s" % (id_, issue)
 
+    # setup pgp_ids lookup
+    if pgp_ids is False:
+        pgp_ids = {}
+    elif pgp_ids is True:
+        pgp_ids = AlwaysContains()
+    else:
+        pgp_ids = set(pgp_ids)
 
     age_cat_map = [(0,2,'Baby'),
                    (2,13,'Child'),
@@ -232,6 +268,7 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
         bmi_idx = None
 
     new_mapping_lines = [header[:]]
+    new_mapping_lines[0].append('IS_PGP')
     new_mapping_lines[0].append('SIMPLE_BODY_SITE')
     new_mapping_lines[0].append('TITLE_ACRONYM')
     new_mapping_lines[0].append('TITLE_BODY_SITE')
@@ -246,6 +283,16 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
         new_line = l[:]
         body_site = new_line[bodysite_idx]
         country = new_line[country_idx]
+
+        # see if we have a PGP ID. We test for a split on '.' in the case of
+        # qiime db suffixes
+        sample_id = l[0]
+        if sample_id in pgp_ids:
+            is_pgp = 'Yes'
+        elif sample_id.split('.')[0] in pgp_ids:
+            is_pgp = 'Yes'
+        else:
+            is_pgp = 'No'
 
         # grab the body site
         if body_site.startswith('UBERON_'):
@@ -311,6 +358,7 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
                 if bmi_cat is None:
                     err_msg("Unknown BMI: %f" % bmi, new_line[0])
 
+        new_line.append(is_pgp)
         new_line.append(body_site)
         new_line.append(exp_acronym)
         new_line.append("%s-%s" % (exp_acronym, body_site))
@@ -576,7 +624,7 @@ def construct_bootstrap_and_latex_commands(ids, participants, rel_existing_path,
 
 
 def harvest(path):
-    """harvest PDFs"""
+    """harvest PDFs and taxa summaries"""
     harvest_path = os.path.join(path, 'harvested')
     if not os.path.exists(harvest_path):
         os.mkdir(harvest_path)
@@ -601,10 +649,15 @@ def harvest(path):
 
         src = os.path.join(path, dirpath, "%s.pdf" % sample_suffix)
         dst = os.path.join(harvest_path, "%s.pdf" % sample)
-        
+
         if os.path.exists(src):
             yield "mv %s %s" % (src, dst)
 
+        src = os.path.join(path, dirpath, "%s_taxa.txt" % sample_suffix)
+        dst = os.path.join(harvest_path, "%s.txt" % sample)
+
+        if os.path.exists(src):
+            yield "mv %s %s" % (src, dst)
 
 def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
               previously_printed=None):

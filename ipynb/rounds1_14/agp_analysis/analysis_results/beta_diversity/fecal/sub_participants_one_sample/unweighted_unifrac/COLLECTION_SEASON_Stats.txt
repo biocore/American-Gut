@@ -1,0 +1,53 @@
+# The tests of significance were performed using a two-sided Student's two-sample t-test.
+# Alternative hypothesis: Group 1 mean != Group 2 mean
+# The nonparametric p-values were calculated using 999 Monte Carlo permutations.
+# The nonparametric p-values contain the correct number of significant digits.
+# Entries marked with "N/A" could not be calculated because at least one of the groups
+# of distances was empty, both groups each contained only a single distance, or
+# the test could not be performed (e.g. no variance in groups with the same mean).
+Group 1	Group 2	t statistic	Parametric p-value	Parametric p-value (Bonferroni-corrected)	Nonparametric p-value	Nonparametric p-value (Bonferroni-corrected)
+Summer vs. Summer	Fall vs. Fall	-0.17304449149	0.862617979931	1	0.872	1.000
+Summer vs. Summer	Winter vs. Winter	34.5638033714	3.92858087975e-257	1.76786139589e-255	0.001	0.045
+Summer vs. Summer	Spring vs. Spring	12.043643122	2.42156953009e-33	1.08970628854e-31	0.001	0.045
+Summer vs. Summer	Summer vs. Fall	-2.67123501767	0.00756055207027	0.340224843162	0.002	0.090
+Summer vs. Summer	Summer vs. Winter	11.1919978984	4.83268792621e-29	2.1747095668e-27	0.001	0.045
+Summer vs. Summer	Summer vs. Spring	0.554548570749	0.579205770062	1	0.596	1.000
+Summer vs. Summer	Fall vs. Winter	11.6117974511	4.07625093809e-31	1.83431292214e-29	0.001	0.045
+Summer vs. Summer	Fall vs. Spring	-1.74897082306	0.0803040135471	1	0.066	1.000
+Summer vs. Summer	Winter vs. Spring	18.2801962007	2.03637957636e-74	9.16370809363e-73	0.001	0.045
+Fall vs. Fall	Winter vs. Winter	25.2092924599	3.44684824893e-138	1.55108171202e-136	0.001	0.045
+Fall vs. Fall	Spring vs. Spring	8.56561989189	1.13525533325e-17	5.10864899962e-16	0.001	0.045
+Fall vs. Fall	Summer vs. Fall	-1.61574835713	0.106160928013	1	0.121	1.000
+Fall vs. Fall	Summer vs. Winter	7.52610954558	5.34124671517e-14	2.40356102182e-12	0.001	0.045
+Fall vs. Fall	Summer vs. Spring	0.559758512475	0.575647108262	1	0.576	1.000
+Fall vs. Fall	Fall vs. Winter	8.04116079794	9.2938136982e-16	4.18221616419e-14	0.001	0.045
+Fall vs. Fall	Fall vs. Spring	-0.995693077328	0.319408165253	1	0.322	1.000
+Fall vs. Fall	Winter vs. Spring	12.3263881166	7.5392512613e-35	3.39266306759e-33	0.001	0.045
+Winter vs. Winter	Spring vs. Spring	-25.465060291	9.51034006895e-142	4.27965303103e-140	0.001	0.045
+Winter vs. Winter	Summer vs. Fall	-37.0248716129	1.87382837855e-294	8.43222770347e-293	0.001	0.045
+Winter vs. Winter	Summer vs. Winter	-28.7531244079	2.79230470052e-180	1.25653711524e-178	0.001	0.045
+Winter vs. Winter	Summer vs. Spring	-40.2509749489	0.0	0.0	0.001	0.045
+Winter vs. Winter	Fall vs. Winter	-22.7090264975	2.49038898018e-113	1.12067504108e-111	0.001	0.045
+Winter vs. Winter	Fall vs. Spring	-37.6594853052	1.43445033589e-304	6.45502651151e-303	0.001	0.045
+Winter vs. Winter	Winter vs. Spring	-24.6483624052	2.38363045406e-133	1.07263370433e-131	0.001	0.045
+Spring vs. Spring	Summer vs. Fall	-15.0007806802	1.00063404769e-50	4.5028532146e-49	0.001	0.045
+Spring vs. Spring	Summer vs. Winter	-2.13175190875	0.0330318996774	1	0.029	1.000
+Spring vs. Spring	Summer vs. Spring	-14.005262397	1.71925427348e-44	7.73664423067e-43	0.001	0.045
+Spring vs. Spring	Fall vs. Winter	0.505980260627	0.612873403302	1	0.609	1.000
+Spring vs. Spring	Fall vs. Spring	-14.5301836286	1.0262113635e-47	4.61795113574e-46	0.001	0.045
+Spring vs. Spring	Winter vs. Spring	4.54344152019	5.54620705605e-06	0.000249579317522	0.001	0.045
+Summer vs. Fall	Summer vs. Winter	14.7142031086	6.53325039098e-49	2.93996267594e-47	0.001	0.045
+Summer vs. Fall	Summer vs. Spring	3.90844394913	9.29999555416e-05	0.00418499799937	0.001	0.045
+Summer vs. Fall	Fall vs. Winter	14.4725376091	2.39595167888e-47	1.07817825549e-45	0.001	0.045
+Summer vs. Fall	Fall vs. Spring	1.05442547249	0.291694308283	1	0.290	1.000
+Summer vs. Fall	Winter vs. Spring	22.1159472213	6.58138236466e-108	2.9616220641e-106	0.001	0.045
+Summer vs. Winter	Summer vs. Spring	-13.5458922584	9.46715210783e-42	4.26021844852e-40	0.001	0.045
+Summer vs. Winter	Fall vs. Winter	2.56232900509	0.0104000817007	0.468003676533	0.010	0.450
+Summer vs. Winter	Fall vs. Spring	-14.0551816382	8.58606189087e-45	3.86372785089e-43	0.001	0.045
+Summer vs. Winter	Winter vs. Spring	7.67752150022	1.64364006007e-14	7.39638027033e-13	0.001	0.045
+Summer vs. Spring	Fall vs. Winter	13.7882940876	3.52893539714e-43	1.58802092871e-41	0.001	0.045
+Summer vs. Spring	Fall vs. Spring	-2.77190833091	0.00557464266936	0.250858920121	0.003	0.135
+Summer vs. Spring	Winter vs. Spring	22.2829698298	1.27663443261e-109	5.74485494674e-108	0.001	0.045
+Fall vs. Winter	Fall vs. Spring	-14.0354491234	1.20476528977e-44	5.42144380396e-43	0.001	0.045
+Fall vs. Winter	Winter vs. Spring	3.65727728565	0.000255151292656	0.0114818081695	0.001	0.045
+Fall vs. Spring	Winter vs. Spring	21.6883232955	7.06338665015e-104	3.17852399257e-102	0.001	0.045

@@ -1,0 +1,113 @@
+# The tests of significance were performed using a two-sided Student's two-sample t-test.
+# Alternative hypothesis: Group 1 mean != Group 2 mean
+# The nonparametric p-values were calculated using 999 Monte Carlo permutations.
+# The nonparametric p-values contain the correct number of significant digits.
+# Entries marked with "N/A" could not be calculated because at least one of the groups
+# of distances was empty, both groups each contained only a single distance, or
+# the test could not be performed (e.g. no variance in groups with the same mean).
+Group 1	Group 2	t statistic	Parametric p-value	Parametric p-value (Bonferroni-corrected)	Nonparametric p-value	Nonparametric p-value (Bonferroni-corrected)
+8 or more hours vs. 8 or more hours	 vs. 	-0.629177705917	0.52926295413	1	0.540	1.000
+8 or more hours vs. 8 or more hours	6-7 hours vs. 6-7 hours	-4.48603680589	7.28445364517e-06	0.000764867632743	0.001	0.105
+8 or more hours vs. 8 or more hours	7-8 hours vs. 7-8 hours	-5.93528262973	2.95330895762e-09	3.1009744055e-07	0.001	0.105
+8 or more hours vs. 8 or more hours	Less than 6 hours vs. Less than 6 hours	-10.217033506	2.60347688619e-24	2.7336507305e-22	0.001	0.105
+8 or more hours vs. 8 or more hours	8 or more hours vs. 	-0.359801390441	0.719010723428	1	0.712	1.000
+8 or more hours vs. 8 or more hours	8 or more hours vs. 6-7 hours	-2.27445840982	0.0229465124614	1	0.024	1.000
+8 or more hours vs. 8 or more hours	8 or more hours vs. 7-8 hours	-2.92751347728	0.00341912268372	0.359007881791	0.003	0.315
+8 or more hours vs. 8 or more hours	8 or more hours vs. Less than 6 hours	-12.1004482712	1.8042155882e-33	1.89442636761e-31	0.001	0.105
+8 or more hours vs. 8 or more hours	 vs. 6-7 hours	-1.66198708831	0.0965733520852	1	0.094	1.000
+8 or more hours vs. 8 or more hours	 vs. 7-8 hours	-2.76146633824	0.00577286742815	0.606151079955	0.003	0.315
+8 or more hours vs. 8 or more hours	 vs. Less than 6 hours	-3.48826871577	0.00049042384564	0.0514945037922	0.003	0.315
+8 or more hours vs. 8 or more hours	6-7 hours vs. 7-8 hours	-5.50981409481	3.6048708731e-08	3.78511441675e-06	0.001	0.105
+8 or more hours vs. 8 or more hours	6-7 hours vs. Less than 6 hours	-13.4265701797	6.96727181063e-41	7.31563540116e-39	0.001	0.105
+8 or more hours vs. 8 or more hours	7-8 hours vs. Less than 6 hours	-14.9572438203	2.57916639826e-50	2.70812471817e-48	0.001	0.105
+ vs. 	6-7 hours vs. 6-7 hours	0.561984090414	0.574132183717	1	0.567	1.000
+ vs. 	7-8 hours vs. 7-8 hours	0.491692800872	0.622939000123	1	0.599	1.000
+ vs. 	Less than 6 hours vs. Less than 6 hours	0.114068408897	0.909200169456	1	0.921	1.000
+ vs. 	8 or more hours vs. 	0.575130591428	0.565641366189	1	0.565	1.000
+ vs. 	8 or more hours vs. 6-7 hours	0.595060452699	0.551809364733	1	0.564	1.000
+ vs. 	8 or more hours vs. 7-8 hours	0.56064099666	0.575046627658	1	0.563	1.000
+ vs. 	8 or more hours vs. Less than 6 hours	0.22101883699	0.825086451829	1	0.851	1.000
+ vs. 	 vs. 6-7 hours	0.531552299584	0.595216327482	1	0.614	1.000
+ vs. 	 vs. 7-8 hours	0.455898453147	0.648574342029	1	0.685	1.000
+ vs. 	 vs. Less than 6 hours	0.150410550836	0.880630167367	1	0.892	1.000
+ vs. 	6-7 hours vs. 7-8 hours	0.523707992674	0.600483454147	1	0.593	1.000
+ vs. 	6-7 hours vs. Less than 6 hours	0.2680336407	0.788678208652	1	0.793	1.000
+ vs. 	7-8 hours vs. Less than 6 hours	0.230586395135	0.817639144469	1	0.804	1.000
+6-7 hours vs. 6-7 hours	7-8 hours vs. 7-8 hours	-2.84466998682	0.00444708643727	0.466944075913	0.006	0.630
+6-7 hours vs. 6-7 hours	Less than 6 hours vs. Less than 6 hours	-9.42128842205	4.82827518629e-21	5.0696889456e-19	0.001	0.105
+6-7 hours vs. 6-7 hours	8 or more hours vs. 	0.830404121627	0.406318615278	1	0.400	1.000
+6-7 hours vs. 6-7 hours	8 or more hours vs. 6-7 hours	3.5344133932	0.00040909101718	0.0429545568038	0.002	0.210
+6-7 hours vs. 6-7 hours	8 or more hours vs. 7-8 hours	2.53594022759	0.0112174525023	1	0.011	1.000
+6-7 hours vs. 6-7 hours	8 or more hours vs. Less than 6 hours	-12.1940153859	4.05953590372e-34	4.2625126989e-32	0.001	0.105
+6-7 hours vs. 6-7 hours	 vs. 6-7 hours	-0.0721168753437	0.942509490004	1	0.940	1.000
+6-7 hours vs. 6-7 hours	 vs. 7-8 hours	-1.10008716144	0.271304938694	1	0.256	1.000
+6-7 hours vs. 6-7 hours	 vs. Less than 6 hours	-2.94170140036	0.00326728854983	0.343065297733	0.007	0.735
+6-7 hours vs. 6-7 hours	6-7 hours vs. 7-8 hours	-1.69665125568	0.0897661427044	1	0.100	1.000
+6-7 hours vs. 6-7 hours	6-7 hours vs. Less than 6 hours	-14.6951345121	9.66151977771e-49	1.01445957666e-46	0.001	0.105
+6-7 hours vs. 6-7 hours	7-8 hours vs. Less than 6 hours	-17.9124405834	1.81512755683e-71	1.90588393467e-69	0.001	0.105
+7-8 hours vs. 7-8 hours	Less than 6 hours vs. Less than 6 hours	-8.19246986949	2.62587073983e-16	2.75716427682e-14	0.001	0.105
+7-8 hours vs. 7-8 hours	8 or more hours vs. 	1.17203713798	0.241188499006	1	0.249	1.000
+7-8 hours vs. 7-8 hours	8 or more hours vs. 6-7 hours	6.58095416565	4.70975610211e-11	4.94524390721e-09	0.001	0.105
+7-8 hours vs. 7-8 hours	8 or more hours vs. 7-8 hours	5.8249888766	5.73562385512e-09	6.02240504788e-07	0.001	0.105
+7-8 hours vs. 7-8 hours	8 or more hours vs. Less than 6 hours	-10.6204073987	2.55894264033e-26	2.68688977235e-24	0.001	0.105
+7-8 hours vs. 7-8 hours	 vs. 6-7 hours	0.5032800609	0.614769884625	1	0.606	1.000
+7-8 hours vs. 7-8 hours	 vs. 7-8 hours	-0.386219421875	0.699336015565	1	0.683	1.000
+7-8 hours vs. 7-8 hours	 vs. Less than 6 hours	-2.49929978743	0.0124475283125	1	0.010	1.000
+7-8 hours vs. 7-8 hours	6-7 hours vs. 7-8 hours	1.65432114698	0.0980651794622	1	0.110	1.000
+7-8 hours vs. 7-8 hours	6-7 hours vs. Less than 6 hours	-13.0851376296	4.57860720068e-39	4.80753756071e-37	0.001	0.105
+7-8 hours vs. 7-8 hours	7-8 hours vs. Less than 6 hours	-16.6470669965	4.39775639995e-62	4.61764421995e-60	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	8 or more hours vs. 	4.83920832483	1.42375421771e-06	0.000149494192859	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	8 or more hours vs. 6-7 hours	10.2036028762	2.15642137589e-24	2.26424244469e-22	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	8 or more hours vs. 7-8 hours	9.62497540115	6.74035028559e-22	7.07736779986e-20	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	8 or more hours vs. Less than 6 hours	2.26801963535	0.0233603325942	1	0.020	1.000
+Less than 6 hours vs. Less than 6 hours	 vs. 6-7 hours	5.46692646123	5.14303076064e-08	5.40018229868e-06	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	 vs. 7-8 hours	5.09820431893	3.71321281829e-07	3.89887345921e-05	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	 vs. Less than 6 hours	0.325124571002	0.745131099979	1	0.737	1.000
+Less than 6 hours vs. Less than 6 hours	6-7 hours vs. 7-8 hours	8.83880812937	9.90676644562e-19	1.04021047679e-16	0.001	0.105
+Less than 6 hours vs. Less than 6 hours	6-7 hours vs. Less than 6 hours	3.23616515437	0.00121452176178	0.127524784987	0.002	0.210
+Less than 6 hours vs. Less than 6 hours	7-8 hours vs. Less than 6 hours	2.55177312133	0.0107262677315	1	0.014	1.000
+8 or more hours vs. 	8 or more hours vs. 6-7 hours	-0.24042210453	0.810005319491	1	0.794	1.000
+8 or more hours vs. 	8 or more hours vs. 7-8 hours	-0.407599689446	0.683570570295	1	0.689	1.000
+8 or more hours vs. 	8 or more hours vs. Less than 6 hours	-3.72601533294	0.000196486408022	0.0206310728423	0.001	0.105
+8 or more hours vs. 	 vs. 6-7 hours	-0.689765386921	0.490510904125	1	0.494	1.000
+8 or more hours vs. 	 vs. 7-8 hours	-1.17558140758	0.239999324163	1	0.229	1.000
+8 or more hours vs. 	 vs. Less than 6 hours	-2.65005484702	0.00833072216774	0.874725827613	0.006	0.630
+8 or more hours vs. 	6-7 hours vs. 7-8 hours	-1.0294394998	0.303277036913	1	0.320	1.000
+8 or more hours vs. 	6-7 hours vs. Less than 6 hours	-3.60383293797	0.00031484444273	0.0330586664866	0.001	0.105
+8 or more hours vs. 	7-8 hours vs. Less than 6 hours	-3.86936317843	0.000109553283596	0.0115030947775	0.001	0.105
+8 or more hours vs. 6-7 hours	8 or more hours vs. 7-8 hours	-1.14156070299	0.25364209319	1	0.243	1.000
+8 or more hours vs. 6-7 hours	8 or more hours vs. Less than 6 hours	-13.7684481245	5.54533431429e-43	5.82260103001e-41	0.001	0.105
+8 or more hours vs. 6-7 hours	 vs. 6-7 hours	-0.891202486137	0.372830290191	1	0.372	1.000
+8 or more hours vs. 6-7 hours	 vs. 7-8 hours	-2.0051517195	0.0449589189074	1	0.040	1.000
+8 or more hours vs. 6-7 hours	 vs. Less than 6 hours	-3.22887990846	0.00124462380161	0.130685499169	0.002	0.210
+8 or more hours vs. 6-7 hours	6-7 hours vs. 7-8 hours	-5.79233229821	6.96568184324e-09	7.3139659354e-07	0.001	0.105
+8 or more hours vs. 6-7 hours	6-7 hours vs. Less than 6 hours	-16.8972447908	8.76262608035e-64	9.20075738437e-62	0.001	0.105
+8 or more hours vs. 6-7 hours	7-8 hours vs. Less than 6 hours	-20.2229580757	1.89538524637e-90	1.99015450869e-88	0.001	0.105
+8 or more hours vs. 7-8 hours	8 or more hours vs. Less than 6 hours	-13.1323389105	2.67583453503e-39	2.80962626178e-37	0.001	0.105
+8 or more hours vs. 7-8 hours	 vs. 6-7 hours	-0.61260851015	0.540139926511	1	0.526	1.000
+8 or more hours vs. 7-8 hours	 vs. 7-8 hours	-1.66296920727	0.0963290824835	1	0.096	1.000
+8 or more hours vs. 7-8 hours	 vs. Less than 6 hours	-3.01306520372	0.00258845235017	0.271787496768	0.003	0.315
+8 or more hours vs. 7-8 hours	6-7 hours vs. 7-8 hours	-4.92254591359	8.55705721135e-07	8.98491007192e-05	0.001	0.105
+8 or more hours vs. 7-8 hours	6-7 hours vs. Less than 6 hours	-16.3969441983	3.14410641975e-60	3.30131174074e-58	0.001	0.105
+8 or more hours vs. 7-8 hours	7-8 hours vs. Less than 6 hours	-19.998200978	1.39563336288e-88	1.46541503102e-86	0.001	0.105
+8 or more hours vs. Less than 6 hours	 vs. 6-7 hours	4.23323431454	2.33883864281e-05	0.00245578057495	0.001	0.105
+8 or more hours vs. Less than 6 hours	 vs. 7-8 hours	3.91006255171	9.32764069963e-05	0.00979402273462	0.001	0.105
+8 or more hours vs. Less than 6 hours	 vs. Less than 6 hours	-0.528672421972	0.597054637644	1	0.612	1.000
+8 or more hours vs. Less than 6 hours	6-7 hours vs. 7-8 hours	11.810737388	3.68693573225e-32	3.87128251887e-30	0.001	0.105
+8 or more hours vs. Less than 6 hours	6-7 hours vs. Less than 6 hours	1.24599015637	0.212785440039	1	0.216	1.000
+8 or more hours vs. Less than 6 hours	7-8 hours vs. Less than 6 hours	0.123919580323	0.901380142394	1	0.912	1.000
+ vs. 6-7 hours	 vs. 7-8 hours	-0.633051989606	0.526793684322	1	0.536	1.000
+ vs. 6-7 hours	 vs. Less than 6 hours	-2.51424995649	0.0121211273817	1	0.016	1.000
+ vs. 6-7 hours	6-7 hours vs. 7-8 hours	-0.254869039027	0.798825054102	1	0.803	1.000
+ vs. 6-7 hours	6-7 hours vs. Less than 6 hours	-4.0347247285	5.49994995525e-05	0.00577494745302	0.001	0.105
+ vs. 6-7 hours	7-8 hours vs. Less than 6 hours	-4.461117621	8.20775491138e-06	0.000861814265695	0.001	0.105
+ vs. 7-8 hours	 vs. Less than 6 hours	-2.11670820974	0.0345204775113	1	0.040	1.000
+ vs. 7-8 hours	6-7 hours vs. 7-8 hours	0.705142070756	0.480724338118	1	0.485	1.000
+ vs. 7-8 hours	6-7 hours vs. Less than 6 hours	-3.65780611926	0.00025543358749	0.0268205266865	0.001	0.105
+ vs. 7-8 hours	7-8 hours vs. Less than 6 hours	-4.17370688293	3.01212252387e-05	0.00316272865007	0.001	0.105
+ vs. Less than 6 hours	6-7 hours vs. 7-8 hours	2.70254475922	0.00688288730937	0.722703167484	0.010	1.000
+ vs. Less than 6 hours	6-7 hours vs. Less than 6 hours	0.821939458694	0.411128087438	1	0.414	1.000
+ vs. Less than 6 hours	7-8 hours vs. Less than 6 hours	0.573143307607	0.566555799722	1	0.547	1.000
+6-7 hours vs. 7-8 hours	6-7 hours vs. Less than 6 hours	-14.8775472727	5.4225274398e-50	5.69365381179e-48	0.001	0.105
+6-7 hours vs. 7-8 hours	7-8 hours vs. Less than 6 hours	-18.9428398119	7.56527849513e-80	7.94354241989e-78	0.001	0.105
+6-7 hours vs. Less than 6 hours	7-8 hours vs. Less than 6 hours	-1.53994425758	0.12358555706	1	0.140	1.000

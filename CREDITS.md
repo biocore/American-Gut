@@ -8,12 +8,14 @@ American Gut Credits
 ====================
 
 * Dr. Gail Ackermann
+* Dr. Nadim Ajami
 * Dr. Katie Amato
 * Dr. Amnon Amir
 * Donna Berg-Lyons
 * Evan Bolyen
 * Jeff DeReus
 * Justine Debelius
+* Chandni Desai
 * Dr. Rob Dunn
 * Dr. Merete Eggesbo
 * James Gaffney
@@ -23,9 +25,11 @@ American Gut Credits
 * Dr. Antonio Gonzalez
 * Julia Goodrich
 * Steve Green
+* Dr. Scott Handley
 * Kathy Holt
 * Greg Humphrey
 * Dr. Jim Huntley
+* Dr. Embriette Hyde
 * Zehra Esra Ilhan
 * Jerry Kennedy
 * Elijah Lovelace
@@ -36,6 +40,7 @@ American Gut Credits
 * Daniel McDonald
 * Dr. Jess Metcalf
 * Mike Minson
+* Jamie Morton
 * Jose Navas
 * Catherine Nicholas
 * Dr. Sarah Owens
@@ -47,6 +52,7 @@ American Gut Credits
 * Adam Robbins-Pianka
 * Jennifer Smilowitz
 * Dr. Se Jin Song
+* Josh Shorenstein
 * Emily TerAvest
 * Dr. Luke Thompson
 * Kumar Thurimella
@@ -72,6 +78,7 @@ American Gut Collaborators
 * Frederic Bushman, Professor, Department of Microbiology, University of Pennsylvania
 * J. Gregory Caporaso, Assistant Professor, Department of Biology, Northern Arizona University, and Argonne National Labs
 * Patrice Cani, Group Leader, Faculté de pharmacie et des sciences biomédicales, Universite Catholique de Louvain
+* Nicholas Chia, Associate Director - Microbiome Program, Center for Individualized Medicine, Mayo Clinic, Associate Consultant - Department of Surgery, Mayo Clinic, Assistant Professor ­ Biophysics, Department of Biomedical Engineering, Mayo College
 * George Church, Founder, Personal Genome Project, Professor, Department of Genetics,  Harvard Medical School, Founding Core Faculty Member, Wyss Institute, Professor of Health Sciences and Technology, Harvard and MIT
 * Jose Clemente, Assistant Professor, Department of Genetics and Genomic Sciences, and Department of Medicine, Division of Clinical Immunology, Mount Sinai School of Medicine, New York
 * Maria Gloria Dominguez, Associate Professor, Department of Medicine, New York University, and Department of Biology, University of Puerto Rico Rio Pedras
@@ -86,7 +93,8 @@ American Gut Collaborators
 * Susan Holmes, Professor, Department of Statistics, Stanford University
 * Phil Hugenholtz, Director, Australian Center for Ecogenomics, University of Queensland
 * Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health
-* Janet Jansson, Professor and Senior Staff Scientist, Department of Ecology, Earth Sciences Division, Lawrence Berkeley National Laboratory
+* Janet Jansson, Manager, Fundamental & Computational Sciences Directorate, Pacific Northwest National Laboratory
+* Purna Kashyap, Associate Director - Microbiome Program, Center for Individualized Medicine, Senior Associate Consultant - Department of Gastroenterology and Hepatology, Assistant Professor ­ Department of Medicine, Mayo Clinic
 * Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry & Biochemistry and Department of Computer Science, University of Colorado at Boulder
 * Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota
 * Rosa Krajmalnik-Brown, Assistant Professor, Engineering Research Director, School of Sustainable Engineering and the Built Environment, Biodesign Institute at Arizona State University
@@ -100,6 +108,7 @@ American Gut Collaborators
 * Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine
 * Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium
 * Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine
+* Tim Spector, Head, Department of Twin Research and Genetic Epidemiology, King's College London
 * Jan Suchodolski, Clinical Assistant Professor & Associate Director, Gastrointestinal Laboratory, Texas A&M University
 * Kelly Swanson, Associate Professor, Department of Animal Sciences, University of Illinois at Urbana-Champaign
 * Owen White, Director, Department of Bioinformatics, University of Maryland School of Medicine; PI, Human Microbiome Project Data Analysis and Coordination Center
