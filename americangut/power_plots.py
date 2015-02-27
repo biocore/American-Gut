@@ -579,4 +579,3 @@ def add_average_trace(fig, power, counts, labels, **kwargs):
 
     # Adjusts the legend position
     leg2.set_bbox_to_anchor(kwds['legend_position'])
-

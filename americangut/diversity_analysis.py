@@ -7,7 +7,6 @@ import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import skbio
-import copy
 
 from scipy.stats import kruskal
 from skbio.stats.power import _check_strs
@@ -251,7 +250,7 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
 
     # Formats the axis, if not already done
     if 'xticklabels' not in boxplot_props:
-        boxplot_props['xticklabels'] = order
+        boxplot_props['xticklabels'] = [g.split('(')[0] for g in order]
     if 'show_xticks' not in boxplot_props:
         boxplot_props['show_xticks'] = False
     if 'show_ygrid' not in boxplot_props:
@@ -526,7 +525,8 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
-    interval=None, lowest=None, factor=5, label_size=10):
+    interval=None, lowest=None, factor=5, label_size=10,
+    show_value=True):
     """Adds p_value bars
 
     The assumes that comparison bars are being introduced for a
@@ -556,6 +556,12 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         The ones-place value to which values will be rounded. For example,
         for a `factor` of 5, a value of 0.12 will be rounded to 0.15 and a
         value of 2.7 will be rounded to 3.0.
+    label_size : unsigned int, optional
+        The font size for displaying signifigance labels
+    show_value : bool, optional
+        When True, the signigance bars will display the actual p value.
+        Otherwise, p values will be coded as (p <= 0.1: '+', p <= 0.05: '*',
+        p <= 0.01: '**', p <= 0.001: '***', p <= 0.0001).
 
     Returns
     -------
@@ -588,16 +594,30 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
 
     # Identifies the center positions for the p text
     p_cents = [(centers[1] - centers[0])/2. + centers[0]]
+
     if len(centers) > 2:
         for idx, center in enumerate(centers[2:]):
             p_cents.append((center - centers[0])/2. + centers[0])
     # Determines the p text
     p_text = []
     for p in p_values:
-        if p < 0.01:
+        if p < 0.01 and show_value:
             p_text.append('%1.e' % p)
-        else:
+        elif show_value:
             p_text.append('%1.2f' % p)
+        elif p < 0.0001:
+            p_text.append('****')
+        elif p < 0.001:
+            p_text.append('***')
+        elif p < 0.01:
+            p_text.append('**')
+        elif p < 0.05:
+            p_text.append('*')
+        elif p < 0.1:
+            p_text.append('+')
+        else:
+            p_text.append('')
+
     lines = []
 
     # Plots the first comparison
@@ -770,13 +790,14 @@ def get_distance_vectors(dm, df, group, order=None):
 
     return within, w_dist, between, b_dist
 
+
 def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
     num_iter=999, p_crit=0.01, p_table=None,
     p_tab_col='Parametric p-value (Bonferroni-corrected)',
     ref_less=True, ax=None, interval=0.1, width=0.1,
     show_seperation=True, colormap=None, match_colors=True,
     elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
-    sep_size=0.035, label_size=8, bar_width=0.075, **kwargs):
+    sep_size=0.035, label_size=12, show_p_value=False, **kwargs):
     """Creates a barchart of the beta diversity distances
 
     Parameters
@@ -840,10 +861,12 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
     sep_size : float, optional
         When `show_seperation` is true, this is used to set the size of the
         seperation lines.
-    adj_ax_size : bool, optional
-        To maintain a consistant size among bars from different groups,
-        `adj_ax_size` will allow the function to automatically resize the
-        axes to account for a constant bar width.
+    label_size : int, optional
+        Sets the size of the signfigance labels
+    show_p_value : bool, optional
+        When True, the signigance bars will display the actual p value.
+        Otherwise, p values will be coded as (p <= 0.1: '+', p <= 0.05: '*',
+        p <= 0.01: '**', p <= 0.001: '***', p <= 0.0001).
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
     show_ygrid: bool, optional
@@ -949,24 +972,35 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         if lowest is None:
             lowest, __ = _get_bar_height(dist_bar+dist_std)
         if p_values is not None and (ref_loc == 0 or len(dist_bar) == 2):
-            bars = add_comparison_bars(xpos, dist_bar+dist_std, p_values, ax,
-                                       lowest=lowest, label_size=label_size)
+            bars = add_comparison_bars(xpos,
+                                       dist_bar+dist_std,
+                                       p_values,
+                                       ax,
+                                       lowest=lowest,
+                                       label_size=label_size,
+                                       show_value=show_p_value)
         elif p_values is not None and ref_loc == (len(dist_bar) - 1):
-            bars = add_comparison_bars(xpos[::-1], (dist_bar+dist_std)[::-1],
-                                       p_values[::-1], ax, lowest=lowest,
-                                       label_size=label_size)
+            bars = add_comparison_bars(xpos[::-1],
+                                       (dist_bar+dist_std)[::-1],
+                                       p_values[::-1],
+                                       ax,
+                                       lowest=lowest,
+                                       label_size=label_size,
+                                       show_value=show_p_value)
         elif p_values is not None:
             bars = add_comparison_bars(xpos[ref_loc:],
                                        dist_bar[ref_loc:] + dist_std[ref_loc:],
                                        p_values[(ref_loc):],
                                        ax, lowest=lowest,
-                                       label_size=label_size)
+                                       label_size=label_size,
+                                       show_value=show_p_value)
             bars2 = add_comparison_bars(xpos[:(ref_loc+1)][::-1],
                                         dist_bar[:(ref_loc+1)][::-1] +
                                         dist_std[:(ref_loc+1)][::-1],
                                         p_values[:(ref_loc)][::-1],
                                         ax, lowest=lowest,
-                                        label_size=label_size)
+                                        label_size=label_size,
+                                        show_value=show_p_value)
             bars.extend(bars2)
 
         # Advances the bar count
@@ -981,32 +1015,36 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
     if 'show_xticks' not in kwargs:
         kwargs['show_xticks'] = False
     if 'xticks' not in kwargs:
-        kwargs['xticks'] = np.hstack([xpos - bar_counter*width*(idx) for idx
-                                     in xrange(len(ref_groups) + 1)])
-        kwargs['xticks'] += width
-        kwargs['xticks'].sort()
+        # Calculates the width of a group of bars
+        width = (xpos[-1] - xpos[0])+interval*2
+        left = xlim[0] + width/2 - interval*0.25
+        kwargs['xticks'] = np.arange(left, left+width*len(ref_groups), width)
 
     if 'xticklabels' not in kwargs:
-        order2 = copy.deepcopy(order)
-        order2.append('')
-        kwargs['xticklabels'] = order2*len(ref_groups)
+        kwargs['xticklabels'] = [r.split('(')[0].replace('_', ' ') for r
+                                 in ref_groups]
     if 'xtick_size' not in kwargs:
-        kwargs['xtick_size'] = 9
+        kwargs['xtick_size'] = 12
+    if 'xlabel' not in kwargs:
+        kwargs['xlabel'] = 'Reference Group'
     if 'xlim' not in kwargs:
         kwargs['xlim'] = xlim
 
     # Formats the axis, to make it pretty
     _format_axis(ax, **kwargs)
 
+    # Shows the seperation line if desired
     if show_seperation:
         xlim = ax.get_xlim()
         lower_y, upper_y = ax.get_ylim()
         tick_dist = (upper_y - lower_y)/5.
-        ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(kwargs['xticks']))/10),
+        ax.plot(np.arange(-0.25, 0.75, 0.01) *
+                (1 + np.floor(len(kwargs['xticks']))),
                 np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) +
                 lower_y + tick_dist*0.4,
                 'k-', linewidth=7)
-        ax.plot(np.arange(-0.25, 0.75, 0.01)*(1 + np.floor(len(kwargs['xticks']))/10),
+        ax.plot(np.arange(-0.25, 0.75, 0.01) *
+                (1 + np.floor(len(kwargs['xticks']))),
                 np.array([-tick_dist*sep_size, tick_dist*sep_size]*50) +
                 lower_y + tick_dist*0.4,
                 'w-', linewidth=3)
@@ -1021,6 +1059,23 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         yticklabels = ax.get_yticks()
         yticklabels[0] = 0
         ax.set_yticklabels(yticklabels, size=kwargs['ytick_size'])
+
+    # Adds a legend to the top to distinguish groups
+    # Determines the horizontal ordering for the groups
+    num_groups = len(order)
+    num_leg_cols = int(np.ceil(float(num_groups)/2))
+    leg_order = np.hstack([np.array([i, i+num_leg_cols])
+                           for i in xrange(num_leg_cols)])[:num_groups]
+    # Gets the patches and labels
+    patches = np.array(ax.patches[:num_groups])[leg_order]
+    labels = np.array([l.split('(')[0].replace('_', ' ')
+                       for l in order])[leg_order]
+    # Adds the legend
+    ax.legend(patches, labels,
+              loc="upper center",
+              ncol=num_leg_cols,
+              fontsize=12,
+              frameon=False)
 
     return ax
 
@@ -1306,7 +1361,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
         ref_loc = ref
 
     # Sets up the group labels
-    g_labels = [o.replace('_mean', '').replace('_', ' ')
+    g_labels = [o.replace('_mean', '').replace('_', ' ').split('(')[0]
                 for o in order]
 
     # Gets the signifigant data frame
