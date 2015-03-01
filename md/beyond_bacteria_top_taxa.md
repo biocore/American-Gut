@@ -287,3 +287,10 @@ with the maintenance of clinical remission in ulcerative colitis patients
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/23725320)). Additionally, immune
 cells that are induced by F. prausnitzii, are deficient in IBD patients
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/24714039)).
+
+#### Credits
+
+* Embriette Hyde
+* Luke Thompson
+* Justine Debelius
+* Daniel McDonald
