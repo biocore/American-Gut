@@ -42,7 +42,7 @@ issue a disclaimer: metagenomics is still in its infancy. Few samples have been
 analyzed in this way. Therefore, making health inferences based on metagenomic
 findings would be very premature at this time.
 
-We found several unique pathways within your metagenome (sample 000004607). One
+We found several unique pathways within your metagenome (000004607). One
 of the most notable differences was the presence of genes associated with the
 degradation of the aromatic compounds toluene, xylene, catechols, and benzoate.
 Toluene and xylene are industrial solvents with potentially neurotoxic effects.
