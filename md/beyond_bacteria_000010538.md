@@ -27,3 +27,23 @@ plants as part of your normal diet. Therefore, the presence of a potentially
 “harmful” bacterial species as the most abundant species in your gut is
 curious; nevertheless, you also harbor a large proportion of health-associated,
 plant polysaccharide-fermenting species.
+
+# Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
+
+The most abundant pathways were similar across the four individuals, despite
+taxonomic differences. This is not unprecedented; the Human Microbiome Project
+also large variations in taxonomy, while pathway abundance remained relatively
+stable ([ref](http://www.ncbi.nlm.nih.gov/pubmed/22699609)). Unsurprisingly, we
+find common housekeeping genes, like DNA biosynthesis and carbon metabolism,
+across all four samples. We also find less common pathways. Again, we must
+issue a disclaimer: metagenomics is still in its infancy. Few samples have been
+analyzed in this way. Therefore, making health inferences based on metagenomic
+findings would be very premature at this time.
+
+Your sample (000010538) looks like the metagenome in most individuals in both
+the American Gut and HMP. However, your metagenome includes a degradation
+pathway for the aromatic amino acid, phenylalanine. Phenylalanine is an
+essential amino acid. Phenylalanine is also a metabolite of Aspartame, a common
+artificial sweetener.  The two pathways for phenylalanine degradation take the
+planar ring structure, and break it down to carbon chains that can serve as
+precursors for other reactions.

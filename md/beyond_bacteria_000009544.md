@@ -31,3 +31,26 @@ prior to collection of your sample. Antibiotics have been shown to reduce
 microbiome diversity and have even been associated with recurrent GI tract
 infections in some people; nevertheless, you appear to be generally healthy
 physiologically and microbiologically. 
+
+# Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
+
+The most abundant pathways were similar across the four individuals, despite
+taxonomic differences. This is not unprecedented; the Human Microbiome Project
+also large variations in taxonomy, while pathway abundance remained relatively
+stable ([ref](http://www.ncbi.nlm.nih.gov/pubmed/22699609)). Unsurprisingly, we
+find common housekeeping genes, like DNA biosynthesis and carbon metabolism,
+across all four samples. We also find less common pathways. Again, we must
+issue a disclaimer: metagenomics is still in its infancy. Few samples have been
+analyzed in this way. Therefore, making health inferences based on metagenomic
+findings would be very premature at this time.
+
+Your metagenome (000009455) showed a decreased capacity for the biosynthesis of
+lipopolysaccharide (LPS). LPS, also known as endotoxin, is a main component in
+bacterial cell walls. Endotoxin leads to a pro-inflammatory immune response
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/10963608)). Lower gene counts for
+endotoxin may mean less inflammation. However, your microbiome also had a lower
+capacity for glycosaminoglycan breakdown. Glycosaminoglycan are large, branched
+sugars found on the surface of host cells. In their native form,
+glycosaminoglycans can promote infection. Bacterial breakdown of
+glycosaminoglycans can promote an immune response, leading to faster clearance
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/25122767)).

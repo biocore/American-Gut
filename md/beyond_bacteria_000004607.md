@@ -29,3 +29,34 @@ seldom exercise. Therefore, you represent a good example of the difficulty in
 predicting health status and lifestyle habits solely via the microbiome, and
 you underscore the fact that the relationship between the microbiome and
 lifestyle is quite complex.
+
+# Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
+
+The most abundant pathways were similar across the four individuals, despite
+taxonomic differences. This is not unprecedented; the Human Microbiome Project
+also large variations in taxonomy, while pathway abundance remained relatively
+stable ([ref](http://www.ncbi.nlm.nih.gov/pubmed/22699609)). Unsurprisingly, we
+find common housekeeping genes, like DNA biosynthesis and carbon metabolism,
+across all four samples. We also find less common pathways. Again, we must
+issue a disclaimer: metagenomics is still in its infancy. Few samples have been
+analyzed in this way. Therefore, making health inferences based on metagenomic
+findings would be very premature at this time.
+
+We found several unique pathways within your metagenome (sample 000004607). One
+of the most notable differences was the presence of genes associated with the
+degradation of the aromatic compounds toluene, xylene, catechols, and benzoate.
+Toluene and xylene are industrial solvents with potentially neurotoxic effects.
+Catechols are found in many plants, and are responsible for browning. Catechols
+may also be found in perfumes. Benzoate is naturally occurring in many foods,
+as well as being used as a preservative. Benzoate can react with vitamin C to
+form the carcinogen, benzene. Most aromatic compounds are broken down by
+cytochrome P450 enzymes in the liver. Bacterial degradation of aromatics has
+been used in bioremediation of oil spills
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/16269736)); such potential within the
+human gut is poorly characterized. Your sample was also unique in that your
+metagenome encodes for the biosynthesis of vitamin C and the neurotransmitter
+GABA, pathways which were not found in the other three individuals. You also
+had more pathways for methanogenesis than the other samples. This is likely due
+to your high levels of M. smithii. Methanogenesis is associated with
+constipation in some individuals
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/22573345)).

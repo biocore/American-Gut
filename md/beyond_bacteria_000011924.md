@@ -26,3 +26,29 @@ attempt to prevent or correct antibiotic-induced microbiome dysbiosis via the
 ingestion of probiotics could potentially explain the large amount of
 probiotic-like species in your gut, but without this specific information, this
 potential explanation remains conjecture.
+
+# Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
+
+The most abundant pathways were similar across the four individuals, despite
+taxonomic differences. This is not unprecedented; the Human Microbiome Project
+also large variations in taxonomy, while pathway abundance remained relatively
+stable ([ref](http://www.ncbi.nlm.nih.gov/pubmed/22699609)). Unsurprisingly, we
+find common housekeeping genes, like DNA biosynthesis and carbon metabolism,
+across all four samples. We also find less common pathways. Again, we must
+issue a disclaimer: metagenomics is still in its infancy. Few samples have been
+analyzed in this way. Therefore, making health inferences based on metagenomic
+findings would be very premature at this time.
+
+Your metagenome (000011942) follows a general pattern of core pathways. Your
+sample lacks pathways associated with any type of aromatic degradation,
+including phenylalanine. Aromatics are rigid, stable carbon rings. Traditional
+physiology places aromatic degradation in the human liver, although some
+microbes include this capacity.  The bacteria do not encode genes to break down
+glycosaminoglycan. Glycosaminoglycan are large, branched sugars found on the
+surface of host cells. In their native form, glycosaminoglycans can promote
+infection. Bacterial breakdown of glycosaminoglycans can promote an immune
+response, leading to faster clearance
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/25122767)). Your metagenome also
+lacks some pathways involved in energy metabolism, including enzymes to convert
+between hydrogen sulfide (H2S) and sulfate (SO42-). Hydrogen sulfide has a
+distinct rotten egg aroma and is commonly found in flatulence.
