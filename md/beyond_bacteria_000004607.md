@@ -13,6 +13,9 @@ whether certain abundance thresholds of "good" bacteria become harmful. Only
 time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 
+You can find the specific top taxa in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000004607_taxa).
+
 An archaeon, *Methanobrevibacter smithii*, was the most abundant taxon (20.40%
 abundance) in your sample (000004607), followed by *Akkermansia muciniphila* (16.6%
 abundance). Both of these taxa have been negatively associated with obesity, as
@@ -43,6 +46,9 @@ across all four samples. We also find less common pathways. Again, we must
 issue a disclaimer: metagenomics is still in its infancy. Few samples have been
 analyzed in this way. Therefore, making health inferences based on metagenomic
 findings would be very premature at this time.
+
+You can find the specific top pathways in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000004607_pathway).
 
 We found several unique pathways within your metagenome (000004607). One
 of the most notable differences was the presence of genes associated with the

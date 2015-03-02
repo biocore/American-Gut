@@ -13,6 +13,9 @@ whether certain abundance thresholds of "good" bacteria become harmful. Only
 time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 
+You can find the specific top taxa in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000009544_taxa).
+
 A large proportion (44%) of your gut microbiome (000009544) was composed
 of two Roseburia species, *R. intestinalis* and *R. inulinivorans*. As
 described in the top taxon [document](beyond_bacteria_top_taxa.md), both of
@@ -46,6 +49,9 @@ across all four samples. We also find less common pathways. Again, we must
 issue a disclaimer: metagenomics is still in its infancy. Few samples have been
 analyzed in this way. Therefore, making health inferences based on metagenomic
 findings would be very premature at this time.
+
+You can find the specific top pathways in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000009544_pathway).
 
 Your metagenome (000009455) showed a decreased capacity for the biosynthesis of
 lipopolysaccharide (LPS). LPS, also known as endotoxin, is a main component in

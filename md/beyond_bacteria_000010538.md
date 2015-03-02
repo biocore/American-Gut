@@ -13,6 +13,9 @@ whether certain abundance thresholds of "good" bacteria become harmful. Only
 time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 
+You can find the specific top taxa in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000010538_taxa).
+
 Your gut microbiome (000010538) was composed mainly of *Prevotella copri*
 (14.21%), *Eubacterium eligens* (13.35%), and Faecalibacterium prausnitzii
 (11.75%). *Akkermansia muciniphila* was also present, at an abundance of 9.16%.
@@ -41,6 +44,9 @@ across all four samples. We also find less common pathways. Again, we must
 issue a disclaimer: metagenomics is still in its infancy. Few samples have been
 analyzed in this way. Therefore, making health inferences based on metagenomic
 findings would be very premature at this time.
+
+You can find the specific top pathways in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000010538_pathway).
 
 Your sample (000010538) looks like the metagenome in most individuals in both
 the American Gut and HMP. However, your metagenome includes a degradation

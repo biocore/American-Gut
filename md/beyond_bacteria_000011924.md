@@ -13,6 +13,9 @@ whether certain abundance thresholds of "good" bacteria become harmful. Only
 time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 
+You can find the specific top taxa in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000011924_taxa).
+
 Seven of the top ten species detected in your gut microbiome (000011924) were
 *Lactobacillus* species, and an additional two were *Bifidobacterium* species, both
 of which are generally typified as the probiotic strains. As discussed, many of
@@ -40,6 +43,9 @@ across all four samples. We also find less common pathways. Again, we must
 issue a disclaimer: metagenomics is still in its infancy. Few samples have been
 analyzed in this way. Therefore, making health inferences based on metagenomic
 findings would be very premature at this time.
+
+You can find the specific top pathways in your sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000011924_pathway).
 
 Your metagenome (000011942) follows a general pattern of core pathways. Your
 sample lacks pathways associated with any type of aromatic degradation,
