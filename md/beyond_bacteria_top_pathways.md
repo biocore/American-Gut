@@ -17,6 +17,11 @@ vitamins, essential proteins, and many other processes critical not just for
 the life of the individual organism, but also for the health and well-being of
 the human in which the organism lives.
 
+You can find the specific top pathways per Beyond Bacteria sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#pathway_hits),
+and heatmap comparing each Beyond Bacteria sample by pathways 
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#pathway_heatmap).
+
 One of the common interactions between hosts and their microbial symbionts is
 the exchange of chemicals. Hosts can contribute molecules to this exchange
 through their diets. Microbes are also able to modify host molecules. In

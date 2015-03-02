@@ -20,7 +20,12 @@ gene function. As WGS sequences everything, we're able to get a much higher
 level of specificity on the organisms that are represented in a sample. In
 contrast, the 16S rDNA protocol used for the standard American Gut sample
 focuses only on a small region of a single gene which greatly limits its power
-to differentiate strains or species.  
+to differentiate strains or species. 
+
+You can find the specific top taxa per Beyond Bacteria sample
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#taxonomy_hits),
+and heatmap comparing each Beyond Bacteria sample by species 
+[here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#taxonomy_heatmap).
 
 -------
 
