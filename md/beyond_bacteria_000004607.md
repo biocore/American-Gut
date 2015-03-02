@@ -1,4 +1,6 @@
-# Abundant Bacterial Species in YOUR Beyond Bacteria Sample
+<img style="float: right" height="50%" width="50%" src="img/logo.png">
+
+### Abundant Bacterial Species in YOUR Beyond Bacteria Sample
 
 All four Beyond Bacteria participants had very different microbiome profiles
 when looking at the top ten genera detected in each participant. The microbiome
@@ -30,7 +32,7 @@ predicting health status and lifestyle habits solely via the microbiome, and
 you underscore the fact that the relationship between the microbiome and
 lifestyle is quite complex.
 
-# Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
+### Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
 
 The most abundant pathways were similar across the four individuals, despite
 taxonomic differences. This is not unprecedented; the Human Microbiome Project

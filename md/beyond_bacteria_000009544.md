@@ -1,4 +1,6 @@
-# Abundant Bacterial Species in YOUR Beyond Bacteria Sample
+<img style="float: right" height="50%" width="50%" src="img/logo.png">
+
+### Abundant Bacterial Species in YOUR Beyond Bacteria Sample
 
 All four Beyond Bacteria participants had very different microbiome profiles
 when looking at the top ten genera detected in each participant. The microbiome
@@ -31,9 +33,9 @@ Interestingly, you did take antibiotics within the year prior to collection of
 your sample. Antibiotics have been shown to reduce microbiome diversity and
 have even been associated with recurrent GI tract infections in some people;
 nevertheless, you appear to be generally healthy physiologically and
-microbiologically. 
+microbiologically.
 
-# Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
+### Notable Metabolic Pathways in YOUR Beyond Bacteria Sample
 
 The most abundant pathways were similar across the four individuals, despite
 taxonomic differences. This is not unprecedented; the Human Microbiome Project

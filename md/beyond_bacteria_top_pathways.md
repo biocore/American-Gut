@@ -1,3 +1,5 @@
+<img style="float: right" height="40%" width="40%" src="img/logo.png">
+
 ### Top Metabolic Pathways in the Beyond Bacteria Cohort
 
 The whole-genome shotgun sequencing protocol used for the Beyond Bacteria
@@ -44,7 +46,7 @@ communication. All of these necessary macromolecules are built from smaller
 units. DNA and RNA chains are built from single nucleotide units. Proteins are
 made up of amino acids. Membrane lipids are typically triglycerides, made of
 carboxylic acids connected by a bridge molecule. And, long chain
-polysaccharides are made of single sugars. 
+polysaccharides are made of single sugars.
 
 Building and breakdown the molecular components of the cell requires energy.
 Energy is typically released when bonds are broken, like during carbohydrate
@@ -68,9 +70,9 @@ metabolic intermediates which will be found there
 unique functions to the host, while others are required for the maintenance of
 cellular life. We've described the most abundant pathways found in the Beyond
 Bacteria cohort, as well as a few pathways of interest which provide molecules
-you could not otherwise synthesize. 
+you could not otherwise synthesize.
 
-#### Carbon Fixation					
+#### Carbon Fixation
 
 Carbon is the molecular backbone of life, and all of the carbon in organisms
 was at one point carbon dioxide.  That carbon dioxide becomes organic carbon
@@ -210,7 +212,7 @@ suite of 20 amino acids to make functional proteins, which do almost all the
 major functions in cells, and also that bacteria use dietary amino acids for
 food. There is an intricate interplay between microbiome, host, and diet in the
 synthesis and breakdown of amino acids.
-	
+
 #### Vitamin Synthesis
 
 The most common vitamin production pathway in the human gut metagenome is
@@ -220,7 +222,7 @@ Low tetrahydrofolate levels can lead to anemia, and there is some evidence that
 folic acid may be involved in depression
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/25644193)). Two pathways involving
 tetrahydrofolate were identified in the Beyond Bacteria samples: the synthesis
-of tetrahydrofolate from GTP and C1-unit interconversion by prokaryotes. 
+of tetrahydrofolate from GTP and C1-unit interconversion by prokaryotes.
 
 The first pathway is less abundant, and converts a guanine-nucleotide
 triphosphate, L-guanine, and a molecule of aminobenzoate to a molecule of
@@ -232,13 +234,13 @@ biosynthesis.
 The C1-interconversion pathway utilizes tetrahydrofolate to catalyze the
 conversion of glycine to serine (Schema 2). This pathway uses energy in the
 form of ATP to add a formate group first to the folate body and then transfer
-it to the glycine. The transfer is able to regenerate tetrahydrofolate. 
+it to the glycine. The transfer is able to regenerate tetrahydrofolate.
 
 #### schema 2, insert figure Schema 2. C1 conversion reaction. NADPH donates
 electrons to the reaction, and ATP provides energy.
 
 ### Low-Abundance Pathways of Interest
-											
+
 #### Other Vitamin Synthesis
 
 Two other B-vitamins can be synthesized by the microbiome: Vitamin B12, called
@@ -262,7 +264,7 @@ modifications, gains a Cobalt ion at its center. Cobamide is converted to
 Cob(I)yrinate diamide, which enters the cobalamine pathway found in the
 American Gut (M00121). This pathway converts Cob(I)yrinate diamide to cobalamin
 using dimethylbenzimadizole and ATP-energy. The cobalamin can then be utilized
-within the bacteria, or shared with their host. 
+within the bacteria, or shared with their host.
 
 #### schema 3, insert figure Schema 3. Precorrin-2 biosynthesis from Glutamate
 

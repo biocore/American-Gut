@@ -1,4 +1,4 @@
-# Introduction
+<img style="float: right" height="50%" width="50%" src="img/logo.png">
 
 ### Top 10 Bacterial Species in the Beyond Bacteria Cohort
 
