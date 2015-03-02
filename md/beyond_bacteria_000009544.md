@@ -17,7 +17,7 @@ You can find the specific top taxa in your sample
 [here](http://nbviewer.ipython.org/github/biocore/American-Gut/blob/master/ipynb/beyond_bacteria.ipynb#000009544_taxa).
 
 A large proportion (44%) of your gut microbiome (000009544) was composed
-of two Roseburia species, *R. intestinalis* and *R. inulinivorans*. As
+of two *Roseburia* species, *R. intestinalis* and *R. inulinivorans*. As
 described in the top taxon [document](beyond_bacteria_top_taxa.md), both of
 these bacterial species ferment plant polysaccharides to produce butyrate, an
 anti-inflammatory molecule associated with GI tract health.  Additionally, *R.
