@@ -24,7 +24,7 @@ capable of breaking down complex sugars. In contrast, an assembled metagenomic
 library of 104 organisms encoded more than 15,000 enzymes for digesting these
 sugars ([ref](http://www.ncbi.nlm.nih.gov/pubmed/23748339)). Other metabolites
 produced by the microbiome that influence host health include the following:
-serotonin, with 95% of the body’s supply made by gut bacteria; short-chain
+serotonin, with 95% of the body's supply made by gut bacteria; short-chain
 fatty acids, which regulate metabolism and brain function; and trimethylamine
 N-oxide (TMAO), which plays a role in the development of cardiovascular disease
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/25440054)).
@@ -66,7 +66,7 @@ The metagenomic pathways found within the human gut are a predictor of the
 metabolic intermediates which will be found there
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/25440054)). Some pathways provide
 unique functions to the host, while others are required for the maintenance of
-cellular life. We’ve described the most abundant pathways found in the Beyond
+cellular life. We've described the most abundant pathways found in the Beyond
 Bacteria cohort, as well as a few pathways of interest which provide molecules
 you could not otherwise synthesize. 
 
@@ -105,8 +105,8 @@ metagenomes.
 Glycolysis (also called the Embden-Meyerhof pathway), including the part
 involving three-carbon compounds, is the central pathway in heterotrophic
 metabolism (breakdown of organic carbon for energy). It is found in diverse
-organisms, from E. coli to yeast to humans. Glycolysis (literally “breakdown of
-glucose”) is the conversion of one molecule of glucose into two molecules for
+organisms, from E. coli to yeast to humans. Glycolysis (literally "breakdown of
+glucose") is the conversion of one molecule of glucose into two molecules for
 pyruvate (a three-carbon compound), with two molecules each of NADH and ATP
 generated as by-products. Gluconeogenesis is essentially the reverse of
 glycolysis, converting two three-carbon compounds like pyruvate back into
@@ -129,12 +129,12 @@ by oxygen to form water. The proton gradient is used to power the synthesis of
 ATP. Because oxygen is such a good electron acceptor, a lot of ATP can be made.
 Of course, since much of the gut is anaerobic, other less-efficient terminal
 electron acceptors have to be used. Compounds like fumarate, nitrate, and
-nitrite can all serve as final electron acceptors if oxygen isn’t available. If
-all of this sounds complicated, that’s because it is; scientists still don’t
+nitrite can all serve as final electron acceptors if oxygen isn't available. If
+all of this sounds complicated, that's because it is; scientists still don't
 understand how parts of the process work!
 
 The serine pathway for formaldehyde assimilation is found in methanotrophic
-(“methane eating”) bacteria. It is one of two ways for these bacteria to
+("methane eating") bacteria. It is one of two ways for these bacteria to
 assimilate formaldehyde, produced from the oxidation of methane and methanol,
 into biosynthetic pathways. In other words, methanotrophs consume one-carbon
 methane or methanol to make energy, but rather than throw away the product
@@ -172,8 +172,8 @@ interesting in that it can form so-called non-Watson-Crick base pairs; inosine
 can pair with cytosine, uracil, and adenine. Inosine can also be converted to
 guanine and adenosine.
 
-Finally, it’s not surprising that pathways for nucleotide synthesis are highly
-represented in human gut metagenomes. There generally isn’t enough DNA or RNA
+Finally, it's not surprising that pathways for nucleotide synthesis are highly
+represented in human gut metagenomes. There generally isn't enough DNA or RNA
 in the food we eat to supply the nucleotide requirements for bacteria, and
 transporting them across membranes is difficult. Therefore, they need to
 synthesize most of their nucleotides de novo (from scratch).
@@ -185,7 +185,7 @@ building blocks of DNA and RNA. Proteins are built from a combination of 20
 different amino acids, each with different chemical properties that give
 proteins an amazing diversity of three-dimensional shapes and functions. Not
 all organisms can make all 20 amino acids. For example, humans can make only 11
-of the 20; the other 9 are called “essential” amino acids because they must be
+of the 20; the other 9 are called "essential" amino acids because they must be
 consumed as part of our food. Bacteria generally are able to make more amino
 acids than humans.
 
@@ -198,14 +198,14 @@ function, and also feed back on microbial composition and metabolism
 
 The amino acid pathways most abundant in the Beyond Bacteria cohort were
 cysteine biosynthesis, methionine degradation, and methionine salvage.
-Methionine is an essential amino acid, meaning it’s required from our diet.
+Methionine is an essential amino acid, meaning it's required from our diet.
 These pathways indicate methionine in our gut is consumed (salvaged) by
 bacteria and also degraded, likely to make energy, other amino acids, or to
 harvest nitrogen or sulfur. Cysteine is not an essential amino acid, as humans
 can synthesize it. However, the sulfur in our cysteine comes from methionine.
-Therefore, it’s possible that methionine degradation by the microbiome is
+Therefore, it's possible that methionine degradation by the microbiome is
 contributing to cysteine biosynthesis, either used by the bacteria or harvested
-by the host (you!). What’s clear is that both bacteria and humans need a full
+by the host (you!). What's clear is that both bacteria and humans need a full
 suite of 20 amino acids to make functional proteins, which do almost all the
 major functions in cells, and also that bacteria use dietary amino acids for
 food. There is an intricate interplay between microbiome, host, and diet in the
@@ -243,7 +243,7 @@ electrons to the reaction, and ATP provides energy.
 
 Two other B-vitamins can be synthesized by the microbiome: Vitamin B12, called
 Cobalamin, and Vitamin B5, or Pantothenate. Cobalamin is one of the most
-complex “small molecules” utilized by the body. It is involved in DNA
+complex "small molecules" utilized by the body. It is involved in DNA
 synthesis, fatty acid metabolism, and amino acid metabolism. It is critical to
 neurological function and red blood cell formation. The structure of Cobalamin
 is unique among vitamins. It consists of a ring made out of interconnected

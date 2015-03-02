@@ -7,7 +7,7 @@ Disclaimer: science is not at the stage to confidently assess human health
 status based on the microbiome, and the American Gut is not a medical
 diagnostic. The microbiome could also follow the old adage that too much of a
 good thing is a bad thing, and not enough studies have been done to determine
-whether certain abundance thresholds of “good” bacteria become harmful. Only
+whether certain abundance thresholds of "good" bacteria become harmful. Only
 time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 

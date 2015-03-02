@@ -11,12 +11,12 @@ followed by a short discussion of your own sample.
 
 One of the protocols used for the Beyond Bacteria samples is called
 whole-genome shotgun (WGS) sequencing. This protocol randomly shears all of the
-DNA present in a sample into small fragments (hence the name “shotgun”). These
+DNA present in a sample into small fragments (hence the name "shotgun"). These
 small fragments of DNA are then read out on a sequencing instrument such as the
 Illumina MiSeq. The result is a vast collection of small sequences from all
 over the genomes of everything in your sample. These sequencing fragments can
 then be compared against existing reference databases to assess taxonomy and
-gene function. As WGS sequences everything, we’re able to get a much higher
+gene function. As WGS sequences everything, we're able to get a much higher
 level of specificity on the organisms that are represented in a sample. In
 contrast, the 16S rDNA protocol used for the standard American Gut sample
 focuses only on a small region of a single gene which greatly limits its power
@@ -89,9 +89,9 @@ revealed that obesity-associated gut microbiota were depleted in M. smithii,
 while a 2009 PLoS One study noted that levels of M. smithii were increased in
 anorexic patients compared to normal-weight controls
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/19774074)).  These results appear to
-be related to M. smithii’s use of nutrients in the human gut; however, the
+be related to M. smithii's use of nutrients in the human gut; however, the
 results are still preliminary and more work is needed to confirm or refute M.
-smithii’s exact role as a member of the gut microbiome.  Regardless, one thing
+smithii's exact role as a member of the gut microbiome.  Regardless, one thing
 is clear: M. smithii is not an insignificant stand-by member of the gut
 microbiome and likely plays an important role in relation to nutrition and
 energy harvest.
@@ -111,7 +111,7 @@ counteracting inflammation-mediated ulcerative colitis and colorectal cancer
 suppress colonic inflammation
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/22517765)).
 
-Because of butyrate’s positive effects on GI tract health, bacterial species
+Because of butyrate's positive effects on GI tract health, bacterial species
 that produce butyrate, such as R. intestinalis, are likely important players in
 maintaining intestinal health. R. intestinalis is not as well characterized as
 other members of the gut microbiome, but a recent study demonstrated that R.
@@ -176,7 +176,7 @@ the disease process is unknown.
 #### 6. Prevotella copri
 
 Prevotella copri is another intestinal microbe, but unlike some of the others
-discussed here, it doesn’t have any known or presumed roles in maintaining
+discussed here, it doesn't have any known or presumed roles in maintaining
 human health. In fact, the opposite appears to be the case. P. copri is most
 famous for its alleged connection to rheumatoid arthritis, an accusation that
 was first presented in 2013 when a research group found that P. copri was
@@ -187,8 +187,8 @@ they colonized mice with P. copri, the mice became more susceptible to
 chemical-induced colitis. Although exciting, this study is preliminary and the
 first to suggest a connection between P. copri and arthritis. More work needs
 to be done to determine whether P. copri is associated with inflammation in
-this autoimmune disease or not, and before we brand P. copri as a “bad” or
-“good” player in human health. This cautionary statement is especially
+this autoimmune disease or not, and before we brand P. copri as a "bad" or
+"good" player in human health. This cautionary statement is especially
 underscored when we take into account that in the same year in which P. copri
 was suspected to be connected to rheumatoid arthritis, a second research group
 determined that P. copri related species are decreased in the gut microbiomes
@@ -212,7 +212,7 @@ and allergic markers in infants
 The beneficial effects observed in the studies referenced above are likely due
 to the purported ability of B. breve to positively influence the immune system.
 By adding B. breve-produced proteins to cells in the laboratory, investigators
-were able to determine that B. breve not only accelerated Peyer’s patch cell
+were able to determine that B. breve not only accelerated Peyer's patch cell
 proliferation, but also enhanced antibody (B cell) production
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/1860970)). Additionally, B. breve
 induced dendritic cell maturation, activation, and survival, and inhibited the
@@ -275,7 +275,7 @@ evidence suggests that F. prausnitzii promotes gut health in a number of
 contexts. Lower abundances of F. prausnitzii have been observed in IBD
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/24799893)) and infectious colitis
 patients ([ref](http://www.ncbi.nlm.nih.gov/pubmed/19235886)) as well as
-Crohn’s disease patients ([ref](http://www.ncbi.nlm.nih.gov/pubmed/18936492))
+Crohn's disease patients ([ref](http://www.ncbi.nlm.nih.gov/pubmed/18936492))
 and ulcerative colitis patients
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/24021287)). In several animal models
 of colitis,  F. prausnitzii exerts a number of beneficial anti-inflammatory
