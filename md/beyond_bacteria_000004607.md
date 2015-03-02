@@ -57,6 +57,6 @@ human gut is poorly characterized. Your sample was also unique in that your
 metagenome encodes for the biosynthesis of vitamin C and the neurotransmitter
 GABA, pathways which were not found in the other three individuals. You also
 had more pathways for methanogenesis than the other samples. This is likely due
-to your high levels of M. smithii. Methanogenesis is associated with
+to your high levels of *M. smithii*. Methanogenesis is associated with
 constipation in some individuals
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/22573345)).

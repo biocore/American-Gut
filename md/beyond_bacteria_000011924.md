@@ -12,12 +12,12 @@ time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 
 Seven of the top ten species detected in your gut microbiome (000011924) were
-Lactobacillus species, and an additional two were Bifidobacterium species, both
+*Lactobacillus* species, and an additional two were *Bifidobacterium* species, both
 of which are generally typified as the probiotic strains. As discussed, many of
 these species have been tested for their probiotic potential in a number of
 contexts and have a wide range of purported effects, from a reduction in
 adiposity to a reduction in allergy related inflammation. The large proportion
-of Lactobacillus spp. in your gut is definitely curious, though the cause for
+of *Lactobacillus spp.* in your gut is definitely curious, though the cause for
 this cannot be determined from the lifestyle information you provided. In
 general, you appear to live a healthy lifestyle, eating a variety of vegetables
 and exercising daily. Nevertheless, you are slightly underweight on the BMI

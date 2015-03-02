@@ -12,11 +12,11 @@ time and well-designed, peer-reviewed research will tell us how useful
 microbiome composition can be as a proxy for predicting human health status.
 
 A large proportion (44%) of your gut microbiome (000009544) was composed
-of two Roseburia species, R. intestinalis and R. inulinivorans. As described
-above, both of these bacterial species ferment plant polysaccharides to produce
+of two Roseburia species, *R. intestinalis* and *R. inulinivorans*. As described
+**above**#LINK, both of these bacterial species ferment plant polysaccharides to produce
 butyrate, an anti-inflammatory molecule associated with GI tract health.
-Additionally, R. inulinovorans produces propionate, which which decreases
-lipogenesis.  A third butyrate producer, F. prausnitzii, was also detected in
+Additionally, *R. inulinovorans* produces propionate, which which decreases
+lipogenesis.  A third butyrate producer, *F. prausnitzii*, was also detected in
 your gut (8.14% abundance). Therefore, you appear to be harboring a microbiome
 with a large potential to promote your health by reducing inflammation and fat
 formation. You eat more than 30 types of plants as part of your regular diet,
