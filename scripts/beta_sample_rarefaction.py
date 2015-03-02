@@ -58,7 +58,7 @@ def main():
     verbose = opts.verbose
     y_max = opts.y_max
     labels = opts.labels.split(',')
-    
+
     results = {}
     for idx, input_file in enumerate(input_path):
         if verbose:
@@ -72,7 +72,7 @@ def main():
 
         n_possible_samples = len(possible_samples)
         result_iteration = np.zeros((iterations, n_possible_samples))
-        
+
         for iter_idx, iteration in enumerate(range(iterations)):
             iter_vals = np.zeros(n_possible_samples)
             for idx, n in enumerate(possible_samples):
@@ -87,7 +87,7 @@ def main():
                 np.fill_diagonal(mask, 1)
                 masked_array = np.ma.array(distmat, mask=mask)
                 iter_vals[idx] = masked_array.min()
-            
+
             result_iteration[iter_idx] = iter_vals
 
         results[input_file] = [mean(result_iteration, axis=0),
@@ -100,7 +100,7 @@ def main():
             f.write('\t'.join(map(str,results[input_file][1])))
             f.write('\n')
             f.close()
-    
+
     # generating plot, some parts taken from
     # http://stackoverflow.com/questions/4700614
     fig = figure()
@@ -127,8 +127,7 @@ def main():
         axis([0, max_x, 0, y_max])
     else:
         axis([0, max_x, 0, max_y])
-    print y_max, max_y
-    
+
     # Shrink current axis by 20%
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
