@@ -34,6 +34,45 @@ def check_dir(dir_):
         mkdir(dir_)
 
 
+def pad_index(df, index_col='#SampleID', nzeros=9):
+    """Adds zeros to the sample ID strings
+
+    Parameters
+    ----------
+    df : dataframe
+        the data frame without an index column
+    index_col : {#SampleID, str}
+        the name of the column containing the index data
+    n_zeros : {9, int}
+        the number of zeros to add before the string
+
+    Returns
+    -------
+    df : dataframe
+        the dataframe with an appropriate index column
+    """
+
+    # Gets the sample IDs
+    samples = df[index_col].values
+    new_samples = []
+
+    # Pads the zeros on the id
+    for samp in samples:
+        if not isinstance(samp, str):
+            samp = str(samp)
+        splits = samp.split('.')
+        first_clean = [splits[0].zfill(nzeros)]
+        first_clean.extend(splits[1:])
+        new_samples.append('.'.join(first_clean))
+
+    # Sets the column as the index
+    df.index = new_samples
+    del df[index_col]
+
+    # Returns the dataframe
+    return df
+
+
 def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
     show_counts=True, **kwargs):
     """Makes a more attractive boxplot
