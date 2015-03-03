@@ -19,10 +19,10 @@ You can find the specific top taxa in your sample
 An archaeon, *Methanobrevibacter smithii*, was the most abundant taxon (20.40%
 abundance) in your sample (000004607), followed by *Akkermansia muciniphila* (16.6%
 abundance). Both of these taxa have been negatively associated with obesity, as
-discussed above, indicating that your microbiome may be enriched for microbial
+described in the top taxon document, indicating that your microbiome may be enriched for microbial
 taxa that are efficient at effectively utilizing food energy. *A. muciniphila*
 has also been described to exert anti-inflammatory effects, as has
-butyrate-producing *F. prausnitzii*, which was also present in this participant
+butyrate-producing *F. prausnitzii*, which was also present in your sample
 (6.19%). In general, the composition of your microbiome is suggestive of a
 healthy microbiome that is not only efficient at utilizing nutrients from food
 but is also actively involved in promoting intestinal health. Indeed, based on
