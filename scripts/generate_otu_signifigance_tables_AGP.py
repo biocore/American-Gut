@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 from os import mkdir
 from numpy import array, delete
+from biom.util import biom_open
 from biom.parse import parse_biom_table
 from os.path import isfile, exists, join as pjoin
 from americangut.generate_otu_signifigance_tables import (calculate_abundance,
@@ -129,20 +130,20 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                           FILE_EXTENSION))
 
         filt_fun = lambda v, i, md: v.sum() > 0
-        filtered_table = filtered_table.filterObservations(filt_fun)
-        abund_table = tax_table.filterObservations(filt_fun)
+        filtered_table = filtered_table.filter(filt_fun, axis='observation', inplace=False)
+        abund_table = tax_table.filter(filt_fun, axis='observation', inplace=False)
 
         # Gets sample information for the whole table
-        abund_sample = abund_table.sampleData(samp)
-        abund_taxa = abund_table.ObservationIds
+        abund_sample = abund_table.data(samp)
+        abund_taxa = abund_table.ids(axis='observation')
 
         # Gets sample information for other filtered samples
-        filt_taxa = filtered_table.ObservationIds
-        population = array([filtered_table.observationData(i) for i in
-                            filtered_table.ObservationIds])
+        filt_taxa = filtered_table.ids(axis='observation')
+        population = array([filtered_table.data(i, axis='observation') for i in
+                            filtered_table.ids(axis='observation')])
 
-        sample_position = filtered_table.getSampleIndex(samp)
-        filt_sample = filtered_table.sampleData(samp)
+        sample_position = filtered_table.index(samp, axis='sample')
+        filt_sample = filtered_table.data(samp)
 
         population = delete(population, sample_position, 1)
 
@@ -322,7 +323,8 @@ if __name__ == '__main__':
     elif not isfile(args.input):
         parser.error("The supplied taxonomy file does not exist in the path.")
     else:
-        tax_table = parse_biom_table(open(args.input))
+        with biom_open(args.input) as fp:
+            tax_table = parse_biom_table(fp)
 
     # Checks the output directory is sane.
     if not args.output:
