@@ -32,7 +32,7 @@ and heatmap comparing each Beyond Bacteria sample by species
 #### 1. *Lactobacillus gasseri*
 
 The name *Lactobacillus gasseri* likely brings to mind thoughts of probiotics, as
-*Lactobacilli* strains are often used in probiotic mixtures. L. gasseri is no
+*Lactobacilli* strains are often used in probiotic mixtures. *L. gasseri* is no
 exception; it, too, has been studied for its probiotic potential in a number of
 contexts. *L. gasseri*, first isolated from the human intestine, has been
 demonstrated to establish in the GI tract when given as a probiotic
@@ -70,7 +70,7 @@ methanogen, meaning that it produces methane (one of the gases in flatulence)
 as a metabolic byproduct in low-oxygen conditions; additionally, it removes
 excess hydrogen from the gut (including the hydrogen in methane) and thus
 allows for an increase in energy extraction from nutrients
-([ref](http://www.ncbi.nlm.nih.gov/pubmed/19774074)). M. smithii has been
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/19774074)). *M. smithii* has been
 observed in human feces for decades
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/4881707),
 [ref](http://www.ncbi.nlm.nih.gov/pubmed/7065811)).  Interest in *M. smithii* and
@@ -180,14 +180,14 @@ the disease process is unknown.
 
 #### 6. *Prevotella copri*
 
-Prevotella copri is another intestinal microbe, but unlike some of the others
+*Prevotella copri* is another intestinal microbe, but unlike some of the others
 discussed here, it doesn't have any known or presumed roles in maintaining
 human health. In fact, the opposite appears to be the case. *P. copri* is most
 famous for its alleged connection to rheumatoid arthritis, an accusation that
 was first presented in 2013 when a research group found that *P. copri* was
 strongly correlated with disease in patients with new-onset rheumatoid
 arthritis ([ref](http://www.ncbi.nlm.nih.gov/pubmed/24192039)). This group also
-identified unique Prevotella genes that also correlated with disease, and when
+identified unique *Prevotella* genes that also correlated with disease, and when
 they colonized mice with *P. copri*, the mice became more susceptible to
 chemical-induced colitis. Although exciting, this study is preliminary and the
 first to suggest a connection between *P. copri* and arthritis. More work needs
@@ -239,7 +239,7 @@ studies thoroughly analyzing the potential beneficial (or harmful) actions of
 *E. eligens* have been published to date. A related species, *Eubacterium
 aerofaciens*, has been shown to be closely associated with a low risk for colon
 cancer ([ref](http://www.ncbi.nlm.nih.gov/pubmed/7574628)), while the genus
-Eubacterium was significantly decreased in children born to obese mothers than
+*Eubacterium* was significantly decreased in children born to obese mothers than
 those born to normal-weight mothers
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/25409177)), and in another study was
 also more abundant in normal-weight individuals compared to overweight
