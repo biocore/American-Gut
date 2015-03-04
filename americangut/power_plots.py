@@ -66,7 +66,7 @@ def collate_effect_size(counts, powers, alpha):
         counts = [counts]*num_powers
 
     # Checks there is a count for each power
-    if not len(counts) == len(powers):
+    if len(counts) != len(powers):
         raise ValueError('There must be a counts array for each power array.')
 
     # Checks the shape array
@@ -74,14 +74,14 @@ def collate_effect_size(counts, powers, alpha):
         count_shape = counts[idx].shape
         power_shape = powers[idx].shape
         # Checks the count array is 1d
-        if not len(count_shape) == 1:
+        if len(count_shape) != 1:
             raise TypeError('Each count array must be a 1d array.')
 
         if len(power_shape) == 1:
-            if not count_shape[0] == power_shape[0]:
+            if count_shape[0] != power_shape[0]:
                 raise ValueError('There must be a sample count for each '
                                  'power.')
-        elif not count_shape[0] == power_shape[1]:
+        elif count_shape[0] != power_shape[1]:
             raise ValueError('There must be a sample count for each power.')
 
     # Prealocates the output arrays
@@ -123,7 +123,20 @@ def collate_effect_size(counts, powers, alpha):
     return effect_means, effect_bounds
 
 
-def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
+def _get_rounded_values(eff_means, eff_bounds, round_mean=5., round_bound=1., 
+                        power=0.8, alpha=0.05):
+    """Calculates the rounded count for the effect and corresponding bound."""
+    fit_ = np.ceil(ft.solve_power(eff_means, nobs=None, 
+                   power=power, alpha=alpha)/round_mean)*round_mean
+    err_ = np.ceil(np.abs(ft.solve_power(eff_means, nobs=None, 
+                                         power=power, alpha=alpha) - 
+                          ft.solve_power(eff_means - eff_bounds, nobs=None,
+                                         power=power, alpha=alpha)) / 
+                    round_bound)*round_bound
+    return fit_, err_
+
+
+def summarize_effect(fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                      a_eff_bounds):
     """Creates a pretty html formatted table of the results
 
@@ -132,7 +145,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
     beautiful display. The numeric cells are split into three columns to allow
     for numerical alignment.
 
-    The effect sizes are rounded to 5 samples, and the standard devation are
+    The effect sizes are rounded to 5 samples, and the confidence bounds are
     rounded to 1 sample.
 
     Parameters
@@ -151,7 +164,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
     Returns
     -------
     table : str
-        An html-formmated table which can be rendered in IPython.
+        An html-formatted table which can be rendered in IPython.
 
 
     """
@@ -183,28 +196,12 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
              '\t\t\tBeta',
              '\t\t</th>',
              '\t</tr>']
+
     # Loops through each row
-    for idx in order:
-        # Gets the effect sizes
-        cat = fecal_cats[idx]
-        a_eff_m = a_eff_means[idx]
-        a_eff_b = a_eff_bounds[idx]
-        b_eff_m = b_eff_means[idx]
-        b_eff_b = b_eff_bounds[idx]
-        # Gets the fitted values
-        a_eff_fit = np.ceil(ft.solve_power(a_eff_m, nobs=None, power=0.8,
-                                           alpha=0.05)/5.)*5
-        a_eff_rnd = np.ceil(np.abs(ft.solve_power(a_eff_m, nobs=None,
-                                                  power=0.8, alpha=0.05) -
-                                   ft.solve_power(a_eff_m - a_eff_b,
-                                                  nobs=None, power=0.8,
-                                                  alpha=0.05))/5.)*5
-        b_eff_fit = np.ceil(ft.solve_power(b_eff_m, nobs=None, power=0.8,
-                                           alpha=0.05)/5.)*5
-        b_eff_rnd = np.ceil(np.abs(ft.solve_power(b_eff_m, nobs=None,
-                                                  power=0.8, alpha=0.05) -
-                                   ft.solve_power(b_eff_m - b_eff_b, nobs=None,
-                                                  power=0.8, alpha=0.05))/5.)*5
+    for (cat, a_eff_mean, a_eff_bound, b_eff_mean, b_eff_bound) in zip(
+        fecal_cats, a_eff_means, a_eff_bounds, b_eff_means, b_eff_bounds):
+        a_fit, a_err = _get_rounded_values(a_eff_mean, a_eff_bound)
+        b_fit, b_err = _get_rounded_values(b_eff_mean, b_eff_bound)
                                                   
         # Fills in the html text
         row = ['\t<tr>',
@@ -215,7 +212,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                '\t\t           padding:10px;',
                '\t\t           text-align:left',
                '\t\t          ">',
-               '\t\t\t%s' % cat.replace('_', ' ').title(),
+               '\t\t\t%s' % cat,
                '\t\t</td>',
                '\t\t<td style="border-top:hidden;',
                '\t\t           border-bottom:hidden;',
@@ -223,7 +220,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                '\t\t           border-bottom: hidden;',
                '\t\t           text-align:right',
                '\t\t          ">',
-               '\t\t\t%i' % a_eff_fit,
+               '\t\t\t%i' % a_fit,
                '\t\t</td>',
                '\t\t<td style="border-top:hidden;',
                '\t\t           border-bottom:hidden;',
@@ -239,7 +236,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                '\t\t           border-bottom: hidden;',
                '\t\t           text-align:right',
                '\t\t          ">',
-               '\t\t\t%i' % a_eff_rnd,
+               '\t\t\t%i' % a_err,
                '\t\t</td>',
                '\t\t<td style="border-top:hidden;',
                '\t\t           border-bottom:hidden;',
@@ -253,7 +250,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                '\t\t           border-bottom: hidden;',
                '\t\t           text-align:right',
                '\t\t          ">',
-               '\t\t\t%i' % b_eff_fit,
+               '\t\t\t%i' % b_fit,
                '\t\t</td>',
                '\t\t<td style="border-top:hidden;',
                '\t\t           border-bottom:hidden;',
@@ -269,7 +266,7 @@ def summarize_effect(order, fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                '\t\t           border-bottom: hidden;',
                '\t\t           text-align:right',
                '\t\t          ">',
-               '\t\t\t%i' % b_eff_rnd,
+               '\t\t\t%i' % b_err,
                '\t\t</td>',
                ]
         table.append('\n'.join(row))
@@ -315,7 +312,7 @@ def plot_effects(effect_means, effect_bounds, labels, sample_counts, **kwargs):
     ----------------
     leg_offset : tuple
         Changes the legend position.
-    tick_size : usigned int
+    tick_size : unsigned int
         sets the font size for tick labels
     label_size : unsigned int
         sets the font size for the axis labels
@@ -325,7 +322,6 @@ def plot_effects(effect_means, effect_bounds, labels, sample_counts, **kwargs):
         sets the font size for enteries in the legend
 
     """
-
     # Sets the keyword properties
     kwds = {'alpha': 0.05,
             'colormap': None,
@@ -337,11 +333,7 @@ def plot_effects(effect_means, effect_bounds, labels, sample_counts, **kwargs):
             'label_size': 15,
             'title_size': 18,
             'legend_size': 11}
-    for key, value in viewitems(kwargs):
-        if key in kwds:
-            kwds[key] = value
-        else:
-            raise ValueError('%s is not a property of plot_effects.' % key)
+    kwds.update(kwargs)
 
     # Checks the effect, bound, and mean argument is sane
     mean_shape = effect_means.shape
@@ -351,7 +343,7 @@ def plot_effects(effect_means, effect_bounds, labels, sample_counts, **kwargs):
     bound_shape = effect_bounds.shape
     label_shape = labels.shape
 
-    if not len(mean_shape) == 1:
+    if len(mean_shape) != 1:
         raise ValueError('Effect Mean must be a 1d numpy array')
     elif mean_shape != bound_shape or mean_shape != label_shape:
         raise ValueError('There must be a label and bound for each effect.')
@@ -485,7 +477,7 @@ def add_average_trace(fig, power, counts, labels, **kwargs):
     Parameters
     ----------
     fig : figure
-        A matplitlib figure instance generated by `plot_effects` which has
+        A matplotlib figure instance generated by `plot_effects` which has
         three overlayed axes.
     power : array
         An array of the power estimation results from
@@ -524,11 +516,7 @@ def add_average_trace(fig, power, counts, labels, **kwargs):
             'color': [0.5, 0.5, 0.5]}
 
     # Updates the keyword arguments
-    for kwd, val in viewitems(kwargs):
-        if kwd not in kwds:
-            raise ValueError('%s is not a supported add_bodysite key word.')
-        else:
-            kwds[kwd] = val
+    kwds.update(kwargs)
 
     # Sets up the figure size and dimensions
     fig_dims = (kwds['axis_size'][0] / kwds['figure_size'][0],
@@ -567,7 +555,7 @@ def add_average_trace(fig, power, counts, labels, **kwargs):
     # added.
     axes[2].get_legend().set_visible(False)
 
-    # Adjusts the position of the filte vector so the bodysite line will appear
+    # Adjusts the position of the filter vector so the bodysite line will appear
     # first in the legend
     handles = list(axes[2].get_legend_handles_labels())
     handles[0].insert(0, handles[0].pop(-1))

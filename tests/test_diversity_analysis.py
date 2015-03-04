@@ -417,16 +417,18 @@ class DiversityAnalysisTest(TestCase):
                      'c__Gammaproteobacteria; o__Enterobacteriales; '
                      'f__Enterbacteriaceae; g__Escherichia; s__coli']
 
-        self.sub_p = DataFrame(np.array([['ref_group1 vs. ref_group1',
+        self.sub_p = DataFrame(np.array([['ref_group1 vs. ref_group1', 
                                           'ref_group1 vs. group1', 0.01],
-                                         ['ref_group2 vs. group2',
+                                         ['ref_group2 vs. group2', 
                                           'ref_group2 vs. ref_group2', 0.02],
-                                         ['group3 vs. ref_group3',
+                                         ['group3 vs. ref_group3', 
                                           'ref_group3 vs. ref_group3', 0.03],
                                          ['ref_group4 vs. ref_group4',
                                           'group4 vs. ref_group4', 0.04]]),
                                columns=['Group 1', 'Group 2', 'p_value'])
         self.sub_p.p_value = self.sub_p.p_value.astype(float)
+        self.sub_p_lookup = {k: set(self.sub_p[k].values) for k in 
+                             ('Group 1', 'Group 2')}
 
     def test_pad_index_default(self):
         # Creates a data frame with raw ids and no sample column
@@ -518,19 +520,20 @@ class DiversityAnalysisTest(TestCase):
         self.assertEqual(test_lowest, 0.54)
         self.assertEqual(test_fudge, 10)
 
-    # def test_get_p_value(self):
-    #     self.assertEqual(_get_p_value(self.sub_p, 'ref_group1', 'group1',
-    #                                   'p_value'), 0.01)
-    #     self.assertEqual(_get_p_value(self.sub_p, 'ref_group2', 'group2',
-    #                                   'p_value'), 0.02)
-    #     self.assertEqual(_get_p_value(self.sub_p, 'ref_group3', 'group3',
-    #                                   'p_value'), 0.03)
-    #     self.assertEqual(_get_p_value(self.sub_p, 'ref_group4', 'group4',
-    #                                   'p_value'), 0.04)
+    def test_get_p_value(self):
+        self.assertEqual(_get_p_value(self.sub_p, self.sub_p_lookup, 
+                                      'ref_group1', 'group1', 'p_value'), 0.01)
+        self.assertEqual(_get_p_value(self.sub_p, self.sub_p_lookup,
+                                      'ref_group2', 'group2', 'p_value'), 0.02)
+        self.assertEqual(_get_p_value(self.sub_p, self.sub_p_lookup,
+                                      'ref_group3', 'group3', 'p_value'), 0.03)
+        self.assertEqual(_get_p_value(self.sub_p, self.sub_p_lookup,
+                                      'ref_group4', 'group4', 'p_value'), 0.04)
 
-    # def test_get_p_value_error(self):
-    #     with self.assertRaises(ValueError):
-    #         _get_p_value(self.sub_p, 'ref_group', 'group', 'p_value')
+    def test_get_p_value_error(self):
+        with self.assertRaises(ValueError):
+            _get_p_value(self.sub_p, self.sub_p_lookup, 'ref_group',
+                         'group', 'p_value')
 
     def test_correct_p_value_no_tail(self):
         p_value = 0.05

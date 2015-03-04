@@ -72,8 +72,8 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
     return df
 
 
-def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props=None,
-    show_counts=True, **kwargs):
+def boxplot(vecs, ax=None, notch=True, interval=0.5, show_counts=True,
+    **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -102,9 +102,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props=None,
     ylims : list
         The limits for the y-axis.
     ylabel : str
-        The label text for the y-axis. Every time you leave off appropriate
-        labels and units, a science grad student grading lab reports cries
-        another bitter tear into their bottle of craft beer.
+        The label text for the y-axis.
 
     Returns
     -------
@@ -158,23 +156,18 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props=None,
     counts = []
 
     # Loops through the data
-    for tick, vec in zip(tics, vecs):
+    for tick, vec in zip(ticks, vecs):
         # Gets vector characteristics
-        tick = [ticks[idx]]
         counts.append(len(vec))
         # Plots the data
         ax.boxplot(vec,
-                   positions=tick,
-                   notch=notch,
-                   **boxplot_props)
+                   positions=[tick],
+                   notch=notch)
 
     # Sets up axis formatting
-    if show_counts:
-        kwargs['counts'] = counts
-    if 'xlim' not in kwargs:
-        kwargs['xlim'] = xlim
-    if 'xticks' not in kwargs:
-        kwargs['xticks'] = ticks
+    kwargs['counts'] = kwargs.get('counts', counts)
+    kwargs['xlim'] =  kwargs.get('xlim', xlim)
+    kwargs['xticks'] = kwargs.get('xticks', ticks)
 
     _format_axis(ax, **kwargs)
 
@@ -182,7 +175,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props=None,
 
 
 def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
-    **boxplot_props):
+    **kwargs):
     """Creates a more attractive boxplot than pandas
 
     Parameters
@@ -236,18 +229,16 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     vecs = [grouped.get_group(g)[cat].values for g in order]
 
     # Formats the axis, if not already done
-    if 'xticklabels' not in boxplot_props:
-        boxplot_props['xticklabels'] = [g.split('(')[0] for g in order]
-    if 'show_xticks' not in boxplot_props:
-        boxplot_props['show_xticks'] = False
-    if 'show_ygrid' not in boxplot_props:
-        boxplot_props['show_ygrid'] = True
+    kwargs['xticklabels'] = kwargs.get('xticklabels', 
+                                       [g.split('(')[0] for g in order])
+    kwargs['show_xticks'] = kwargs.get('show_xticks', False)
+    kwargs['show_ygrid'] = kwargs.get('show_ygrid', True)
 
     # Calculates the p value
     h, p = kruskal(*vecs)
 
     # Sets the boxplot properties
-    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **boxplot_props)
+    ax = boxplot(vecs=vecs, ax=ax, p_value=p, **kwargs)
 
     return ax
 
@@ -614,7 +605,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         elif show_value:
             p_text.append('%1.2f' % p)
         else:
-            p_text.append(_p_marks[np.searchsort((p > _p_thresh), True)])
+            p_text.append(_p_marks[np.searchsorted((p > _p_thresh), True)])
 
     lines = []
 
@@ -628,7 +619,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     lines.append(l1)
 
     if len(centers) > 2:
-        for idx in xrange(len(p_cents)):
+        for idx in xrange(len(p_cents[1:])):
             ln = []
             ln.append(ax.plot([centers[idx + 2]]*2,
                               [tops[idx + 2] + space, bar_levels[idx + 1]],
@@ -706,9 +697,8 @@ def _get_p_value(sub_p, sub_p_lookup, ref_group, group, p_tab_col):
     for query, group in itertools.product([query_fwd, query_rev], 
                                           ['Group 1', 'Group 2']):
         if query in sub_p_lookup[group]:
-            return sub_p.loc[sub_p.group == query, p_tab_col]
-        else:
-            raise ValueError('%s is not a defined group.' % query_fwd)
+            return sub_p.loc[sub_p[group] == query, p_tab_col].values
+    raise ValueError('%s is not a defined group.' % query_fwd)
 
 
 def _correct_p_value(tail, p_value, ref_val, current_val):
@@ -750,7 +740,7 @@ def get_distance_vectors(dm, df, group, order=None):
 
     # Gets the data
     dist_ids = np.array(dm.ids)
-    dist_data = dm.data
+    dist_data = pd.DataFrame(dm.data, columns=dm.ids, index=dm.ids)
 
     # Alocates objects for return
     within = {'%s' % (o1): np.zeros(np.square(len(ordered_ids[o1])))
@@ -766,10 +756,9 @@ def get_distance_vectors(dm, df, group, order=None):
         within['%s' % (o1)] = dm.filter(ordered_ids[o1]
                                                   ).condensed_form()
         for o2 in order[(id1+1):]:
-            loc1 = np.array([dist_ids == i for i in ordered_ids[o1]]).any(0)
-            loc2 = np.array([dist_ids == i for i in ordered_ids[o2]]).any(0)
-            data1 = dist_data[loc1, :]
-            between[(o1, o2)] = data1[:, loc2].flatten()
+            loc1 = ordered_ids[o1]
+            loc2 = ordered_ids[o2]
+            between[(o1, o2)] = (dist_data.loc[loc1, loc2].values).flatten()
 
     return within, between
 
@@ -795,7 +784,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         matrix, `dm`.
     group : str
         the metadata category being interrogated, used to group the data
-    order : list, optional
+    order : array-like, optional
         The order of categories in group. If no `order` is specified, all
         categories in group will be used.
     ref_group : str, optional
@@ -874,11 +863,15 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
 
     # Orders the objects
     if order is None:
-        order = map_.groupby(group).groups.keys().sort()
+        order = np.asarray(map_.groupby(group).groups.keys().sort())
+    else:
+        order = np.asarray(order)
+
+    order_count = np.arange(0, len(order))
 
     # Gets the reference groups
     if isinstance(ref_groups, str):
-        ref_groups = [ref_groups]
+        ref_groups = np.array([ref_groups])
     if ref_groups is None:
         ref_groups = order
 
@@ -892,12 +885,12 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
 
     bar_counter = 0
 
-    # Loops through the data to make boxplots compared to the reference group
-    for id1, ref_loc in enumerate(ref_groups.index):
+    # Loops through the data to make barcharts compared to the reference group
+    for id1, ref_group in enumerate(ref_groups):
         # Determines the offset
         offset = (id1 * len(order) + bar_counter)*width
         # Determines the position of the reference group
-        ref_group = ref_group[ref_loc]
+        ref_loc = order_count[order == ref_group]
 
         # Adds the distance vector to the means
         dist_bar = np.zeros((len(order)))
@@ -922,8 +915,12 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
             if group == ref_group:
                 continue
             # Gets the distance vector
-            dist_bar[id2] = between[(ref_group, group)].mean()
-            dist_std[id2] = between[(ref_group, group)].std()
+            try:
+                dist_bar[id2] = between[(ref_group, group)].mean()
+                dist_std[id2] = between[(ref_group, group)].std()
+            except:
+                dist_bar[id2] = between[(group, ref_group)].mean()
+                dist_std[id2] = between[(group, ref_group)].std()
             if p_values is not None:
                 p_value = _get_p_value(sub_p, sub_p_lookup, ref_group, group, 
                                        p_tab_col)
@@ -985,18 +982,22 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
                                         label_size=label_size,
                                         show_value=show_p_value)
             bars.extend(bars2)
+        else:
+            # p_values is None in this case. This is a shortcut for viewing 
+            # the data wtihout make_distance_boxplots.py
+            pass
 
         # Advances the bar count
         bar_counter = bar_counter + 1
     xlim.append(xpos[-1] + interval*0.75)
 
     # Sets up axis formatting defaults, if not supplied
-    if 'show_frame' not in kwargs:
-        kwargs['show_frame'] = False
-    if 'ytick_size' not in kwargs:
-        kwargs['ytick_size'] = 12
-    if 'show_xticks' not in kwargs:
-        kwargs['show_xticks'] = False
+    kwargs['show_frame'] = kwargs.get('show_frame', False)
+    kwargs['ytick_size'] = kwargs.get('ytick_size', 12)
+    kwargs['show_xticks'] = kwargs.get('show_xticks', False)
+    kwargs['xtick_size'] = kwargs.get('xtick_size', 12)
+    kwargs['xlabel'] = kwargs.get('xlabel', 'Reference Group')
+    kwargs['xlim'] = kwargs.get('xlim', xlim)
     if 'xticks' not in kwargs:
         # Calculates the width of a group of bars
         width = (xpos[-1] - xpos[0])+interval*2
@@ -1006,12 +1007,6 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
     if 'xticklabels' not in kwargs:
         kwargs['xticklabels'] = [r.split('(')[0].replace('_', ' ') for r
                                  in ref_groups]
-    if 'xtick_size' not in kwargs:
-        kwargs['xtick_size'] = 12
-    if 'xlabel' not in kwargs:
-        kwargs['xlabel'] = 'Reference Group'
-    if 'xlim' not in kwargs:
-        kwargs['xlim'] = xlim
 
     # Formats the axis, to make it pretty
     _format_axis(ax, **kwargs)
@@ -1084,49 +1079,48 @@ def split_taxa(taxa, level=7):
     levels: list
         the name of the taxonomic levels corresponding to columns in the table.
     """
-
-    if level not in {2, 3, 4, 5, 6, 7}:
+    if not (2 <= level <= 7):
         raise ValueError('%r is not a supported taxonomic level.' % level)
 
     # Prealocates a holding object
-    splits = np.zeros((1, (level)))
+    splits = np.zeros((len(taxa), level), dtype=object)
 
     # Sets up the names of phylogenetic levels
     levels = ['kingdom', 'phylum', 'p_class', 'p_order', 'family', 'genus',
               'species']
 
     # Loops through the list of taxa
-    for taxon in taxa:
+    for id1, taxon in enumerate(taxa):
         if taxon == 'Unassigned':
             clean = ['Unassigned']*level
         else:
             # Splits the greengenes string
             rough = [v.strip() for v in taxon.split(';')]
             # Watches the last space in the data
-            try:
-                last = rough[level - 1].replace('__', '. ')
-            except:
+            if len(rough) != level:
                 raise ValueError('There are %i levels in your taxa string and'
                                  ' you would like to look at %i levels.'
                                  % (len(rough), level))
-            clean = []
-
-            # Cleans the taxa
-            for t in rough[:(level)]:
-                val = t.split('__')[1].replace('_', ' ').replace('-', ' ')
-                if val == '':
-                    clean.append(last)
-                elif '[' in val:
-                    v_corr = 'cont. %s' % val.replace('[', '').replace(']', '')
-                    clean.append(v_corr)
-                    last = '%s. %s' % (t.split('__')[0], v_corr)
+            clean = np.zeros(level, dtype='object')
+            last = ('', '')
+            for id2, t in enumerate(rough[:level]):
+                # Cleans the taxa
+                pl, v = t.split('__')
+                if len(v) == 0:
+                    v_corr = last
+                elif '[' in v:
+                    v_corr = 'cont. %s' % v.replace('[', '').replace(']', '')
+                    last = '%s. %s' % (pl, v_corr)
                 else:
-                    clean.append(val)
-                    last = t.replace('__', '. ')
-        # Adds the information to the taxa watch
-        splits = np.vstack((splits, np.array(clean)))
+                    v_corr = v
+                    last = '%s. %s' % (pl, v_corr)
 
-    return splits[1:], levels[:level]
+                clean[id2] = v_corr
+
+        # Adds the information to the taxa watch
+        splits[id1, :] = clean
+
+    return splits, levels[:level]
 
 
 def get_ratio_heatmap(data, ref_pos=None, log=None):
@@ -1156,13 +1150,11 @@ def get_ratio_heatmap(data, ref_pos=None, log=None):
     else:
         ref = data[:, ref_pos]
 
-    ref = ((ref*np.ones((1, data.shape[0]))) *
-           np.ones((data.shape[1], 1))).transpose()
+    ref = (ref * np.ones(data.shape[::-1])).transpose()
 
-    if log is None:
-        ratio = data / ref
-    else:
-        ratio = np.log(data / ref) / np.log(log)
+    ratio = data / ref
+    if log is not None:
+        ratio = np.log(ratio) / np.log(log)
 
     return ratio
 
@@ -1174,13 +1166,13 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     ----------
     data : array
         The data to be plotted in the heat map
-   ax : matplotlib axis, optional
+    ax : matplotlib axis, optional
         The axis where data should be plotted. If none, a new axis instance
         will be created.
-    xticklabels : list, optional
+    xticklabels : list
         The labels to be used for the x-axis, to describe the groups of
         data.
-    yticklabels : list, optional
+    yticklabels : list
         The labels for each group on the y-axis.
     cmap : str, optional
         The colormap name to use for plotting.
@@ -1213,13 +1205,13 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     """
     # Checks the shape of the data is sane
     mat_shape = data.shape
-    if ('xticklabels' in kwargs and kwargs['xticklabels'] is not None and not
-        len(kwargs['xticklabels']) == mat_shape[1]):
+    if (kwargs.get('xticklabels', None) is not None and 
+        len(kwargs.get('xticklabels', [])) != mat_shape[1]):
         raise ValueError('There must be a label for each column in '
                          'data.')
 
-    if ('yticklabels' in kwargs and kwargs['yticklabels'] is not None and not
-        len(kwargs['yticklabels']) == mat_shape[0]):
+    if (kwargs.get('yticklabels', None) is not None and 
+        len(kwargs.get('yticklabels', [])) != mat_shape[0]):
         raise ValueError('There must be a label for each row in data.')
 
     # Gets the axis
@@ -1234,14 +1226,10 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     cbar = fig.colorbar(im, ax=ax)
 
     # Gets the axis limits
-    if 'xlim' not in kwargs:
-        kwargs['xlim'] = [0, mat_shape[1]]
-    if 'ylim' not in kwargs:
-        kwargs['ylim'] = [mat_shape[0], 0]
-    if 'xticks' not in kwargs:
-        kwargs['xticks'] = np.arange(0, mat_shape[1]) + 0.5
-    if 'yticks' not in kwargs:
-        kwargs['yticks'] = np.arange(0, mat_shape[0]) + 0.5
+    kwargs['xlim'] = kwargs.get('xlim', [0, mat_shape[1]])
+    kwargs['ylim'] = kwargs.get('ylim', [mat_shape[0], 0])
+    kwargs['xticks'] = kwargs.get('xticks',  np.arange(0, mat_shape[1]) + 0.5)
+    kwargs['yticks'] = kwargs.get('yticks', np.arange(0, mat_shape[0]) + 0.5)
 
     # Formats the axis
     _format_axis(ax, **kwargs)
@@ -1259,7 +1247,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
     p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
     cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
     label='INDEX', sort_by_taxa=True, cbar_size=12,
-    consistant_size=True, width=11, height=8.5, **kwargs):
+    consistent_size=True, width=11, height=8.5, **kwargs):
     """Creates side by side abundance and log ratio heatmaps
 
     Parameters
@@ -1280,8 +1268,8 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
         The name of the column which should serve as the refence for the ratio
         heatmap. If none is supplied, the arethmatic mean will be used.
     ratio_base : float, optional
-        The logarthemic base for the ratio heatmap. If `None`, then no
-        logarthem will be taken.
+        The logarithmic base for the ratio heatmap. If `None`, then no
+        logarithm will be taken.
     cmap1 : str, optional
         A name of a matplotlib colormap instance, used for the display of the
         raw data heatmap.
@@ -1323,10 +1311,9 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
     ax1, ax2 : matplotlib axes
         The matplotlib axis instances with the raw and ratio data, respectively
     cbar1, cbar2 : matplotlib colorbars
-        The colobar instances for the raw and ratio data, respectively.
+        The colorbar instances for the raw and ratio data, respectively.
 
     """
-
     # Creates axes if not specified
     if axes is None:
         ax1 = plt.subplot(1, 2, 1)
@@ -1359,8 +1346,8 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
 
     # Creates an index column
     if label == 'INDEX':
-        sig['label'] = sig['genus'] + ' (' + \
-            sig['OTU'].apply(lambda x: str((x))) + ')'
+        sig['label'] = sig['genus'].replace('_', ' ') + ' (' + \
+            sig['OTU'].apply(lambda x: str(x)) + ')'
     else:
         sig['label'] = sig[label]
 
@@ -1394,7 +1381,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
     ax1.set_xlabel('Raw Data', size=15)
     ax2.set_xlabel('Ratio Data', size=15)
 
-    if consistant_size:
+    if consistent_size:
         # Checks lower padding needed for the figure. If text is not horizonal,
         # an extra inch of padding is provided.
         xangled = ('xfont_angle' in kwargs and
@@ -1444,7 +1431,7 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
 
 
 def _format_axis(ax, **kwargs):
-    """Beautifies the axis
+    """Sets up plotting axes in a consistent way
 
     Parameters
     ----------
@@ -1579,86 +1566,61 @@ def _format_axis(ax, **kwargs):
             'ylabel_size': 15,
             'ytick_size': 12}
 
-    for key, val in kwargs.iteritems():
-        if key in kwds:
-            kwds[key] = val
+    kwds.update(kwargs)
+
+    def _setup_axis_(axis, name):
+        # Sets the ticks
+        if kwds['%sticks' % name] is not None:
+            axis.set_ticks(kwds['%sticks' % name])
+        
+        # Checks the axis limits. Limits have to be set outside the axis 
+        # instance; there is not a good option to set them on the axis.
+        if (kwds['%slim' % name] is not None and 
+            len(kwds['%slim' % name]) != 2):
+            raise ValueError('%slim must specify a %smin and %smax value.' 
+                             % (name, name, name))
+        if name == 'x':
+            ax.set_xlim(kwds['xlim'])
+        elif name == 'y':
+            ax.set_ylim(kwds['ylim'])
+
+        # Sets the ticklabels
+        ticklabels = '%sticklabels' % name
+        ticklabels_v = kwds[ticklabels]
+        if ticklabels_v is None:
+            tls = ['']*len(axis.get_ticklocs())
+        elif (isinstance(ticklabels_v, (str, unicode)) and 
+              ticklabels_v.lower() == 'text'):
+            tls = [kwds['%stick_format' % name] % t for t in 
+                   axis.get_ticklocs()]
+        elif not isinstance(ticklabels_v, (list, tuple, np.ndarray)):
+            raise TypeError('%sticklabels must be None, "text" or an iterable.' 
+                            % name)
+        elif not len(ticklabels_v) == len(axis.get_ticklocs()):
+            raise ValueError('There must be a label for every %stick' % name)
         else:
-            raise ValueError('%s is not an input for axis formatting.' % key)
+            tls = ticklabels_v
 
-    # Sets axis ticks
-    if kwds['xticks'] is not None:
-        ax.set_xticks(kwds['xticks'])
+        axis.set_ticklabels(tls,
+                            ha=kwds['%sfont_align' % name],
+                            rotation=kwds['%sfont_angle' % name],
+                            size=kwds['%stick_size' % name])
 
-    if kwds['yticks'] is not None:
-        ax.set_yticks(kwds['yticks'])
+        # Sets the axis label
+        axis.set_label_text(kwds['%slabel' % name], 
+                            size=kwds['%slabel_size' % name])
 
-    # Checks the max and min values values
-    if kwds['xlim'] is not None and not len(kwds['xlim']) == 2:
-        raise ValueError('xlim must specify a xmin and xmax value.')
+        # Sets the grid
+        axis.grid(kwds['show_%sgrid' % name])
 
-    if kwds['ylim'] is not None and not len(kwds['ylim']) == 2:
-        raise ValueError('xlim must specify a ymin and ymax value.')
+        # Hides the axis tick marks, if desirable
+        if not kwds['show_%sticks' % name]:
+            for tic in axis.get_major_ticks():
+                tic.tick1On = False
+                tic.tick2On = False
 
-    # Sets axis limits
-    if kwds['xlim'] is not None:
-        ax.set_xlim(kwds['xlim'])
-    if kwds['ylim'] is not None:
-        ax.set_ylim(kwds['ylim'])
-
-    # Formats the tick labels
-    if kwds['xticklabels'] is None:
-        xtls = ['']*len(ax.get_xticks())
-    elif (isinstance(kwds['xticklabels'], str) and
-          kwds['xticklabels'].lower() == 'text'):
-        xtls = [kwds['xtick_format'] % t for t in ax.get_xticks()]
-    elif not isinstance(kwds['xticklabels'], (list, tuple, np.ndarray)):
-        raise TypeError('xticklabels must be None, "text" or an iterable.')
-    elif not len(kwds['xticklabels']) == len(ax.get_xticks()):
-        raise ValueError('There must be a label for each xtick.')
-    else:
-        xtls = kwds['xticklabels']
-
-    ax.set_xticklabels(xtls,
-                       ha=kwds['xfont_align'],
-                       rotation=kwds['xfont_angle'],
-                       size=kwds['xtick_size'])
-
-    if kwds['yticklabels'] is None:
-        ytls = ['']*len(ax.get_yticks())
-    elif (isinstance(kwds['yticklabels'], str) and
-          kwds['yticklabels'].lower() == 'text'):
-        ytls = [kwds['ytick_format'] % t for t in ax.get_yticks()]
-    elif not isinstance(kwds['yticklabels'], (list, tuple, np.ndarray)):
-        raise TypeError('yticklabels must be None, "text" or an iterable.')
-    elif not len(kwds['yticklabels']) == len(ax.get_yticks()):
-        raise ValueError('There must be a label for each ytick.')
-    else:
-        ytls = kwds['yticklabels']
-
-    ax.set_yticklabels(ytls,
-                       ha=kwds['yfont_align'],
-                       rotation=kwds['yfont_angle'],
-                       size=kwds['ytick_size'])
-
-    # Adds axis labels, if appropriate
-    ax.set_xlabel(kwds['xlabel'], size=kwds['xlabel_size'])
-    ax.set_ylabel(kwds['ylabel'], size=kwds['ylabel_size'])
-
-    # Adds a grid, if appropriate
-    if kwds['show_xgrid']:
-        ax.xaxis.grid()
-    if kwds['show_ygrid']:
-        ax.yaxis.grid()
-
-    # Hides the axis tick marks, if desirable
-    if not kwds['show_xticks']:
-        for tic in ax.xaxis.get_major_ticks():
-            tic.tick1On = False
-            tic.tick2On = False
-    if not kwds['show_yticks']:
-        for tic in ax.yaxis.get_major_ticks():
-            tic.tick1On = False
-            tic.tick2On = False
+    _setup_axis_(ax.xaxis, 'x')
+    _setup_axis_(ax.yaxis, 'y')
 
     # Removes the axis frame, if desired.
     if not kwds['show_frame']:
