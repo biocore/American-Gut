@@ -1,6 +1,7 @@
 from __future__ import division
-from os import mkdir
-from os.path import exists
+
+import os
+import itertools
 
 import numpy as np
 import pandas as pd
@@ -29,9 +30,8 @@ def check_dir(dir_):
     dir : str
         the directory to be checked
     """
-
-    if not exists(dir_):
-        mkdir(dir_)
+    if not os.path.exists(dir_):
+        os.mkdir(dir_)
 
 
 def pad_index(df, index_col='#SampleID', nzeros=9):
@@ -51,7 +51,6 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
     df : dataframe
         the dataframe with an appropriate index column
     """
-
     # Gets the sample IDs
     samples = df[index_col].values
     new_samples = []
@@ -73,7 +72,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
     return df
 
 
-def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
+def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props=None,
     show_counts=True, **kwargs):
     """Makes a more attractive boxplot
 
@@ -92,7 +91,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
     show_counts : bool, optional
         Shows the size of the groups below each plot on the x-axis
     p_value : float, optional
-        Default is None. When supplied, the signfigance value will be displayed
+        Default is None. When supplied, the significance value will be displayed
         on the plot in the upper right hand corner by default.
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
@@ -146,22 +145,20 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
     ytick_size : int
         The font size for the ytick labels
     """
-
     # Sets up an axes instance if necessary
     if ax is None:
         ax = plt.axes()
 
     # Determines the plotting locations
     num_cats = len(vecs)
-    xlim = [-interval/2,
-            interval*(num_cats-1)+interval/2]
+    xlim = [-interval/2, interval*(num_cats-1)+interval/2]
 
     # Sets up the plotting constants
     ticks = np.arange(0, interval*num_cats, interval)
     counts = []
 
     # Loops through the data
-    for idx, vec in enumerate(vecs):
+    for tick, vec in zip(tics, vecs):
         # Gets vector characteristics
         tick = [ticks[idx]]
         counts.append(len(vec))
@@ -186,7 +183,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, boxplot_props={},
 
 def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     **boxplot_props):
-    """Creates a more attractive poxplot than pandas
+    """Creates a more attractive boxplot than pandas
 
     Parameters
     ----------
@@ -210,8 +207,8 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     show_n : bool, optional
         Shows the size of the groups below each plot on the x-axis
     p_value : float, optional
-        Default is None. When supplied, the signfigance value will be displayed
-        on the plot in the upper right hand corner by default.
+        Default is None. When supplied, the significance value will be 
+        displayed on the plot in the upper right hand corner by default.
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
     show_ygrid: bool, optional
@@ -221,9 +218,7 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     ylims : list
         The limits for the y-axis.
     ylabel : str
-        The label text for the y-axis. Every time you leave off appropriate
-        labels and units, a science grad student grading lab reports cries
-        another bitter tear into their bottle of craft beer.
+        The label text for the y-axis.
 
     Returns
     -------
@@ -231,7 +226,6 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
         A matplotlib axes containing the plotted data
 
     """
-
     grouped = meta.groupby(group)
 
     # Sets up the plotting order
@@ -267,7 +261,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
     meta : pandas DataFrame
         the metadata object for the data
     group : str
-        the metadata category being interograted
+        the metadata category being interrogated
     cat : str
         the name of the column with the result
     order : None, list, optional
@@ -288,7 +282,6 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
         of p-values.
 
     """
-
     # Groups the data
     grouped = meta.groupby(group)
 
@@ -296,7 +289,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
     if order is None:
         order = grouped.groups.keys()
 
-    # Prealocates an output frame
+    # Sets up an output dataframe
     if show_stats:
         stats = pd.DataFrame({'Counts': grouped[cat].count(),
                               'Mean':  grouped[cat].mean(),
@@ -309,16 +302,13 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
     for pos, g1_name in enumerate(order[:-1]):
         g1_data = grouped.get_group(g1_name)[cat]
         compare = []
-        index = []
         for id2, g2_name in enumerate(order):
             if id2 <= pos:
-                index.append(g2_name)
                 compare.append(np.nan)
             else:
                 g2_data = grouped.get_group(g2_name)[cat]
-                index.append(g2_name)
                 compare.append(kruskal(g1_data, g2_data)[1])
-        add_series = pd.Series(compare, index=index)
+        add_series = pd.Series(compare, index=order)
         comparison[g1_name] = add_series
 
     # Converts the data to a dataframe
@@ -331,14 +321,41 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
 
     # Performs the multiple hypothesis correction
     if correct is not None:
-        post_hoc = multiple_correct_post_hoc(post_hoc, order, correct)
+        post_hoc = multiple_correct_post_hoc(post_hoc, order, method=correct)
 
     return post_hoc
 
 
 def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
     method='bonferroni'):
-    """Performs multiple hypothesis correction on post hoc test matrices"""
+    """Performs multiple hypothesis correction on post hoc test matrices
+
+    Parameters
+    ----------
+    raw_ph : DataFrame
+        A data frame of uncorrected p-values. The column and row names should
+        be the same and must appear in `order`.
+    order : list
+        The final order of the observations in the table.
+    alphafwer : float, optional
+        The critical value for multiple hypothesis correction
+    method: string, optional
+        The method by which multiple hypotheses should be corrected. A value
+        of `None` will result in no hypothesis correction. Other values
+        are given by the statsmodels function, 
+        `statsmodels.sandbox.stats.multicomp.multipletests`. These includes
+        `"bonferroni"` for bonferroini correction and `"fbr_bh"` for
+        Benjamini/Hochberg False Discovery Rate correction.
+
+    Returns
+    -------
+    corrected_ph
+        A dataframe with p values corrected for multiple hypotheses.
+
+    Also See
+    --------
+    statsmodels.sandbox.stats.multicomp.multipletests
+    """
     # Gets the positon matrix
     num_rows = len(order)
     num_cols = num_rows - 1
@@ -355,7 +372,7 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
     ps_sort = ps_all[ps_ord]
     pos_sort = pos_all[ps_ord]
     # Identifies the position of missing values in the sorted matrix
-    ps_nan = np.isnan(ps_sort) == False
+    ps_nan = np.logical_not(np.isnan(ps_sort))
 
     # Corrects for multiple hypotheses
     reject, p_corr, asidak, abonf = multipletests(ps_sort[ps_nan],
@@ -373,8 +390,8 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2, offset=0,
-    **kwargs):
+    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2, 
+    offset=0, **kwargs):
     """Renders a barchart
 
     Parameters
@@ -384,7 +401,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
     interval : float, optional
         The spacing between the bars
     width : float, optional
-        The width of each bars. Should be less than or equal to the interal.
+        The width of each bars. Should be less than or equal to the interval.
     ax : matplotlib axis, optional
         The axis where data should be plotted. If none, a new axis instance
         will be created.
@@ -405,8 +422,8 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
         plotting multiple barcharts on the same axis with spacing, or plotting
         the bar chart away from the origin.
     p_value : float, optional
-        Default is None. When supplied, the signfigance value will be displayed
-        on the plot in the upper right hand corner by default.
+        Default is None. When supplied, the significance value will be 
+        displayed on the plot in the upper right hand corner by default.
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
     show_ygrid: bool, optional
@@ -480,10 +497,6 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
     else:
         edgecolors = np.array([[0, 0, 0]]*len(height))
 
-    # Gets an axis instance
-    if ax is None:
-        ax = plt.axes()
-
     # Gets the xposition, for errorbars
     xpos = np.arange(0, len(height))*interval + interval/2 + offset
 
@@ -496,12 +509,12 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
     # Plots the errorbars
     if errors is not None:
         e_bars = []
-        for idx, err in enumerate(errors):
-            eb = ax.errorbar(x=xpos[idx],
-                             y=height[idx],
+        for x_, y_, err, color in zip(xpos, height, errors, edgecolors):
+            eb = ax.errorbar(x=x_,
+                             y=y_,
                              yerr=err,
                              fmt='none',
-                             ecolor=edgecolors[idx, :],
+                             ecolor=color,
                              elinewidth=elinewidth,
                              capthick=ecapwidth)
         e_bars.append(eb)
@@ -543,7 +556,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     interval : float
         The space between the bars
     lowest : float, optional
-        If mutliple sets of comparison bars are being added, this allows
+        If multiple sets of comparison bars are being added, this allows
         the user to set the position of the lowest bar in the group
     factor : unsigned int, optional
         The ones-place value to which values will be rounded. For example,
@@ -563,9 +576,9 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
 
     """
     # Checks the shapes of the inputs
-    if not centers.shape == tops.shape:
+    if centers.shape != tops.shape:
         raise ValueError('centers and tops must be the same length')
-    if not centers.shape[0] == (p_values.shape[0] + 1):
+    if centers.shape[0] != (p_values.shape[0] + 1):
         raise ValueError('there must be a p-value for each center')
 
     # Deterines the bar locations
@@ -582,7 +595,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     if interval is None:
         interval = correct/3.
 
-    # Sets the tops of hte bars
+    # Sets the tops of the bars
     bar_levels = np.arange(0., len(p_values))*interval + lowest
 
     # Identifies the center positions for the p text
@@ -593,23 +606,15 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
             p_cents.append((center - centers[0])/2. + centers[0])
     # Determines the p text
     p_text = []
+    _p_marks = ['', '+', '*', '**', '***', '****']
+    _p_thresh = np.array([1, 0.1, 0.05, 0.01, 0.001, 0.0001])
     for p in p_values:
         if p < 0.01 and show_value:
             p_text.append('%1.e' % p)
         elif show_value:
             p_text.append('%1.2f' % p)
-        elif p < 0.0001:
-            p_text.append('****')
-        elif p < 0.001:
-            p_text.append('***')
-        elif p < 0.01:
-            p_text.append('**')
-        elif p < 0.05:
-            p_text.append('*')
-        elif p < 0.1:
-            p_text.append('+')
         else:
-            p_text.append('')
+            p_text.append(_p_marks[np.searchsort((p > _p_thresh), True)])
 
     lines = []
 
@@ -623,7 +628,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     lines.append(l1)
 
     if len(centers) > 2:
-        for idx, p_cent in enumerate(p_cents[:-1]):
+        for idx in xrange(len(p_cents)):
             ln = []
             ln.append(ax.plot([centers[idx + 2]]*2,
                               [tops[idx + 2] + space, bar_levels[idx + 1]],
@@ -639,12 +644,12 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
 
 
 def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
-    """Segments a matplotlib colormap into descrete colors
+    """Segments a matplotlib colormap into discrete colors
 
     Parameters
     ----------
     cm_name : str
-        The name of the continous matplotlib colormap which will be segmented.
+        The name of the continuous matplotlib colormap which will be segmented.
     n_colors : int
         The number of colors needed in the colormap
     n_pad : int, optional
@@ -660,7 +665,6 @@ def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
         A segmented array containing the colormap
 
     """
-
     # Sets parameters if necessary
     if n_pad is None:
         n_pad = n_colors + 1
@@ -670,7 +674,7 @@ def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
     # Gets the colormap
     cm = mpl.cm.get_cmap(cm_name)
     # Sets up the new map
-    new_map = np.array([list(cm(1. * (i + start) / n_pad)) for i in
+    new_map = np.array([cm(1. * (i + start) / n_pad) for i in 
                         xrange(n_colors)])
 
     return new_map
@@ -679,7 +683,7 @@ def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
 def _get_bar_height(tops, factor=5):
     """Calculates the lowest bar height"""
     max_hi = tops.max()
-    # Gets the correct order of magnitdue
+    # Gets the correct order of magnitude
     if max_hi < 1:
         fudge = np.power(10, -np.floor(np.log(max_hi)))
     else:
@@ -693,33 +697,23 @@ def _get_bar_height(tops, factor=5):
     return lowest, fudge
 
 
-def _get_p_value(sub_p, ref_group, group, p_tab_col):
+def _get_p_value(sub_p, sub_p_lookup, ref_group, group, p_tab_col):
     """Determines the comparison value within a post-hoc table"""
-    if '%s vs. %s' % (ref_group, group) in sub_p['Group 2'].values:
-        p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
-                            % (ref_group, group), p_tab_col].values[0]
-    elif '%s vs. %s' % (ref_group, group) in sub_p['Group 1'].values:
-        p_value = sub_p.loc[sub_p['Group 1'] == '%s vs. %s'
-                            % (ref_group, group), p_tab_col].values[0]
-    elif '%s vs. %s' % (group, ref_group) in sub_p['Group 2'].values:
-        p_value = sub_p.loc[sub_p['Group 2'] == '%s vs. %s'
-                            % (group, ref_group), p_tab_col].values[0]
-    elif '%s vs. %s' % (group, ref_group) in sub_p['Group 1'].values:
-        p_value = sub_p.loc[sub_p['Group 1'] == '%s vs. %s'
-                            % (group, ref_group), p_tab_col].values[0]
-    else:
-        raise ValueError('%s vs. %s is not a defined group'
-                         % (ref_group, group))
 
-    return p_value
+    query_fwd = '%s vs. %s' % (ref_group, group)
+    query_rev = '%s vs. %s' % (group, ref_group)
+
+    for query, group in itertools.product([query_fwd, query_rev], 
+                                          ['Group 1', 'Group 2']):
+        if query in sub_p_lookup[group]:
+            return sub_p.loc[sub_p.group == query, p_tab_col]
+        else:
+            raise ValueError('%s is not a defined group.' % query_fwd)
 
 
 def _correct_p_value(tail, p_value, ref_val, current_val):
     """Determines if p-values should be tail corrected"""
-    if tail and ref_val > current_val:
-        return 1
-    else:
-        return p_value
+    return 1 if tail and ref_val > current_val else p_value
 
 
 def get_distance_vectors(dm, df, group, order=None):
@@ -731,23 +725,19 @@ def get_distance_vectors(dm, df, group, order=None):
         A distance matrix object with the samples corresponding to those in
         the data frame with the metadata.
     df : pandas DataFrame
-        A dataframe containing the metadata associated withed with the object
+        A dataframe containing the metadata associated with the object
     group : str
-        the metadata category being interograted, used to group the data
+        the metadata category being interrogated, used to group the data
     order : None, list
-        Default is None. The order of groups in group.
+        The order of groups in group. If no order is given, all the groups
+        that fit within the category are used.
 
     Returns
     -------
-    within : list
-        A list of the group names for the within group distance
-    w_dist : list
-        A list of arrays with the within group distances
-    between : list
-        A list of the group names for between group distance
-    b_dist : list
-        A list of arrays for between group distance
-
+    within : dict
+        The within-group distance for the groups in order
+    between : dict
+        The between-group distances for each group-group pair in order.
     """
     # Checks the column is supported
     if group not in df:
@@ -759,29 +749,29 @@ def get_distance_vectors(dm, df, group, order=None):
     ordered_ids = {o: df.groupby(group).groups[o] for o in order}
 
     # Gets the data
-    dist_ids = np.array(list(dm.ids))
+    dist_ids = np.array(dm.ids)
     dist_data = dm.data
 
-    # Prealocates objects for return
-    within = []
-    w_dist = []
-    between = []
-    b_dist = []
+    # Alocates objects for return
+    within = {'%s' % (o1): np.zeros(np.square(len(ordered_ids[o1])))
+              for o1 in order}
+    between = {(o1, o2): np.zeros([len(ordered_ids[o1]) * 
+               len(ordered_ids[o2])]) for o1, o2 in 
+               itertools.combinations(order, 2)}
 
+    counter = 0
     # Loops through the groups
     for id1, o1 in enumerate(order):
         # Gets the intragroup distance
-        within.append(o1)
-        w_dist.append(dm.filter(ordered_ids[o1]).condensed_form())
+        within['%s' % (o1)] = dm.filter(ordered_ids[o1]
+                                                  ).condensed_form()
         for o2 in order[(id1+1):]:
             loc1 = np.array([dist_ids == i for i in ordered_ids[o1]]).any(0)
             loc2 = np.array([dist_ids == i for i in ordered_ids[o2]]).any(0)
             data1 = dist_data[loc1, :]
-            # Adds the intragroup distance
-            between.append({o1, o2})
-            b_dist.append((data1[:, loc2]).flatten())
+            between[(o1, o2)] = data1[:, loc2].flatten()
 
-    return within, w_dist, between, b_dist
+    return within, between
 
 
 def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
@@ -790,7 +780,8 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
     ref_less=True, ax=None, interval=0.1, width=0.1,
     show_seperation=True, colormap=None, match_colors=True,
     elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
-    sep_size=0.035, label_size=12, show_p_value=False, **kwargs):
+    sep_size=0.035, label_size=12, show_p_value=False, 
+    **kwargs):
     """Creates a barchart of the beta diversity distances
 
     Parameters
@@ -803,7 +794,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         in the DataFrame may be a superset of the samples in the distance
         matrix, `dm`.
     group : str
-        the metadata category being interograted, used to group the data
+        the metadata category being interrogated, used to group the data
     order : list, optional
         The order of categories in group. If no `order` is specified, all
         categories in group will be used.
@@ -855,7 +846,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         When `show_seperation` is true, this is used to set the size of the
         seperation lines.
     label_size : int, optional
-        Sets the size of the signfigance labels
+        Sets the size of the significance labels
     show_p_value : bool, optional
         When True, the signigance bars will display the actual p value.
         Otherwise, p values will be coded as (p <= 0.1: '+', p <= 0.05: '*',
@@ -869,17 +860,13 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
     ylims : list
         The limits for the y-axis.
     ylabel : str
-        The label text for the y-axis. Every time you leave off appropriate
-        labels and units, a science grad student grading lab reports cries
-        another bitter tear into their bottle of craft beer.
-
+        The label text for the y-axis.
 
     Returns
     -------
     ax : axes
         A matplotlib axes containing the plotted data
     """
-
     # Removes any undefined groups
     map_ = meta.groupby(meta[group].apply(_check_strs)
                         ).get_group(True)
@@ -901,24 +888,23 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         kwargs['p_value'] = perma_res['p-value']
 
     # Gets the distance vectors
-    w_groups, w_dist, b_groups, b_dist = \
-        get_distance_vectors(dm, meta, group, order)
+    within, between = get_distance_vectors(dm, meta, group, order)
 
     bar_counter = 0
 
     # Loops through the data to make boxplots compared to the reference group
-    for id1, ref_group in enumerate(ref_groups):
+    for id1, ref_loc in enumerate(ref_groups.index):
         # Determines the offset
         offset = (id1 * len(order) + bar_counter)*width
         # Determines the position of the reference group
-        ref_loc = order.index(ref_group)
+        ref_group = ref_group[ref_loc]
 
         # Adds the distance vector to the means
         dist_bar = np.zeros((len(order)))
         dist_std = np.zeros((len(order)))
 
-        dist_bar[ref_loc] = w_dist[w_groups.index(ref_group)].mean()
-        dist_std[ref_loc] = w_dist[w_groups.index(ref_group)].std()
+        dist_bar[ref_loc] = within[ref_group].mean()
+        dist_std[ref_loc] = within[ref_group].std()
 
         # Sets up the pvalues
         if p_table is None:
@@ -929,18 +915,22 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
                                            % (ref_group, ref_group)],
                                p_table.loc[p_table['Group 2'] == '%s vs. %s'
                                            % (ref_group, ref_group)]])
+            sub_p_lookup = {k: set(sub_p[k].values) for k in 
+                            ('Group 1', 'Group 2')}
 
         for id2, group in enumerate(order):
             if group == ref_group:
                 continue
             # Gets the distance vector
-            dist_bar[id2] = b_dist[b_groups.index({ref_group, group})].mean()
-            dist_std[id2] = b_dist[b_groups.index({ref_group, group})].std()
-            p_value = _get_p_value(sub_p, ref_group, group, p_tab_col)
-            p_values = np.hstack((p_values,
-                                  _correct_p_value(ref_less, p_value,
-                                                   dist_bar[ref_loc],
-                                                   dist_bar[id2])))
+            dist_bar[id2] = between[(ref_group, group)].mean()
+            dist_std[id2] = between[(ref_group, group)].std()
+            if p_values is not None:
+                p_value = _get_p_value(sub_p, sub_p_lookup, ref_group, group, 
+                                       p_tab_col)
+                p_values = np.hstack((p_values,
+                                      _correct_p_value(ref_less, p_value,
+                                                       dist_bar[ref_loc],
+                                                       dist_bar[id2])))
 
         dist_bar = np.array(dist_bar)
         dist_std = np.array(dist_std)
@@ -963,7 +953,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
 
         # Gets the critical lines to display on the figure
         if lowest is None:
-            lowest, __ = _get_bar_height(dist_bar+dist_std)
+            lowest, _ = _get_bar_height(dist_bar+dist_std)
         if p_values is not None and (ref_loc == 0 or len(dist_bar) == 2):
             bars = add_comparison_bars(xpos,
                                        dist_bar+dist_std,
@@ -1465,7 +1455,7 @@ def _format_axis(ax, **kwargs):
         A list of the number of samples in each plotting location, for use
         with a barchart or boxplt
     p_value : float, optional
-        Default is None. When supplied, the signfigance value will be displayed
+        Default is None. When supplied, the significance value will be displayed
         on the plot in the upper right hand corner by default.
     show_frame: bool, optional
         When true, the frame around the axis is displayed. When false, only the
