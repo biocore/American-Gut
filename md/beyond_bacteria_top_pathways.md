@@ -233,16 +233,18 @@ The first pathway is less abundant, and converts a guanine-nucleotide
 triphosphate, L-guanine, and a molecule of aminobenzoate to a molecule of
 tetrahydrofolate (Schema 1). Tetrahydrofolate is biologically available.
 
-#### schema 1, insert figure Schema 1. Molecular components of tetrahydrofolate
-biosynthesis.
+![](img/schema1.png)
+<p align="center"><font size=1><i>Schema 1</i>, Molecular components of tetrahydrofolate
+biosynthesis.</font></p>
 
 The C1-interconversion pathway utilizes tetrahydrofolate to catalyze the
 conversion of glycine to serine (Schema 2). This pathway uses energy in the
 form of ATP to add a formate group first to the folate body and then transfer
 it to the glycine. The transfer is able to regenerate tetrahydrofolate.
 
-#### schema 2, insert figure Schema 2. C1 conversion reaction. NADPH donates
-electrons to the reaction, and ATP provides energy.
+![](img/schema2.png)
+<p align="center"><font size=1><i>Schema 2</i>, C1 conversion reaction. NADPH donates
+electrons to the reaction, and ATP provides energy.</font></p>
 
 ### Low-Abundance Pathways of Interest
 
@@ -271,7 +273,8 @@ American Gut (M00121). This pathway converts Cob(I)yrinate diamide to cobalamin
 using dimethylbenzimadizole and ATP-energy. The cobalamin can then be utilized
 within the bacteria, or shared with their host.
 
-#### schema 3, insert figure Schema 3. Precorrin-2 biosynthesis from Glutamate
+![](img/schema3.png)
+<p align="center"><font size=1><i>Schema 3</i>, insert figure Schema 3. Precorrin-2 biosynthesis from Glutamate.</font></p>
 
 Pantothenate is required for the synthesis of the co-enzyme, Acetyl CoA. Acetyl
 CoA is critical for carbon metabolism and fixation, as well as aiding fatty
@@ -282,9 +285,9 @@ to 2-ketovaline and Pantothenate. The five step processes uses a form of
 tetrahydrofolate, 5,10-methylenetetrahydrofolate which transfers one carbon
 into the creation, an electron donor, and ATP for energy (Schema 4).
 
-#### schema 4, insert figure Schema 4: Pantothenate Synthesis. THF is an
-abbreviation for Tetrahydrofolate. NADP+/NADPH are an oxidation/reduction pair
-which donate electrons to the reaction. ATP stores energy.  
+![](img/schema4.png)
+<p align="center"><font size=1><i>Schema 4</i>, insert figure Schema 4: Pantothenate Synthesis. THF is an abbreviation for Tetrahydrofolate. NADP+/NADPH are an oxidation/reduction pair
+which donate electrons to the reaction. ATP stores energy.</font></p>
 
 #### Credits
 
