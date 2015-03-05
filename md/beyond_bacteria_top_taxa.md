@@ -65,7 +65,7 @@ different individuals respond to treatment with this probiotic strain.
 
 *Methanobrevibacter smithii* (*M. smithii*) is an archaeon, not a bacterium, and
 has been observed as the predominant archaeon in the human gut.  It is a
-methanogen, meaning that it produces methane (one of the gases in flatulence)
+methanogen, meaning that it produces methane (one of the gases in flatus)
 as a metabolic byproduct in low-oxygen conditions; additionally, it removes
 excess hydrogen from the gut (including the hydrogen in methane) and thus
 allows for an increase in energy extraction from nutrients
