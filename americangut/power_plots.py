@@ -178,7 +178,7 @@ def summarize_effect(fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
              '\t\t           background-color:black;',
              '\t\t           color:white',
              '\t\t           ">',
-             '\t\t\tCategory'
+             '\t\t\tCategory',
              '\t\t</th>',
              '\t\t<th style="text-align:center;',
              '\t\t           background-color:black;',
@@ -268,7 +268,7 @@ def summarize_effect(fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
                '\t\t          ">',
                '\t\t\t%i' % b_err,
                '\t\t</td>',
-               ]
+               '\t</tr>']
         table.append('\n'.join(row))
     table.append('</table>')
 
@@ -460,10 +460,11 @@ def trace_bounds(power, counts):
     pwr_bound = confidence_bound(power, axis=0)
 
     # Prevents the confidence interval of being less than 0 or more than 1
-    pwr_lower = np.vstack((pwr_mean - pwr_bound,
-                           np.zeros(pwr_mean.shape))).max(0)
-    pwr_upper = np.vstack((pwr_mean + pwr_bound,
-                           np.ones(pwr_mean.shape))).min(0)
+    pwr_lower = pwr_mean - pwr_bound
+    np.where(pwr_lower < 0, 0, pwr_lower)
+
+    pwr_upper = pwr_mean + pwr_bound
+    np.where(pwr_upper > 1, 1, pwr_upper)
 
     return pwr_mean, pwr_lower, pwr_upper
 

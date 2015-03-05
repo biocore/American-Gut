@@ -4,7 +4,9 @@ from unittest import TestCase, main
 import numpy as np
 import numpy.testing as npt
 
-from americangut.power_plots import collate_effect_size, summarize_effect
+from americangut.power_plots import (collate_effect_size, 
+                                     summarize_effect,
+                                     _get_rounded_values)
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2014"
@@ -45,7 +47,8 @@ class PowerPlotTest(TestCase):
                '\t\t           background-color:black;\n'
                '\t\t           color:white\n'
                '\t\t           ">\n'
-               '\t\t\tCategory\t\t</th>\n'
+               '\t\t\tCategory\n'
+               '\t\t</th>\n'
                '\t\t<th style="text-align:center;\n'
                '\t\t           background-color:black;\n'
                '\t\t           color:white";\n'
@@ -70,7 +73,7 @@ class PowerPlotTest(TestCase):
                '\t\t           padding:10px;\n'
                '\t\t           text-align:left\n'
                '\t\t          ">\n'
-               '\t\t\t2\n'
+               '\t\t\t25_samples\n'
                '\t\t</td>\n'
                '\t\t<td style="border-top:hidden;\n'
                '\t\t           border-bottom:hidden;\n'
@@ -94,7 +97,7 @@ class PowerPlotTest(TestCase):
                '\t\t           border-bottom: hidden;\n'
                '\t\t           text-align:right\n'
                '\t\t          ">\n'
-               '\t\t\t5\n'
+               '\t\t\t3\n'
                '\t\t</td>\n'
                '\t\t<td style="border-top:hidden;\n'
                '\t\t           border-bottom:hidden;\n'
@@ -124,8 +127,9 @@ class PowerPlotTest(TestCase):
                '\t\t           border-bottom: hidden;\n'
                '\t\t           text-align:right\n'
                '\t\t          ">\n'
-               '\t\t\t5\n'
+               '\t\t\t3\n'
                '\t\t</td>\n'
+               '\t</tr>\n'
                '\t<tr>\n'
                '\t\t<td style="border-top:hidden;\n'
                '\t\t           border-bottom:hidden;\n'
@@ -134,7 +138,7 @@ class PowerPlotTest(TestCase):
                '\t\t           padding:10px;\n'
                '\t\t           text-align:left\n'
                '\t\t          ">\n'
-               '\t\t\t5\n'
+               '\t\t\t50_samples\n'
                '\t\t</td>\n'
                '\t\t<td style="border-top:hidden;\n'
                '\t\t           border-bottom:hidden;\n'
@@ -158,7 +162,7 @@ class PowerPlotTest(TestCase):
                '\t\t           border-bottom: hidden;\n'
                '\t\t           text-align:right\n'
                '\t\t          ">\n'
-               '\t\t\t5\n'
+               '\t\t\t3\n'
                '\t\t</td>\n'
                '\t\t<td style="border-top:hidden;\n'
                '\t\t           border-bottom:hidden;\n'
@@ -188,10 +192,10 @@ class PowerPlotTest(TestCase):
                '\t\t           border-bottom: hidden;\n'
                '\t\t           text-align:right\n'
                '\t\t          ">\n'
-               '\t\t\t5\n'
+               '\t\t\t3\n'
                '\t\t</td>\n'
-               '</table>'
-               ]
+               '\t</tr>\n'
+               '</table>']
         self.table = tab[0]
 
     def test_collate_effect_size_unequal_counts_error(self):
@@ -246,13 +250,19 @@ class PowerPlotTest(TestCase):
         self.assertTrue(np.isnan(test_bounds[0]))
 
     def test_summarize_effect(self):
-        test_table = summarize_effect(order=self.order,
-                                      fecal_cats=self.labels,
+        test_table = summarize_effect(fecal_cats=self.labels,
                                       a_eff_means=self.effects,
                                       a_eff_bounds=self.bounds,
                                       b_eff_means=self.effects,
                                       b_eff_bounds=self.bounds)
         self.assertEqual(self.table, test_table)
+
+    def test_get_rounded_values(self):
+      k_fit = 20.
+      k_err = 3.
+      t_fit, t_err = _get_rounded_values(self.effects[0], self.bounds[0])
+      self.assertEqual(k_fit, t_fit)
+      self.assertEqual(k_err, t_err)
 
 if __name__ == '__main__':
     main()
