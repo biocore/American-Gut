@@ -250,7 +250,7 @@ species.
 
 #### 9. *Eubacterium rectale*
 
-*Eubacterium rectale* is a close relative to *E. eligens*, and as such, little
+*Eubacterium rectale* is a close relative to *E. eligens* and, like its relative, little
 research has been done on this member of the *Eubacterium* genus. As mentioned
 above, some preliminary work suggests that *Eubacterium* may play a beneficial
 role in human health, though much work is still needed to fully characterize
