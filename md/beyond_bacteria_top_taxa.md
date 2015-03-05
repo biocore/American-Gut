@@ -68,7 +68,7 @@ has been observed as the predominant archaeon in the human gut.  It is a
 methanogen, meaning that it produces methane (one of the gases in flatus)
 as a metabolic byproduct in low-oxygen conditions; additionally, it removes
 excess hydrogen from the gut (including the hydrogen in methane) and thus
-allows for an increase in energy extraction from nutrients
+increases the efficiency of energy extraction from nutrients
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/19774074)). *M. smithii* has been
 observed in human feces for decades
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/4881707),
