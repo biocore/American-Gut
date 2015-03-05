@@ -72,8 +72,8 @@ increases the efficiency of energy extraction from nutrients
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/19774074)). *M. smithii* has been
 observed in human feces for decades
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/4881707),
-[ref](http://www.ncbi.nlm.nih.gov/pubmed/7065811)).  Interest in *M. smithii* and
-other methane producers is rooted in the study of methane producers in human
+[ref](http://www.ncbi.nlm.nih.gov/pubmed/7065811)).  *M. smithii* is one of several
+methane producers that might be found in human
 feces.  Initial estimates determined that only about one-third of adults harbor
 methane producers in the gut, and that the amounts of methane produced varies
 by individual ([ref](http://www.ncbi.nlm.nih.gov/pubmed/5111441),
