@@ -109,7 +109,7 @@ plant-derived polysaccharides such as xylan
 [ref](http://www.ncbi.nlm.nih.gov/pubmed/20105245)), a molecule that plays a
 very important role in intestinal health. Not only does butyrate represent an
 energy source for intestinal epithelial cells
-([ref](http://www.ncbi.nlm.nih.gov/pubmed/21531334)), but it also is capable of
+([ref](http://www.ncbi.nlm.nih.gov/pubmed/21531334)), but it is also capable of
 counteracting inflammation-mediated ulcerative colitis and colorectal cancer
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/14747692)) through its ability to
 suppress colonic inflammation
