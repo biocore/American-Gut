@@ -217,7 +217,6 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     -------
     ax : axes
         A matplotlib axes containing the plotted data
-
     """
     grouped = meta.groupby(group)
 
@@ -271,7 +270,6 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
         `post_hoc` summarizes the results of the post-hoc test. It includes
         statitics about each distribution, as well as the comparison matrix
         of p-values.
-
     """
     # Groups the data
     grouped = meta.groupby(group)
@@ -564,7 +562,6 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
     -------
     lines : list
         A list of the lines and text objects which have been plotted
-
     """
     # Checks the shapes of the inputs
     if centers.shape != tops.shape:
@@ -654,7 +651,6 @@ def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
     -------
     new_map : array
         A segmented array containing the colormap
-
     """
     # Sets parameters if necessary
     if n_pad is None:
@@ -1143,7 +1139,6 @@ def get_ratio_heatmap(data, ref_pos=None, log=None):
     ratio : array
         A numpy array with the the ratio of the data values to the reference
         group.
-
     """
     if ref_pos is None:
         ref = data.mean(1)
@@ -1201,7 +1196,6 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
         The axis with the data plotted.
     cbar : matplotlib colorbar
         The colorbar instance on the plot
-
     """
     # Checks the shape of the data is sane
     mat_shape = data.shape
@@ -1312,7 +1306,6 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
         The matplotlib axis instances with the raw and ratio data, respectively
     cbar1, cbar2 : matplotlib colorbars
         The colorbar instances for the raw and ratio data, respectively.
-
     """
     # Creates axes if not specified
     if axes is None:
