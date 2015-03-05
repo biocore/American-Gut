@@ -73,7 +73,7 @@ def pad_index(df, index_col='#SampleID', nzeros=9):
 
 
 def boxplot(vecs, ax=None, notch=True, interval=0.5, show_counts=True,
-    **kwargs):
+            **kwargs):
     """Makes a more attractive boxplot
 
     Parameters
@@ -175,7 +175,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, show_counts=True,
 
 
 def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
-    **kwargs):
+                          **kwargs):
     """Creates a more attractive boxplot than pandas
 
     Parameters
@@ -244,7 +244,7 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
 
 
 def post_hoc_pandas(meta, group, cat, order=None, correct=None,
-    show_stats=True):
+                    show_stats=True):
     """Preforms an post-hoc comparison between two groups
 
     Parameters
@@ -318,7 +318,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
 
 
 def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
-    method='bonferroni'):
+                              method='bonferroni'):
     """Performs multiple hypothesis correction on post hoc test matrices
 
     Parameters
@@ -381,8 +381,8 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-    colormap=None, match_colors=True, elinewidth=2, ecapwidth=2, 
-    offset=0, **kwargs):
+             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2, 
+             offset=0, **kwargs):
     """Renders a barchart
 
     Parameters
@@ -522,8 +522,8 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
 
 
 def add_comparison_bars(centers, tops, p_values, ax, space=None,
-    interval=None, lowest=None, factor=5, label_size=10,
-    show_value=True):
+                        interval=None, lowest=None, factor=5, label_size=10,
+                        show_value=True):
     """Adds p_value bars
 
     The assumes that comparison bars are being introduced for a
@@ -764,13 +764,13 @@ def get_distance_vectors(dm, df, group, order=None):
 
 
 def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
-    num_iter=999, p_crit=0.01, p_table=None,
-    p_tab_col='Parametric p-value (Bonferroni-corrected)',
-    ref_less=True, ax=None, interval=0.1, width=0.1,
-    show_seperation=True, colormap=None, match_colors=True,
-    elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
-    sep_size=0.035, label_size=12, show_p_value=False, 
-    **kwargs):
+                        num_iter=999, p_crit=0.01, p_table=None,
+                        p_tab_col='Parametric p-value (Bonferroni-corrected)',
+                        ref_less=True, ax=None, interval=0.1, width=0.1,
+                        show_seperation=True, colormap=None, match_colors=True,
+                        elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
+                        sep_size=0.035, label_size=12, show_p_value=False, 
+                        **kwargs):
     """Creates a barchart of the beta diversity distances
 
     Parameters
@@ -1244,10 +1244,10 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
 
 
 def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
-    p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
-    cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
-    label='INDEX', sort_by_taxa=True, cbar_size=12,
-    consistent_size=True, width=11, height=8.5, **kwargs):
+                       p_crit=0.05, ref=None, ratio_base=np.e, cmap1='Greens',
+                       cmap2='RdBu_r', clims1=None, clims2=[-2, 2],
+                       label='INDEX', sort_by_taxa=True, cbar_size=12,
+                       consistent_size=True, width=11, height=8.5, **kwargs):
     """Creates side by side abundance and log ratio heatmaps
 
     Parameters
