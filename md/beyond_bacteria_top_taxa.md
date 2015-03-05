@@ -147,7 +147,7 @@ human health or disease has been published to date.
 #### 5. *Akkermansia muciniphila*
 
 *Akkermansia muciniphila* is known for its ability to degrade mucin, a protein
-produced by epithelial tissues and that forms gels. The ability to form gels
+produced by epithelial tissues that forms gels. The ability to form gels
 means mucin can serve a number of functions, from lubrication to forming
 chemical barriers ([ref](http://www.ncbi.nlm.nih.gov/pubmed/17950376)).  *A.
 muciniphila* is a common member of the human gastrointestinal tract
@@ -163,7 +163,7 @@ with a range of gastrointestinal disorders.
 A number of research groups have focused on the association between *A.
 muciniphila* and diabetes and obesity. In both humans and in animal models, *A.
 muciniphila* abundance decreases as host weight increases. An elegant 2012 study
-demonstrated that in obese diabetic mice (type 2 diabetes,
+demonstrated that in obese diabetic mice (type 2 diabetes;
 [ref](http://www.ncbi.nlm.nih.gov/pubmed/23671105)). *A. muciniphila* was
 decreased; however, treatment of these mice with *A. muciniphila* reversed
 high-fat diet induced metabolic disorders, including insulin resistance.
