@@ -271,7 +271,7 @@ rectale* was a major member of bacterial biofilms in inflammatory bowel syndrome
 Like *Roseburia spp.*, *Faecalibacterium prausnitzii* is an important butyrate
 producer in the human GI tract. Numerous studies have described associations
 between *F. prausnitzii* and health and several disease states, solidly
-establishing this species as an importer player in maintaining host health.
+establishing this species as an important player in maintaining host health.
 
 Much work has been focused on the association between the presence or absence
 of *F. prausnitzii* in the gut microbiome and gut diseases, and a wealth of
