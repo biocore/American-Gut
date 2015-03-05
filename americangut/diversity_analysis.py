@@ -1229,7 +1229,7 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     _format_axis(ax, **kwargs)
 
     # Formats the colorbar ylabels
-    new_labels = ['%s' % t.get_text() for t in cbar.ax.get_yticklabels()]
+    new_labels = [str(t.get_text()) for t in cbar.ax.get_yticklabels()]
     new_labels = [t.replace('$', '') for t in new_labels]
     cbar.ax.set_yticklabels(new_labels, size=cbar_size)
     cbar.outline.set_color('none')
