@@ -54,8 +54,7 @@ A 2010 study ([ref](http://www.ncbi.nlm.nih.gov/pubmed/20216555)) demonstrated
 that probiotic treatment with *L. gasseri* of individuals with obese tendencies
 was followed by reduced abdominal adiposity, body weight, BMI, and waist and
 hip measurements, indicating that *L. gasseri* could be used as a probiotic in
-some to prevent obesity in at-risk individuals. On the other end of the
-spectrum, a 2001 study ([ref](http://www.ncbi.nlm.nih.gov/pubmed/11328791))
+some to prevent obesity in at-risk individuals. Furthermore, a 2001 study ([ref](http://www.ncbi.nlm.nih.gov/pubmed/11328791))
 demonstrated that *L. gasseri* treatment of individuals with *Helicobacter pylori*
 suppressed *H. pylori* and reduced gastric inflammation. These studies suggest
 that the probiotic potential of *L. gasseri* could be quite large, though more
