@@ -81,15 +81,15 @@ by individual ([ref](http://www.ncbi.nlm.nih.gov/pubmed/5111441),
 [ref](http://www.ncbi.nlm.nih.gov/pubmed/6902964)).
 
 Because *M. smithii* consumes hydrogen in the gut, this places the microbe in the
-unique position to potentially increase human gut health.  Accumulation of
+unique position of being potentially beneficial to human gut health.  Accumulation of
 hydrogen decreases the efficiency of microbial fermentation, which is involved
 in polysaccharide digestion (a process human cells cannot perform); therefore,
-M. smithii can aid in microbial fermentation (and polysaccharide digestion) by
+*M. smithii* can aid in microbial fermentation (and polysaccharide digestion) by
 removing the fermentation-inhibiting hydrogen.  Additionally, it also removes
 fermentation end-products ([ref](http://www.ncbi.nlm.nih.gov/pubmed/17563350)).
 
 Interestingly, a 2011 study published in the International Journal of Obesity
-revealed that obesity-associated gut microbiota were depleted in M. smithii,
+revealed that obesity-associated gut microbiota were depleted in *M. smithii*,
 while a 2009 PLoS One study noted that levels of *M. smithii* were increased in
 anorexic patients compared to normal-weight controls
 ([ref](http://www.ncbi.nlm.nih.gov/pubmed/19774074)).  These results appear to
@@ -97,7 +97,7 @@ be related to *M. smithii*'s use of nutrients in the human gut; however, the
 results are still preliminary and more work is needed to confirm or refute *M.
 smithii*'s exact role as a member of the gut microbiome.  Regardless, one thing
 is clear: *M. smithii* is not an insignificant stand-by member of the gut
-microbiome and likely plays an important role in relation to nutrition and
+microbiome and likely plays an important role in nutrition and
 energy harvest.
 
 #### 3. *Roseburia intestinalis*
