@@ -27,7 +27,7 @@ def check_dir(dir_):
 
     Parameters
     ----------
-    dir : str
+    dir : strf
         the directory to be checked
     """
     if not os.path.exists(dir_):
@@ -552,7 +552,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         for a `factor` of 5, a value of 0.12 will be rounded to 0.15 and a
         value of 2.7 will be rounded to 3.0.
     label_size : unsigned int, optional
-        The font size for displaying signifigance labels
+        The font size for displaying significance labels
     show_value : bool, optional
         When True, the signigance bars will display the actual p value.
         Otherwise, p values will be coded as (p <= 0.1: '+', p <= 0.05: '*',
@@ -787,7 +787,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
         The group within `order` to which all other groups should be compared.
         If group is specified, the first group in `order` will be used.
     num_iter : int
-        The number of times to run the permanova to test signifigance between
+        The number of times to run the permanova to test significance between
         the groups
     p_crit : float
         The permnova p-value must be less than p-crit to generate a plot.
@@ -1247,13 +1247,13 @@ def make_dual_heatmaps(gs, order=None, axes=None, p_column='Bonferroni_P',
     Parameters
     ----------
     gs : pandas DataFrame
-        The results of Qiime's `group_signifigance.py` read into pandas.
+        The results of Qiime's `group_significance.py` read into pandas.
     order : list, optional
         The order in which columns from `gs` should be plotted in the heatmap.
         Groups in order should contain the suffix, `'_mean'`, which is
-        standard in the group_signifigance output.
+        standard in the group_significance output.
     p_column : {'Bonferroni_P', 'FDR_P', 'P'}, optional
-        The column name from which signifigance values should be drawn. It is
+        The column name from which significance values should be drawn. It is
         recommended that 'Bonferroni_P' or 'FDR_P' be used.
     p_crit : float, optional
         The critical p value. Comparison p values must be less than this

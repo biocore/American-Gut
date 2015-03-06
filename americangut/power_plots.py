@@ -461,10 +461,10 @@ def trace_bounds(power, counts):
 
     # Prevents the confidence interval of being less than 0 or more than 1
     pwr_lower = pwr_mean - pwr_bound
-    np.where(pwr_lower < 0, 0, pwr_lower)
+    pwr_lower = np.where(pwr_lower < 0, 0, pwr_lower)
 
     pwr_upper = pwr_mean + pwr_bound
-    np.where(pwr_upper > 1, 1, pwr_upper)
+    pwr_upper = np.where(pwr_upper > 1, 1, pwr_upper)
 
     return pwr_mean, pwr_lower, pwr_upper
 
