@@ -32,12 +32,15 @@ if __name__ == '__main__':
     counts = table.sum(axis='sample')
 
     below_threshold = set()
+    above_threshold = set()
     for id_, count in zip([i.split('.')[0] for i in table.ids()], counts):
         if 'blank' in id_.lower():
             continue
 
         if count < threshold:
             below_threshold.add(id_)
+        else:
+            above_threshold.add(id_)
 
     if missing:
         print "The following IDs do not have any reads:"
@@ -45,7 +48,8 @@ if __name__ == '__main__':
             print id_
         print
 
-    if below_threshold:
+    # remove any resequenced samples
+    if below_threshold - above_threshold:
         print "The following have fewer than %d reads" % threshold
         for id_ in sorted(below_threshold):
             print id_
