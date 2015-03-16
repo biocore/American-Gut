@@ -4,19 +4,20 @@ from __future__ import division
 
 __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2011, The QIIME project"
-__credits__ = ["Antonio Gonzalez Pena"]
+__credits__ = ["Antonio Gonzalez Pena", "Daniel McDonald"]
 __license__ = "GPL"
 __version__ = "1.4.0-dev"
 __maintainer__ = "Antonio Gonzalez Pena"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
 
+import numpy as np
 from matplotlib import use
 use('Agg')
 from qiime.util import parse_command_line_parameters, make_option
 from qiime.parse import parse_distmat
 from random import sample
-from numpy import mean, std, inf
+from numpy import mean, std, inf, asarray
 from matplotlib.pyplot import (figure, subplot, grid, title, axis, savefig,
                                ylabel, xlabel)
 
@@ -59,28 +60,35 @@ def main():
     labels = opts.labels.split(',')
 
     results = {}
-    for input_file in input_path:
+    for idx, input_file in enumerate(input_path):
         if verbose:
             print input_file
 
         # Reading OTU/biom table
         samples, distmat = parse_distmat(open(input_file, 'U'))
         possible_samples = range(len(distmat[0]))
+        mask = np.ones(distmat.shape)
+        tril_mask = np.tril(np.ones(distmat.shape))
 
-        result_iteration = []
-        for iteration in range(iterations):
-            iter_vals = []
-            for n in possible_samples:
+        n_possible_samples = len(possible_samples)
+        result_iteration = np.zeros((iterations, n_possible_samples))
+
+        for iter_idx, iteration in enumerate(range(iterations)):
+            iter_vals = np.zeros(n_possible_samples)
+            for idx, n in enumerate(possible_samples):
                 if n < 1:
                     continue
                 curr_samples = sample(possible_samples, n+1)
 
-                curr_vals = []
-                for curr_i, i in enumerate(curr_samples):
-                    for j in curr_samples[curr_i+1:]:
-                        curr_vals.append(distmat[i][j])
-                iter_vals.append(min(curr_vals))
-            result_iteration.append(iter_vals)
+                # masked arrays are inverted apparently, so 0 means to keep
+                mask.fill(1)
+                mask[curr_samples] = 0
+                mask[:, curr_samples] = 0
+                np.fill_diagonal(mask, 1)
+                masked_array = np.ma.array(distmat, mask=mask)
+                iter_vals[idx] = masked_array.min()
+
+            result_iteration[iter_idx] = iter_vals
 
         results[input_file] = [mean(result_iteration, axis=0),
                                std(result_iteration, axis=0)]
@@ -116,9 +124,9 @@ def main():
                     label=label)
 
     if y_max:
-        axis([0, max_x, 0, max_y])
-    else:
         axis([0, max_x, 0, y_max])
+    else:
+        axis([0, max_x, 0, max_y])
 
     # Shrink current axis by 20%
     box = ax.get_position()

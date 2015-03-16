@@ -149,7 +149,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     if debug:
         mp_sample_pos = 2
     else:
-        mp_sample_pos = whole_sample_ids.index(michael_pollan)
+        mp_sample_pos = whole_sample_ids.tolist().index(michael_pollan)
     mp_sample_taxa = whole_summary[:, mp_sample_pos]
 
     # Gets the table average
@@ -178,7 +178,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                 mapping_key = meta_data[cat]
                 # Pulls taxonomic summary and group descriptions
                 tax_summary = categories[cat]['Summary']
-                group_descriptions = categories[cat]['Groups']
+                group_descriptions = categories[cat]['Groups'].tolist()
                  # Appends plotting tables
                 try:
                     mapping_col = group_descriptions.index(mapping_key)
@@ -250,7 +250,9 @@ if __name__ == '__main__':
     elif not isfile(args.input):
         parser.error('The supplied biom table does not exist in the path.')
     else:
-        otu_table = parse_biom_table(open(args.input, 'U'))
+        import h5py
+        f = h5py.File(args.input)
+        otu_table = parse_biom_table(f)
 
     # Checks the mapping file is sane
     if not args.mapping:

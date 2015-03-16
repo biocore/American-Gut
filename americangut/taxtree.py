@@ -111,9 +111,9 @@ def build_tree_from_taxontable(table):
     {sample_id:[['k__foo','p__bar',...]]}
     """
     sample_taxa_lookup = {}
-    for taxa_freqs, sample_id, sample_md in table.iterSamples():
+    for taxa_freqs, sample_id, sample_md in table.iter():
         sample_taxa = []
-        for taxon, freq in zip(table.ObservationIds, taxa_freqs):
+        for taxon, freq in zip(table.ids(axis='observation'), taxa_freqs):
             if freq > 0:
                 sample_taxa.append(taxon.split('; '))
         sample_taxa_lookup[sample_id] = sample_taxa
@@ -146,7 +146,7 @@ def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
         if table is None:
             yield (sample_id, None, rare, unique)
         else:
-            filtered = table.filterObservations(filter_f)
+            filtered = table.filter(filter_f, axis='observation', inplace=False)
             yield (sample_id, filtered, rare, unique)
 
 
