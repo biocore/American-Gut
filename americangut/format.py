@@ -34,7 +34,7 @@ def format_print_for_magnified_sample(sample_id, per_sample_file_string,
     escaped_sample_id = escape(sample_id)
 
     # find the matches of the tags only within the same path
-    re = compile('<path id="%s".*?/>' % escaped_sample_id)
+    re = compile('<path id="%s".*?</path>' % escaped_sample_id)
     big_sphere_contents = findall(re, per_sample_file_string)
     small_sphere_contents = findall(re, global_file_string)
 
