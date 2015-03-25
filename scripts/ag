@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import click
 import os
 import json
 from gzip import open as gzopen
 
+import click
 from biom import load_table
 
 from americangut.taxtree import (build_tree_from_taxontable,
@@ -23,7 +23,8 @@ def taxtree():
 
 
 @taxtree.command()
-@click.option('--table', required=True, type=click.Path(exists=True),
+@click.option('--table', required=True, type=click.Path(exists=True,
+                                                        dir_okay=False),
               help='The input BIOM taxon table')
 @click.option('--rare-threshold', required=False,
               default=0.01, help='The threshold to consider an OTU rare')
@@ -40,11 +41,13 @@ def rareunique(table, rare_threshold):
 
 
 @taxtree.command()
-@click.option('--table', required=True, type=click.Path(exists=True),
+@click.option('--table', required=True, type=click.Path(exists=True,
+                                                        dir_okay=False),
               help='The input BIOM taxon table')
-@click.option('--output', required=True, type=click.Path(exists=False))
+@click.option('--output', required=True, type=click.Path(exists=False,
+                                                         writable=True))
 def persample_json(table, output):
-    os.makedirs(output)
+    os.makedirs(os.path.abspath(output))
     table = load_table(table)
     for samp, tree in build_persample_tree_from_taxontable(table):
         with gzopen(os.path.join(output, '%s.json.gz' % samp), 'w') as fp:

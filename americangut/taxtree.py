@@ -161,6 +161,9 @@ def build_persample_tree_from_taxontable(table):
     abundance.
     """
     samp_ids = table.ids()
+
+    # It is assumed the IDs are of the form "foo; bar" or "foo;bar". Both of
+    # which have been produced by QIIME's summarize_taxa.py
     obs_ids_tmp = table.ids(axis='observation')
     obs_ids = [[t.strip() for t in i.split(';')] for i in obs_ids_tmp]
 

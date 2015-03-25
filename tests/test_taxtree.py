@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from unittest import TestCase, main
+from copy import deepcopy
 
 from numpy import array
-from copy import deepcopy
 from biom import Table
 
 from americangut.taxtree import create_node, add_node, get_node, update_tree, \
