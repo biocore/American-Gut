@@ -5,7 +5,7 @@ from StringIO import StringIO
 from unittest import TestCase, main
 
 from numpy import array
-from biom.table import table_factory
+from biom import Table
 
 from americangut.util import (
     pick_rarifaction_level, slice_mapping_file,parse_mapping_file,
@@ -94,17 +94,28 @@ class UtilTests(TestCase):
     def test_verify_subset(self):
         metadata = [('a','other stuff\tfoo'), ('b', 'asdasdasd'), 
                     ('c','123123123')]
-        table = table_factory(array([[1,2,3],[4,5,6]]), ['a','b','c'], ['x','y'])
+        table = Table(array([[1,2,3],[4,5,6]]),
+                      ['x', 'y'],
+                      ['a', 'b', 'c'])
         self.assertTrue(verify_subset(table, metadata))
-        table = table_factory(array([[1,2],[3,4]]), ['a','b'], ['x','y'])
+
+        table = Table(array([[1,2],[3,4]]),
+                      ['x','y'],
+                      ['a','b'])
         self.assertTrue(verify_subset(table, metadata))
-        table = table_factory(array([[1,2,3],[4,5,6]]), ['a','b','x'], ['x','y'])
+
+        table = Table(array([[1,2,3],[4,5,6]]),
+                      ['x','y'],
+                      ['a','b','x'])
         self.assertFalse(verify_subset(table, metadata))
 
 
     def test_slice_mapping_file(self):
         header, metadata = parse_mapping_file(StringIO(test_mapping))
-        table = table_factory(array([[1,2],[4,5]]), ['a','c'], ['x','y'])
+        table = Table(array([[1,2],[4,5]]),
+                      ['x','y'],
+                      ['a','c'])
+
         exp = ["a\t1\t123123", "c\tpoop\tdoesn't matter"]
         obs = slice_mapping_file(table, metadata)
         self.assertEqual(obs,exp)
