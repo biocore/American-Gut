@@ -8,7 +8,6 @@ import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import skbio
-
 from scipy.stats import kruskal
 from skbio.stats.power import _check_strs
 from statsmodels.sandbox.stats.multicomp import multipletests
@@ -91,8 +90,8 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, show_counts=True,
     show_counts : bool, optional
         Shows the size of the groups below each plot on the x-axis
     p_value : float, optional
-        Default is None. When supplied, the significance value will be displayed
-        on the plot in the upper right hand corner by default.
+        Default is None. When supplied, the significance value will be
+        displayed on the plot in the upper right hand corner by default.
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
     show_ygrid: bool, optional
@@ -166,7 +165,7 @@ def boxplot(vecs, ax=None, notch=True, interval=0.5, show_counts=True,
 
     # Sets up axis formatting
     kwargs['counts'] = kwargs.get('counts', counts)
-    kwargs['xlim'] =  kwargs.get('xlim', xlim)
+    kwargs['xlim'] = kwargs.get('xlim', xlim)
     kwargs['xticks'] = kwargs.get('xticks', ticks)
 
     _format_axis(ax, **kwargs)
@@ -200,7 +199,7 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     show_n : bool, optional
         Shows the size of the groups below each plot on the x-axis
     p_value : float, optional
-        Default is None. When supplied, the significance value will be 
+        Default is None. When supplied, the significance value will be
         displayed on the plot in the upper right hand corner by default.
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
@@ -228,7 +227,7 @@ def pretty_pandas_boxplot(meta, group, cat, order=None, ax=None,
     vecs = [grouped.get_group(g)[cat].values for g in order]
 
     # Formats the axis, if not already done
-    kwargs['xticklabels'] = kwargs.get('xticklabels', 
+    kwargs['xticklabels'] = kwargs.get('xticklabels',
                                        [g.split('(')[0] for g in order])
     kwargs['show_xticks'] = kwargs.get('show_xticks', False)
     kwargs['show_ygrid'] = kwargs.get('show_ygrid', True)
@@ -262,7 +261,7 @@ def post_hoc_pandas(meta, group, cat, order=None, correct=None,
         likely to use are `bonferroni` and `fdr_bh`.
     show_stats : bool, optional
         When `show_stats` is True, a summary of each group will be displayed
-        along with the p values. 
+        along with the p values.
 
     Returns
     -------
@@ -331,7 +330,7 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
     method: string, optional
         The method by which multiple hypotheses should be corrected. A value
         of `None` will result in no hypothesis correction. Other values
-        are given by the statsmodels function, 
+        are given by the statsmodels function,
         `statsmodels.sandbox.stats.multicomp.multipletests`. These includes
         `"bonferroni"` for bonferroini correction and `"fbr_bh"` for
         Benjamini/Hochberg False Discovery Rate correction.
@@ -379,7 +378,7 @@ def multiple_correct_post_hoc(raw_ph, order, alphafwer=0.05,
 
 
 def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
-             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2, 
+             colormap=None, match_colors=True, elinewidth=2, ecapwidth=2,
              offset=0, **kwargs):
     """Renders a barchart
 
@@ -411,7 +410,7 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
         plotting multiple barcharts on the same axis with spacing, or plotting
         the bar chart away from the origin.
     p_value : float, optional
-        Default is None. When supplied, the significance value will be 
+        Default is None. When supplied, the significance value will be
         displayed on the plot in the upper right hand corner by default.
     show_xgrid: bool, optional
         Default is False. Adds vertical lines at each major x-tick.
@@ -489,7 +488,8 @@ def barchart(height, interval=0.5, width=0.4, ax=None, errors=None,
     # Gets the xposition, for errorbars
     xpos = np.arange(0, len(height))*interval + interval/2 + offset
 
-    xleft = np.arange(0, len(height)) * interval + (interval - width)/2 + offset
+    xleft = np.arange(0,
+                      len(height)) * interval + (interval - width)/2 + offset
     xlims = [0, len(height)*interval]
 
     if 'xlim' not in kwargs or kwargs['xlim'] is None:
@@ -661,7 +661,7 @@ def segment_colormap(cm_name, n_colors, n_pad=None, start=None):
     # Gets the colormap
     cm = mpl.cm.get_cmap(cm_name)
     # Sets up the new map
-    new_map = np.array([cm(1. * (i + start) / n_pad) for i in 
+    new_map = np.array([cm(1. * (i + start) / n_pad) for i in
                         xrange(n_colors)])
 
     return new_map
@@ -690,7 +690,7 @@ def _get_p_value(sub_p, sub_p_lookup, ref_group, group, p_tab_col):
     query_fwd = '%s vs. %s' % (ref_group, group)
     query_rev = '%s vs. %s' % (group, ref_group)
 
-    for query, group in itertools.product([query_fwd, query_rev], 
+    for query, group in itertools.product([query_fwd, query_rev],
                                           ['Group 1', 'Group 2']):
         if query in sub_p_lookup[group]:
             return sub_p.loc[sub_p[group] == query, p_tab_col].values
@@ -735,22 +735,20 @@ def get_distance_vectors(dm, df, group, order=None):
     ordered_ids = {o: df.groupby(group).groups[o] for o in order}
 
     # Gets the data
-    dist_ids = np.array(dm.ids)
     dist_data = pd.DataFrame(dm.data, columns=dm.ids, index=dm.ids)
 
     # Alocates objects for return
     within = {'%s' % (o1): np.zeros(np.square(len(ordered_ids[o1])))
               for o1 in order}
-    between = {(o1, o2): np.zeros([len(ordered_ids[o1]) * 
-               len(ordered_ids[o2])]) for o1, o2 in 
+    between = {(o1, o2): np.zeros([len(ordered_ids[o1]) *
+               len(ordered_ids[o2])]) for o1, o2 in
                itertools.combinations(order, 2)}
 
-    counter = 0
     # Loops through the groups
     for id1, o1 in enumerate(order):
         # Gets the intragroup distance
-        within['%s' % (o1)] = dm.filter(ordered_ids[o1]
-                                                  ).condensed_form()
+        within['%s' % (o1)] = dm.filter(
+            ordered_ids[o1]).condensed_form()
         for o2 in order[(id1+1):]:
             loc1 = ordered_ids[o1]
             loc2 = ordered_ids[o2]
@@ -765,7 +763,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
                         ref_less=True, ax=None, interval=0.1, width=0.1,
                         show_seperation=True, colormap=None, match_colors=True,
                         elinewidth=2, ecapwidth=2, show_p=False, lowest=None,
-                        sep_size=0.035, label_size=12, show_p_value=False, 
+                        sep_size=0.035, label_size=12, show_p_value=False,
                         **kwargs):
     """Creates a barchart of the beta diversity distances
 
@@ -904,7 +902,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
                                            % (ref_group, ref_group)],
                                p_table.loc[p_table['Group 2'] == '%s vs. %s'
                                            % (ref_group, ref_group)]])
-            sub_p_lookup = {k: set(sub_p[k].values) for k in 
+            sub_p_lookup = {k: set(sub_p[k].values) for k in
                             ('Group 1', 'Group 2')}
 
         for id2, group in enumerate(order):
@@ -918,7 +916,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
                 dist_bar[id2] = between[(group, ref_group)].mean()
                 dist_std[id2] = between[(group, ref_group)].std()
             if p_values is not None:
-                p_value = _get_p_value(sub_p, sub_p_lookup, ref_group, group, 
+                p_value = _get_p_value(sub_p, sub_p_lookup, ref_group, group,
                                        p_tab_col)
                 p_values = np.hstack((p_values,
                                       _correct_p_value(ref_less, p_value,
@@ -979,7 +977,7 @@ def beta_diversity_bars(dm, meta, group, order=None, ref_groups=None,
                                         show_value=show_p_value)
             bars.extend(bars2)
         else:
-            # p_values is None in this case. This is a shortcut for viewing 
+            # p_values is None in this case. This is a shortcut for viewing
             # the data wtihout make_distance_boxplots.py
             pass
 
@@ -1199,13 +1197,13 @@ def heatmap(data, ax=None,  cmap='RdBu_r', clims=None, cbar_size=11, **kwargs):
     """
     # Checks the shape of the data is sane
     mat_shape = data.shape
-    if (kwargs.get('xticklabels', None) is not None and 
-        len(kwargs.get('xticklabels', [])) != mat_shape[1]):
+    if (kwargs.get('xticklabels', None) is not None and
+            len(kwargs.get('xticklabels', [])) != mat_shape[1]):
         raise ValueError('There must be a label for each column in '
                          'data.')
 
-    if (kwargs.get('yticklabels', None) is not None and 
-        len(kwargs.get('yticklabels', [])) != mat_shape[0]):
+    if (kwargs.get('yticklabels', None) is not None and
+            len(kwargs.get('yticklabels', [])) != mat_shape[0]):
         raise ValueError('There must be a label for each row in data.')
 
     # Gets the axis
@@ -1435,8 +1433,8 @@ def _format_axis(ax, **kwargs):
         A list of the number of samples in each plotting location, for use
         with a barchart or boxplt
     p_value : float, optional
-        Default is None. When supplied, the significance value will be displayed
-        on the plot in the upper right hand corner by default.
+        Default is None. When supplied, the significance value will be
+        displayed on the plot in the upper right hand corner by default.
     show_frame: bool, optional
         When true, the frame around the axis is displayed. When false, only the
         lower and left axes will be dispalyed.
@@ -1565,13 +1563,13 @@ def _format_axis(ax, **kwargs):
         # Sets the ticks
         if kwds['%sticks' % name] is not None:
             axis.set_ticks(kwds['%sticks' % name])
-        
-        # Checks the axis limits. Limits have to be set outside the axis 
+
+        # Checks the axis limits. Limits have to be set outside the axis
         # instance; there is not a good option to set them on the axis.
-        if (kwds['%slim' % name] is not None and 
-            len(kwds['%slim' % name]) != 2):
-            raise ValueError('%slim must specify a %smin and %smax value.' 
-                             % (name, name, name))
+        if (kwds['%slim' % name] is not None and
+                len(kwds['%slim' % name]) != 2):
+            raise ValueError('%slim must specify a %smin and %smax '
+                             'value.' % (name, name, name))
         if name == 'x':
             ax.set_xlim(kwds['xlim'])
         elif name == 'y':
@@ -1582,12 +1580,12 @@ def _format_axis(ax, **kwargs):
         ticklabels_v = kwds[ticklabels]
         if ticklabels_v is None:
             tls = ['']*len(axis.get_ticklocs())
-        elif (isinstance(ticklabels_v, (str, unicode)) and 
+        elif (isinstance(ticklabels_v, (str, unicode)) and
               ticklabels_v.lower() == 'text'):
-            tls = [kwds['%stick_format' % name] % t for t in 
+            tls = [kwds['%stick_format' % name] % t for t in
                    axis.get_ticklocs()]
         elif not isinstance(ticklabels_v, (list, tuple, np.ndarray)):
-            raise TypeError('%sticklabels must be None, "text" or an iterable.' 
+            raise TypeError('%sticklabels must be None, "text" or an iterable.'
                             % name)
         elif not len(ticklabels_v) == len(axis.get_ticklocs()):
             raise ValueError('There must be a label for every %stick' % name)
@@ -1600,7 +1598,7 @@ def _format_axis(ax, **kwargs):
                             size=kwds['%stick_size' % name])
 
         # Sets the axis label
-        axis.set_label_text(kwds['%slabel' % name], 
+        axis.set_label_text(kwds['%slabel' % name],
                             size=kwds['%slabel_size' % name])
 
         # Sets the grid

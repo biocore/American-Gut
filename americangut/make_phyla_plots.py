@@ -2,7 +2,6 @@
 
 from __future__ import division
 from matplotlib import use
-use('agg')
 from os.path import isfile
 from biom.parse import parse_biom_table
 from biom.util import biom_open
@@ -13,6 +12,9 @@ from matplotlib.font_manager import FontProperties
 from matplotlib import rc
 from operator import itemgetter
 import colorbrewer
+
+
+use('agg')
 
 # Colors from www.ColorBrewer.org by Cynthia A. Brewer, Geography,
 #    Pennsylvania State University.
@@ -112,10 +114,10 @@ def parse_category_files(raw_tables, common_groups, level=2,
     category_data = {}
     for (cat, cat_table) in raw_tables.items():
         [ids, data, cats] = \
-            summarize_common_categories(biom_table=cat_table,
-                                        level=level,
-                                        common_categories=common_groups[:num_g],
-                                        metadata_category=metadata)
+            summarize_common_categories(
+                biom_table=cat_table, level=level,
+                common_categories=common_groups[:num_g],
+                metadata_category=metadata)
         category_data.update({cat: {'Groups': ids,
                                     'Summary': data}})
     return category_data
@@ -191,7 +193,9 @@ def identify_most_common_categories(biom_table, level, limit_mode='COMPOSITE',
     biom_table_norm = biom_table.norm(inplace=False)
 
     # Collapses the OTUs into category summaries using the correct levels
-    bin_fun = lambda y, x: x[metadata_category][:level]
+    def bin_fun(y, x):
+        return x[metadata_category][:level]
+
     for (bin, table) in biom_table_norm.partition(bin_fun, axis='observation'):
         # Pulls out the sample data for the group
         group_value = array(table.sum('sample'))
@@ -267,7 +271,7 @@ def summarize_common_categories(biom_table, level, common_categories,
 
     categories = set(group_all)
 
-    if not metadata_category in categories:
+    if metadata_category not in categories:
         raise ValueError('The biom table cannot be summarized; supplied '
                          'category does not exist.')
 
@@ -299,7 +303,9 @@ def summarize_common_categories(biom_table, level, common_categories,
     cat_summary = zeros([num_cats, num_samples])
 
     # Collapses the OTU table using the category at the correct level
-    bin_fun = lambda y, x: x[metadata_category][:level]
+    def bin_fun(y, x):
+        return x[metadata_category][:level]
+
     for (bin_, table) in biom_norm.partition(bin_fun, axis='observation'):
         new_bin = []
         for item in bin_:
@@ -399,7 +405,7 @@ def calculate_dimensions_rectangle(axis_width=4, axis_height=4, border=0.1,
     axis_top = (border+axis_height+xlab)/fig_height
 
     axis_dimensions = array([[axis_left,  axis_bottom],
-                             [axis_right, axis_top   ]])
+                             [axis_right, axis_top]])
 
     return axis_dimensions, figure_dimensions
 
@@ -648,7 +654,7 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
             patch.set_edgecolor(colormap[idx, :])
 
     # Sets the label properties
-    if not labels is None:
+    if labels is not None:
         for lab in pie_text:
             lab.set_set_font_properties(label_font)
 
@@ -669,9 +675,9 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
                          frameon=legend_frame)
         plt.draw()
 
-        if not legend_offset is None and len(legend_offset) == 2:
+        if legend_offset is not None and len(legend_offset) == 2:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
-        elif not legend_offset is None:
+        elif legend_offset is not None:
             leg.set_bbox_to_anchor(tuple(legend_offset))
 
     plt.draw()
@@ -687,17 +693,18 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
     plt.clf()
 
 
-def render_barchart(data_table, group_names, sample_names, axis_dims,
-    fig_dims, file_out='barchart', filetype='PDF', colors=None,
-    show_edge=True, legend=True, title=None, match_legend=True,
-    frame=True, bar_width=0.8, x_axis=True, x_label=None,
-    x_min=-0.5, x_tick_interval=1.0, y_axis=True,
-    y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None,
-    y_label=None, legend_frame=False,
-    legend_offset=None, font_angle=45, font_alignment='right',
-    tick_font=None, label_font=None, legend_font=None,
-    title_font=None, use_latex=False, rc_fam='sans-serif',
-    rc_font=['Helvetica']):
+def render_barchart(
+        data_table, group_names, sample_names, axis_dims,
+        fig_dims, file_out='barchart', filetype='PDF', colors=None,
+        show_edge=True, legend=True, title=None, match_legend=True,
+        frame=True, bar_width=0.8, x_axis=True, x_label=None,
+        x_min=-0.5, x_tick_interval=1.0, y_axis=True,
+        y_lims=[0, 1], y_tick_interval=0.2, y_tick_labels=None,
+        y_label=None, legend_frame=False,
+        legend_offset=None, font_angle=45, font_alignment='right',
+        tick_font=None, label_font=None, legend_font=None,
+        title_font=None, use_latex=False, rc_fam='sans-serif',
+        rc_font=['Helvetica']):
     """Creates a stacked bar chart using the data in the category table.
 
     A single value bar chart can be created using a vector for data_table
@@ -854,7 +861,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
     elif not table_width == num_samples:
         raise ValueError('The number of samples differ.')
 
-     # Sets up the colormap
+    # Sets up the colormap
     num_colors = len(colors[:, 0])
     if num_colors is None:
         colormap = ones((table_height, 3))
@@ -898,7 +905,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
         title_font.set_size(30)
         title_font.set_family('sans-serif')
 
-     # Sets up LateX rendering if desired
+    # Sets up LateX rendering if desired
     if use_latex:
         rc('text', usetex=True)
         rc('font', **{'family': rc_fam, rc_fam: rc_font})
@@ -952,7 +959,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
 
     y_tick_labels = ax1.set_yticklabels(y_text_labels,
                                         fontproperties=tick_font)
-    if not y_label is None:
+    if y_label is not None:
         ax1.set_ylabel(y_label, fontproperties=label_font)
 
     # Set the x-axis labels
@@ -967,7 +974,7 @@ def render_barchart(data_table, group_names, sample_names, axis_dims,
 
     if legend:
         leg = plt.legend(patches_watch, group_names, prop=legend_font)
-        if not legend_offset is None:
+        if legend_offset is not None:
             leg.set_bbox_to_anchor((legend_offset[0], legend_offset[1]))
 
     if isinstance(title, str):
