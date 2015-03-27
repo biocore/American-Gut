@@ -7,13 +7,12 @@ from random import sample
 
 import numpy as np
 from matplotlib import use
+use('Agg')  # noqa
 from qiime.util import parse_command_line_parameters, make_option
 from qiime.parse import parse_distmat
 from numpy import mean, std, inf
 from matplotlib.pyplot import (figure, subplot, grid, title, axis, savefig,
                                ylabel, xlabel)
-
-use('Agg')
 
 __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2011, The QIIME project"

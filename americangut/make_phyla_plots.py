@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from matplotlib import use
+
 from os.path import isfile
+
+from matplotlib import use
+use('Agg')  # noqa
 from biom.parse import parse_biom_table
 from biom.util import biom_open
 from numpy import (array, zeros, mean, ones, vstack, arange, ndarray)
@@ -12,9 +15,6 @@ from matplotlib.font_manager import FontProperties
 from matplotlib import rc
 from operator import itemgetter
 import colorbrewer
-
-
-use('agg')
 
 # Colors from www.ColorBrewer.org by Cynthia A. Brewer, Geography,
 #    Pennsylvania State University.

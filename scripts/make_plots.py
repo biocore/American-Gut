@@ -3,13 +3,13 @@
 import argparse
 
 from matplotlib import use
+use('Agg')  # noqa
 import brewer2mpl
 import matplotlib.pyplot as plt
-from americangut.agplots_parse import get_filtered_taxa_summary
 from numpy import cumsum, arange
 from matplotlib.font_manager import FontProperties
 
-use('Agg')
+from americangut.agplots_parse import get_filtered_taxa_summary
 
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
