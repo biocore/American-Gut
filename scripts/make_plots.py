@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+import argparse
+
+from matplotlib import use
+use('Agg')  # noqa
+import brewer2mpl
+import matplotlib.pyplot as plt
+from numpy import cumsum, arange
+from matplotlib.font_manager import FontProperties
+
+from americangut.agplots_parse import get_filtered_taxa_summary
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -7,16 +18,6 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
-
-from matplotlib import use
-use('Agg')
-
-import argparse
-import brewer2mpl
-import matplotlib.pyplot as plt
-from americangut.agplots_parse import get_filtered_taxa_summary
-from numpy import cumsum, arange
-from matplotlib.font_manager import FontProperties
 
 
 def interface():
@@ -84,7 +85,7 @@ def make_stacked_plot(output_file, filtered_sample_ids, taxa_labels,
 def make_pie_chart(output_file, collapsed_taxa_table, colors):
     """ Create a simple pie chart """
     fractions = [100*x for x in collapsed_taxa_table.mean(axis=1)]
-    fig = plt.figure()
+    plt.figure()
     wedges, texts = plt.pie(fractions, colors=colors)
 
     for w in wedges:

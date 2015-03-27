@@ -36,6 +36,7 @@ def pick_rarifaction_level(id_, lookups):
             return name
     return None
 
+
 def parse_mapping_file(open_file):
     """return (header, [(sample_id, all_other_fields)])
 
@@ -44,20 +45,22 @@ def parse_mapping_file(open_file):
     res = []
 
     for l in open_file:
-        res.append(l.strip().split('\t',1))
+        res.append(l.strip().split('\t', 1))
 
     return (header, res)
+
 
 def verify_subset(table, mapping):
     """Returns True/False if the table is a subset"""
     ids = set([i[0] for i in mapping])
-    t_ids = set(table.SampleIds)
+    t_ids = set(table.ids())
 
     return t_ids.issubset(ids)
 
+
 def slice_mapping_file(table, mapping):
     """Returns a new mapping corresponding to just the ids in the table"""
-    t_ids = set(table.SampleIds)
+    t_ids = set(table.ids())
     res = []
 
     for id_, l in mapping:
@@ -66,10 +69,12 @@ def slice_mapping_file(table, mapping):
 
     return res
 
+
 def check_file(f, e=IOError):
     """Verify a file (or directory) exists"""
     if not os.path.exists(f):
         raise e("Cannot continue! The file %s does not exist!" % f)
+
 
 def trim_fasta(input_fasta, output_fasta, length):
     """Trim FASTA sequences to a given length
@@ -88,6 +93,7 @@ def trim_fasta(input_fasta, output_fasta, length):
         sequence = sequence.strip()[:length]
         output_fasta.write("%s\n%s\n" % (header, sequence))
 
+
 def concatenate_files(input_files, output_file, read_chunk=10000):
     """Concatenate all input files and produce an output file
 
@@ -100,6 +106,7 @@ def concatenate_files(input_files, output_file, read_chunk=10000):
             output_file.write(chunk)
             chunk = infile.read(read_chunk)
 
+
 def fetch_study_details(accession):
     """Fetch secondary accession and FASTQ details
 
@@ -110,7 +117,19 @@ def fetch_study_details(accession):
               "fields=secondary_sample_accession,submitted_ftp"
     res = fetch_url(url_fmt % {'accession': accession})
 
-    return [tuple(l.strip().split('\t')) for l in res.readlines()[1:]]
+    for line in res.readlines()[1:]:
+        if 'ERA371447' in line:
+            # Corrupt sequence files were uploaded to EBI for one of the AG
+            # rounds. Ignoring entries associated with this accession works
+            # around the corruption
+            continue
+
+        parts = line.strip().split('\t')
+        if len(parts) != 2:
+            continue
+        else:
+            yield tuple(parts)
+
 
 def fetch_url(url):
     """Return an open file handle"""
@@ -134,6 +153,7 @@ def fetch_url(url):
 
     return StringIO(res.read())
 
+
 def fetch_seqs_fastq(url):
     """Fetch a FTP item"""
     # not using a url_fmt here as the directory structure has potential to
@@ -144,6 +164,7 @@ def fetch_seqs_fastq(url):
     res = fetch_url(url)
 
     return gzip.GzipFile(fileobj=res)
+
 
 def fetch_metadata_xml(accession):
     """Fetch sample metadata"""
@@ -160,13 +181,14 @@ def fetch_metadata_xml(accession):
         metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
     return metadata
 
+
 def fetch_study(accession, metadata_path, fasta_path):
     """Fetch and dump a full study
 
     Grab and dump a full study
     """
     all_md = {}
-    all_cols = set([])
+    all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
     md_f = open(metadata_path, 'w')
     fasta_path = open(fasta_path, 'w')
     for sample, fastq_url in fetch_study_details(accession):
@@ -181,8 +203,11 @@ def fetch_study(accession, metadata_path, fasta_path):
         all_cols.update(md)
 
         # write out fasta
-        for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
-            fasta_path.write(">%s\n%s\n" % (id_, seq))
+        try:
+            for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
+                fasta_path.write(">%s\n%s\n" % (id_, seq))
+        except:
+            continue
 
     header = list(all_cols)
     md_f.write('#SampleID\t')
@@ -215,6 +240,7 @@ def count_seqs(seqs_fp, subset=None):
                 count += 1
         return count
 
+
 def count_unique_participants(metadata_fp, criteria=None):
     """Count the number of unique participants"""
     if criteria is None:
@@ -222,7 +248,7 @@ def count_unique_participants(metadata_fp, criteria=None):
 
     header = {k: i for i, k in enumerate(
               metadata_fp.next().strip().split('\t'))}
-    
+
     count = set()
     for line in metadata_fp:
         line = line.strip().split('\t')
@@ -232,13 +258,13 @@ def count_unique_participants(metadata_fp, criteria=None):
                 keep = False
         if keep:
             count.add(line[header['HOST_SUBJECT_ID']])
-    
+
     return len(count)
 
 
 def count_samples(metadata_fp, criteria=None):
     """Count the number of samples
-    
+
     criteria : dict
         Header keys and values to restrict by
     """
@@ -247,7 +273,7 @@ def count_samples(metadata_fp, criteria=None):
 
     header = {k: i for i, k in enumerate(
               metadata_fp.next().strip().split('\t'))}
-    
+
     count = 0
     for line in metadata_fp:
         line = line.strip().split('\t')
