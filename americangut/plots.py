@@ -2,6 +2,10 @@
 
 from __future__ import division
 
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
+from numpy import cumsum, arange
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -9,10 +13,6 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
-
-import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
-from numpy import cumsum, arange
 
 
 def make_stack_plot(taxa_table, sample_ids, ylabel,
@@ -38,7 +38,7 @@ def make_stack_plot(taxa_table, sample_ids, ylabel,
 
     """
 
-    #N=taxa groups, M=num samples
+    # N=taxa groups, M=num samples
     N, M = taxa_table.shape
     x = arange(M)
     cumulative = cumsum(taxa_table, axis=0)

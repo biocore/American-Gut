@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 # File created on 01 Mar 2012
+
 from __future__ import division
+
+from random import sample
+
+import numpy as np
+from matplotlib import use
+use('Agg')  # noqa
+from qiime.util import parse_command_line_parameters, make_option
+from qiime.parse import parse_distmat
+from numpy import mean, std, inf
+from matplotlib.pyplot import (figure, subplot, grid, title, axis, savefig,
+                               ylabel, xlabel)
 
 __author__ = "Antonio Gonzalez Pena"
 __copyright__ = "Copyright 2011, The QIIME project"
@@ -10,16 +22,6 @@ __version__ = "1.4.0-dev"
 __maintainer__ = "Antonio Gonzalez Pena"
 __email__ = "antgonza@gmail.com"
 __status__ = "Development"
-
-import numpy as np
-from matplotlib import use
-use('Agg')
-from qiime.util import parse_command_line_parameters, make_option
-from qiime.parse import parse_distmat
-from random import sample
-from numpy import mean, std, inf, asarray
-from matplotlib.pyplot import (figure, subplot, grid, title, axis, savefig,
-                               ylabel, xlabel)
 
 script_info = {}
 script_info['brief_description'] = ""
@@ -68,7 +70,6 @@ def main():
         samples, distmat = parse_distmat(open(input_file, 'U'))
         possible_samples = range(len(distmat[0]))
         mask = np.ones(distmat.shape)
-        tril_mask = np.tril(np.ones(distmat.shape))
 
         n_possible_samples = len(possible_samples)
         result_iteration = np.zeros((iterations, n_possible_samples))
@@ -95,15 +96,15 @@ def main():
 
         if verbose:
             f = open(output_path + '.txt', 'a')
-            f.write('\t'.join(map(str,results[input_file][0])))
+            f.write('\t'.join(map(str, results[input_file][0])))
             f.write('\n')
-            f.write('\t'.join(map(str,results[input_file][1])))
+            f.write('\t'.join(map(str, results[input_file][1])))
             f.write('\n')
             f.close()
 
     # generating plot, some parts taken from
     # http://stackoverflow.com/questions/4700614
-    fig = figure()
+    figure()
     ax = subplot(111)
 
     max_x, max_y = -inf, -inf
