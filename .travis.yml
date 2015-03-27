@@ -9,14 +9,11 @@ before_install:
   # Update conda itself
   - conda update --yes conda
 install:
-  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy scipy matplotlib pandas>=0.15 flake8
-  - conda install --yes -n env_name python=$PYTHON_VERSION h5py>=2.3.1 statsmodels lxml
+  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 
   - source activate env_name
   # upgrade click, older versions of click do not have __version__
   - pip install -U click
-  - pip install scikit-bio
-  - pip install biom-format
-  - pip install colorbrewer
+  - pip install scikit-bio biom-format colorbrewer
 script:
   - nosetests --with-doctest
   - flake8 americangut/*.py
