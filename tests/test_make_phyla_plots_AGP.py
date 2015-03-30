@@ -1,22 +1,26 @@
-# #!/usr/bin/env python
+#!/usr/bin/env python
+
 from __future__ import division
+
 from unittest import TestCase, main
 from StringIO import StringIO
+
 from numpy import array
 from numpy.testing import assert_almost_equal
-from biom.table import table_factory, SparseOTUTable
+from biom import Table
+from matplotlib.transforms import Bbox
+
 from americangut.make_phyla_plots import (map_to_2D_dict,
                                           identify_most_common_categories,
                                           summarize_common_categories,
                                           calculate_dimensions_rectangle,
                                           calculate_dimensions_bar,
                                           translate_colors)
-from matplotlib.transforms import Bbox
 
 
 __author__ = "Justine Debelius"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Justine Debelius"]
+__credits__ = ["Justine Debelius", "Adam Robbins-Pianka"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Justine Debelius"
@@ -76,11 +80,10 @@ class MakePhylaPlotsAGPTest(TestCase):
                       [   21,   268,   153,     8,    15,     0],
                       [   59,    51,   531,   120,    25,     0]])
 
-        self.otu_table = table_factory(data=data,
-                                       sample_ids=sample_ids,
-                                       observation_ids=observation_ids,
-                                       observation_metadata=observation_md,
-                                       constructor=SparseOTUTable)
+        self.otu_table = Table(data,
+                               observation_ids,
+                               sample_ids,
+                               observation_metadata=observation_md)
 
         self.common_cats = [(u'k__Bacteria', u'p__Firmicutes'),
                             (u'k__Bacteria', u'p__Bacteroidetes'),
@@ -363,7 +366,7 @@ class MakePhylaPlotsAGPTest(TestCase):
                                         common_categories=self.common_cats)
 
         # Checks that all the outputs are correct
-        self.assertEqual(test_ids, known_ids)
+        self.assertEqual(tuple(test_ids), known_ids)
         assert_almost_equal(test_table, table_known, decimal=4)
         self.assertEqual(test_common_cats, known_common_cats)
 

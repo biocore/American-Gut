@@ -36,6 +36,7 @@ def pick_rarifaction_level(id_, lookups):
             return name
     return None
 
+
 def parse_mapping_file(open_file):
     """return (header, [(sample_id, all_other_fields)])
 
@@ -44,9 +45,10 @@ def parse_mapping_file(open_file):
     res = []
 
     for l in open_file:
-        res.append(l.strip().split('\t',1))
+        res.append(l.strip().split('\t', 1))
 
     return (header, res)
+
 
 def verify_subset(table, mapping):
     """Returns True/False if the table is a subset"""
@@ -54,6 +56,7 @@ def verify_subset(table, mapping):
     t_ids = set(table.ids())
 
     return t_ids.issubset(ids)
+
 
 def slice_mapping_file(table, mapping):
     """Returns a new mapping corresponding to just the ids in the table"""
@@ -66,10 +69,12 @@ def slice_mapping_file(table, mapping):
 
     return res
 
+
 def check_file(f, e=IOError):
     """Verify a file (or directory) exists"""
     if not os.path.exists(f):
         raise e("Cannot continue! The file %s does not exist!" % f)
+
 
 def trim_fasta(input_fasta, output_fasta, length):
     """Trim FASTA sequences to a given length
@@ -88,6 +93,7 @@ def trim_fasta(input_fasta, output_fasta, length):
         sequence = sequence.strip()[:length]
         output_fasta.write("%s\n%s\n" % (header, sequence))
 
+
 def concatenate_files(input_files, output_file, read_chunk=10000):
     """Concatenate all input files and produce an output file
 
@@ -99,6 +105,7 @@ def concatenate_files(input_files, output_file, read_chunk=10000):
         while chunk:
             output_file.write(chunk)
             chunk = infile.read(read_chunk)
+
 
 def fetch_study_details(accession):
     """Fetch secondary accession and FASTQ details
@@ -123,6 +130,7 @@ def fetch_study_details(accession):
         else:
             yield tuple(parts)
 
+
 def fetch_url(url):
     """Return an open file handle"""
     # really should use requests instead of urllib2
@@ -145,6 +153,7 @@ def fetch_url(url):
 
     return StringIO(res.read())
 
+
 def fetch_seqs_fastq(url):
     """Fetch a FTP item"""
     # not using a url_fmt here as the directory structure has potential to
@@ -155,6 +164,7 @@ def fetch_seqs_fastq(url):
     res = fetch_url(url)
 
     return gzip.GzipFile(fileobj=res)
+
 
 def fetch_metadata_xml(accession):
     """Fetch sample metadata"""
@@ -170,6 +180,7 @@ def fetch_metadata_xml(accession):
         tag, value = node.getchildren()
         metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
     return metadata
+
 
 def fetch_study(accession, metadata_path, fasta_path):
     """Fetch and dump a full study
@@ -228,6 +239,7 @@ def count_seqs(seqs_fp, subset=None):
             elif parts[0].split('.')[0] in subset:
                 count += 1
         return count
+
 
 def count_unique_participants(metadata_fp, criteria=None):
     """Count the number of unique participants"""

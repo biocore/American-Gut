@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from biom.parse import parse_biom_table
+from itertools import izip
+
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
@@ -11,9 +12,11 @@ __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
 
 
-def create_node(name):
+def create_node(name, **kwargs):
     """Create and return a new node"""
-    return {'name': name, 'popcount': 0, 'children': []}
+    n = {'name': name, 'children': []}
+    n.update(kwargs)
+    return n
 
 
 def add_node(cur_node, node):
@@ -38,7 +41,7 @@ def update_tree(tree, taxa_by_sample):
         children : list of nodes
     """
     if tree is None:
-        tree = create_node('root')
+        tree = create_node('root', popcount=0)
 
     for list_of_taxa in taxa_by_sample:
         tree['popcount'] += 1
@@ -53,7 +56,7 @@ def update_tree(tree, taxa_by_sample):
                 node = get_node(cur_node, taxon)
 
                 if node is None:
-                    node = create_node(taxon)
+                    node = create_node(taxon, popcount=0)
                     add_node(cur_node, node)
 
                 if taxon not in seen:
@@ -61,6 +64,33 @@ def update_tree(tree, taxa_by_sample):
                     seen.add(taxon)
 
                 cur_node = node
+    return tree
+
+
+def set_relative_freqs(tree):
+    """Set freqs on tree"""
+    total_count = float(tree['count'])
+    tree['freq'] = tree['count'] / total_count
+
+    for node in traverse(tree):
+        node['freq'] = node['count'] / total_count
+
+
+def update_per_sample_tree(tree, taxons, count):
+    """Updates a per-sample tree"""
+    if tree is None:
+        tree = create_node('root', count=0, freq=None)
+
+    tree['count'] += count
+    cur_node = tree
+    for taxon in taxons:
+        node = get_node(cur_node, taxon)
+
+        if node is None:
+            node = create_node(taxon, count=0, freq=None)
+            add_node(cur_node, node)
+        node['count'] += count
+        cur_node = node
     return tree
 
 
@@ -115,12 +145,37 @@ def build_tree_from_taxontable(table):
         sample_taxa = []
         for taxon, freq in zip(table.ids(axis='observation'), taxa_freqs):
             if freq > 0:
-                sample_taxa.append(taxon.split('; '))
+                sample_taxa.append([t.strip() for t in taxon.split(';')])
         sample_taxa_lookup[sample_id] = sample_taxa
 
     tree = update_tree(None, sample_taxa_lookup.values())
 
     return tree, sample_taxa_lookup
+
+
+def build_persample_tree_from_taxontable(table):
+    """Construct per-sample trees from a taxon table
+
+    yields (sample_id, tree). Each node in the tree (tip and nontip) include
+    the taxon name, associated sequence count as well as the relative
+    abundance.
+    """
+    samp_ids = table.ids()
+
+    # It is assumed the IDs are of the form "foo; bar" or "foo;bar". Both of
+    # which have been produced by QIIME's summarize_taxa.py
+    obs_ids_tmp = table.ids(axis='observation')
+    obs_ids = [[t.strip() for t in i.split(';')] for i in obs_ids_tmp]
+
+    for samp_id in samp_ids:
+        tree = create_node('root', count=0, freq=None)
+        data = table.data(samp_id)
+        for obs_id, count in izip(obs_ids, data):
+            if count == 0:
+                continue
+            update_per_sample_tree(tree, obs_id, count)
+        set_relative_freqs(tree)
+        yield (samp_id, tree)
 
 
 def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
@@ -146,17 +201,6 @@ def sample_rare_unique(tree, table, all_sample_taxa, rare_threshold):
         if table is None:
             yield (sample_id, None, rare, unique)
         else:
-            filtered = table.filter(filter_f, axis='observation', inplace=False)
+            filtered = table.filter(filter_f, axis='observation',
+                                    inplace=False)
             yield (sample_id, filtered, rare, unique)
-
-
-if __name__ == '__main__':
-    from sys import argv
-    table = parse_biom_table(open(argv[1]))
-    tree, all_taxa = build_tree_from_taxontable(table)
-    print "#SampleID\ttype\ttaxon"
-    for samp, ft, rare, uniq in sample_rare_unique(tree, None, all_taxa, 0.01):
-        for r in rare:
-            print "%s\t%s\t%s" % (samp, 'rare', r)
-        for u in uniq:
-            print "%s\t%s\t%s" % (samp, 'unique', u)

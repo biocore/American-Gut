@@ -1,0 +1,23 @@
+language: python
+env:
+  - PYTHON_VERSION=2.7
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda3-3.7.3-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda3/bin:$PATH
+  # Update conda itself
+  - conda update --yes conda
+install:
+  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 
+  - source activate env_name
+  # upgrade click, older versions of click do not have __version__
+  - pip install -U click
+  - pip install scikit-bio biom-format colorbrewer
+script:
+  - nosetests --with-doctest
+  - flake8 americangut/*.py
+  - flake8 scripts/*.py scripts/ag
+  # The test code contains a LOT of non-flake8 lines, mostly due to expected
+  # data
+  #- flake8 tests/*

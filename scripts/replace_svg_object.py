@@ -2,6 +2,13 @@
 # File created on 04 Oct 2013
 from __future__ import division
 
+from os.path import join, exists
+from subprocess import Popen, PIPE
+from os import listdir, makedirs, remove
+from optparse import OptionParser, OptionGroup
+
+from americangut.format import format_print_for_magnified_sample
+
 __author__ = "Yoshiki Vazquez Baeza"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Yoshiki Vazquez Baeza", "Adam Robbins-Pianka"]
@@ -12,26 +19,20 @@ __email__ = "yoshiki.vazquezbaeza@colorado.edu"
 __status__ = "Development"
 
 
-from shutil import copy
-from os.path import join, exists
-from subprocess import Popen, PIPE
-from os import listdir, makedirs, remove
-from optparse import OptionParser, OptionGroup
-from americangut.format import format_print_for_magnified_sample
-
 def main():
-    usage = "usage: %prog -i svg_files --prefix figure_1 --sample_id 000000"+\
-        "001.314159 -o results/000000001.314159/"
+    usage = ("usage: %prog -i svg_files --prefix figure_1 --sample_id 000000"
+             "001.314159 -o results/000000001.314159/")
     parser = OptionParser(usage=usage)
     options = OptionGroup(parser, "options")
     options.add_option("-i", "--input_dir", type="string", help="input "
-        "directory containing the SVG formatted files")
-    options.add_option("--prefix", type="string", help="prefix filename for the"
-        " SVG files in the folder i. e. figure_1")
+                       "directory containing the SVG formatted files")
+    options.add_option("--prefix", type="string", help="prefix filename for "
+                       "the SVG files in the folder i. e. figure_1")
     options.add_option("--sample_id", type="string", help="sample name to be "
-        "processed and converted to PDF")
+                       "processed and converted to PDF")
     options.add_option("-o", "--output_dir", type="string", help="output "
-        "directory where you want to store the PDF formatted files")
+                       "directory where you want to store the PDF formatted "
+                       "files")
     parser.add_option_group(options)
     opts, args = parser.parse_args()
 
@@ -40,11 +41,11 @@ def main():
     output_directory = opts.output_dir
     sample_id = opts.sample_id
 
-    if exists(input_directory) == False:
+    if not exists(input_directory):
         parser.error("The input directory doesn't exist")
 
     all_the_files = [element for element in listdir(input_directory)
-        if element.startswith(file_prefix)]
+                     if element.startswith(file_prefix)]
     global_file_path = file_prefix + '.GLOBAL'
 
     if not len(all_the_files):
@@ -71,7 +72,7 @@ def main():
 
     try:
         temp = format_print_for_magnified_sample(sample_id, per_sample_file,
-            global_file_contents)
+                                                 global_file_contents)
     except RuntimeError:
         parser.error('Problem found with sample %s ' % sample_id)
 
@@ -82,14 +83,16 @@ def main():
     fd_out.close()
 
     # in case something went wrong just make sure that the file exists
-    assert exists(transformed_svg_file), "Something went wrong the file does "+\
-        "exist (%s)." % transformed_svg_file
+    if not exists(transformed_svg_file):
+        raise IOError("Something went wrong the file does "
+                      "not exist (%s)." % transformed_svg_file)
 
     # -z forces the session to be CLI-only; -D limits the print to the size
     # of the print to the dimensions necessary to fit all the elements in the
     # plot; -f takes any input file and -A will format the output as a PDF
-    inkscape_command = 'inkscape -z -D -f %s -A %s;' % (transformed_svg_file,
-        transformed_svg_file[:-3]+'pdf')
+    inkscape_command = (
+        'inkscape -z -D -f %s -A %s;' % (transformed_svg_file,
+                                         transformed_svg_file[:-3] + 'pdf'))
 
     # based on pyqi/util.pyqi_system_call
     process = Popen(inkscape_command, shell=True, stdout=PIPE, stderr=PIPE)
@@ -98,7 +101,7 @@ def main():
         print o, e
     if process.returncode != 0:
         parser.error('Could not convert the file from SVG to PDF, exit status '
-            'code is %d', process.returncode)
+                     'code is %d', process.returncode)
 
     # remove the svg file as it is just transient
     try:
@@ -109,4 +112,3 @@ def main():
 
 if __name__ == "__main__":
     main()
- 

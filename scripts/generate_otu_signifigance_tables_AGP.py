@@ -2,18 +2,18 @@
 
 from argparse import ArgumentParser
 from os import mkdir
+from os.path import isfile, exists, join as pjoin
+
 from numpy import array, delete
 from biom.util import biom_open
 from biom.parse import parse_biom_table
-from os.path import isfile, exists, join as pjoin
-from americangut.generate_otu_signifigance_tables import (calculate_abundance,
-                                                          calculate_tax_rank_1,
-                                                          convert_taxa,
-                                                          convert_taxa_to_list,
-                                                          clean_greengenes_string,
-                                                          build_latex_macro,
-                                                          format_date)
-from americangut.taxtree import build_tree_from_taxontable, sample_rare_unique
+
+from americangut.generate_otu_signifigance_tables import (
+    calculate_abundance, calculate_tax_rank_1, convert_taxa,
+    convert_taxa_to_list, clean_greengenes_string, build_latex_macro,
+    format_date)
+from americangut.taxtree import (build_tree_from_taxontable,
+                                 sample_rare_unique)
 from americangut.make_phyla_plots import map_to_2D_dict
 
 __author__ = "Justine Debelius"
@@ -48,7 +48,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         defined as present in less than 10% of the total population. The unique
         taxa are bolded in the lists.
     """
-     # Sets up the way samples should be converted
+    # Sets up the way samples should be converted
     SAMPLE_CONVERTER = {'feces': 'fecal',
                         'oral_cavity': 'oral',
                         'skin': 'skin'}
@@ -56,7 +56,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     DUMMY = ['', '', '', '']
     COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
 
-     # Sets up the way samples should be converted
+    # Sets up the way samples should be converted
     SAMPLE_CONVERTER = {'feces': 'fecal',
                         'oral_cavity': 'oral',
                         'skin': 'skin'}
@@ -108,7 +108,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     tree, all_taxa = build_tree_from_taxontable(taxa_table)
 
     # Sets up samples for which tables are being generated
-    if not samples_to_analyze is None:
+    if samples_to_analyze is not None:
         samples_to_test = samples_to_analyze
     else:
         samples_to_test = all_taxa.keys()
@@ -129,9 +129,13 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
         file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp,
                           FILE_EXTENSION))
 
-        filt_fun = lambda v, i, md: v.sum() > 0
-        filtered_table = filtered_table.filter(filt_fun, axis='observation', inplace=False)
-        abund_table = tax_table.filter(filt_fun, axis='observation', inplace=False)
+        def filt_fun(v, i, md):
+            return v.sum() > 0
+
+        filtered_table = filtered_table.filter(filt_fun, axis='observation',
+                                               inplace=False)
+        abund_table = tax_table.filter(filt_fun, axis='observation',
+                                       inplace=False)
 
         # Gets sample information for the whole table
         abund_sample = abund_table.data(samp)
@@ -238,7 +242,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                            categories=MACRO_CATS_SIGNIFICANCE,
                                            format=MACRO_FORM_SIGNIFICANCE)
 
-       # Handles date parsing
+        # Handles date parsing
         if mapping is not None and mapping[samp][DATE_FIELD] not in UNKNOWNS:
             try:
                 sample_date = format_date(mapping[samp],

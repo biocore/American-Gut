@@ -1,36 +1,36 @@
 #!/usr/bin/env python
 
-import re
 import os
 import shutil
 import zipfile
-from functools import partial
-from americangut.util import check_file
-from biom.parse import parse_biom_table
 from itertools import izip
 from collections import defaultdict
+from functools import partial
 
+from biom.parse import parse_biom_table
+
+from americangut.util import check_file
 
 # These are the data files in the American-Gut repository that are used for
 # results processing
 _data_files = [
-        # (directory, filename)
-        ('PGP', 'PGP_100nt.biom.gz'),
-        ('PGP', 'PGP_100nt.txt'),
-        ('HMP', 'HMPv35_100nt.biom.gz'),
-        ('HMP', 'HMPv35_100nt.txt'),
-        ('GG', 'GG_100nt.biom.gz'),
-        ('GG', 'GG_100nt.txt'),
-        ('AG', 'pgp_agp_barcodes.txt'),
-        ('AG', 'BLOOM.fasta')
-        ]
+    # (directory, filename)
+    ('PGP', 'PGP_100nt.biom.gz'),
+    ('PGP', 'PGP_100nt.txt'),
+    ('HMP', 'HMPv35_100nt.biom.gz'),
+    ('HMP', 'HMPv35_100nt.txt'),
+    ('GG', 'GG_100nt.biom.gz'),
+    ('GG', 'GG_100nt.txt'),
+    ('AG', 'pgp_agp_barcodes.txt'),
+    ('AG', 'BLOOM.fasta')
+]
 
 
 # These are the Latex templates for the different results types
 _templates = {
-        'fecal': ('template_gut.tex', 'macros_gut.tex'),
-        'oralskin': ('template_oralskin.tex', 'macros_oralskin.tex')
-        }
+    'fecal': ('template_gut.tex', 'macros_gut.tex'),
+    'oralskin': ('template_oralskin.tex', 'macros_oralskin.tex')
+}
 
 
 _mod1_bits = ['metadata_charts.json',
@@ -53,8 +53,8 @@ def get_repository_dir():
     expected = os.path.abspath(__file__).rsplit('/', 2)[0]
 
     # get_path verifies the existance of these directories
-    _ = get_path(expected, 'data')
-    _ = get_path(expected, 'latex')
+    get_path(expected, 'data')
+    get_path(expected, 'latex')
 
     return expected
 
@@ -125,6 +125,7 @@ def _stage_static_mod1(working_dir):
         src = get_path(statics, f)
         shutil.copy(src, working_dir)
 
+
 def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
     _stage_static_data(working_dir, debug)
@@ -175,33 +176,33 @@ def parse_previously_printed(path):
 
 
 simple_matter_map = {
-        'feces': 'FECAL',
-        'sebum': 'SKIN',
-        'tongue': 'ORAL',
-        'skin': 'SKIN',
-        'mouth': 'ORAL',
-        'gingiva': 'ORAL',
-        'gingival epithelium': 'ORAL',
-        'nares': 'SKIN',
-        'skin of hand': 'SKIN',
-        'hand': 'SKIN',
-        'skin of head': 'SKIN',
-        'hand skin': 'SKIN',
-        'throat': 'ORAL',
-        'auricular region zone of skin': 'SKIN',
-        'mucosa of tongue': 'ORAL',
-        'mucosa of vagina': 'SKIN',
-        'palatine tonsil': 'ORAL',
-        'hard palate': 'ORAL',
-        'saliva': 'ORAL',
-        'stool': 'FECAL',
-        'vagina': 'SKIN',
-        'fossa': 'SKIN',
-        'buccal mucosa': 'ORAL',
-        'vaginal fornix': 'SKIN',
-        'hair follicle': 'SKIN',
-        'nostril': 'SKIN'
-        }
+    'feces': 'FECAL',
+    'sebum': 'SKIN',
+    'tongue': 'ORAL',
+    'skin': 'SKIN',
+    'mouth': 'ORAL',
+    'gingiva': 'ORAL',
+    'gingival epithelium': 'ORAL',
+    'nares': 'SKIN',
+    'skin of hand': 'SKIN',
+    'hand': 'SKIN',
+    'skin of head': 'SKIN',
+    'hand skin': 'SKIN',
+    'throat': 'ORAL',
+    'auricular region zone of skin': 'SKIN',
+    'mucosa of tongue': 'ORAL',
+    'mucosa of vagina': 'SKIN',
+    'palatine tonsil': 'ORAL',
+    'hard palate': 'ORAL',
+    'saliva': 'ORAL',
+    'stool': 'FECAL',
+    'vagina': 'SKIN',
+    'fossa': 'SKIN',
+    'buccal mucosa': 'ORAL',
+    'vaginal fornix': 'SKIN',
+    'hair follicle': 'SKIN',
+    'nostril': 'SKIN'
+}
 
 
 def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
@@ -233,22 +234,22 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
     else:
         pgp_ids = set(pgp_ids)
 
-    age_cat_map = [(0,2,'Baby'),
-                   (2,13,'Child'),
-                   (13,20,'Teen'),
-                   (20,30,'20s'),
-                   (30,40,'30s'),
-                   (40,50,'40s'),
-                   (50,60,'50s'),
-                   (60,70,'60s'),
-                   (70,80,'70s'),
-                   (80,99999,'Older than 80')]
-    bmi_cat_map = [(0, 18.5,'Underweight'),
-                   (18.5, 25,'Normal'),
-                   (25, 30,'Overweight'),
-                   (30, 35,'Moderately obese'),
-                   (35, 40,'Severely obese'),
-                   (40, 99999,'Very severely obese')]
+    age_cat_map = [(0, 2, 'Baby'),
+                   (2, 13, 'Child'),
+                   (13, 20, 'Teen'),
+                   (20, 30, '20s'),
+                   (30, 40, '30s'),
+                   (40, 50, '40s'),
+                   (50, 60, '50s'),
+                   (60, 70, '60s'),
+                   (70, 80, '70s'),
+                   (80, 99999, 'Older than 80')]
+    bmi_cat_map = [(0, 18.5, 'Underweight'),
+                   (18.5, 25, 'Normal'),
+                   (25, 30, 'Overweight'),
+                   (30, 35, 'Moderately obese'),
+                   (35, 40, 'Severely obese'),
+                   (40, 99999, 'Very severely obese')]
 
     mapping_lines = [l.strip('\n').split('\t') for l in in_fp]
 
@@ -297,9 +298,9 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
 
         # grab the body site
         if body_site.startswith('UBERON_'):
-            body_site = body_site.split('_',1)[-1].replace("_"," ")
+            body_site = body_site.split('_', 1)[-1].replace("_", " ")
         elif body_site.startswith('UBERON:'):
-            body_site = body_site.split(':',1)[-1]
+            body_site = body_site.split(':', 1)[-1]
         elif body_site in ['NA', 'unknown']:
             # controls, environmental, etc
             continue
@@ -321,14 +322,14 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
 
         # simplify the country
         if country.startswith('GAZ:'):
-            country = country.split(':',1)[-1]
+            country = country.split(':', 1)[-1]
         else:
             err_msg("Could not parse country %s" % country, new_line[0])
             continue
 
         if age_idx is not None:
             age_cat = None
-            if new_line[age_idx] in ['NA','None']:
+            if new_line[age_idx] in ['NA', 'None']:
                 age_cat = 'Unknown'
             else:
                 try:
@@ -338,7 +339,7 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
                     age_cat = 'Unknown'
 
             if age_cat is not 'Unknown':
-                for low,high,cat in age_cat_map:
+                for low, high, cat in age_cat_map:
                     if low <= age < high:
                         age_cat = cat
                         break
@@ -347,12 +348,12 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
                     continue
 
         if bmi_idx is not None:
-            if new_line[bmi_idx] in ['NA','', 'None', 'no_data', 'unknown']:
+            if new_line[bmi_idx] in ['NA', '', 'None', 'no_data', 'unknown']:
                 bmi_cat = 'Unknown'
             else:
                 bmi = float(new_line[bmi_idx])
                 bmi_cat = None
-                for low,high,cat in bmi_cat_map:
+                for low, high, cat in bmi_cat_map:
                     if low <= bmi < high:
                         bmi_cat = cat
                         break
@@ -383,8 +384,8 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
 
     in_fp : the input file-like object
     out_fp : the output file-like object
-    columns_to_keep : a dict of the columns to keep, valued by specific category
-        value if desired to filter out samples that don't meet a given
+    columns_to_keep : a dict of the columns to keep, valued by specific
+        category value if desired to filter out samples that don't meet a given
         criteria. In other words, a row is retained if the function associated
         with the key "foo" returns True, or the row is retained if the value
         associated with "foo" is None.
@@ -395,14 +396,14 @@ def filter_mapping_file(in_fp, out_fp, columns_to_keep):
 
     # ensure SampleID is always first
     new_header = ["#SampleID"]
-    indices = [0] # always keep SampleID
+    indices = [0]  # always keep SampleID
     for c in columns_to_keep:
         if c.lower() not in header_lower:
             raise ValueError("Cannot find %s!" % c)
 
         indices.append(header_lower.index(c.lower()))
         new_header.append(c)
-    columns_to_keep['#SampleID'] = None # add for consistency
+    columns_to_keep['#SampleID'] = None  # add for consistency
 
     new_lines = [new_header]
     for l in lines[1:]:
@@ -496,7 +497,8 @@ def per_sample_taxa_summaries(open_table, output_format):
         with open(output_format % id_, 'w') as f:
             f.write(header)
 
-            for sorted_v, taxa in sorted(zip(v, t.ids(axis='observation')))[::-1]:
+            for sorted_v, taxa in \
+                    sorted(zip(v, t.ids(axis='observation')))[::-1]:
                 if sorted_v:
                     f.write("%s\t%f\n" % (taxa, sorted_v))
 
@@ -518,17 +520,27 @@ def bootstrap_result(rel_existing_path, static_paths, base_cmd_fmt,
     """
     if name is None:
         unidentified = rel_existing_path('unidentified')
-        bootstrap_path = lambda x: os.path.join(unidentified, x)
+
+        def bootstrap_path(x):
+            return os.path.join(unidentified, x)
     else:
         identified = rel_existing_path('identified')
-        bootstrap_path = lambda x: os.path.join(identified, x)
+
+        def bootstrap_path(x):
+            return os.path.join(identified, x)
 
     template_path = rel_existing_path('template_files')
     indiv_dir = bootstrap_path(sample_id)
     pdf_dir = os.path.join(indiv_dir, 'pdfs-gut')
-    tex_path = lambda x: os.path.join(indiv_dir, x)
-    fig_pdf_path = lambda x: os.path.join(pdf_dir, x)
-    template_files_path = lambda x: os.path.join(template_path, x)
+
+    def tex_path(x):
+        return os.path.join(indiv_dir, x)
+
+    def fig_pdf_path(x):
+        return os.path.join(pdf_dir, x)
+
+    def template_files_path(x):
+        return os.path.join(template_path, x)
 
     fig1_src = template_files_path("Figure_1.%s_huge.pdf" % sample_id)
     fig2_src = template_files_path("Figure_2.%s_huge.pdf" % sample_id)
@@ -584,7 +596,8 @@ def bootstrap_result(rel_existing_path, static_paths, base_cmd_fmt,
     return (indiv_cmd, latex_cmd)
 
 
-def construct_bootstrap_and_latex_commands(ids, participants, rel_existing_path,
+def construct_bootstrap_and_latex_commands(ids, participants,
+                                           rel_existing_path,
                                            static_paths, base_cmd_fmt,
                                            to_pdf_fmt):
     """Construct the commands to bootstrap results and latex generation
@@ -657,6 +670,7 @@ def harvest(path):
         if os.path.exists(src):
             yield "mv %s %s" % (src, dst)
 
+
 def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
               previously_printed=None):
     """Combine sets of PDFs into single documents
@@ -684,12 +698,15 @@ def pdf_smash(path, tag, pdf_smash_fmt, n_per_result=30,
         os.mkdir(result_path)
 
     # sort and then filter out. filtering is by barcode without prefix
-    sort_key = lambda x: int(x.rsplit('/')[-1].split('.')[0])
+    def sort_key(x):
+        return int(x.rsplit('/')[-1].split('.')[0])
     files_ordered = sorted(files, key=sort_key)
 
     smash_set = []
     barcode_set = []
-    bc_f = lambda ch: '\n'.join([f.rsplit('/')[-1].split('.')[0] for f in ch])
+
+    def bc_f(ch):
+        return '\n'.join([f.rsplit('/')[-1].split('.')[0] for f in ch])
 
     for chunk in chunk_list(files_ordered, n_per_result):
         smash_set.append(' '.join(chunk))
@@ -774,8 +791,8 @@ def write_bloom_fasta(unique_counts, output_file, abundance_threshold):
         otu_total_count = sum([count for seq, count in otu_counts.iteritems()])
 
         counter = 0
-        for seq, count in sorted(otu_counts.items(), key=lambda x:x[1],
-                reverse=True):
+        for seq, count in sorted(otu_counts.items(), key=lambda x: x[1],
+                                 reverse=True):
             counter += 1
             if 1.0*count/otu_total_count > abundance_threshold:
                 output_file.write('>%s_%d\n%s\n' % (otu_id, counter, seq))

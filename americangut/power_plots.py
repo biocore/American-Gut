@@ -1,10 +1,6 @@
 import numpy as np
-
-from future.utils import viewitems
-
 from statsmodels.stats.power import FTestAnovaPower
 from skbio.stats.power import confidence_bound
-
 from matplotlib import rcParams
 
 ft = FTestAnovaPower()
@@ -123,16 +119,17 @@ def collate_effect_size(counts, powers, alpha):
     return effect_means, effect_bounds
 
 
-def _get_rounded_values(eff_means, eff_bounds, round_mean=5., round_bound=1., 
+def _get_rounded_values(eff_means, eff_bounds, round_mean=5., round_bound=1.,
                         power=0.8, alpha=0.05):
     """Calculates the rounded count for the effect and corresponding bound."""
-    fit_ = np.ceil(ft.solve_power(eff_means, nobs=None, 
+    fit_ = np.ceil(ft.solve_power(eff_means, nobs=None,
                    power=power, alpha=alpha)/round_mean)*round_mean
-    err_ = np.ceil(np.abs(ft.solve_power(eff_means, nobs=None, 
-                                         power=power, alpha=alpha) - 
+    err_ = np.ceil(np.abs(ft.solve_power(eff_means, nobs=None,
+                                         power=power,
+                                         alpha=alpha) -
                           ft.solve_power(eff_means - eff_bounds, nobs=None,
-                                         power=power, alpha=alpha)) / 
-                    round_bound)*round_bound
+                                         power=power, alpha=alpha)) /
+                   round_bound)*round_bound
     return fit_, err_
 
 
@@ -199,10 +196,10 @@ def summarize_effect(fecal_cats, a_eff_means, b_eff_means, b_eff_bounds,
 
     # Loops through each row
     for (cat, a_eff_mean, a_eff_bound, b_eff_mean, b_eff_bound) in zip(
-        fecal_cats, a_eff_means, a_eff_bounds, b_eff_means, b_eff_bounds):
+            fecal_cats, a_eff_means, a_eff_bounds, b_eff_means, b_eff_bounds):
         a_fit, a_err = _get_rounded_values(a_eff_mean, a_eff_bound)
         b_fit, b_err = _get_rounded_values(b_eff_mean, b_eff_bound)
-                                                  
+
         # Fills in the html text
         row = ['\t<tr>',
                '\t\t<td style="border-top:hidden;',
@@ -556,8 +553,8 @@ def add_average_trace(fig, power, counts, labels, **kwargs):
     # added.
     axes[2].get_legend().set_visible(False)
 
-    # Adjusts the position of the filter vector so the bodysite line will appear
-    # first in the legend
+    # Adjusts the position of the filter vector so the bodysite line will
+    # appear first in the legend
     handles = list(axes[2].get_legend_handles_labels())
     handles[0].insert(0, handles[0].pop(-1))
 
