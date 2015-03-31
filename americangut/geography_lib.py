@@ -13,6 +13,8 @@ __email__ = "Justine.Debelius@colorado.edu"
 #       acessed 7 June 2014.
 #       http://en.wikipedia.org/wiki/List_of_U.S._state_abbreviations
 
+country_map = {'GAZ:Great Britain': 'GAZ:United Kingdom'}
+
 us_state_map = {nan: nan,
                 'AL': 'AL', 'Alabama': 'AL', 'ALABAMA': 'AL',
                 'AK': 'AK', 'Alaska': 'AK', 'ALASKA': 'AK',
