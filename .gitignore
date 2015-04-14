@@ -40,3 +40,8 @@ nosetests.xml
 
 #OS X files
 .DS_Store
+
+#Blocks data files
+./ipynb/agp_analysis/
+./ipynb/agp_analysis/**
+
