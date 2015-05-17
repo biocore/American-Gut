@@ -91,7 +91,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                             0.0703, -0.0372,  0.0931,  0.0883, -0.0154,
                             0.0302,  0.1436, -0.0564,  0.0490, -0.0296]])
 
-        self.test_list = ['k__Bacteria',
+        self.test_list = ['k__[Bacteria]',
                           'k__Bacteria; p__[Proteobacteria]',
                           'k__Bacteria; p__Proteobacteria; '
                           'c__Gammaproteobacteria',
@@ -201,7 +201,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                           'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0,
                           1.4507298345686689e-22],
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852,
-                          7.0, 0.00073396297302392652],
+                          7.0, 0.00073396297302392771],
                          ['k__Bacteria; p__Proteobacteria; '
                           'c__Gammaproteobacteria; o__Enterobacteriales; '
                           'f__Enterbacteriaceae; g__Escherichia', 0.1, 0.04714,
@@ -211,13 +211,13 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                           'f__Enterbacteriaceae', 0.002, 7.6e-05, 26.0,
                           1.4507298345686689e-22],
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852,
-                          7.0, 0.00073396297302392652]]
+                          7.0, 0.00073396297302392771]]
         known_high_01 = [['k__Bacteria; p__Proteobacteria; '
                           'c__Gammaproteobacteria; o__Enterobacteriales; '
                           'f__Enterbacteriaceae', 0.002, 7.6e-05,
                           26.0, 1.4507298345686689e-22],
                          ['k__Bacteria; p__[Proteobacteria]', 0.7, 0.101852,
-                          7.0, 0.00073396297302392652]]
+                          7.0, 0.00073396297302392771]]
         known_low_10 = [['k__Bacteria; p__Actinobacteria; c__Actinobacteria;'
                          ' o__Actinomycetales; f__Dietziaceae; g__',
                          0.0, 0.044336, 0.0, 0.016163391728614671],
@@ -320,7 +320,7 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
             convert_taxa(test_value, test_keys, test_hund[0:1])
 
         # Tests with list values
-        test  = convert_taxa(test_value, test_keys, test_hund)
+        test = convert_taxa(test_value, test_keys, test_hund)
         known = [['Rose', '9', '10.10', '74.01', '97.6\%', '68.0\%'],
                  ['Martha', '10', '10.20', '38.23', '20.0\%', '0.2\%']]
         self.assertEqual(test, known)
@@ -346,29 +346,39 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
     def test_convert_taxa_to_list(self):
         format_list = ['BOLD', 'REG', 'REG', 'REG', 'REG', 'REG', 'COLOR']
 
-        known_latex_format = '\\begin{itemize}\n\\item \\textbf{Unclassified'\
-            ' Kingdom Bacteria}\n\\item Unclassified Phylum Proteobacteria\n'\
-            '\\item Unclassified Class Gammaproteobacteria\n\\item '\
-            'Unclassified Order Enterobacteriales\n\\item Unclassified Family'\
-            ' Enterbacteriaceae\n\\item Genus \\textit{Escherichia}\n\\'\
-            'item \\textcolor{red}{\\textit{Escherichia coli}}\n\\end{itemize}'
+        known_latex_format = ['\\begin{itemize}\n\\item \\textbf{cont. '
+                              'Unclassified Kingdom Bacteria}\n\\item cont. '
+                              'Unclassified Phylum Proteobacteria\n\\item '
+                              'Unclassified Class Gammaproteobacteria\n\\item'
+                              ' Unclassified Order Enterobacteriales\n\\item'
+                              ' Unclassified Family Enterbacteriaceae\n\\item'
+                              ' Genus \\textit{Escherichia}\n\\item '
+                              '\\textcolor{red}{\\textit{Escherichia coli}}\n'
+                              '\\end{itemize}']
 
-        known_latex_comma = '\\textbf{Unclassified Kingdom Bacteria}, '\
-            'Unclassified Phylum Proteobacteria, Unclassified Class '\
-            'Gammaproteobacteria, Unclassified Order Enterobacteriales, '\
-            'Unclassified Family Enterbacteriaceae, Genus \\textit'\
-            '{Escherichia}, \\textcolor{blue}{\\textit{Escherichia coli}}'
+        known_latex_comma = ['\\textbf{cont. Unclassified Kingdom Bacteria},'
+                             ' cont. Unclassified Phylum Proteobacteria, '
+                             'Unclassified Class Gammaproteobacteria, '
+                             'Unclassified Order Enterobacteriales, '
+                             'Unclassified Family Enterbacteriaceae, '
+                             'Genus \\textit{Escherichia}, \\textcolor{blue}'
+                             '{\\textit{Escherichia coli}}']
 
-        known_raw_format = '\n o   *Unclassified Kingdom Bacteria*\n o   '\
-            'Unclassified Phylum Proteobacteria\n o   Unclassified Class '\
-            'Gammaproteobacteria\n o   Unclassified Order Enterobacteriales'\
-            '\n o   Unclassified Family Enterbacteriaceae\n o   Genus '\
-            'Escherichia\n o   *Escherichia coli*'
+        known_raw_format = ['\n o   *cont. Unclassified Kingdom Bacteria*\n '
+                            'o   cont. Unclassified Phylum Proteobacteria\n '
+                            'o   Unclassified Class Gammaproteobacteria\n '
+                            'o   Unclassified Order Enterobacteriales\n '
+                            'o   Unclassified Family Enterbacteriaceae\n '
+                            'o   Genus Escherichia\n '
+                            'o   *Escherichia coli*']
 
-        known_raw_comma = '*Unclassified Kingdom Bacteria*, Unclassified '\
-            'Phylum Proteobacteria, Unclassified Class Gammaproteobacteria, '\
-            'Unclassified Order Enterobacteriales, Unclassified Family '\
-            'Enterbacteriaceae, Genus Escherichia, *Escherichia coli*'
+        known_raw_comma = ['*cont. Unclassified Kingdom Bacteria*,'
+                           ' cont. Unclassified Phylum Proteobacteria, '
+                           'Unclassified Class Gammaproteobacteria, '
+                           'Unclassified Order Enterobacteriales, '
+                           'Unclassified Family Enterbacteriaceae, '
+                           'Genus Escherichia, '
+                           '*Escherichia coli*']
 
         test_list_latex_format = convert_taxa_to_list(self.test_list,
                                                       render_mode='LATEX',
@@ -389,21 +399,21 @@ class GenerateOTUSignifiganceTablesTest(TestCase):
                                                    tax_format=format_list,
                                                    comma=True)
 
-        self.assertEqual(test_list_latex_format, known_latex_format)
-        self.assertEqual(test_list_latex_comma, known_latex_comma)
-        self.assertEqual(test_list_raw_format, known_raw_format)
-        self.assertEqual(test_list_raw_comma, known_raw_comma)
+        self.assertEqual(test_list_latex_format, known_latex_format[0])
+        self.assertEqual(test_list_latex_comma, known_latex_comma[0])
+        self.assertEqual(test_list_raw_format, known_raw_format[0])
+        self.assertEqual(test_list_raw_comma, known_raw_comma[0])
 
-    def test_clean_greengenes_string(self):
-        known_raw = ['*Kingdom Bacteria*',
-                     'Phylum Proteobacteria',
+    def test_clean_otu_string(self):
+        known_raw = ['*cont. Kingdom Bacteria*',
+                     'cont. Phylum Proteobacteria',
                      'Class Gammaproteobacteria',
                      'Order Enterobacteriales',
                      'Family Enterbacteriaceae',
                      '*Genus Escherichia*',
                      '*Escherichia coli*']
-        known_latex = ['\\textbf{Unclassified Kingdom Bacteria}',
-                       'Unclassified Phylum Proteobacteria',
+        known_latex = ['\\textbf{cont. Unclassified Kingdom Bacteria}',
+                       'cont. Unclassified Phylum Proteobacteria',
                        'Unclassified Class Gammaproteobacteria',
                        'Unclassified Order Enterobacteriales',
                        'Unclassified Family Enterbacteriaceae',

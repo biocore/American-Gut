@@ -1,7 +1,7 @@
 Data
 ====
 
-OTU Tables and QIIME-compliant mapping files used to generate figures and statistics for the American Gut project. All data are de-identified.
+OTU Tables and QIIME-compliant mapping files used to generate figures and statistics for the American Gut project. All data are de-identified. These tables were picked against Greengenes 13_8 at 97% using SortMeRNA.
 
 Data sources
 ------------

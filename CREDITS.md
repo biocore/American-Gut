@@ -8,12 +8,14 @@ American Gut Credits
 ====================
 
 * Dr. Gail Ackermann
+* Dr. Nadim Ajami
 * Dr. Katie Amato
 * Dr. Amnon Amir
 * Donna Berg-Lyons
 * Evan Bolyen
 * Jeff DeReus
 * Justine Debelius
+* Chandni Desai
 * Dr. Rob Dunn
 * Dr. Merete Eggesbo
 * James Gaffney
@@ -23,6 +25,7 @@ American Gut Credits
 * Dr. Antonio Gonzalez
 * Julia Goodrich
 * Steve Green
+* Dr. Scott Handley
 * Kathy Holt
 * Greg Humphrey
 * Dr. Jim Huntley
@@ -92,7 +95,8 @@ American Gut Collaborators
 * Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health
 * Janet Jansson, Manager, Fundamental & Computational Sciences Directorate, Pacific Northwest National Laboratory
 * Purna Kashyap, Associate Director - Microbiome Program, Center for Individualized Medicine, Senior Associate Consultant - Department of Gastroenterology and Hepatology, Assistant Professor ­ Department of Medicine, Mayo Clinic
-* Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry & Biochemistry and Department of Computer Science, University of Colorado at Boulder
+* Scott Kelley, Professor, Department of Biology, San Diego State University
+* Rob Knight, Professor, Professor, Department of Pediatrics and Department of Computer Science and Engineering, University of California San Diego 
 * Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota
 * Rosa Krajmalnik-Brown, Assistant Professor, Engineering Research Director, School of Sustainable Engineering and the Built Environment, Biodesign Institute at Arizona State University
 * Jeff Leach, Founder, Human Food Project
@@ -100,14 +104,18 @@ American Gut Collaborators
 * Cecil M Lewis, Associate Professor, Department of Anthropology, University of Oklahoma
 * James Lewis, Senior Scholar, Epidemiology, Professor of Medicine, University of Pennsylvania
 * Ruth Ley, Assistant Professor, Department of Microbiology, Cornell University
+* Chris Lowry, Associate Professor, Department of Integrative Physiology, University of Colorado at Boulder
 * Catherine Lozupone, Assistant Professor, Division of BioMedical Informatics and Personalized Medicine, Anschultz Medical Campus, University of Colorado at Denver
 * David Mills, Peter J. Shields Endowed Chair in Dairy Food Science, Departments of Viticulture & Enology and Food Science & Technology University of California at Davis
 * Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine
 * Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium
+* Charles Raison, Professor, Department of Psychiatry, University of Arizona
 * Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine
 * Tim Spector, Head, Department of Twin Research and Genetic Epidemiology, King's College London
+* Phil Strandwitz, Graduate Student, Antimicrobial Discovery Center, Northeastern University
 * Jan Suchodolski, Clinical Assistant Professor & Associate Director, Gastrointestinal Laboratory, Texas A&M University
 * Kelly Swanson, Associate Professor, Department of Animal Sciences, University of Illinois at Urbana-Champaign
+* Paul Wischmeyer, Professor, Department of Anesthesiology, Anschutz Medical Center
 * Owen White, Director, Department of Bioinformatics, University of Maryland School of Medicine; PI, Human Microbiome Project Data Analysis and Coordination Center
 * Gary D. Wu, Professor of Medicine, University of Pennsylvania
 * Ramnik Xavier, Chief of Gastroenterology, Massachusetts General Hospital, Director Center for the study of Inflammatory Bowel Disease and Senior Associate Member, Broad Institute

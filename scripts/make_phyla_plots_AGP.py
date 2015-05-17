@@ -119,7 +119,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     map_dict = map_to_2D_dict(mapping_data)
 
     # Gets the category file dictionary summarized with the common categories
-     # Generates the category file dictionary
+    # Generates the category file dictionary
     categories = parse_category_files(raw_tables=cat_tables,
                                       common_groups=COMMON_TAXA[:8],
                                       level=LEVEL,
@@ -139,7 +139,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
         common_phyla.append(taxon[1].strip(' p__').strip('[').strip(']'))
     new_common_taxa = common_phyla
 
-      # Checks that the crrect sample ids are plotted
+    # Checks that the crrect sample ids are plotted
     if samples_to_plot is None:
         sample_ids = whole_sample_ids
     else:
@@ -149,12 +149,12 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     if debug:
         mp_sample_pos = 2
     else:
-        mp_sample_pos = whole_sample_ids.index(michael_pollan)
+        mp_sample_pos = whole_sample_ids.tolist().index(michael_pollan)
     mp_sample_taxa = whole_summary[:, mp_sample_pos]
 
     # Gets the table average
     table_average = mean(whole_summary, 1)
-    
+
     # Generates a figure for each sample
     for idx, sample_id in enumerate(whole_sample_ids):
         if sample_id in sample_ids:
@@ -178,15 +178,15 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                 mapping_key = meta_data[cat]
                 # Pulls taxonomic summary and group descriptions
                 tax_summary = categories[cat]['Summary']
-                group_descriptions = categories[cat]['Groups']
-                 # Appends plotting tables
+                group_descriptions = categories[cat]['Groups'].tolist()
+                # Appends plotting tables
                 try:
                     mapping_col = group_descriptions.index(mapping_key)
                 except:
                     raise ValueError('The %s cannot be found in %s.'
                                      % (mapping_key, cat))
                 tax_array[:, idx] = tax_summary[:, mapping_col]
-            
+
             # Sets up the file to save the data
             filename = pjoin(output_dir, '%s%s%s'
                              % (FILEPREFIX, sample_id, FILE_END))
@@ -243,14 +243,16 @@ parser.add_argument('-d', '--debug',
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    
+
     # Checks the biom table is sane
     if not args.input:
         parser.error("An input BIOM table is required.")
     elif not isfile(args.input):
         parser.error('The supplied biom table does not exist in the path.')
     else:
-        otu_table = parse_biom_table(open(args.input, 'U'))
+        import h5py
+        f = h5py.File(args.input)
+        otu_table = parse_biom_table(f)
 
     # Checks the mapping file is sane
     if not args.mapping:
@@ -301,7 +303,8 @@ if __name__ == '__main__':
          debug=args.debug)
 
 
-### Commentary on the selection of common taxa:
+# Commentary on the selection of common taxa:
+#
 # Common taxa can be calculated using the function,
 # identify_most_common_categories. When this was run on rounds 1, 2, and 3 of
 # the American Gut for fecal and all sites equally weighted, and for the HMP

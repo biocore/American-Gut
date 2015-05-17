@@ -2,6 +2,8 @@
 
 from __future__ import division
 
+from numpy import array, argsort, zeros
+
 __author__ = "Sam Way"
 __copyright__ = "Copyright 2013, The American Gut Project"
 __credits__ = ["Sam Way"]
@@ -9,8 +11,6 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Sam Way"
 __email__ = "samuel.way@colorado.edu"
-
-from numpy import array, argsort, zeros
 
 
 def get_filtered_taxa_summary(mapping_file, taxa_summary_file,
