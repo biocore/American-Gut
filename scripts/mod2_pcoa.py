@@ -140,8 +140,8 @@ def country(coords, mapping_file):
 
         # change particapant's country's color to color_Highlight unless
         # country is Venezuela or Malawi
-        if (mf.loc[sample]['COUNTRY'] != 'Malawi') & (mf.loc[sample]['COUNTRY']
-                                                      != 'Venezuela'):
+        if (mf.loc[sample]['COUNTRY'] != 'Malawi') & (
+                mf.loc[sample]['COUNTRY'] != 'Venezuela'):
             grp_colors[mf.loc[sample]['COUNTRY']] = color_Highlight
 
         # plot each country except participant's according to colors above
@@ -172,8 +172,8 @@ def country(coords, mapping_file):
 
         # reset particapant's country's color to color_Western unless country
         # is Venezuela or Malawi
-        if (mf.loc[sample]['COUNTRY'] != 'Malawi') & (mf.loc[sample]['COUNTRY']
-                                                      != 'Venezuela'):
+        if (mf.loc[sample]['COUNTRY'] != 'Malawi') & (
+                mf.loc[sample]['COUNTRY'] != 'Venezuela'):
             grp_colors[mf.loc[sample]['COUNTRY']] = color_Western
 
         plt.axis('off')
