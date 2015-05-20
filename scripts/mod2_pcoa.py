@@ -2,6 +2,8 @@
 
 import os
 import click
+from matplotlib import use
+use('Agg')  # noqa
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,6 +12,7 @@ from skbio import read
 from skbio.stats.ordination import OrdinationResults
 from collections import defaultdict
 from collections import OrderedDict
+
 
 ALPHA = 1.0
 LINE_WIDTH = 0.3
