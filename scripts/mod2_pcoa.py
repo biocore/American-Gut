@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+import os
 import click
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from skbio import read
 from skbio.stats.ordination import OrdinationResults
 from collections import defaultdict
 from collections import OrderedDict
@@ -25,9 +27,14 @@ def mod2_pcoa():
 @click.option('--mapping_file', required=True, type=click.Path(
               resolve_path=True, readable=True, exists=True),
               help='Mapping file')
-def body_site(coords, mapping_file):
+@click.option('--output', required=True, type=click.Path(exists=True,
+              writable=True, resolve_path=True), help='Output directory')
+@click.option('--prefix', required=True, type=str, help='Output file prefix')
+@click.option('--samples', required=False, type=str,
+              help='Comma separated list of samples to print')
+def body_site(coords, mapping_file, output, prefix, samples):
     """Generates as many figures as samples in the coordinates file"""
-    o = OrdinationResults.from_file(coords)
+    o = read(coords, into=OrdinationResults)
 
     # coordinates
     c_df = pd.DataFrame(o.site, o.site_ids)
@@ -36,6 +43,12 @@ def body_site(coords, mapping_file):
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
                      index_col='#SampleID')
     mf = mf.loc[o.site_ids]
+
+    if samples is None:
+        samples = mf.index
+    else:
+        samples = set(samples.split(',')).intersection(set(o.site_ids))
+        samples = mf.loc[samples].index
 
     color_hmp_fecal = sns.color_palette('Paired', 12)[10]  # light brown
     color_agp_fecal = sns.color_palette('Paired', 12)[11]  # dark brown
@@ -55,7 +68,7 @@ def body_site(coords, mapping_file):
                   'HMP-SKIN':  color_hmp_skin,
                   'PGP-SKIN':  color_hmp_skin}
 
-    for sample in mf.index:
+    for sample in samples:
 
         # plot categories as 50 slices with random zorder
         for grp, color in grp_colors.iteritems():
@@ -77,8 +90,9 @@ def body_site(coords, mapping_file):
 
         plt.axis('off')
         my_dpi = 72
-        plt.savefig(sample+'.pdf', figsize=(1000/my_dpi, 1000/my_dpi),
-                    dpi=my_dpi)
+        figsize = (1000 / my_dpi, 1000 / my_dpi)
+        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
+        plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 
 
@@ -88,9 +102,14 @@ def body_site(coords, mapping_file):
 @click.option('--mapping_file', required=True, type=click.Path(
               resolve_path=True, readable=True, exists=True),
               help='Mapping file')
-def country(coords, mapping_file):
+@click.option('--output', required=True, type=click.Path(exists=True,
+              writable=True, resolve_path=True), help='Output directory')
+@click.option('--prefix', required=True, type=str, help='Output file prefix')
+@click.option('--samples', required=False, type=str,
+              help='Comma separated list of samples to print')
+def country(coords, mapping_file, output, prefix, samples):
     """Generates as many figures as samples in the coordinates file"""
-    o = OrdinationResults.from_file(coords)
+    o = read(coords, into=OrdinationResults)
     x, y = o.site[:, 0], o.site[:, 1]
 
     # coordinates
@@ -100,6 +119,12 @@ def country(coords, mapping_file):
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
                      index_col='#SampleID')
     mf = mf.loc[o.site_ids]
+
+    if samples is None:
+        samples = mf.index
+    else:
+        samples = set(samples.split(',')).intersection(set(o.site_ids))
+        samples = mf.loc[samples].index
 
     color_Venezuela = sns.color_palette('Paired', 12)[10]
     color_Malawi = sns.color_palette('Paired', 12)[1]
@@ -132,7 +157,7 @@ def country(coords, mapping_file):
     grp_colors['Malawi'] = color_Malawi
     grp_colors['Venezuela'] = color_Venezuela
 
-    for sample in mf.index:
+    for sample in samples:
 
         # countour plot superimposed
         sns.kdeplot(x, y, cmap='bone')
@@ -178,8 +203,9 @@ def country(coords, mapping_file):
 
         plt.axis('off')
         my_dpi = 72
-        plt.savefig(sample+'.pdf', figsize=(1000/my_dpi, 1000/my_dpi),
-                    dpi=my_dpi)
+        figsize = (1000 / my_dpi, 1000 / my_dpi)
+        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
+        plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 
 
@@ -191,9 +217,14 @@ def country(coords, mapping_file):
               help='Mapping file')
 @click.option('--color', required=True, type=str,
               help='Metadata category to set color by')
-def gradient(coords, mapping_file, color):
+@click.option('--output', required=True, type=click.Path(exists=True,
+              writable=True, resolve_path=True), help='Output directory')
+@click.option('--prefix', required=True, type=str, help='Output file prefix')
+@click.option('--samples', required=False, type=str,
+              help='Comma separated list of samples to print')
+def gradient(coords, mapping_file, color, output, prefix, samples):
     """Generates as many figures as samples in the coordinates file"""
-    o = OrdinationResults.from_file(coords)
+    o = read(coords, into=OrdinationResults)
 
     # coordinates
     c_df = pd.DataFrame(o.site, o.site_ids)
@@ -204,12 +235,18 @@ def gradient(coords, mapping_file, color):
     mf = mf.loc[o.site_ids]
     mf[color] = mf[color].convert_objects(convert_numeric=True)
 
+    if samples is None:
+        samples = mf.index
+    else:
+        samples = set(samples.split(',')).intersection(set(o.site_ids))
+        samples = mf.loc[samples].index
+
     numeric = mf[~pd.isnull(mf[color])]
     non_numeric = mf[pd.isnull(mf[color])]
 
     color_array = plt.cm.RdBu(numeric[color]/max(numeric[color]))
 
-    for sample in mf.index:
+    for sample in samples:
 
         # plot numeric metadata as colored gradient
         ids = numeric.index
@@ -242,8 +279,9 @@ def gradient(coords, mapping_file, color):
 
         plt.axis('off')
         my_dpi = 72
-        plt.savefig(sample+'.pdf', figsize=(1000/my_dpi, 1000/my_dpi),
-                    dpi=my_dpi)
+        figsize = (1000 / my_dpi, 1000 / my_dpi)
+        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
+        plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 
 if __name__ == '__main__':
