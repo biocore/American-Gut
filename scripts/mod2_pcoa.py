@@ -16,6 +16,8 @@ from collections import OrderedDict
 
 ALPHA = 1.0
 LINE_WIDTH = 0.3
+LINE_WIDTH_WHITE = 2.0
+LINE_WIDTH_BLACK = 1.0
 
 
 @click.group()
@@ -84,12 +86,12 @@ def body_site(coords, mapping_file, output, prefix, samples):
         # plot participant's dot
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
                     color=grp_colors[mf.loc[sample]['TITLE_BODY_SITE']],
-                    s=270, edgecolor='w', zorder=1)
+                    s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
                     color=grp_colors[mf.loc[sample]['TITLE_BODY_SITE']],
                     s=250, edgecolor=np.asarray(
                     grp_colors[mf.loc[sample]['TITLE_BODY_SITE']])*0.6,
-                    zorder=2)
+                    zorder=2, lw=LINE_WIDTH_BLACK)
 
         plt.axis('off')
         my_dpi = 72
@@ -192,11 +194,12 @@ def country(coords, mapping_file, output, prefix, samples):
         # plot participant's dot
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
                     color=grp_colors[mf.loc[sample]['COUNTRY']],
-                    s=270, edgecolor='w', zorder=1)
+                    s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
                     color=grp_colors[mf.loc[sample]['COUNTRY']],
                     s=250, edgecolor=np.asarray(grp_colors[mf.loc[sample]
-                                                ['COUNTRY']])*0.6, zorder=2)
+                                                ['COUNTRY']])*0.6,
+                    zorder=2, lw=LINE_WIDTH_BLACK)
 
         # reset particapant's country's color to color_Western unless country
         # is Venezuela or Malawi
@@ -276,9 +279,10 @@ def gradient(coords, mapping_file, color, output, prefix, samples):
             _color = color_array[color_index]
 
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=_color, s=270, edgecolor='w')
+                    color=_color, s=270, edgecolor='w', lw=LINE_WIDTH_WHITE)
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=_color, s=250, edgecolor=np.asarray(_color)*0.6)
+                    color=_color, s=250, edgecolor=np.asarray(_color)*0.6,
+                    lw=LINE_WIDTH_BLACK)
 
         plt.axis('off')
         my_dpi = 72
