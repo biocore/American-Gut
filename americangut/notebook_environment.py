@@ -7,7 +7,7 @@ import qiime
 
 import americangut as ag
 from americangut.results_utils import get_repository_dir
-from americangut.util import get_path, get_new_path, get_existing_path
+from americangut.util import get_existing_path
 
 
 _EBI_ACCESSIONS = ['ERP012511']
@@ -17,12 +17,12 @@ _TEST_ACCESSIONS = ['ag_testing']
 # essential filenames that may be used between notebooks
 filenames = {
     'raw-sequences': 'raw-sequences.fna',
-    'raw-metadata' : 'raw_metadata.txt',
+    'raw-metadata': 'raw_metadata.txt',
     'fecal-sequences': 'fecal-sequences.fna',
     'filtered-sequences': 'filtered-sequences.fna',
     'observed-blooms': 'observed-blooms',
     'observed-blooms-biom': 'observed-blooms/otu_table.biom',
-    'observed-blooms-otu-map': \
+    'observed-blooms-otu-map':
         'observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt'
 }
 
