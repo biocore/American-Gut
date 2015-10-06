@@ -6,9 +6,11 @@ import gzip
 import time
 from itertools import izip
 from StringIO import StringIO
-from lxml import etree
 
+from lxml import etree
 from skbio.parse.sequences import parse_fastq, parse_fasta
+
+import americangut as ag
 
 
 __author__ = "Daniel McDonald"
@@ -18,6 +20,87 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
+
+
+def get_path(path):
+    """Get a relative path to the working directory
+
+    Parameters
+    ----------
+    path : str
+        A path
+
+    Notes
+    -----
+    This method does not care if the path exists or not
+
+    Returns
+    -------
+    str
+        The filepath
+    """
+    return os.path.join(ag.working_dir, path)
+
+
+def get_new_path(path):
+    """Get a new relative path to the working directory
+
+    Parameters
+    ----------
+    path : str
+        A path that does not exist
+
+    Notes
+    -----
+    It is only assured that the path does not exist at the time of function
+    evaluation.
+
+    Raises
+    ------
+    IOError
+        If the path exists
+
+    Returns
+    -------
+    str
+        The filepath
+    """
+    path = get_path(path)
+
+    if os.path.exists(path):
+        raise IOError('%s already exists.' % path)
+
+    return path
+
+
+def get_existing_path(path):
+    """Get an existing relative path to the working directory
+
+    Parameters
+    ----------
+    path : str
+        A path that exists
+
+    Notes
+    -----
+    It is only assured that the path exists at the time of function evaluation
+
+    Raises
+    ------
+    IOError
+        If the path does not exist
+
+    Returns
+    -------
+    str
+        The filepath
+    """
+    path = get_path(path)
+
+    if not os.path.exists(path):
+        raise IOError('%s does not exist.' % path)
+
+    return path
 
 
 def pick_rarifaction_level(id_, lookups):
@@ -178,15 +261,29 @@ def fetch_metadata_xml(accession):
     metadata = {}
     for node in attributes.iterfind('SAMPLE_ATTRIBUTE'):
         tag, value = node.getchildren()
-        metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
+        if value.text is None:
+            metadata[tag.text.strip('" ').upper()] = 'no_data'
+        else:
+            metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
+
+    description = sample.find('DESCRIPTION')
+    metadata['Description'] = description.text.strip('" ')
+
     return metadata
 
 
-def fetch_study(accession, metadata_path, fasta_path):
+def fetch_study(accession):
     """Fetch and dump a full study
 
     Grab and dump a full study
     """
+    metadata_path = get_path('%s.txt' % accession)
+    fasta_path = get_path('%s.fna' % accession)
+
+    if os.path.exists(fasta_path) and os.path.exists(metadata_path):
+        # it appears we already have the accession, so short circuit
+        return
+
     all_md = {}
     all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
     md_f = open(metadata_path, 'w')
@@ -201,9 +298,10 @@ def fetch_study(accession, metadata_path, fasta_path):
         md = fetch_metadata_xml(sample)
         all_md[qiimedb_samplename] = md
         all_cols.update(md)
-
+        break
         # write out fasta
         try:
+            raise ValueError()
             for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
                 fasta_path.write(">%s\n%s\n" % (id_, seq))
         except:
@@ -214,7 +312,7 @@ def fetch_study(accession, metadata_path, fasta_path):
     md_f.write('\t'.join(header))
     md_f.write('\n')
     for sampleid, values in all_md.iteritems():
-        to_write = [values.get(k, "no_data") for k in header]
+        to_write = [values.get(k, "no_data").encode('utf-8') for k in header]
         to_write.insert(0, sampleid)
         md_f.write('\t'.join(to_write))
         md_f.write('\n')
