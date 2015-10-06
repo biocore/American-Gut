@@ -101,6 +101,7 @@ def body_site(coords, mapping_file, output, prefix, samples):
         plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 
+
 @mod2_pcoa.command()
 @click.option('--distmat', required=True, type=click.Path(resolve_path=True,
                                                           readable=True,
@@ -120,7 +121,7 @@ def subsample_dm(distmat, mapping_file, max, category, output):
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
                      index_col='#SampleID')
     id_to_cat = dict(mf[category])
-    bin_f = lambda x: id_to_cat[x]
+    bin_f = lambda x: id_to_cat[x]  # noqa
 
     dm = read(distmat, into=DistanceMatrix)
     dm = dm.filter([id for _, id in isubsample(dm.ids, max, bin_f=bin_f)])
@@ -252,9 +253,8 @@ def country(coords, mapping_file, output, prefix, samples, distmat):
                     s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
         plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
                     color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
-                    s=250,
-                    edgecolor=np.asarray(grp_colors[\
-                            mf.loc[sample_to_plot]['COUNTRY']])*0.6,
+                    s=250, edgecolor=np.asarray(grp_colors[
+                        mf.loc[sample_to_plot]['COUNTRY']])*0.6,
                     zorder=2, lw=LINE_WIDTH_BLACK)
 
         # reset particapant's country's color to color_Western unless country
