@@ -121,7 +121,9 @@ def subsample_dm(distmat, mapping_file, max, category, output):
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
                      index_col='#SampleID')
     id_to_cat = dict(mf[category])
-    bin_f = lambda x: id_to_cat[x]  # noqa
+
+    def bin_f(x):
+        return id_to_cat[x]
 
     dm = read(distmat, into=DistanceMatrix)
     dm = dm.filter([id for _, id in isubsample(dm.ids, max, bin_f=bin_f)])
