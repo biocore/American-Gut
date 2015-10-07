@@ -14,16 +14,32 @@ _EBI_ACCESSIONS = ['ERP012511']
 _TEST_ACCESSIONS = ['ag_testing']
 
 
-# essential filenames that may be used between notebooks
-filenames = {
+# essential paths relative to the working_dir to be used between notebooks
+
+paths = {
+    # raw files
     'raw-sequences': 'raw-sequences.fna',
     'raw-metadata': 'raw_metadata.txt',
-    'fecal-sequences': 'fecal-sequences.fna',
+
+    # sequences filtered for blooms
     'filtered-sequences': 'filtered-sequences.fna',
+    'filtered-sequences-100nt': 'filtered-sequences-100nt.fna',
+
+    # only fecal sequences (for filtering for blooms)
+    'fecal-sequences': 'fecal-sequences.fna',
+
+    # observed bloom sequences in samples
     'observed-blooms': 'observed-blooms',
     'observed-blooms-biom': 'observed-blooms/otu_table.biom',
     'observed-blooms-otu-map':
-        'observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt'
+        'observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
+
+    # resulting OTU directories
+    'gg-otus': 'otus/gg-13_8-97-percent-otus',
+    'gg-otus-100nt': 'otus/gg-13_8-97-percent-otus-with-100nt',
+    'gg-otus-biom': 'otus/gg-13_8-97-percent-otus/otu_table.biom',
+    'gg-otus-100nt-biom':
+        'otus/gg-13_8-97-percent-otus-with-100nt/otu_table.biom',
 }
 
 
@@ -37,6 +53,11 @@ def _assert_environment():
     if find_executable('mod2_pcoa.py') is None:
         raise EnvironmentError("The AG scripts are not in $PATH.")
 _assert_environment()
+
+
+def get_sortmerna_index():
+    """Return the absolute path a SortMeRNA index if available"""
+    return os.environ.get('AG_SMR_INDEX')
 
 
 def get_accessions():
