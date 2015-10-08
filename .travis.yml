@@ -21,4 +21,7 @@ script:
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag
   - ipymd --from markdown --to notebook ipynb/primary-processing/*.md
-  - runipy ipynb/primary-processing/*.ipynb
+  - runipy ipynb/primary-processing/1-get_sequences_and_metadata.ipynb
+  - runipy ipynb/primary-processing/2-filter_sequences_for_blooms.ipynb
+  - runipy ipynb/primary-processing/3-pick_otus.ipynb
+  # runipy ipynb/primary-processing/4-diversity_analyses.ipynb
