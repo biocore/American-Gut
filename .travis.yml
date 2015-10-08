@@ -17,6 +17,7 @@ install:
   - pip install scikit-bio==0.2.3 biom-format colorbrewer
   - pip install qiime runipy ipymd
 script:
+  - export PYTHONPATH=$TRAVIS_BUILD_DIR:$PYTHONPATH
   - nosetests --with-doctest
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag
