@@ -36,8 +36,8 @@ Now let's setup the paths to the sequences to filter. We need the metadata as we
 
 ```python
 >>> # If you are filtering your own data, please update these filepath variables as necessary
-... sequences = agenv.get_existing_path(agenv.filenames['raw-sequences'])
->>> metadata  = agenv.get_existing_path(agenv.filenames['raw-metadata'])
+... sequences = agenv.get_existing_path(agenv.paths['raw-sequences'])
+>>> metadata  = agenv.get_existing_path(agenv.paths['raw-metadata'])
 ```
 
 We also need to specify what specific metadata category and value correspond indicate what samples are fecal. It is possible that these values are study specific, so please modify these as needed if you filtering other datasets.
