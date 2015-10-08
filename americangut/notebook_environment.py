@@ -4,6 +4,7 @@ import shutil
 from distutils.spawn import find_executable
 
 import qiime
+import qiime_default_reference as qdr
 
 import americangut as ag
 from americangut.results_utils import get_repository_dir
@@ -58,6 +59,23 @@ _assert_environment()
 def get_sortmerna_index():
     """Return the absolute path a SortMeRNA index if available"""
     return os.environ.get('AG_SMR_INDEX')
+
+
+def get_reference_set():
+    """Get the reference set to use for OTU picking
+
+    Returns
+    -------
+    (str, str)
+        The file paths to the reference sequences and the reference taxonomy.
+    """
+    if os.environ.get('AG_TESTING') == 'True':
+        repo = get_repository_dir()
+        ref_seqs = os.path.join(repo, 'tests/data/otus.fna')
+        ref_tax = os.path.join(repo, 'tests/data/otus.txt')
+        return ref_seqs, ref_tax
+    else:
+        return qdr.get_reference_sequences(), qdr.get_reference_taxonomy()
 
 
 def get_accessions():
