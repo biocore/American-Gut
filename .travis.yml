@@ -6,7 +6,7 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda3/bin:$TRAVIS_BUILD_DIR/scripts:$PATH
-  - export AG_TESTING=True
+  - export AG_TESTING='True'
   # Update conda itself
   - conda update --yes conda
 install:
@@ -15,7 +15,7 @@ install:
   # upgrade click, older versions of click do not have __version__
   - pip install -U click
   - pip install scikit-bio==0.2.3 biom-format colorbrewer
-  - pip install qiime
+  - pip install qiime runipy ipymd
 script:
   - nosetests --with-doctest
   - flake8 americangut/*.py
