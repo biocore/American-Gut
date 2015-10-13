@@ -4,10 +4,10 @@ Pick OTUs (for full and trimmed data) at approximately genus level resolution (9
 >>> import os
 >>> import multiprocessing
 ...
->>> import qiime_default_reference as qdr
-...
 >>> import americangut.util as agu
 >>> import americangut.notebook_environment as agenv
+...
+>>> chp_path = agenv.activate('3')
 ```
 
 Before we go too far, let's make sure the files we need are present.
@@ -20,16 +20,16 @@ Before we go too far, let's make sure the files we need are present.
 And, let's make sure that the output files we need do not already exist.
 
 ```python
->>> gg_otus            = agu.get_new_path(agenv.paths['gg-otus'])
->>> gg_otus_biom       = agu.get_new_path(agenv.paths['gg-otus-biom'])
->>> gg_otus_100nt      = agu.get_new_path(agenv.paths['gg-otus-100nt'])
->>> gg_otus_100nt_biom = agu.get_new_path(agenv.paths['gg-otus-100nt-biom'])
+>>> ag_otus       = agu.get_new_path(agenv.paths['ag-otus'])
+>>> ag_biom       = agu.get_new_path(agenv.paths['ag-biom'])
+>>> ag_otus_100nt = agu.get_new_path(agenv.paths['ag-otus-100nt'])
+>>> ag_100nt_biom = agu.get_new_path(agenv.paths['ag-100nt-biom'])
 ```
 
 We're going to now setup a parameters file for the OTU picking runs. It is possible to specify a precomputed SortMeRNA index by indicating it's path as the environment variable `$AG_SMR_INDEX`. The reason we're using an environment variable is that it makes it much easier to inject an index during continuous integration testing.
 
 ```python
->>> _params_file = agu.get_path('sortmerna_pick_params.txt')
+>>> _params_file = os.path.join(chp_path, 'sortmerna_pick_params.txt')
 ...
 >>> with open(_params_file, 'w') as f:
 ...     f.write("pick_otus:otu_picking_method sortmerna\n")
@@ -50,7 +50,7 @@ And now we can actually pick the OTUs. This will take sometime. Note, we're issu
 
 ```python
 >>> !pick_closed_reference_otus.py -i $filtered_sequences \
-...                                -o $gg_otus \
+...                                -o $ag_otus \
 ...                                -r $ref_seqs \
 ...                                -t $ref_tax \
 ...                                -p $_params_file
@@ -58,7 +58,7 @@ And now we can actually pick the OTUs. This will take sometime. Note, we're issu
 
 ```python
 >>> !pick_closed_reference_otus.py -i $filtered_sequences_100nt \
-...                                -o $gg_otus_100nt \
+...                                -o $ag_otus_100nt \
 ...                                -r $ref_seqs \
 ...                                -t $ref_tax \
 ...                                -p $_params_file
@@ -67,6 +67,6 @@ And now we can actually pick the OTUs. This will take sometime. Note, we're issu
 And we'll end with some sanity checking of the outputs.
 
 ```python
->>> assert os.stat(gg_otus_biom).st_size > 0
->>> assert os.stat(gg_otus_100nt_biom).st_size > 0
+>>> assert os.stat(ag_biom).st_size > 0
+>>> assert os.stat(ag_100nt_biom).st_size > 0
 ```

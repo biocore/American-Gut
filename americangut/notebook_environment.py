@@ -11,6 +11,7 @@ from americangut.results_utils import get_repository_dir
 from americangut.util import get_existing_path
 
 
+_TEST_ENV = os.environ.get('AG_TESTING') == 'True'
 _EBI_ACCESSIONS = ['ERP012511']
 _TEST_ACCESSIONS = ['ag_testing']
 
@@ -19,28 +20,39 @@ _TEST_ACCESSIONS = ['ag_testing']
 
 paths = {
     # raw files
-    'raw-sequences': 'raw-sequences.fna',
-    'raw-metadata': 'raw_metadata.txt',
+    'raw-sequences': '1/raw-sequences.fna',
+    'raw-metadata': '1/raw-metadata.txt',
 
     # sequences filtered for blooms
-    'filtered-sequences': 'filtered-sequences.fna',
-    'filtered-sequences-100nt': 'filtered-sequences-100nt.fna',
+    'filtered-sequences': '2/filtered-sequences.fna',
+    'filtered-sequences-100nt': '2/filtered-sequences-100nt.fna',
 
     # only fecal sequences (for filtering for blooms)
-    'fecal-sequences': 'fecal-sequences.fna',
+    'fecal-sequences': '2/fecal-sequences.fna',
 
     # observed bloom sequences in samples
-    'observed-blooms': 'observed-blooms',
-    'observed-blooms-biom': 'observed-blooms/otu_table.biom',
+    'observed-blooms': '2/observed-blooms',
+    'observed-blooms-biom': '2/observed-blooms/otu_table.biom',
     'observed-blooms-otu-map':
-        'observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
+        '2/observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
 
     # resulting OTU directories
-    'gg-otus': 'otus/gg-13_8-97-percent-otus',
-    'gg-otus-100nt': 'otus/gg-13_8-97-percent-otus-with-100nt',
-    'gg-otus-biom': 'otus/gg-13_8-97-percent-otus/otu_table.biom',
-    'gg-otus-100nt-biom':
-        'otus/gg-13_8-97-percent-otus-with-100nt/otu_table.biom',
+    'ag-otus': '3/otus/gg-13_8-97-per-otus',
+    'ag-otus-100nt': '3/otus/gg-13_8-97-per-otus-with-100nt',
+    'ag-biom': '3/otus/gg-13_8-97-per-otus/otu_table.biom',
+    'ag-100nt-biom': '3/otus/gg-13_8-97-per-otus-with-100nt/otu_table.biom',
+
+    # merged files for diversity analyses
+    'ag-gg-100nt-biom': '4/ag-gg-100nt.biom',
+    'pgp-hmp-100nt-biom': '4/pgp-hmp-100nt.biom',
+    'ag-pgp-hmp-gg-100nt-biom': '4/ag-pgp-hmp-gg-100nt.biom',
+    'ag-cleaned-md': '4/ag-cleaned.txt',
+    'gg-cleaned-md': '4/gg-cleaned.txt',
+    'pgp-cleaned-md': '4/pgp-cleaned.txt',
+    'hmp-cleaned-md': '4/hmp-cleaned.txt',
+    'ag-gg-cleaned-md': '4/ag-gg-cleaned.txt',
+    'pgp-hmp-cleaned-md': '4/pgp-hmp-cleaned.txt',
+    'ag-pgp-hmp-gg-cleaned-md': '4/ag-pgp-hmp-gg-cleaned.txt',
 }
 
 
@@ -56,6 +68,30 @@ def _assert_environment():
 _assert_environment()
 
 
+def activate(chp):
+    """Activate a chapter
+
+    Parameters
+    ----------
+    chp : str
+        The chapter.
+
+    Returns
+    -------
+    str
+        The path to the activated directory
+
+    Notes
+    -----
+    Activation creates the chapter processing directory if it does
+    not already exist.
+    """
+    path = os.path.join(ag.working_dir, chp)
+    if not os.path.exists(path):
+        os.mkdir(path)
+    return path
+
+
 def get_sortmerna_index():
     """Return the absolute path a SortMeRNA index if available"""
     return os.environ.get('AG_SMR_INDEX')
@@ -69,7 +105,7 @@ def get_reference_set():
     (str, str)
         The file paths to the reference sequences and the reference taxonomy.
     """
-    if os.environ.get('AG_TESTING') == 'True':
+    if _TEST_ENV:
         repo = get_repository_dir()
         ref_seqs = os.path.join(repo, 'tests/data/otus.fna')
         ref_tax = os.path.join(repo, 'tests/data/otus.txt')
@@ -78,12 +114,67 @@ def get_reference_set():
         return qdr.get_reference_sequences(), qdr.get_reference_taxonomy()
 
 
+def get_hmp():
+    """Get the HMP 100nt table and mapping"""
+    return _get_data('HMP', 'HMPv35_100nt')
+
+
+def get_pgp():
+    """Get the PGP 100nt table and mapping"""
+    return _get_data('PGP', 'PGP_100nt')
+
+
+def get_global_gut():
+    """Get the Global Gut table and mapping"""
+    return _get_data('GG', 'GG_100nt')
+
+
+def _get_data(data_dir, tag):
+    """Get a non-AG table and mapping file
+
+    Parameters
+    ----------
+    data_dir : str
+        The base data path
+    tag : str
+        The filetag (e.g., HMPv35_100nt)
+
+    Notes
+    -----
+    If $AG_TESTING == 'True', then the data returned will correspond to the
+    test dataset.
+
+    Raises
+    ------
+    IOError
+        If the filepaths are not accessible
+
+    Returns
+    -------
+    (str, str)
+        The filepath to the table, and the filepath to the mapping file.
+    """
+    repo = get_repository_dir()
+    data = 'tests/data' if _TEST_ENV else 'data'
+    base = os.path.join(repo, data)
+
+    table = os.path.join(base, data_dir, '%s.biom' % tag)
+    mapping = os.path.join(base, data_dir, '%s.txt' % tag)
+
+    if not os.path.exists(table):
+        raise IOError("Unable to access: %s" % table)
+    if not os.path.exists(mapping):
+        raise IOError("Unable to access: %s" % table)
+
+    return table, mapping
+
+
 def get_accessions():
     """Get the accessions to use, or redirect to test data
 
     Notes
     -----
-    If os.environ['AG_TESTING'] == 'True', then the accessions returned will
+    If $AG_TESTING == 'True', then the accessions returned will
     correspond to the test dataset.
 
     Returns
@@ -93,7 +184,7 @@ def get_accessions():
         For instance, the accession "foo" would have sequences as "foo.fna" and
         metadata as "foo.txt".
     """
-    if os.environ.get('AG_TESTING') == 'True':
+    if _TEST_ENV:
         _stage_test_accessions()
         return _TEST_ACCESSIONS[:]
     else:
@@ -131,5 +222,5 @@ def _stage_test_accessions():
         src_fna = os.path.join(repo, 'tests/data/%s.fna' % acc)
         src_map = os.path.join(repo, 'tests/data/%s.txt' % acc)
 
-        shutil.copy(src_fna, ag.working_dir)
-        shutil.copy(src_map, ag.working_dir)
+        shutil.copy(src_fna, os.path.join(ag.working_dir, '1'))
+        shutil.copy(src_map, os.path.join(ag.working_dir, '1'))
