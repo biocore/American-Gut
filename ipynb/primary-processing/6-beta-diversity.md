@@ -36,7 +36,7 @@ Next, we'll setup the paths that we're going to create and need.
 >>> ag_pgp_hmp_gg_100nt_1k_bdiv_u  = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-bdiv-unifrac'])
 >>> ag_pgp_hmp_gg_100nt_1k_bdiv_wu = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-bdiv-wunifrac'])
 ...
->>> # principal coordiantes
+>>> # principal coordinates
 ... ag_100nt_1k_u_pc               = agu.get_new_path(agenv.paths['ag-100nt-1k-unifrac-pc'])
 >>> ag_100nt_oral_1k_u_pc          = agu.get_new_path(agenv.paths['ag-100nt-oral-1k-unifrac-pc'])
 >>> ag_100nt_skin_1k_u_pc          = agu.get_new_path(agenv.paths['ag-100nt-skin-1k-unifrac-pc'])

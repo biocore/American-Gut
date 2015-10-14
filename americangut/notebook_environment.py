@@ -119,6 +119,14 @@ paths = {
         ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'weighted_unifrac_ag-gg-100nt-1k-pc.txt'),
 
+    # taxonomy summaries
+    'ag-taxa': '7/taxa',
+    'ag-L2-taxa-tsv': '7/taxa/otu_table_L2.txt',
+    'ag-L2-taxa-biom': '7/taxa/otu_table_L2.biom',
+    'ag-L3-taxa-tsv': '7/taxa/otu_table_L3.txt',
+    'ag-L3-taxa-biom': '7/taxa/otu_table_L3.biom',
+    'ag-L6-taxa-tsv': '7/taxa/otu_table_L6.txt',
+    'ag-L6-taxa-biom': '7/taxa/otu_table_L6.biom',
 }
 
 
