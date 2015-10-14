@@ -53,6 +53,72 @@ paths = {
     'ag-gg-cleaned-md': '4/ag-gg-cleaned.txt',
     'pgp-hmp-cleaned-md': '4/pgp-hmp-cleaned.txt',
     'ag-pgp-hmp-gg-cleaned-md': '4/ag-pgp-hmp-gg-cleaned.txt',
+
+    # alpha diversity analysis files
+    'ag-pgp-hmp-gg-100nt-1k-multiple': '5/ag-pgp-hmp-gg-100nt-1k-multiple',
+
+
+    'ag-pgp-hmp-gg-100nt-1k-adiv': '5/ag-pgp-hmp-gg-100nt-1k-adiv',
+    'ag-pgp-hmp-gg-100nt-1k-adiv-pd':
+        '5/ag-pgp-hmp-gg-100nt-1k-adiv/PD_whole_tree.txt',
+    'ag-pgp-hmp-gg-100nt-1k-adiv-chao1':
+        '5/ag-pgp-hmp-gg-100nt-1k-adiv/chao1.txt',
+    'ag-pgp-hmp-gg-100nt-1k-adiv-observedotus':
+        '5/ag-pgp-hmp-gg-100nt-1k-adiv/observed_otus.txt',
+
+    # beta diversity analysis files
+    'ag-pgp-hmp-gg-100nt-1k-biom': '6/ag-pgp-hmp-gg-100nt-1k.biom',
+    'ag-pgp-hmp-gg-100nt-1k-bdiv': '6/ag-pgp-hmp-gg-100nt-1k-bdiv',
+
+    'ag-100nt-1k-bdiv-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-1k.txt'),
+    'ag-100nt-1k-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-1k-pc.txt'),
+
+    'ag-100nt-oral-1k-bdiv-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-oral-1k.txt'),
+    'ag-100nt-oral-1k-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-oral-1k-pc.txt'),
+
+    'ag-100nt-skin-1k-bdiv-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-skin-1k.txt'),
+    'ag-100nt-skin-1k-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-skin-1k-pc.txt'),
+
+    'ag-pgp-hmp-gg-100nt-1k-bdiv-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-pgp-hmp-gg-100nt-1k.txt'),
+    'ag-pgp-hmp-gg-100nt-1k-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-pgp-hmp-gg-100nt-1k-pc.txt'),
+
+    'ag-pgp-hmp-gg-100nt-1k-bdiv-wunifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'weighted_unifrac_ag-pgp-hmp-gg-100nt-1k.txt'),
+    'ag-pgp-hmp-gg-100nt-1k-wunifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'weighted_unifrac_ag-pgp-hmp-gg-100nt-1k-pc.txt'),
+
+    'ag-gg-100nt-1k-bdiv-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-gg-100nt-1k.txt'),
+    'ag-gg-100nt-1k-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-gg-100nt-1k-pc.txt'),
+
+    'ag-gg-100nt-1k-bdiv-wunifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'weighted_unifrac_ag-gg-100nt-1k.txt'),
+    'ag-gg-100nt-1k-wunifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'weighted_unifrac_ag-gg-100nt-1k-pc.txt'),
+
 }
 
 
