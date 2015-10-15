@@ -84,6 +84,13 @@ paths = {
         ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-oral-1k-pc.txt'),
 
+    'ag-100nt-fecal-1k-bdiv-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-fecal-1k.txt'),
+    'ag-100nt-fecal-1k-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-100nt-fecal-1k-pc.txt'),
+
     'ag-100nt-skin-1k-bdiv-unifrac':
         ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-skin-1k.txt'),
@@ -112,6 +119,13 @@ paths = {
         ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-gg-100nt-1k-pc.txt'),
 
+    'ag-gg-100nt-1k-bdiv-subsampled-unifrac':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-gg-100nt-1k-subsampled.txt'),
+    'ag-gg-100nt-1k-subsampled-unifrac-pc':
+        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+         'unweighted_unifrac_ag-gg-100nt-1k-subsampled-pc.txt'),
+
     'ag-gg-100nt-1k-bdiv-wunifrac':
         ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'weighted_unifrac_ag-gg-100nt-1k.txt'),
@@ -127,6 +141,14 @@ paths = {
     'ag-L3-taxa-biom': '7/taxa/otu_table_L3.biom',
     'ag-L6-taxa-tsv': '7/taxa/otu_table_L6.txt',
     'ag-L6-taxa-biom': '7/taxa/otu_table_L6.biom',
+    'ag-L6-taxa-skin-biom': '7/taxa/otu_table_skin_L6.biom',
+    'ag-L6-taxa-oral-biom': '7/taxa/otu_table_oral_L6.biom',
+    'ag-L6-taxa-fecal-biom': '7/taxa/otu_table_fecal_L6.biom',
+
+    # per-sample results
+    'successful-ids': '8/successful_ids.txt',
+    'unsuccessful-ids': '8/unsuccessful_ids.txt',
+    'per-sample-results': '8/per-sample-results',
 }
 
 
@@ -169,6 +191,14 @@ def activate(chp):
 def get_sortmerna_index():
     """Return the absolute path a SortMeRNA index if available"""
     return os.environ.get('AG_SMR_INDEX')
+
+
+def get_rarefaction_depth():
+    """Return the rarefaction depth to use"""
+    if _TEST_ENV:
+        return "100"
+    else:
+        return "1000"
 
 
 def get_reference_set():

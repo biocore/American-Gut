@@ -36,11 +36,17 @@ As well as establish the new paths that we'll be creating.
 
 Now for the fun bits. We're going to make a call to `parallel_multiple_rarefactions.py` which will produce multiple tables normalized for sequencing effort at 1000 sequences per sample. This process is called rarefaction, and we perform it as the number of sequences produced per sample can vary quite a bit. This variation can greatly influence the resulting diversity scores, so in order to reduce bias driven by sequencing effort, we make an attempt to normalize. The process involves random subsampling, so we're going to do it a few times to get rough bounds on the diversity of each sample.
 
+Before we start computation, we're going to get the depth to sample at. The depth is abstracted out for integration testing purposes.
+
+```python
+>>> depth = agenv.get_rarefaction_depth()
+```
+
 ```python
 >>> !parallel_multiple_rarefactions.py -i $ag_pgp_hmp_gg_100nt_biom \
 ...                                    -o $ag_pgp_hmp_gg_100nt_1k_multi \
-...                                    -m 1000 \
-...                                    -x 1000 \
+...                                    -m $depth \
+...                                    -x $depth \
 ...                                    -O $cpu_count
 ```
 

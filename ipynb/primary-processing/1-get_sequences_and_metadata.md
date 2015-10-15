@@ -29,7 +29,7 @@ Now let's actually fetch the study data. `fetch_study` will only pull down acces
 Now that we have the sequences and sample information, let's merge all the data into a single file to ease downstream processing.
 
 ```python
->>> form_path = lambda acc, ext: agenv.get_existing_path('%s.%s' % (acc, ext))
+>>> form_path = lambda acc, ext: agenv.get_existing_path(os.path.join('1', '%s.%s' % (acc, ext)))
 ...
 >>> bash_compatible_sequence_files = ' '.join([form_path(acc, 'fna') for acc in accessions])
 >>> !cat $bash_compatible_sequence_files > $agp_sequences

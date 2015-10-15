@@ -14,7 +14,7 @@ install:
   - source activate env_name
   # upgrade click, older versions of click do not have __version__
   - pip install -U click
-  - pip install scikit-bio==0.2.3 biom-format colorbrewer
+  - pip install scikit-bio==0.2.3 biom-format colorbrewer seaborn click
   - pip install qiime runipy ipymd
 script:
   - export PYTHONPATH=$TRAVIS_BUILD_DIR:$PYTHONPATH

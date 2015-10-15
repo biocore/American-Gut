@@ -77,13 +77,14 @@ We also need to make sure the metadata (the information about the samples) are a
 
 ```python
 >>> original_clean_category_acronym = \
-...     [(ag_md, ag_cleaned_md, 'AG', 'body_site'),
+...     [(ag_md, ag_cleaned_md, 'AGP', 'body_site'),
 ...      (gg_md, gg_cleaned_md, 'GG', 'body_site'),
 ...      (pgp_md, pgp_cleaned_md, 'PGP', 'body_site'),
 ...      (hmp_md, hmp_cleaned_md, 'HMP', 'bodysite')]
 ...
 >>> for original, cleaned, acronym, category in original_clean_category_acronym:
 ...     with open(original, 'U') as ori_fp, open(cleaned, 'w') as clean_fp:
+...         print original
 ...         agu.clean_and_reformat_mapping(ori_fp, clean_fp, category, acronym)
 ```
 

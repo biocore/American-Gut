@@ -80,6 +80,8 @@ def body_site(coords, mapping_file, output, prefix, samples):
         for grp, color in grp_colors.iteritems():
             sub_coords = c_df[mf.TITLE_BODY_SITE == grp].values
             for i in np.array_split(sub_coords, 50):
+                if i.size == 0:
+                    continue
                 plt.scatter(i[:, 0], i[:, 1], color=color,
                             edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
                             alpha=ALPHA, zorder=np.random.rand())
