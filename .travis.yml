@@ -10,7 +10,7 @@ before_install:
   # Update conda itself
   - conda update --yes conda
 install:
-  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 notebook 
+  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy=1.9.2 scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 notebook 
   - source activate env_name
   # upgrade click, older versions of click do not have __version__
   - pip install -U click
