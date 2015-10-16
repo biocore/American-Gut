@@ -106,7 +106,9 @@ def main(tax_table, output_dir, samples_to_analyze=None):
             raise ValueError("No samples!")
 
     # Walks over the table
-    filt_fun = lambda v, i, md: v.sum() > 0  # noqa
+    def filt_fun(v, i, md):
+        return v.sum() > 0
+
     for samp, filtered_table, rare, unique in sample_rare_unique(tree,
                                                                  tax_table,
                                                                  all_taxa,
