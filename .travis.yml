@@ -19,6 +19,7 @@ install:
 script:
   - source activate env_name
   - export PYTHONPATH=$TRAVIS_BUILD_DIR:$PYTHONPATH
+  - pip freeze
   - nosetests --with-doctest
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag
