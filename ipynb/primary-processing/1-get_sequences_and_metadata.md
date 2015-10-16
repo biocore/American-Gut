@@ -3,7 +3,6 @@ The sequences and the metadata. All of the deidentified American Gut data are de
 First, let's setup and sanity check our environment.
 
 ```python
->>> from scipy.sparse import csr
 >>> import os
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu

@@ -18,27 +18,7 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 First we'll setup our existing paths that we need.
 
 ```python
->>> ag_l6_taxa_biom       = agu.get_existing_path(agenv.paths['ag-L6-taxa-biom'])
->>> ag_l6_taxa_oral_biom  = agu.get_existing_path(agenv.paths['ag-L6-taxa-oral-biom'])
->>> ag_l6_taxa_skin_biom  = agu.get_existing_path(agenv.paths['ag-L6-taxa-skin-biom'])
->>> ag_l6_taxa_fecal_biom = agu.get_existing_path(agenv.paths['ag-L6-taxa-fecal-biom'])
 >>> ag_cleaned_md         = agu.get_existing_path(agenv.paths['ag-cleaned-md'])
-...
->>> full_md               = agu.get_existing_path(agenv.paths['ag-pgp-hmp-gg-cleaned-md'])
->>> full_dm               = agu.get_existing_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-bdiv-unifrac'])
->>> full_pc               = agu.get_existing_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-unifrac-pc'])
-...
->>> ag_gg_dm              = agu.get_existing_path(agenv.paths['ag-gg-100nt-1k-bdiv-unifrac'])
->>> ag_gg_pc              = agu.get_existing_path(agenv.paths['ag-gg-100nt-1k-unifrac-pc'])
->>> ag_gg_ss_dm           = agu.get_existing_path(agenv.paths['ag-gg-100nt-1k-bdiv-subsampled-unifrac'])
->>> ag_gg_ss_pc           = agu.get_existing_path(agenv.paths['ag-gg-100nt-1k-subsampled-unifrac-pc'])
-...
->>> ag_skin_dm            = agu.get_existing_path(agenv.paths['ag-100nt-skin-1k-bdiv-unifrac'])
->>> ag_skin_pc            = agu.get_existing_path(agenv.paths['ag-100nt-skin-1k-unifrac-pc'])
->>> ag_oral_dm            = agu.get_existing_path(agenv.paths['ag-100nt-oral-1k-bdiv-unifrac'])
->>> ag_oral_pc            = agu.get_existing_path(agenv.paths['ag-100nt-oral-1k-unifrac-pc'])
->>> ag_fecal_dm           = agu.get_existing_path(agenv.paths['ag-100nt-fecal-1k-bdiv-unifrac'])
->>> ag_fecal_pc           = agu.get_existing_path(agenv.paths['ag-100nt-fecal-1k-unifrac-pc'])
 ```
 
 Then we'll establish our new paths as well as "per-sample-results" directory where the individual figures will go.
@@ -57,7 +37,7 @@ We're also going to load up the American Gut mapping file so we can determine wh
 >>> ag_cleaned_df = pd.read_csv(ag_cleaned_md, sep='\t', index_col='#SampleID')
 ```
 
-These next functions actually perform the processing per site. These functions were not pushed down into the library code as to make it easier for developers to iterate and modify the processing code.
+These next functions actually perform the processing per site as well as compute support methods.
 
 ```python
 >>> def _iter_ids_over_system_call(cmd_fmt, sample_ids):
@@ -85,7 +65,8 @@ These next functions actually perform the processing per site. These functions w
 ...         stdout, stderr, return_value = qiime_system_call(cmd)
 ...
 ...         if return_value != 0:
-...             results[id_] = 'FAILED (%s): %s' % (stderr.splitlines()[-1], cmd)
+...             last_err = stderr.splitlines()[-1]
+...             results[id_] = 'FAILED (%s): %s' % (last_err if last_err else '', cmd)
 ...         else:
 ...             results[id_] = None
 ...
@@ -99,10 +80,7 @@ These next functions actually perform the processing per site. These functions w
 ...     sample_ids : iterable
 ...         A list of sample IDs of interest
 ...     paths : dict
-...         A dict of relevant paths. This is expected to contain the following
-...         keys:
-...             {'site_table', 'site_dm', 'site_pc', 'full_table', 'full_md',
-...              'full_dm', 'full_pc', 'output_path'}
+...         A dict of relevant paths.
 ...
 ...     Returns
 ...     -------
@@ -138,10 +116,7 @@ These next functions actually perform the processing per site. These functions w
 ...     sample_ids : iterable
 ...         A list of sample IDs of interest
 ...     paths : dict
-...         A dict of relevant paths. This is expected to contain the following
-...         keys:
-...             {'site_table', 'site_dm', 'site_pc', 'full_table', 'full_md',
-...              'full_dm', 'full_pc', 'output_path'}
+...         A dict of relevant paths.
 ...
 ...     Returns
 ...     -------
@@ -165,10 +140,7 @@ These next functions actually perform the processing per site. These functions w
 ...     sample_ids : iterable
 ...         A list of sample IDs of interest
 ...     paths : dict
-...         A dict of relevant paths. This is expected to contain the following
-...         keys:
-...             {'site_table', 'site_dm', 'site_pc', 'full_table', 'full_md',
-...              'full_dm', 'full_pc', 'output_path'}
+...         A dict of relevant paths.
 ...
 ...     Returns
 ...     -------
@@ -193,10 +165,7 @@ These next functions actually perform the processing per site. These functions w
 ...     sample_ids : iterable
 ...         A list of sample IDs of interest
 ...     paths : dict
-...         A dict of relevant paths. This is expected to contain the following
-...         keys:
-...             {'site_table', 'site_dm', 'site_pc', 'full_table', 'full_md',
-...              'full_dm', 'full_pc', 'output_path'}
+...         A dict of relevant paths.
 ...
 ...     Returns
 ...     -------
@@ -207,7 +176,7 @@ These next functions actually perform the processing per site. These functions w
 ...     cmd_fmt = ' '.join(["mod2_pcoa.py country",
 ...                         "--distmat %s" % paths['ag_gg_dm'],
 ...                         "--coords %s" % paths['ag_gg_ss_pc'],
-...                         "--mapping_file %s" % paths['full_md'],
+...                         "--mapping_file %s" % paths['ag_gg_md'],
 ...                         "--output %s" % paths['output_path'],
 ...                         "--prefix Figure_2",
 ...                         "--samples %s"])
@@ -215,14 +184,80 @@ These next functions actually perform the processing per site. These functions w
 ...     return _iter_ids_over_system_call(cmd_fmt, sample_ids)
 ...
 >>> def gradient_pcoa(sample_ids, paths):
-...     pass
+...     """Produce a gradient PCoA
 ...
->>> # NEED BAR/PIE CHARTS, AND PCOAS
-... #x = {
-...   #  'mod2 pcoas fig3': 'mod2_pcoa.py gradient --coords %(coords)s --mapping_file %(mapping)s --output %(output)s --prefix Figure_3 --color %(color)s --samples %(samples)s',
-...    # 'Make Pie Charts': 'make_pie_plot_AGP.py -i %(input)s -o %(output)s -s %(samples)s',
-...     #'mod2 pcoas fig2 subsample': '
+...     Paramters
+...     ---------
+...     sample_ids : iterable
+...         A list of sample IDs of interest
+...     paths : dict
+...         A dict of relevant paths.
+...
+...     Returns
+...     -------
+...     dict
+...         A dict containing each sample ID and any errors observed or None if
+...         no error was observed for the sample.
+...     """
+...     cmd_fmt = ' '.join(["mod2_pcoa.py gradient",
+...                         "--coords %s" % paths['site_pc'],
+...                         "--mapping_file %s" % paths['ag-L2-taxa-md'],
+...                         "--output %s" % paths['output_path'],
+...                         "--prefix Figure_3",
+...                         "--color %s" % paths['color-by'],
+...                         "--samples %s"])
+...
+...     return _iter_ids_over_system_call(cmd_fmt, sample_ids)
+...
+>>> def pie_plot(sample_ids, paths):
+...     """Produce a pie chart
+...
+...     Paramters
+...     ---------
+...     sample_ids : iterable
+...         A list of sample IDs of interest
+...     paths : dict
+...         A dict of relevant paths.
+...
+...     Returns
+...     -------
+...     dict
+...         A dict containing each sample ID and any errors observed or None if
+...         no error was observed for the sample.
+...     """
+...     cmd_fmt = ' '.join(['make_pie_plot_AGP.py',
+...                         '-i %s' % paths['ag-L3-taxa-tsv'],
+...                         '-o %s' % paths['output_path'],
+...                         '-s %s'])
+...     return _iter_ids_over_system_call(cmd_fmt, sample_ids)
+...
+>>> def bar_chart(sample_ids, paths):
+...     """Produce a bar chart
+...
+...     Paramters
+...     ---------
+...     sample_ids : iterable
+...         A list of sample IDs of interest
+...     paths : dict
+...         A dict of relevant paths.
+...
+...     Returns
+...     -------
+...     dict
+...         A dict containing each sample ID and any errors observed or None if
+...         no error was observed for the sample.
+...     """
+...     cmd_fmt = ' '.join(['make_phyla_plots_AGP.py',
+...                         '-i %s' % paths['site_table_1k'],
+...                         '-m %s' % paths['full_md'],
+...                         '-o %s' % paths['output_path'],
+...                         '-c %s' % paths['barchart_categories'],
+...                         '-t %s' % paths['sample_type'],
+...                         '-s %s'])
+...     return _iter_ids_over_system_call(cmd_fmt, sample_ids)
 ```
+
+These next methods partition the samples by sample type and enable farming of work over available processors.
 
 ```python
 >>> def dispatcher(success_fp, fail_fp, partitioner):
@@ -267,6 +302,8 @@ These next functions actually perform the processing per site. These functions w
 ...         yield func, df_subset.index
 ```
 
+And finally, these next blocks of code support the per-sample type processing.
+
 ```python
 >>> def merge_error_reports(*reports):
 ...     """Merge error reports
@@ -293,10 +330,13 @@ These next functions actually perform the processing per site. These functions w
 ...                 result[id_].append(value)
 ...
 ...     return result
-```
-
-```python
+...
 >>> def get_paths_thread_local(extras):
+...     """Grab paths thread local. This method likely is not necessary.
+...
+...     This method was put in as a precaution against the GIL. It likely
+...     isn't necessary and is a refactor target.
+...     """
 ...     import americangut.notebook_environment as agenv_local
 ...     import americangut.util as agu_local
 ...
@@ -305,8 +345,13 @@ These next functions actually perform the processing per site. These functions w
 ...              'full_dm': agu_local.get_existing_path(agenv_local.paths['ag-pgp-hmp-gg-100nt-1k-bdiv-unifrac']),
 ...              'full_pc': agu_local.get_existing_path(agenv_local.paths['ag-pgp-hmp-gg-100nt-1k-unifrac-pc']),
 ...              'ag_gg_dm': agu_local.get_existing_path(agenv_local.paths['ag-gg-100nt-1k-bdiv-unifrac']),
+...              'ag_gg_md': agu_local.get_existing_path(agenv_local.paths['ag-gg-cleaned-md']),
 ...              'ag_gg_ss_pc': agu_local.get_existing_path(agenv_local.paths['ag-gg-100nt-1k-subsampled-unifrac-pc']),
-...              'output_path': agu_local.get_existing_path(agenv_local.paths['per-sample-results'])}
+...              'output_path': agu_local.get_existing_path(agenv_local.paths['per-sample-results']),
+...              'ag-L2-taxa-biom': agu_local.get_existing_path(agenv_local.paths['ag-L2-taxa-biom']),
+...              'ag-L2-taxa-md': agu_local.get_existing_path(agenv_local.paths['ag-L2-taxa-md']),
+...              'ag-L3-taxa-tsv': agu.get_existing_path(agenv.paths['ag-L3-taxa-tsv'])
+>>> }
 ...
 ...     for ksrc, kdest in extras:
 ...         paths[kdest] = agu_local.get_existing_path(agenv_local.paths[ksrc])
@@ -328,12 +373,28 @@ These next functions actually perform the processing per site. These functions w
 ...         all errors observed for the sample, or the empty list if no errors
 ...         were observed.
 ...     """
-...     paths = get_paths_thread_local([('ag-L6-taxa-fecal-biom', 'site_table')])
+...     paths = get_paths_thread_local([('ag-L6-taxa-fecal-biom', 'site_table'),
+...                                     ('ag-L2-taxa-fecal-biom', 'site_table_L2'),
+...                                     ('ag-100nt-1k-fecal-biom', 'site_table_1k'),
+...                                     ('ag-100nt-fecal-1k-unifrac-pc', 'site_pc'),
+...                                     ('ag-100nt-1k-fecal-sex-biom', 'sex_biom'),
+...                                     ('ag-100nt-1k-fecal-diet-biom', 'diet_biom'),
+...                                     ('ag-100nt-1k-fecal-age-biom', 'age_biom'),
+...                                     ('ag-100nt-1k-fecal-bmi-biom', 'bmi_biom'),
+...                                    ])
 ...
+...     paths['color-by'] = 'k__Bacteria\;p__Firmicutes'
+...     paths['sample_type'] = 'fecal'
+...     paths['barchart_categories'] = '"%s"' % ', '.join(["DIET_TYPE:%s" % paths['diet_biom'],
+...                                                        "BMI_CAT:%s" % paths['bmi_biom'],
+...                                                        "SEX:%s" % paths['sex_biom'],
+...                                                        "AGE_CAT:%s" % paths['age_biom']])
 ...     functions = [taxa_summaries,
 ...                  taxon_significance,
 ...                  body_site_pcoa,
-...                  country_pcoa
+...                  country_pcoa,
+...                  gradient_pcoa,
+...                  bar_chart
 ...                 ]
 ...
 ...     return merge_error_reports(*[f(ids, paths) for f in functions])
@@ -353,11 +414,28 @@ These next functions actually perform the processing per site. These functions w
 ...         all errors observed for the sample, or the empty list if no errors
 ...         were observed.
 ...     """
-...     paths = get_paths_thread_local([('ag-L6-taxa-oral-biom', 'site_table')])
+...     paths = get_paths_thread_local([('ag-L6-taxa-oral-biom', 'site_table'),
+...                                     ('ag-L2-taxa-oral-biom', 'site_table_L2'),
+...                                     ('ag-100nt-1k-oral-biom', 'site_table_1k'),
+...                                     ('ag-100nt-oral-1k-unifrac-pc', 'site_pc'),
+...                                     ('ag-100nt-1k-oral-sex-biom', 'sex_biom'),
+...                                     ('ag-100nt-1k-oral-diet-biom', 'diet_biom'),
+...                                     ('ag-100nt-1k-oral-age-biom', 'age_biom'),
+...                                     ('ag-100nt-1k-oral-flossing-biom', 'floss_biom'),
 ...
+...                                    ])
+...     paths['color-by'] = 'k__Bacteria\;p__Firmicutes'
+...     paths['sample_type'] = 'oral'
+...     paths['barchart_categories'] = '"%s"' % ', '.join(["DIET_TYPE:%s" % paths['diet_biom'],
+...                                                        "FLOSSING_FREQUENCY:%s" % paths['floss_biom'],
+...                                                        "SEX:%s" % paths['sex_biom'],
+...                                                        "AGE_CAT:%s" % paths['age_biom']])
 ...     functions = [taxa_summaries,
 ...                  taxon_significance,
 ...                  body_site_pcoa,
+...                  gradient_pcoa,
+...                  pie_plot,
+...                  bar_chart
 ...                 ]
 ...
 ...     return merge_error_reports(*[f(ids, paths) for f in functions])
@@ -377,11 +455,27 @@ These next functions actually perform the processing per site. These functions w
 ...         all errors observed for the sample, or the empty list if no errors
 ...         were observed.
 ...     """
-...     paths = get_paths_thread_local([('ag-L6-taxa-skin-biom', 'site_table')])
-...
+...     paths = get_paths_thread_local([('ag-L6-taxa-skin-biom', 'site_table'),
+...                                     ('ag-L2-taxa-skin-biom', 'site_table_L2'),
+...                                     ('ag-100nt-1k-skin-biom', 'site_table_1k'),
+...                                     ('ag-100nt-skin-1k-unifrac-pc', 'site_pc'),
+...                                     ('ag-100nt-1k-skin-sex-biom', 'sex_biom'),
+...                                     ('ag-100nt-1k-skin-cosmetics-biom', 'cosmetics_biom'),
+...                                     ('ag-100nt-1k-skin-age-biom', 'age_biom'),
+...                                     ('ag-100nt-1k-skin-hand-biom', 'hand_biom'),
+...                                    ])
+...     paths['color-by'] = 'k__Bacteria\;p__Proteobacteria'
+...     paths['sample_type'] = 'skin'
+...     paths['barchart_categories'] = '"%s"' % ', '.join(["COSMETICS_FREQUENCY:%s" % paths['cosmetics_biom'],
+...                                                        "DOMINANT_HAND:%s" % paths['hand_biom'],
+...                                                        "SEX:%s" % paths['sex_biom'],
+...                                                        "AGE_CAT:%s" % paths['age_biom']])
 ...     functions = [taxa_summaries,
 ...                  taxon_significance,
 ...                  body_site_pcoa,
+...                  gradient_pcoa,
+...                  pie_plot,
+...                  bar_chart
 ...                 ]
 ...
 ...     return merge_error_reports(*[f(ids, paths) for f in functions])
@@ -392,8 +486,6 @@ And now, let's start mass generating figures!
 ```python
 >>> with open(successful_ids, 'w') as successful_ids_fp, open(unsuccessful_ids, 'w') as unsuccessful_ids_fp:
 ...     dispatcher(successful_ids_fp, unsuccessful_ids_fp, partition_samples_by_bodysite)
->>> print time.time() - start
- 29.3168480396
 ```
 
 And we'll end with some numbers on the number of successful and unsuccessful samples.
@@ -401,6 +493,4 @@ And we'll end with some numbers on the number of successful and unsuccessful sam
 ```python
 >>> print "Number of successfully processed samples: %d" % len([l for l in open(successful_ids) if not l.startswith('#')])
 >>> print "Number of unsuccessfully processed samples: %d" % len([l for l in open(unsuccessful_ids) if not l.startswith('#')])
-Number of successfully processed samples: 12
-Number of unsuccessfully processed samples: 3
 ```

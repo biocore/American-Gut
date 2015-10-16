@@ -137,13 +137,38 @@ paths = {
     'ag-taxa': '7/taxa',
     'ag-L2-taxa-tsv': '7/taxa/otu_table_L2.txt',
     'ag-L2-taxa-biom': '7/taxa/otu_table_L2.biom',
+    'ag-L2-taxa-md': '7/taxa/ag-cleaned_L2.txt',
     'ag-L3-taxa-tsv': '7/taxa/otu_table_L3.txt',
     'ag-L3-taxa-biom': '7/taxa/otu_table_L3.biom',
     'ag-L6-taxa-tsv': '7/taxa/otu_table_L6.txt',
     'ag-L6-taxa-biom': '7/taxa/otu_table_L6.biom',
+    'ag-L2-taxa-skin-biom': '7/taxa/otu_table_skin_L2.biom',
+    'ag-L2-taxa-oral-biom': '7/taxa/otu_table_oral_L2.biom',
+    'ag-L2-taxa-fecal-biom': '7/taxa/otu_table_fecal_L2.biom',
     'ag-L6-taxa-skin-biom': '7/taxa/otu_table_skin_L6.biom',
     'ag-L6-taxa-oral-biom': '7/taxa/otu_table_oral_L6.biom',
     'ag-L6-taxa-fecal-biom': '7/taxa/otu_table_fecal_L6.biom',
+
+    # collapsed samples
+    'ag-100nt-1k-biom': '7.5/ag-100nt-1k.biom',
+    'ag-100nt-1k-fecal-biom': '7.5/ag-100nt-1k-fecal.biom',
+    'ag-100nt-1k-skin-biom': '7.5/ag-100nt-1k-oral.biom',
+    'ag-100nt-1k-oral-biom': '7.5/ag-100nt-1k-skin.biom',
+
+    'ag-100nt-1k-fecal-sex-biom':  '7.5/ag-100nt-1k-fecal-sex.biom',
+    'ag-100nt-1k-fecal-diet-biom': '7.5/ag-100nt-1k-fecal-diet.biom',
+    'ag-100nt-1k-fecal-age-biom':  '7.5/ag-100nt-1k-fecal-age.biom',
+    'ag-100nt-1k-fecal-bmi-biom':  '7.5/ag-100nt-1k-fecal-bmi.biom',
+
+    'ag-100nt-1k-oral-sex-biom':  '7.5/ag-100nt-1k-oral-sex.biom',
+    'ag-100nt-1k-oral-diet-biom': '7.5/ag-100nt-1k-oral-diet.biom',
+    'ag-100nt-1k-oral-age-biom':  '7.5/ag-100nt-1k-oral-age.biom',
+    'ag-100nt-1k-oral-flossing-biom':  '7.5/ag-100nt-1k-oral-flossing.biom',
+
+    'ag-100nt-1k-skin-sex-biom':  '7.5/ag-100nt-1k-skin-sex.biom',
+    'ag-100nt-1k-skin-cosmetics-biom': '7.5/ag-100nt-1k-skin-cosmetics.biom',
+    'ag-100nt-1k-skin-age-biom':  '7.5/ag-100nt-1k-skin-age.biom',
+    'ag-100nt-1k-skin-hand-biom':  '7.5/ag-100nt-1k-skin-hand.biom',
 
     # per-sample results
     'successful-ids': '8/successful_ids.txt',
