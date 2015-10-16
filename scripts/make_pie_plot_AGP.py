@@ -10,8 +10,8 @@ from matplotlib.font_manager import FontProperties
 from americangut.make_phyla_plots import (translate_colors,
                                           calculate_dimensions_rectangle,
                                           render_single_pie)
-from americangut.generate_otu_signifigance_tables import(calculate_abundance,
-                                                         clean_greengenes_string)
+from americangut.generate_otu_signifigance_tables import (
+    calculate_abundance, clean_greengenes_string)
 from americangut.taxtree import (build_tree_from_taxontable,
                                  sample_rare_unique)
 
@@ -83,7 +83,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     colormap = translate_colors((NUM_SHOW-1), MAP_NAME)
     colormap = vstack((colormap, OTHER_COLOR))
 
-     # Sets up plotting constants
+    # Sets up plotting constants
     (axis_dims, fig_dims) = calculate_dimensions_rectangle(
         axis_width=AXIS_LENGTH, axis_height=AXIS_LENGTH, border=AXIS_BORDER,
         title=AXIS_TITLE, legend=AXIS_LEGEND)
@@ -106,7 +106,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
             raise ValueError("No samples!")
 
     # Walks over the table
-    filt_fun = lambda v, i, md: v.sum() > 0
+    filt_fun = lambda v, i, md: v.sum() > 0  # noqa
     for samp, filtered_table, rare, unique in sample_rare_unique(tree,
                                                                  tax_table,
                                                                  all_taxa,
@@ -135,7 +135,6 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         # Sets up the sample filename
         filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp,
                                                  FILENAME_AFTER))
-
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,

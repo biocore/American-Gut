@@ -19,7 +19,6 @@ install:
 script:
   - source activate env_name
   - export PYTHONPATH=$TRAVIS_BUILD_DIR:$PYTHONPATH
-  - pip freeze
   - nosetests --with-doctest
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag
@@ -31,3 +30,4 @@ script:
   - runipy ipynb/primary-processing/5-alpha_diversity.ipynb
   - runipy ipynb/primary-processing/6-beta_diversity.ipynb
   - runipy ipynb/primary-processing/7-taxonomy_summaries.ipynb
+  - runipy ipynb/primary-processing/7.5-collapse_samples.ipynb
