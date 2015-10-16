@@ -16,9 +16,9 @@ class NotebookEnvironmentTests(TestCase):
         qiime.__version__ = old
 
     def test_get_accessions(self):
-        os.environ['AG_TESTING'] = ''
+        agenv._TEST_ENV = ''
         self.assertEqual(agenv.get_accessions(), agenv._EBI_ACCESSIONS)
-        os.environ['AG_TESTING'] = 'True'
+        agenv._TEST_ENV = 'True'
         self.assertEqual(agenv.get_accessions(), agenv._TEST_ACCESSIONS)
 
     def test_get_bloom_sequences(self):
