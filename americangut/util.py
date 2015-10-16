@@ -299,10 +299,9 @@ def fetch_study(accession, base_dir):
         md = fetch_metadata_xml(sample)
         all_md[qiimedb_samplename] = md
         all_cols.update(md)
-        break
+
         # write out fasta
         try:
-            raise ValueError()
             for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
                 fasta_path.write(">%s\n%s\n" % (id_, seq))
         except:
