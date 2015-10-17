@@ -43,8 +43,6 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     """
 
     # Creates the text around hte file name
-    FILENAME_BEFORE = 'Figure_2.'
-    FILENAME_AFTER = '.pdf'
 
     # Handles string cleaning
     RENDER = 'LATEX'
@@ -135,8 +133,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
-        filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp,
-                                                 FILENAME_AFTER))
+        filename = pjoin(output_dir, 'piechart.pdf')
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,

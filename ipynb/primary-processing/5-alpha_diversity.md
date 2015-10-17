@@ -43,11 +43,9 @@ Before we start computation, we're going to get the depth to sample at. The dept
 ```
 
 ```python
->>> !parallel_multiple_rarefactions.py -i $ag_pgp_hmp_gg_100nt_biom \
-...                                    -o $ag_pgp_hmp_gg_100nt_1k_multi \
-...                                    -m $depth \
-...                                    -x $depth \
-...                                    -O $cpu_count
+>>> !multiple_rarefactions_even_depth.py -i $ag_pgp_hmp_gg_100nt_biom \
+...                                      -o $ag_pgp_hmp_gg_100nt_1k_multi \
+...                                      -d $depth \
 ```
 
 Once we have the rarefactions, we can then compute the diversity of every sample within our dataset.

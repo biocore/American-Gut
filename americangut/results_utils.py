@@ -99,8 +99,9 @@ def _stage_static_pdfs(sample_type, working_dir):
     pdfs_dir = get_repository_latex_pdfs(sample_type)
 
     for f in os.listdir(pdfs_dir):
-        src = get_path(pdfs_dir, f)
-        shutil.copy(src, working_dir)
+        if f.endswith('.pdf'):
+            src = get_path(pdfs_dir, f)
+            shutil.copy(src, working_dir)
 
 
 def _stage_static_data(working_dir, debug):
@@ -128,10 +129,8 @@ def _stage_static_mod1(working_dir):
 
 def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
-    _stage_static_data(working_dir, debug)
     _stage_static_latex(sample_type, working_dir)
     _stage_static_pdfs(sample_type, working_dir)
-    _stage_static_mod1(working_dir)
 
 
 # use participant names only if the data are available.

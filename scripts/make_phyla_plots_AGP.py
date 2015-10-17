@@ -58,10 +58,6 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     NUM_TAXA = 9
     NUM_CATS_TO_PLOT = 7
 
-    # Sets up file name constants
-    FILEPREFIX = 'Figure_4_'
-    FILE_END = '.pdf'
-
     # Sets up plotting constants
     COLORMAP = array([[0.8353, 0.2421, 0.3098],
                       [0.9569, 0.4275, 0.2627],
@@ -188,8 +184,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                 tax_array[:, idx] = tax_summary[:, mapping_col]
 
             # Sets up the file to save the data
-            filename = pjoin(output_dir, '%s%s%s'
-                             % (FILEPREFIX, sample_id, FILE_END))
+            filename = pjoin(output_dir, 'barchart.pdf')
 
             # Plots the data
             render_barchart(data_table=tax_array,
