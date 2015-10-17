@@ -88,9 +88,6 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     MACRO_FORM_ABUNDANCE = [lambda x: clean_greengenes_string(x,
                             render_mode='LATEX'), lambda x: x]
 
-    FILE_PRECURSER = 'macros_'
-    FILE_EXTENSION = '.tex'
-
     DATE_FIELD = 'COLLECTION_DATE'
     DATE_FORMAT_SHORT = '%m/%d/%y'
     DATE_FORMAT_LONG = '%m/%d/%Y'
