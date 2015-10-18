@@ -58,10 +58,6 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
     NUM_TAXA = 9
     NUM_CATS_TO_PLOT = 7
 
-    # Sets up file name constants
-    FILEPREFIX = 'Figure_4_'
-    FILE_END = '.pdf'
-
     # Sets up plotting constants
     COLORMAP = array([[0.8353, 0.2421, 0.3098],
                       [0.9569, 0.4275, 0.2627],
@@ -94,23 +90,23 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
         michael_pollan = '000007108.1075657'
         cat_list = ['You', 'Average', 'Similar Diet', ' Similar BMI',
                     'Same Gender', 'Similar Age', 'Michael Pollan']
-        order = ['Sample', 'Average', 'DIET_TYPE', 'BMI_CATEGORY', 'SEX',
-                 'AGE_CATEGORY', 'MP']
+        order = ['Sample', 'Average', 'DIET_TYPE', 'BMI_CAT', 'SEX',
+                 'AGE_CAT', 'MP']
 
     elif sample_type == 'skin':
-        michael_pollan = '7113.1075702'
+        michael_pollan = '000007113.1075702'
         cat_list = ['You', 'Average', 'Similar Cosmetic Use',
                     'Same Dominant Hand', 'Same Gender', 'Same Age',
                     'Michael Pollan']
         order = ['Sample', 'Average', 'COSMETICS_FREQUENCY',
-                 'DOMINANT_HAND', 'SEX', 'AGE_CATEGORY', 'MP']
+                 'DOMINANT_HAND', 'SEX', 'AGE_CAT', 'MP']
 
     elif sample_type == 'oral':
-        michael_pollan = '7109.1075688'
+        michael_pollan = '000007109.1075688'
         cat_list = ['You', 'Average', 'Similar Diet', 'Flossing Frequency',
                     'Same Gender', 'Same Age', 'Michael Pollan']
         order = ['Sample', 'Average', 'DIET_TYPE', 'FLOSSING_FREQUENCY',
-                 'SEX', 'AGE_CATEGORY', 'MP']
+                 'SEX', 'AGE_CAT', 'MP']
 
     else:
         raise ValueError('%s is not a supported sample type.' % sample_type)
@@ -188,8 +184,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                 tax_array[:, idx] = tax_summary[:, mapping_col]
 
             # Sets up the file to save the data
-            filename = pjoin(output_dir, '%s%s%s'
-                             % (FILEPREFIX, sample_id, FILE_END))
+            filename = pjoin(output_dir, 'barchart.pdf')
 
             # Plots the data
             render_barchart(data_table=tax_array,

@@ -6,9 +6,12 @@ import gzip
 import time
 from itertools import izip
 from StringIO import StringIO
-from lxml import etree
+from collections import defaultdict
 
+from lxml import etree
 from skbio.parse.sequences import parse_fastq, parse_fasta
+
+import americangut as ag
 
 
 __author__ = "Daniel McDonald"
@@ -18,6 +21,87 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
+
+
+def get_path(path):
+    """Get a relative path to the working directory
+
+    Parameters
+    ----------
+    path : str
+        A path
+
+    Notes
+    -----
+    This method does not care if the path exists or not
+
+    Returns
+    -------
+    str
+        The filepath
+    """
+    return os.path.join(ag.working_dir, path)
+
+
+def get_new_path(path):
+    """Get a new relative path to the working directory
+
+    Parameters
+    ----------
+    path : str
+        A path that does not exist
+
+    Notes
+    -----
+    It is only assured that the path does not exist at the time of function
+    evaluation.
+
+    Raises
+    ------
+    IOError
+        If the path exists
+
+    Returns
+    -------
+    str
+        The filepath
+    """
+    path = get_path(path)
+
+    if os.path.exists(path):
+        raise IOError('%s already exists.' % path)
+
+    return path
+
+
+def get_existing_path(path):
+    """Get an existing relative path to the working directory
+
+    Parameters
+    ----------
+    path : str
+        A path that exists
+
+    Notes
+    -----
+    It is only assured that the path exists at the time of function evaluation
+
+    Raises
+    ------
+    IOError
+        If the path does not exist
+
+    Returns
+    -------
+    str
+        The filepath
+    """
+    path = get_path(path)
+
+    if not os.path.exists(path):
+        raise IOError('%s does not exist.' % path)
+
+    return path
 
 
 def pick_rarifaction_level(id_, lookups):
@@ -178,15 +262,29 @@ def fetch_metadata_xml(accession):
     metadata = {}
     for node in attributes.iterfind('SAMPLE_ATTRIBUTE'):
         tag, value = node.getchildren()
-        metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
+        if value.text is None:
+            metadata[tag.text.strip('" ').upper()] = 'no_data'
+        else:
+            metadata[tag.text.strip('" ').upper()] = value.text.strip('" ')
+
+    description = sample.find('DESCRIPTION')
+    metadata['Description'] = description.text.strip('" ')
+
     return metadata
 
 
-def fetch_study(accession, metadata_path, fasta_path):
+def fetch_study(accession, base_dir):
     """Fetch and dump a full study
 
     Grab and dump a full study
     """
+    metadata_path = os.path.join(base_dir, '%s.txt' % accession)
+    fasta_path = os.path.join(base_dir, '%s.fna' % accession)
+
+    if os.path.exists(fasta_path) and os.path.exists(metadata_path):
+        # it appears we already have the accession, so short circuit
+        return
+
     all_md = {}
     all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
     md_f = open(metadata_path, 'w')
@@ -214,7 +312,7 @@ def fetch_study(accession, metadata_path, fasta_path):
     md_f.write('\t'.join(header))
     md_f.write('\n')
     for sampleid, values in all_md.iteritems():
-        to_write = [values.get(k, "no_data") for k in header]
+        to_write = [values.get(k, "no_data").encode('utf-8') for k in header]
         to_write.insert(0, sampleid)
         md_f.write('\t'.join(to_write))
         md_f.write('\n')
@@ -285,3 +383,109 @@ def count_samples(metadata_fp, criteria=None):
             count += 1
 
     return count
+
+
+simple_matter_map = {
+    'feces': 'FECAL',
+    'sebum': 'SKIN',
+    'tongue': 'ORAL',
+    'skin': 'SKIN',
+    'mouth': 'ORAL',
+    'gingiva': 'ORAL',
+    'gingival epithelium': 'ORAL',
+    'nares': 'SKIN',
+    'skin of hand': 'SKIN',
+    'hand': 'SKIN',
+    'skin of head': 'SKIN',
+    'hand skin': 'SKIN',
+    'throat': 'ORAL',
+    'auricular region zone of skin': 'SKIN',
+    'mucosa of tongue': 'ORAL',
+    'mucosa of vagina': 'SKIN',
+    'palatine tonsil': 'ORAL',
+    'hard palate': 'ORAL',
+    'saliva': 'ORAL',
+    'stool': 'FECAL',
+    'vagina': 'SKIN',
+    'fossa': 'SKIN',
+    'buccal mucosa': 'ORAL',
+    'vaginal fornix': 'SKIN',
+    'hair follicle': 'SKIN',
+    'nostril': 'SKIN'
+}
+
+
+def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
+                               exp_acronym):
+    """Simplify the mapping file for use in figures
+
+    in_fp : input file-like object
+    out_fp : output file-like object
+    body_site_column_name : specify the column name for body
+    exp_acronym : short name for the study
+
+    Returns a dict containing a description of any unprocessed samples.
+    """
+    errors = defaultdict(list)
+
+    mapping_lines = [l.strip('\n').split('\t') for l in in_fp]
+
+    header = mapping_lines[0]
+    header_low = [x.lower() for x in header]
+
+    bodysite_idx = header_low.index(body_site_column_name.lower())
+    country_idx = header_low.index('country')
+
+    new_mapping_lines = [header[:]]
+    new_mapping_lines[0].append('SIMPLE_BODY_SITE')
+    new_mapping_lines[0].append('TITLE_ACRONYM')
+    new_mapping_lines[0].append('TITLE_BODY_SITE')
+    new_mapping_lines[0].append('HMP_SITE')
+
+    for l in mapping_lines[1:]:
+        new_line = l[:]
+        sample_id = new_line[0]
+        body_site = new_line[bodysite_idx]
+        country = new_line[country_idx]
+
+        # grab the body site
+        if body_site.startswith('UBERON_'):
+            body_site = body_site.split('_', 1)[-1].replace("_", " ")
+        elif body_site.startswith('UBERON:'):
+            body_site = body_site.split(':', 1)[-1]
+        elif body_site in ['NA', 'unknown', '', 'no_data']:
+            errors[('unspecified_bodysite', body_site)].append(sample_id)
+            continue
+        else:
+            raise ValueError("Cannot process: %s, %s" % (sample_id, body_site))
+
+        # remap the body site
+        if body_site.lower() not in simple_matter_map:
+            errors[('unknown_bodysite', body_site)].append(sample_id)
+            continue
+        else:
+            body_site = simple_matter_map[body_site.lower()]
+
+        if exp_acronym == 'HMP':
+            hmp_site = 'HMP-%s' % body_site
+        else:
+            hmp_site = body_site
+
+        # simplify the country
+        if country.startswith('GAZ:'):
+            new_line[country_idx] = country.split(':', 1)[-1]
+        else:
+            errors[('unknown_country', country)].append(sample_id)
+            continue
+
+        new_line.append(body_site)
+        new_line.append(exp_acronym)
+        new_line.append("%s-%s" % (exp_acronym, body_site))
+        new_line.append(hmp_site)
+
+        new_mapping_lines.append(new_line)
+
+    out_fp.write('\n'.join(['\t'.join(l) for l in new_mapping_lines]))
+    out_fp.write('\n')
+
+    return errors

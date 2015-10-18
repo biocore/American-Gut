@@ -50,11 +50,15 @@ def body_site(coords, mapping_file, output, prefix, samples):
                      index_col='#SampleID')
     mf = mf.loc[o.site_ids]
 
+    old_samples = samples
     if samples is None:
         samples = mf.index
     else:
         samples = set(samples.split(',')).intersection(set(o.site_ids))
         samples = mf.loc[samples].index
+
+    if samples.size == 0:
+        raise ValueError("%s not observed in coordinates." % old_samples)
 
     color_hmp_fecal = sns.color_palette('Paired', 12)[10]  # light brown
     color_agp_fecal = sns.color_palette('Paired', 12)[11]  # dark brown
@@ -80,6 +84,8 @@ def body_site(coords, mapping_file, output, prefix, samples):
         for grp, color in grp_colors.iteritems():
             sub_coords = c_df[mf.TITLE_BODY_SITE == grp].values
             for i in np.array_split(sub_coords, 50):
+                if i.size == 0:
+                    continue
                 plt.scatter(i[:, 0], i[:, 1], color=color,
                             edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
                             alpha=ALPHA, zorder=np.random.rand())
@@ -97,7 +103,7 @@ def body_site(coords, mapping_file, output, prefix, samples):
         plt.axis('off')
         my_dpi = 72
         figsize = (1000 / my_dpi, 1000 / my_dpi)
-        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
+        out_file = os.path.join(output, 'body_site.pdf')
         plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 
@@ -268,7 +274,7 @@ def country(coords, mapping_file, output, prefix, samples, distmat):
         plt.axis('off')
         my_dpi = 72
         figsize = (1000 / my_dpi, 1000 / my_dpi)
-        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
+        out_file = os.path.join(output, 'country.pdf')
         plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 
@@ -345,7 +351,7 @@ def gradient(coords, mapping_file, color, output, prefix, samples):
         plt.axis('off')
         my_dpi = 72
         figsize = (1000 / my_dpi, 1000 / my_dpi)
-        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
+        out_file = os.path.join(output, 'gradient.pdf')
         plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
         plt.close()
 

@@ -628,7 +628,6 @@ def render_single_pie(data_vec, group_names, axis_dims, fig_dims,
 
     # Sets up LateX rendering if desired
     if use_latex:
-        rc('text', usetex=True)
         rc('font', **{'family': rc_fam, rc_fam: rc_font})
 
     # Creates the figure

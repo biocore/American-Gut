@@ -10,7 +10,7 @@ from biom import Table
 from americangut.util import (
     pick_rarifaction_level, slice_mapping_file,parse_mapping_file,
     verify_subset, concatenate_files, trim_fasta, count_samples,
-    count_seqs, count_unique_participants 
+    count_seqs, count_unique_participants, clean_and_reformat_mapping
 )
 
 __author__ = "Daniel McDonald"
@@ -32,7 +32,7 @@ class UtilTests(TestCase):
         obs = count_samples(iter(test_mapping))
         exp = 5
         self.assertEqual(obs, exp)
-        
+
         obs = count_samples(iter(test_mapping), criteria={'foo': '2'})
         exp = 2
 
@@ -64,12 +64,12 @@ class UtilTests(TestCase):
         exp = 4
         self.assertEqual(obs, exp)
 
-        obs = count_unique_participants(iter(test_mapping), 
+        obs = count_unique_participants(iter(test_mapping),
                                         criteria={'foo': '1'})
         exp = 1
         self.assertEqual(obs, exp)
 
-        obs = count_unique_participants(iter(test_mapping), 
+        obs = count_unique_participants(iter(test_mapping),
                                         criteria={'foo': '2'})
         exp = 2
         self.assertEqual(obs, exp)
@@ -77,7 +77,7 @@ class UtilTests(TestCase):
     def test_pick_rarifaction_level(self):
         ids_10k = {'a':'a.1', '000001000':'000001000.123'}
         ids_1k = {'a':'a.1', '000001000':'000001000.123', 'b':123}
-        
+
         exp_a = '10k'
         exp_b = '1k'
         exp_c = None
@@ -85,14 +85,14 @@ class UtilTests(TestCase):
         obs_a = pick_rarifaction_level('a', [('10k',ids_10k), ('1k',ids_1k)])
         obs_b = pick_rarifaction_level('b', [('10k',ids_10k), ('1k',ids_1k)])
         obs_c = pick_rarifaction_level('c', [('10k',ids_10k), ('1k',ids_1k)])
-        
+
         self.assertEqual(obs_a, exp_a)
         self.assertEqual(obs_b, exp_b)
         self.assertEqual(obs_c, exp_c)
 
 
     def test_verify_subset(self):
-        metadata = [('a','other stuff\tfoo'), ('b', 'asdasdasd'), 
+        metadata = [('a','other stuff\tfoo'), ('b', 'asdasdasd'),
                     ('c','123123123')]
         table = Table(array([[1,2,3],[4,5,6]]),
                       ['x', 'y'],
@@ -163,6 +163,102 @@ class UtilTests(TestCase):
         outfasta.seek(0)
         self.assertEqual(expected, outfasta.read())
 
+    def test_clean_and_reformat_mapping(self):
+        """Exercise the reformat mapping code, verify expected results"""
+        out = StringIO()
+        reformat_mapping_testdata.seek(0)
+        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
+                                   'test')
+        out.seek(0)
+
+        # verify the resulting header structure
+        test_mapping = [l.strip().split('\t') for l in out]
+        test_header = test_mapping[0]
+        self.assertEqual(test_header[-4:], ['SIMPLE_BODY_SITE',
+                                            'TITLE_ACRONYM', 'TITLE_BODY_SITE',
+                                            'HMP_SITE'])
+
+        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
+                                              'UBERON_mucosa_of_tongue', '5',
+                                              'ORAL', 'test', 'test-ORAL',
+                                              'ORAL'])
+        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
+                                              'UBERON:FECES', '10',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL'])
+        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
+                                              'UBERON_FECES', '15',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL'])
+        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
+                                              'UBERON:SKIN', '37',
+                                              'SKIN', 'test', 'test-SKIN',
+                                              'SKIN'])
+
+    def test_clean_and_reformat_mapping_nopgp(self):
+        """Exercise the reformat mapping code, verify expected results"""
+        out = StringIO()
+        reformat_mapping_testdata.seek(0)
+        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
+                                   'test')
+        out.seek(0)
+
+        # verify the resulting header structure
+        test_mapping = [l.strip().split('\t') for l in out]
+        test_header = test_mapping[0]
+        self.assertEqual(test_header[-4:], ['SIMPLE_BODY_SITE',
+                                            'TITLE_ACRONYM', 'TITLE_BODY_SITE',
+                                            'HMP_SITE'])
+
+        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
+                                              'UBERON_mucosa_of_tongue', '5',
+                                              'ORAL', 'test', 'test-ORAL',
+                                              'ORAL'])
+        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
+                                              'UBERON:FECES', '10',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL'])
+        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
+                                              'UBERON_FECES', '15',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL'])
+        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
+                                              'UBERON:SKIN', '37',
+                                              'SKIN', 'test', 'test-SKIN',
+                                              'SKIN'])
+
+    def test_clean_and_reformat_mapping_allpgp(self):
+        """Exercise the reformat mapping code, verify expected results"""
+        out = StringIO()
+        reformat_mapping_testdata.seek(0)
+        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
+                                   'test')
+        out.seek(0)
+
+        # verify the resulting header structure
+        test_mapping = [l.strip().split('\t') for l in out]
+        test_header = test_mapping[0]
+        self.assertEqual(test_header[-4:], ['SIMPLE_BODY_SITE',
+                                            'TITLE_ACRONYM', 'TITLE_BODY_SITE',
+                                            'HMP_SITE'])
+
+        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
+                                              'UBERON_mucosa_of_tongue', '5',
+                                              'ORAL', 'test', 'test-ORAL',
+                                              'ORAL'])
+        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
+                                              'UBERON:FECES', '10',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL'])
+        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
+                                              'UBERON_FECES', '15',
+                                              'FECAL', 'test', 'test-FECAL',
+                                              'FECAL'])
+        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
+                                              'UBERON:SKIN', '37',
+                                              'SKIN', 'test', 'test-SKIN',
+                                              'SKIN'])
+
 
 test_mapping = """#SampleIDs\tfoo\tbar
 a\t1\t123123
@@ -182,6 +278,15 @@ test_fasta = """>seq1
 0123456789AB
 >seq3
 012345"""
+
+reformat_mapping_testdata = StringIO(
+"""#SampleID	COUNTRY	AGE	BODY_SITE	BMI
+A	GAZ:w00t	43.0	UBERON_mucosa_of_tongue	5
+B	GAZ:left	51.0	UBERON:FECES	10
+C	GAZ:right	12.0	UBERON_FECES	15
+D	GAZ:stuff	32.0	unknown	26
+E	GAZ:stuff	56.0	UBERON:SKIN	37
+""")
 
 if __name__ == '__main__':
     main()

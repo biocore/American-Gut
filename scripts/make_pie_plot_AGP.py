@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
 from __future__ import division
-
 from os import mkdir
 from os.path import isfile, exists, join as pjoin
-from argparse import ArgumentParser
-
 from numpy import array, vstack
+from argparse import ArgumentParser
 from biom.parse import parse_biom_table
 from matplotlib.font_manager import FontProperties
-
 from americangut.make_phyla_plots import (translate_colors,
                                           calculate_dimensions_rectangle,
                                           render_single_pie)
-from americangut.generate_otu_signifigance_tables import(
+from americangut.generate_otu_signifigance_tables import (
     calculate_abundance, clean_greengenes_string)
 from americangut.taxtree import (build_tree_from_taxontable,
                                  sample_rare_unique)
@@ -46,8 +43,6 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     """
 
     # Creates the text around hte file name
-    FILENAME_BEFORE = 'piechart_'
-    FILENAME_AFTER = '.pdf'
 
     # Handles string cleaning
     RENDER = 'LATEX'
@@ -117,9 +112,9 @@ def main(tax_table, output_dir, samples_to_analyze=None):
                                                                  all_taxa,
                                                                  RARE_THRESH):
         # abund_fun = lambda v, i, md: i in all_taxa[samp]
-        filtered_table = tax_table.filterObservations(filt_fun)
-        sample_data = filtered_table.sampleData(samp)
-        taxa = filtered_table.ObservationIds
+        filtered_table = tax_table.filter(filt_fun, axis='observation')
+        sample_data = filtered_table.data(samp)
+        taxa = filtered_table.ids(axis='observation')
 
         # Calculates abundance and limits to the top n samples.
         abund_rank = calculate_abundance(sample=sample_data,
@@ -138,8 +133,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
-        filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp,
-                                                 FILENAME_AFTER))
+        filename = pjoin(output_dir, 'piechart.pdf')
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,
