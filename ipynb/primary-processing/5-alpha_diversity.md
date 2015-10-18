@@ -25,7 +25,6 @@ And then we'll pull in the files we need for processing.
 As well as establish the new paths that we'll be creating.
 
 ```python
->>> ag_pgp_hmp_gg_100nt_1k_biom    = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-biom'])
 >>> ag_pgp_hmp_gg_100nt_1k_multi   = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-multiple'])
 ...
 >>> ag_pgp_hmp_gg_100nt_1k_adiv    = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-adiv'])
