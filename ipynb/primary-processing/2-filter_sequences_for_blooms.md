@@ -96,5 +96,5 @@ Finally, let's do a quick sanity check that we have sequence data, and that the 
 >>> assert os.stat(filtered_sequences).st_size > 0
 >>> assert os.stat(filtered_sequences_100nt).st_size > 0
 ...
->>> !biom summarize-table -i $observed_blooms_biom
+>>> !biom summarize-table -i $observed_blooms_biom | head -n 25
 ```
