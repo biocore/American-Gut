@@ -84,7 +84,6 @@ We also need to make sure the metadata (the information about the samples) are a
 ...
 >>> for original, cleaned, acronym, category in original_clean_category_acronym:
 ...     with open(original, 'U') as ori_fp, open(cleaned, 'w') as clean_fp:
-...         print original
 ...         agu.clean_and_reformat_mapping(ori_fp, clean_fp, category, acronym)
 ```
 
