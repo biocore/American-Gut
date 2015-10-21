@@ -40,7 +40,7 @@ def get_path(path):
     -----
     This method does not care if the path exists or not
     """
-    return os.path.join(ag.working_dir, path)
+    return os.path.join(ag.WORKING_DIR, path)
 
 
 def get_new_path(path):
