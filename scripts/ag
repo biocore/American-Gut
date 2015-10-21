@@ -54,5 +54,30 @@ def persample_json(table, output):
             fp.write(json.dumps(tree, indent=2))
 
 
+@ag.command()
+@click.argument('accession-metadata', required=True, nargs=-1)
+def sample_to_accession(accession_metadata):
+    """Dump {accession: [sample]} and {sample: accession}"""
+    accession_to_sample = {}
+    sample_to_accession = {}
+
+    for f in accession_metadata:
+        accession = os.path.basename(f).rsplit('.', 1)[0]
+        accession_to_sample[accession] = []
+        with open(f) as fp:
+            for line in fp:
+                if line.startswith('#'):
+                    continue
+                sample = line.split('\t', 1)[0]
+                accession_to_sample[accession].append(sample)
+                sample_to_accession[sample] = accession
+
+    with open('accession_to_sample.json', 'w') as fp:
+        fp.write(json.dumps(accession_to_sample))
+
+    with open('sample_to_accession.json', 'w') as fp:
+        fp.write(json.dumps(sample_to_accession))
+
+
 if __name__ == '__main__':
     ag()
