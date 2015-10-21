@@ -1,8 +1,8 @@
 import os
 
-working_dir = 'agp_processing'
-if not os.path.exists(working_dir):
-    os.mkdir(working_dir)
+WORKING_DIR = 'agp_processing'
+if not os.path.exists(WORKING_DIR):
+    os.mkdir(WORKING_DIR)
 
 
-__all__ = ['working_dir']
+__all__ = ['WORKING_DIR']

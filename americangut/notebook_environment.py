@@ -180,8 +180,8 @@ paths = {
 def _assert_environment():
     if qiime.__version__ != '1.9.1':
         obs_version = qiime.__version__
-        raise ImportError(("QIIME 1.9.1 is not in the environment, found "
-                           "%s." % obs_version))
+        raise ImportError("QIIME 1.9.1 is not in the environment, found "
+                          "%s." % obs_version)
 
     if find_executable('print_qiime_config.py') is None:
         raise EnvironmentError("The QIIME executables are not in $PATH.")
@@ -209,14 +209,14 @@ def activate(chp):
     Activation creates the chapter processing directory if it does
     not already exist.
     """
-    path = os.path.join(ag.working_dir, chp)
+    path = os.path.join(ag.WORKING_DIR, chp)
     if not os.path.exists(path):
         os.mkdir(path)
     return path
 
 
 def get_sortmerna_index():
-    """Return the absolute path a SortMeRNA index if available"""
+    """Return the absolute path of a SortMeRNA index if available"""
     return os.environ.get('AG_SMR_INDEX')
 
 
@@ -270,6 +270,11 @@ def _get_data(data_dir, tag):
     tag : str
         The filetag (e.g., HMPv35_100nt)
 
+    Returns
+    -------
+    (str, str)
+        The filepath to the table, and the filepath to the mapping file.
+
     Notes
     -----
     If $AG_TESTING == 'True', then the data returned will correspond to the
@@ -279,11 +284,6 @@ def _get_data(data_dir, tag):
     ------
     IOError
         If the filepaths are not accessible
-
-    Returns
-    -------
-    (str, str)
-        The filepath to the table, and the filepath to the mapping file.
     """
     repo = get_repository_dir()
     data = 'tests/data' if _TEST_ENV else 'data'
@@ -303,17 +303,17 @@ def _get_data(data_dir, tag):
 def get_accessions():
     """Get the accessions to use, or redirect to test data
 
-    Notes
-    -----
-    If $AG_TESTING == 'True', then the accessions returned will
-    correspond to the test dataset.
-
     Returns
     -------
     list of str
         The accessions, which are expected to be basenames for the actual data.
         For instance, the accession "foo" would have sequences as "foo.fna" and
         metadata as "foo.txt".
+
+    Notes
+    -----
+    If $AG_TESTING == 'True', then the accessions returned will
+    correspond to the test dataset.
     """
     if _TEST_ENV:
         _stage_test_accessions()
@@ -325,15 +325,15 @@ def get_accessions():
 def get_bloom_sequences():
     """Get the filepath to the bloom sequences
 
-    Raises
-    ------
-    IOError
-        If the path does not exist
-
     Returns
     -------
     str
         The filepath to the bloom sequences
+
+    Raises
+    ------
+    IOError
+        If the path does not exist
     """
     repo = get_repository_dir()
     return get_existing_path(os.path.join(repo, 'data/AG/BLOOM.fasta'))
@@ -353,5 +353,5 @@ def _stage_test_accessions():
         src_fna = os.path.join(repo, 'tests/data/%s.fna' % acc)
         src_map = os.path.join(repo, 'tests/data/%s.txt' % acc)
 
-        shutil.copy(src_fna, os.path.join(ag.working_dir, '1'))
-        shutil.copy(src_map, os.path.join(ag.working_dir, '1'))
+        shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '1'))
+        shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '1'))

@@ -31,14 +31,14 @@ def get_path(path):
     path : str
         A path
 
-    Notes
-    -----
-    This method does not care if the path exists or not
-
     Returns
     -------
     str
         The filepath
+
+    Notes
+    -----
+    This method does not care if the path exists or not
     """
     return os.path.join(ag.working_dir, path)
 
@@ -51,6 +51,11 @@ def get_new_path(path):
     path : str
         A path that does not exist
 
+    Returns
+    -------
+    str
+        The filepath
+
     Notes
     -----
     It is only assured that the path does not exist at the time of function
@@ -60,11 +65,6 @@ def get_new_path(path):
     ------
     IOError
         If the path exists
-
-    Returns
-    -------
-    str
-        The filepath
     """
     path = get_path(path)
 
@@ -82,6 +82,11 @@ def get_existing_path(path):
     path : str
         A path that exists
 
+    Returns
+    -------
+    str
+        The filepath
+
     Notes
     -----
     It is only assured that the path exists at the time of function evaluation
@@ -90,11 +95,6 @@ def get_existing_path(path):
     ------
     IOError
         If the path does not exist
-
-    Returns
-    -------
-    str
-        The filepath
     """
     path = get_path(path)
 
