@@ -179,7 +179,9 @@ paths = {
 
 def _assert_environment():
     if qiime.__version__ != '1.9.1':
-        raise ImportError("QIIME 1.9.1 is not in the environment.")
+        obs_version = qiime.__version__
+        raise ImportError(("QIIME 1.9.1 is not in the environment, found "
+                           "%s." % obs_version))
 
     if find_executable('print_qiime_config.py') is None:
         raise EnvironmentError("The QIIME executables are not in $PATH.")
