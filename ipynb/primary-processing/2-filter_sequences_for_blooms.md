@@ -1,11 +1,12 @@
-Early in the American Gut Project, it was observed that some organisms bloomed likely as a result of increased shipping time and delay between when samples were collected and when they were put on ice (more detail can be found [here](http://americangut.org/?page_id=277)). The purpose of this notebook is to apply the filter developed in order to bioinformatically subtract these observed bloom sequences from fecal samples. It is important to apply this filter when combining data with the American Gut as to remove a potential study-effect bias as all fecal data in the American Gut has had this filter applied. In addition, we're going to produce a read-length trimmed set of sequences as to reduce a potential study-effect bias in the subsequent analyses we'll be doing. The specific steps covered in this notebook are:
+Early in the American Gut Project, it was observed that some organisms bloomed likely as a result of increased shipping time and delay between when samples were collected and when they were put on ice (more detail can be found [here](http://americangut.org/?page_id=277)). The purpose of this notebook is to apply the filter developed in order to bioinformatically subtract these observed bloom sequences from fecal samples. It is important to apply this filter when combining data with the American Gut as to remove a potential study-effect bias as all fecal data in the American Gut has had this filter applied. The specific steps covered are:
 
 * Filter demultiplexed sequence data to only fecal samples
 * Determine what sequences in the fecal samples recruit to the observed bloom sequences
 * Remove the recruited bloom sequences from the demultiplexed sequence data
 * Trim the filtered demultiplexed data (to reduce study bias when combining with short reads, such as the data in [Yatsunenko et al 2012](http://www.nature.com/nature/journal/v486/n7402/abs/nature11053.html))
 
-The filtering is only intended to be applied to fecal data. As such, this notebook allows you to describe what metadata column and value to use so that only fecal samples are used. This will be done in a few cells.
+
+The filtering is only intended to be applied to fecal data. As such, this notebook allows you to describe what metadata column and value to use so that only fecal samples are used.
 
 ```python
 >>> import os
@@ -41,7 +42,7 @@ Now let's setup the paths to the sequences to filter. We need the metadata as we
 >>> metadata  = agenv.get_existing_path(agenv.paths['raw-metadata'])
 ```
 
-We also need to specify what specific metadata category and value indicate which samples are fecal. It is possible that these values are study specific, so please modify these as needed if you filtering other datasets.
+We also need to specify what specific metadata category and value correspond indicate what samples are fecal. It is possible that these values are study specific, so please modify these as needed if you filtering other datasets.
 
 ```python
 >>> # If you are filtering your own data, please update these variables to reflect your mapping file
@@ -66,6 +67,7 @@ The next thing we need to do is setup the parameters for SortMeRNA, which is the
 >>> _params_file = agu.get_path('sortmerna_pick_params.txt')
 >>> with open(_params_file, 'w') as f:
 ...     f.write("pick_otus:otu_picking_method sortmerna\n")
+...     f.write("pick_otus:similarity 0.97\n")
 ...     f.write("pick_otus:threads %d\n" % multiprocessing.cpu_count())
 ...
 >>> !pick_closed_reference_otus.py -i $fecal_sequences \
@@ -90,11 +92,11 @@ As the data have now been filtered for blooms, we can now trim the reads back to
 ...     agu.trim_fasta(in_, out, 100)
 ```
 
-Finally, let's do a quick sanity check that we have sequence data, and that the number of sequences is the same between both trimmed and untrimmed. We'll also dump out summary information about how many reads per sample recruited to the blooms.
+Finally, let's do a quick sanity check that we have sequence data and we'll also dump out summary information about how many reads per sample recruited to the blooms.
 
 ```python
 >>> assert os.stat(filtered_sequences).st_size > 0
 >>> assert os.stat(filtered_sequences_100nt).st_size > 0
 ...
->>> !biom summarize-table -i $observed_blooms_biom
+>>> !biom summarize-table -i $observed_blooms_biom | head -n 25
 ```
