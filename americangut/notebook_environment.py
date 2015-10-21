@@ -233,8 +233,10 @@ def get_reference_set():
 
     Returns
     -------
-    (str, str)
-        The file paths to the reference sequences and the reference taxonomy.
+    str
+        The file path to the reference sequences.
+    str
+        The file path to the reference taxonomy.
     """
     if _TEST_ENV:
         repo = get_repository_dir()
