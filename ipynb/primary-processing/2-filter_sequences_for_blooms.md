@@ -42,7 +42,7 @@ Now let's setup the paths to the sequences to filter. We need the metadata as we
 >>> metadata  = agenv.get_existing_path(agenv.paths['raw-metadata'])
 ```
 
-We also need to specify what specific metadata category and value correspond indicate what samples are fecal. It is possible that these values are study specific, so please modify these as needed if you filtering other datasets.
+We also need to specify what specific metadata category and value indicate which samples are fecal. It is possible that these values are study specific, so please modify these as needed if you filtering other datasets.
 
 ```python
 >>> # If you are filtering your own data, please update these variables to reflect your mapping file
