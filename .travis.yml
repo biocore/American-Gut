@@ -7,6 +7,7 @@ before_install:
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda3/bin:$TRAVIS_BUILD_DIR/scripts:$PATH
   - export AG_TESTING='True'
+  - export AG_CPU_COUNT=1
 install:
   - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy=1.9.2 scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 notebook 
   - source activate env_name
@@ -25,7 +26,7 @@ script:
   - runipy ipynb/primary-processing/2-filter_sequences_for_blooms.ipynb
   - runipy ipynb/primary-processing/3-pick_otus.ipynb
   - runipy ipynb/primary-processing/4-prepare_metaanalyses.ipynb
-  # runipy ipynb/primary-processing/5-alpha_diversity.ipynb
+  - runipy ipynb/primary-processing/5-alpha_diversity.ipynb
   # runipy ipynb/primary-processing/6-beta-diversity.ipynb
   # runipy ipynb/primary-processing/7-taxonomy-summaries.ipynb
   # runipy ipynb/primary-processing/7.5-collapse_samples.ipynb
