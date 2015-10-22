@@ -247,6 +247,28 @@ def get_reference_set():
         return qdr.get_reference_sequences(), qdr.get_reference_taxonomy()
 
 
+def get_cpu_count():
+    """Get the CPU count to use
+
+    Returns
+    -------
+    int
+        The number of CPUs available for use.
+
+    Notes
+    -----
+    This method provides a layer of indirection in the event that a) a user
+    does not want to allow all cores to be used or b) for testing purposes
+    as Travis CI appears to be unreliable under multiprocessing and QIIME.
+    """
+    if os.environ.get('AG_CPU_COUNT') is not None:
+        return int(os.environ.get('AG_CPU_COUNT'))
+    else:
+        # import is scoped as far its use is contained here.
+        import multiprocessing
+        return multiprocessing.cpu_count()
+
+
 def get_hmp():
     """Get the HMP 100nt table and mapping"""
     return _get_data('HMP', 'HMPv35_100nt')
