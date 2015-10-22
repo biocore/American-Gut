@@ -26,6 +26,8 @@ script:
   - runipy ipynb/primary-processing/3-pick_otus.ipynb
   - runipy ipynb/primary-processing/4-prepare_metaanalyses.ipynb
   - runipy ipynb/primary-processing/5-alpha_diversity.ipynb
+  - ls agp_processing/5
+  - ls agp_processing/5/ag-pgp-hmp-gg-100nt-1k-adiv/
   # runipy ipynb/primary-processing/6-beta-diversity.ipynb
   # runipy ipynb/primary-processing/7-taxonomy-summaries.ipynb
   # runipy ipynb/primary-processing/7.5-collapse_samples.ipynb
