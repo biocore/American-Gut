@@ -2,7 +2,6 @@ In this next chapter, we're going to calculate alpha diversity over all of the s
 
 ```python
 >>> import os
->>> import multiprocessing
 ...
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
@@ -11,7 +10,7 @@ In this next chapter, we're going to calculate alpha diversity over all of the s
 ...
 >>> chp_path = agenv.activate('5')
 >>> greengenes_tree = qdr.get_reference_tree()
->>> cpu_count = multiprocessing.cpu_count()
+>>> cpu_count = agenv.get_cpu_count()
 ```
 
 And then we'll pull in the files we need for processing.
