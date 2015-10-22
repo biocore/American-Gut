@@ -57,7 +57,6 @@ paths = {
     # alpha diversity analysis files
     'ag-pgp-hmp-gg-100nt-1k-multiple': '5/ag-pgp-hmp-gg-100nt-1k-multiple',
 
-
     'ag-pgp-hmp-gg-100nt-1k-adiv': '5/ag-pgp-hmp-gg-100nt-1k-adiv',
     'ag-pgp-hmp-gg-100nt-1k-adiv-pd':
         '5/ag-pgp-hmp-gg-100nt-1k-adiv/PD_whole_tree.txt',
@@ -65,6 +64,16 @@ paths = {
         '5/ag-pgp-hmp-gg-100nt-1k-adiv/chao1.txt',
     'ag-pgp-hmp-gg-100nt-1k-adiv-observedotus':
         '5/ag-pgp-hmp-gg-100nt-1k-adiv/observed_otus.txt',
+
+    'ag-pgp-hmp-gg-100nt-10k-multiple': '5/ag-pgp-hmp-gg-100nt-10k-multiple',
+
+    'ag-pgp-hmp-gg-100nt-10k-adiv': '5/ag-pgp-hmp-gg-100nt-10k-adiv',
+    'ag-pgp-hmp-gg-100nt-10k-adiv-pd':
+        '5/ag-pgp-hmp-gg-100nt-10k-adiv/PD_whole_tree.txt',
+    'ag-pgp-hmp-gg-100nt-10k-adiv-chao1':
+        '5/ag-pgp-hmp-gg-100nt-10k-adiv/chao1.txt',
+    'ag-pgp-hmp-gg-100nt-10k-adiv-observedotus':
+        '5/ag-pgp-hmp-gg-100nt-10k-adiv/observed_otus.txt',
 
     # beta diversity analysis files
     'ag-pgp-hmp-gg-100nt-1k-biom': '6/ag-pgp-hmp-gg-100nt-1k.biom',
@@ -223,9 +232,9 @@ def get_sortmerna_index():
 def get_rarefaction_depth():
     """Return the rarefaction depth to use"""
     if _TEST_ENV:
-        return "100"
+        return ("100", "200")
     else:
-        return "1000"
+        return ("1000", "10000")
 
 
 def get_reference_set():
