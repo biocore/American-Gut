@@ -2,7 +2,6 @@ In this next chapter, we're going to calculate alpha diversity over all of the s
 
 ```python
 >>> import os
->>> import multiprocessing
 ...
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
