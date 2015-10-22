@@ -25,7 +25,7 @@ script:
   - runipy ipynb/primary-processing/2-filter_sequences_for_blooms.ipynb
   - runipy ipynb/primary-processing/3-pick_otus.ipynb
   - runipy ipynb/primary-processing/4-prepare_metaanalyses.ipynb
-  # runipy ipynb/primary-processing/5-alpha_diversity.ipynb
-  # runipy ipynb/primary-processing/6-beta-diversity.ipynb
+  - runipy ipynb/primary-processing/5-alpha_diversity.ipynb
+  - runipy ipynb/primary-processing/6-beta-diversity.ipynb
   # runipy ipynb/primary-processing/7-taxonomy-summaries.ipynb
   # runipy ipynb/primary-processing/7.5-collapse_samples.ipynb
