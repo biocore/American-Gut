@@ -21,9 +21,16 @@ script:
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag
   - ipymd --from markdown --to notebook ipynb/primary-processing/*.md
+  - pwd
+  - ls agp_processing
   - runipy ipynb/primary-processing/1-get_sequences_and_metadata.ipynb
+  - pwd
+  - ls agp_processing
   - runipy ipynb/primary-processing/2-filter_sequences_for_blooms.ipynb
+  - pwd
+  - ls agp_processing
   - runipy ipynb/primary-processing/3-pick_otus.ipynb
+  - pwd
   - ls agp_processing
   - ls agp_processing/3
   - ls agp_processing/3/otus/
