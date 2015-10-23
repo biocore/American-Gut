@@ -150,30 +150,30 @@ paths = {
     'ag-L6-taxa-fecal-biom': '7/taxa/otu_table_fecal_L6.biom',
 
     # collapsed samples
-    'ag-100nt-1k-biom': '7.5/ag-100nt-1k.biom',
-    'ag-100nt-1k-fecal-biom': '7.5/ag-100nt-1k-fecal.biom',
-    'ag-100nt-1k-skin-biom': '7.5/ag-100nt-1k-oral.biom',
-    'ag-100nt-1k-oral-biom': '7.5/ag-100nt-1k-skin.biom',
+    'ag-100nt-1k-biom': '8/ag-100nt-1k.biom',
+    'ag-100nt-1k-fecal-biom': '8/ag-100nt-1k-fecal.biom',
+    'ag-100nt-1k-skin-biom': '8/ag-100nt-1k-oral.biom',
+    'ag-100nt-1k-oral-biom': '8/ag-100nt-1k-skin.biom',
 
-    'ag-100nt-1k-fecal-sex-biom':  '7.5/ag-100nt-1k-fecal-sex.biom',
-    'ag-100nt-1k-fecal-diet-biom': '7.5/ag-100nt-1k-fecal-diet.biom',
-    'ag-100nt-1k-fecal-age-biom':  '7.5/ag-100nt-1k-fecal-age.biom',
-    'ag-100nt-1k-fecal-bmi-biom':  '7.5/ag-100nt-1k-fecal-bmi.biom',
+    'ag-100nt-1k-fecal-sex-biom':  '8/ag-100nt-1k-fecal-sex.biom',
+    'ag-100nt-1k-fecal-diet-biom': '8/ag-100nt-1k-fecal-diet.biom',
+    'ag-100nt-1k-fecal-age-biom':  '8/ag-100nt-1k-fecal-age.biom',
+    'ag-100nt-1k-fecal-bmi-biom':  '8/ag-100nt-1k-fecal-bmi.biom',
 
-    'ag-100nt-1k-oral-sex-biom':  '7.5/ag-100nt-1k-oral-sex.biom',
-    'ag-100nt-1k-oral-diet-biom': '7.5/ag-100nt-1k-oral-diet.biom',
-    'ag-100nt-1k-oral-age-biom':  '7.5/ag-100nt-1k-oral-age.biom',
-    'ag-100nt-1k-oral-flossing-biom':  '7.5/ag-100nt-1k-oral-flossing.biom',
+    'ag-100nt-1k-oral-sex-biom':  '8/ag-100nt-1k-oral-sex.biom',
+    'ag-100nt-1k-oral-diet-biom': '8/ag-100nt-1k-oral-diet.biom',
+    'ag-100nt-1k-oral-age-biom':  '8/ag-100nt-1k-oral-age.biom',
+    'ag-100nt-1k-oral-flossing-biom':  '8/ag-100nt-1k-oral-flossing.biom',
 
-    'ag-100nt-1k-skin-sex-biom':  '7.5/ag-100nt-1k-skin-sex.biom',
-    'ag-100nt-1k-skin-cosmetics-biom': '7.5/ag-100nt-1k-skin-cosmetics.biom',
-    'ag-100nt-1k-skin-age-biom':  '7.5/ag-100nt-1k-skin-age.biom',
-    'ag-100nt-1k-skin-hand-biom':  '7.5/ag-100nt-1k-skin-hand.biom',
+    'ag-100nt-1k-skin-sex-biom':  '8/ag-100nt-1k-skin-sex.biom',
+    'ag-100nt-1k-skin-cosmetics-biom': '8/ag-100nt-1k-skin-cosmetics.biom',
+    'ag-100nt-1k-skin-age-biom':  '8/ag-100nt-1k-skin-age.biom',
+    'ag-100nt-1k-skin-hand-biom':  '8/ag-100nt-1k-skin-hand.biom',
 
     # per-sample results
-    'successful-ids': '8/successful_ids.txt',
-    'unsuccessful-ids': '8/unsuccessful_ids.txt',
-    'per-sample-results': '8/per-sample-results',
+    'successful-ids': '9/successful_ids.txt',
+    'unsuccessful-ids': '9/unsuccessful_ids.txt',
+    'per-sample-results': '9/per-sample-results',
 }
 
 
