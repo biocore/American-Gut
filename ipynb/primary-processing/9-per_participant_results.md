@@ -36,7 +36,7 @@ We're also going to load up the American Gut mapping file so we can determine wh
 >>> ag_cleaned_df = pd.read_csv(ag_cleaned_md, sep='\t', index_col='#SampleID')
 ```
 
-And finally, these next blocks of code support the per-sample type processing.
+And finally, these next blocks of code support the per-sample type processing. First, for every sample type, there are common outputs to produce, such as taxonomy summaries. Second, there are some functions that are specific to a sample type. And last, there are a few sample specific options.
 
 ```python
 >>> common_functions = [agps.per_sample_directory,
@@ -66,7 +66,7 @@ And finally, these next blocks of code support the per-sample type processing.
 >>> process_skin = partial(agps.sample_type_processor, skin_functions, skin_opts)
 ```
 
-And before the fun starts, let's stage static aspects of the participant results.
+And before the fun starts, let's stage static aspects of the participant results. These are things like the American Gut logo, the result template, etc.
 
 ```python
 >>> agru.stage_static_files('fecal', chp_path)
@@ -90,8 +90,4 @@ And we'll end with some numbers on the number of successful and unsuccessful sam
 ```python
 >>> print "Number of successfully processed samples: %d" % len([l for l in open(successful_ids) if not l.startswith('#')])
 >>> print "Number of unsuccessfully processed samples: %d" % len([l for l in open(unsuccessful_ids) if not l.startswith('#')])
-```
-
-```python
-
 ```
