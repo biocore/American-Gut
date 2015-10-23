@@ -1,6 +1,7 @@
 import multiprocessing as mp
 
 import americangut.results_utils as agru
+import americangut.notebook_environment as agenv
 
 
 def dispatcher(success_fp, fail_fp, partitions):
@@ -17,7 +18,7 @@ def dispatcher(success_fp, fail_fp, partitions):
         Yields a function and an iterable of IDs. It is expected that this
         function will return a dict of {str: list}.
     """
-    pool = mp.Pool(processes=mp.cpu_count())
+    pool = mp.Pool(processes=agenv.get_cpu_count())
 
     success_fp.write('%s\n' % '#SampleID')
     fail_fp.write('%s\t%s\n' % ('#SampleID', 'Error(s)'))
