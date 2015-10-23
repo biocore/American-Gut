@@ -1,4 +1,4 @@
-In order to provide taxonomy information for participants, we need to summarize the taxonomies of the individual OTUs. Within AG and for participants, were interested in providing information at 3 levels: phylum, class and genus. These summarizations are used in different areas of the participant results.
+In order to provide taxonomy information for participants, we need to summarize the taxonomies of the individual OTUs. Within AG and for participants, we're interested in providing information at 3 levels: phylum, class and genus. These summarizations are used in different areas of the participant results.
 
 ```python
 >>> import os
