@@ -326,7 +326,7 @@ def gradient_pcoa(opts, sample_ids):
                         "--mapping_file %s" % opts['ag-L2-taxa-md'],
                         "--output %(result_path)s",
                         "--prefix Figure_3",
-                        "--color %s" % opts['gradient-color-by'],
+                        "--color %s" % opts['gradient_color_by'],
                         "--samples %(id)s"])
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
