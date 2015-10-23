@@ -10,7 +10,7 @@ In this chapter, we'll compute unweighted and weighted UniFrac distances over th
 ...
 >>> chp_path = agenv.activate('6')
 >>> greengenes_tree = qdr.get_reference_tree()
->>> cpu_count = agenv.cpu_count()
+>>> cpu_count = agenv.get_cpu_count()
 ```
 
 Let's first setup the files that we need for processing.
