@@ -41,6 +41,7 @@ And let's setup all the paths that we're going to create.
 >>> ag_100nt_1k_skin_age_biom       = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-age-biom'])
 >>> ag_100nt_1k_skin_hand_biom      = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-hand-biom'])
 ...
+>>> # A file path that was necessary for the system call but not used after the fact
 >>> ignored = 'foo'
 ```
 
