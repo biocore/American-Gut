@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase, main
 
 import pandas as pd
@@ -65,13 +66,13 @@ class PerSampleTests(TestCase):
         ids = ['/', '/asdasd', '/usr']
         opts = {'per-sample-results': ''}
 
-        # the command for /asdasd is duplicated as that is the effect of the
-        # formatting with "result_path" as it encodes the ID as well.
-        exp = {'/': None, '/asdasd': ('FAILED (ls: /asdasd: No such file '
-                                      'or directory): ls /asdasd /asdasd'),
-               '/usr': None}
         obs = agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
-        self.assertEqual(obs, exp)
+
+        # ls behaves differently on BSD and Linux
+        self.assertEqual(obs['/'], None)
+        self.assertTrue(obs['/asdasd'].startswith('FAILED (ls: '))
+        self.assertTrue(obs['/asdasd'].endswith('ls /asdasd /asdasd'))
+        self.assertEqual(obs['/usr'], None)
 
     # When the unit test suite is run, we cannot assume that the expected
     # inputs to these methods are available. The intent of these next
@@ -130,7 +131,7 @@ class PerSampleTests(TestCase):
                 'ag-100nt-what-1k-unifrac-pc': 'foo',
                 'ag-L2-taxa-md': 'bar',
                 'sample_type': 'what',
-                'gradient-color-by': 'foobar'}
+                'gradient_color_by': 'foobar'}
 
         obs = agps.gradient_pcoa(opts, ids)
         self.assertEqual(obs, exp)
@@ -147,14 +148,36 @@ class PerSampleTests(TestCase):
         self.assertEqual(obs, exp)
 
     def test_bar_chart(self):
-        self.fail()
+        exp = {'test': ('FAILED (make_phyla_plots_AGP.py: error: The supplied '
+                        'biom table does not exist in the path.): '
+                        'make_phyla_plots_AGP.py -i foo -m baz -o bar/test '
+                        '-c stuff -t what -s test')}
+        ids = ['test']
+        opts = {'per-sample-results': 'bar',
+                'ag-100nt-1k-what-biom': 'foo',
+                'ag-cleaned-md': 'baz',
+                'barchart_categories': 'stuff',
+                'sample_type': 'what'}
+
+        obs = agps.bar_chart(opts, ids)
+        self.assertEqual(obs, exp)
 
     def test_taxa_summaries(self):
         self.fail()
+
     def test_per_sample_directory(self):
-        self.fail()
+        ids = ['test']
+        opts = {'per-sample-results': 'bar'}
+        os.mkdir('bar')
+        agps.per_sample_directory(opts, ids)
+
+        self.assertTrue(os.path.exists('bar/test'))
+        os.rmdir('bar/test')
+        os.rmdir('bar')
+
     def test_stage_per_sample_specific_statics(self):
         self.fail()
+
 
 if __name__ == '__main__':
     main()
