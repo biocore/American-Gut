@@ -22,7 +22,7 @@ def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
     gradient_color_by : str
         The taxon to color by for the gradient PCoA.
 
-    barchart_categories : iterable
+    barchart_categories : Iterable of str
         The relevant barchart categories to use.
 
     Returns
@@ -77,7 +77,7 @@ def sample_type_processor(functions, opts, ids):
     opts : dict
         Paths and relevant processing options.
 
-    ids : iterable
+    ids : Iterable of str
         The list of sample IDs to examine
 
     Returns
@@ -108,7 +108,7 @@ def partition_samples_by_bodysite(md, site_to_function):
 
     Parameters
     ----------
-    md : DataFrame
+    md : pd.DataFrame
         The metadata to examine. It is expected that this DataFrame contain a
         column named SIMPLE_BODY_SITE.
     site_to_function : list of tuple
@@ -117,8 +117,10 @@ def partition_samples_by_bodysite(md, site_to_function):
     Returns
     -------
     generator
-        (fucntion, iterable)
-        The processing function and the sample IDs to examine.
+        function
+            The processing functione.
+        Iterable of str
+            The sample IDs to process.
     """
     for site, func in site_to_function:
         df_subset = md[md.SIMPLE_BODY_SITE == site]
@@ -138,6 +140,7 @@ def merge_error_reports(*reports):
     dict
         Keyed by sample ID, valued by the list of observed errors. An empty
         list is associted with a sample ID if no errors were observed.
+        {str: [str]}
     """
     result = {}
 
@@ -161,14 +164,14 @@ def _iter_ids_over_system_call(cmd_fmt, sample_ids, opts):
         The format of the command to execute. It is expected that there
         is a single string format to be done and it should take a sample
         ID
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     results = {}
 
@@ -194,14 +197,14 @@ def taxa_summaries(opts, sample_ids):
     opts : dict
         A dict of relevant opts.
 
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     results = {}
     table_path = opts['ag-L6-taxa-%s-biom' % opts['sample_type']]
@@ -232,14 +235,14 @@ def taxon_significance(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     table_path = opts['ag-L6-taxa-%s-biom' % opts['sample_type']]
 
@@ -256,14 +259,14 @@ def body_site_pcoa(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     coords = opts['ag-pgp-hmp-gg-100nt-1k-unifrac-pc']
     cmd_fmt = ' '.join(["mod2_pcoa.py body_site",
@@ -283,14 +286,14 @@ def country_pcoa(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     coords = opts['ag-gg-100nt-1k-subsampled-unifrac-pc']
     cmd_fmt = ' '.join(["mod2_pcoa.py country",
@@ -311,14 +314,14 @@ def gradient_pcoa(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     coords = opts['ag-100nt-%s-1k-unifrac-pc' % opts['sample_type']]
     cmd_fmt = ' '.join(["mod2_pcoa.py gradient",
@@ -339,14 +342,14 @@ def pie_plot(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     cmd_fmt = ' '.join(['make_pie_plot_AGP.py',
                         '-i %s' % opts['ag-L3-taxa-tsv'],
@@ -362,14 +365,14 @@ def bar_chart(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     table_path = opts['ag-100nt-1k-%s-biom' % opts['sample_type']]
     cmd_fmt = ' '.join(['make_phyla_plots_AGP.py',
@@ -389,14 +392,14 @@ def per_sample_directory(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     result = {}
 
@@ -421,14 +424,14 @@ def stage_per_sample_specific_statics(opts, sample_ids):
     ---------
     opts : dict
         A dict of relevant opts.
-    sample_ids : iterable
+    sample_ids : Iterable of str
         A list of sample IDs of interest
 
     Returns
     -------
     dict
         A dict containing each sample ID and any errors observed or None if
-        no error was observed for the sample.
+        no error was observed for the sample. {str: str or None}
     """
     result = {}
     chp_path = opts['chp-path']
