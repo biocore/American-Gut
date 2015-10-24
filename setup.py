@@ -1,5 +1,6 @@
 import re
 import ast
+from glob import glob
 
 from setuptools import find_packages, setup
 
@@ -35,6 +36,7 @@ setup(name='americangut',
       url='https://github.com/biocore/American-Gut/',
       test_suite='nose.collector',
       packages=find_packages(),
+      scripts=glob('scripts/*py'),
       setup_requires=['numpy >= 1.9.2'],
       install_requires=[
           'IPython < 4.0.0',
