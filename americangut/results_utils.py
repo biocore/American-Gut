@@ -99,8 +99,9 @@ def _stage_static_pdfs(sample_type, working_dir):
     pdfs_dir = get_repository_latex_pdfs(sample_type)
 
     for f in os.listdir(pdfs_dir):
-        src = get_path(pdfs_dir, f)
-        shutil.copy(src, working_dir)
+        if f.endswith('.pdf'):
+            src = get_path(pdfs_dir, f)
+            shutil.copy(src, working_dir)
 
 
 def _stage_static_data(working_dir, debug):
@@ -128,10 +129,8 @@ def _stage_static_mod1(working_dir):
 
 def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
-    _stage_static_data(working_dir, debug)
     _stage_static_latex(sample_type, working_dir)
     _stage_static_pdfs(sample_type, working_dir)
-    _stage_static_mod1(working_dir)
 
 
 # use participant names only if the data are available.
@@ -173,210 +172,6 @@ def parse_previously_printed(path):
     else:
         prev_printed = set([])
     return prev_printed
-
-
-simple_matter_map = {
-    'feces': 'FECAL',
-    'sebum': 'SKIN',
-    'tongue': 'ORAL',
-    'skin': 'SKIN',
-    'mouth': 'ORAL',
-    'gingiva': 'ORAL',
-    'gingival epithelium': 'ORAL',
-    'nares': 'SKIN',
-    'skin of hand': 'SKIN',
-    'hand': 'SKIN',
-    'skin of head': 'SKIN',
-    'hand skin': 'SKIN',
-    'throat': 'ORAL',
-    'auricular region zone of skin': 'SKIN',
-    'mucosa of tongue': 'ORAL',
-    'mucosa of vagina': 'SKIN',
-    'palatine tonsil': 'ORAL',
-    'hard palate': 'ORAL',
-    'saliva': 'ORAL',
-    'stool': 'FECAL',
-    'vagina': 'SKIN',
-    'fossa': 'SKIN',
-    'buccal mucosa': 'ORAL',
-    'vaginal fornix': 'SKIN',
-    'hair follicle': 'SKIN',
-    'nostril': 'SKIN'
-}
-
-
-def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
-                               exp_acronym, pgp_ids=False):
-    """Simplify the mapping file for use in figures
-
-    in_fp : input file-like object
-    out_fp : output file-like object
-    body_site_column_name : specify the column name for body
-    exp_acronym : short name for the study
-    pgp_ids : the list of IDs that are associated with PGP kits. If False, then
-        all IDs are assumed to not be PGP. If a list or set, then the
-        corresponding IDs will be described as PGP. If True, then all IDs will
-        be considered PGP.
-    Returns False on failure, True on success
-    """
-    class AlwaysContains(object):
-        def __contains__(self, other):
-            return True
-
-    def err_msg(issue, id_):
-        print "SampleID: %s, %s" % (id_, issue)
-
-    # setup pgp_ids lookup
-    if pgp_ids is False:
-        pgp_ids = {}
-    elif pgp_ids is True:
-        pgp_ids = AlwaysContains()
-    else:
-        pgp_ids = set(pgp_ids)
-
-    age_cat_map = [(0, 2, 'Baby'),
-                   (2, 13, 'Child'),
-                   (13, 20, 'Teen'),
-                   (20, 30, '20s'),
-                   (30, 40, '30s'),
-                   (40, 50, '40s'),
-                   (50, 60, '50s'),
-                   (60, 70, '60s'),
-                   (70, 80, '70s'),
-                   (80, 99999, 'Older than 80')]
-    bmi_cat_map = [(0, 18.5, 'Underweight'),
-                   (18.5, 25, 'Normal'),
-                   (25, 30, 'Overweight'),
-                   (30, 35, 'Moderately obese'),
-                   (35, 40, 'Severely obese'),
-                   (40, 99999, 'Very severely obese')]
-
-    mapping_lines = [l.strip('\n').split('\t') for l in in_fp]
-
-    header = mapping_lines[0]
-    header_low = [x.lower() for x in header]
-
-    bodysite_idx = header_low.index(body_site_column_name.lower())
-    country_idx = header_low.index('country')
-
-    try:
-        age_idx = header_low.index('age')
-    except ValueError:
-        age_idx = None
-
-    try:
-        bmi_idx = header_low.index('bmi')
-    except ValueError:
-        bmi_idx = None
-
-    new_mapping_lines = [header[:]]
-    new_mapping_lines[0].append('IS_PGP')
-    new_mapping_lines[0].append('SIMPLE_BODY_SITE')
-    new_mapping_lines[0].append('TITLE_ACRONYM')
-    new_mapping_lines[0].append('TITLE_BODY_SITE')
-    new_mapping_lines[0].append('HMP_SITE')
-
-    if age_idx is not None:
-        new_mapping_lines[0].append('AGE_CATEGORY')
-    if bmi_idx is not None:
-        new_mapping_lines[0].append('BMI_CATEGORY')
-
-    for l in mapping_lines[1:]:
-        new_line = l[:]
-        body_site = new_line[bodysite_idx]
-        country = new_line[country_idx]
-
-        # see if we have a PGP ID. We test for a split on '.' in the case of
-        # qiime db suffixes
-        sample_id = l[0]
-        if sample_id in pgp_ids:
-            is_pgp = 'Yes'
-        elif sample_id.split('.')[0] in pgp_ids:
-            is_pgp = 'Yes'
-        else:
-            is_pgp = 'No'
-
-        # grab the body site
-        if body_site.startswith('UBERON_'):
-            body_site = body_site.split('_', 1)[-1].replace("_", " ")
-        elif body_site.startswith('UBERON:'):
-            body_site = body_site.split(':', 1)[-1]
-        elif body_site in ['NA', 'unknown']:
-            # controls, environmental, etc
-            continue
-        else:
-            err_msg("Unknown body site: %s" % body_site, new_line[0])
-            continue
-
-        # remap the body site
-        if body_site.lower() not in simple_matter_map:
-            err_msg("Could not remap: %s" % body_site, new_line[0])
-            continue
-        else:
-            body_site = simple_matter_map[body_site.lower()]
-
-        if exp_acronym == 'HMP':
-            hmp_site = 'HMP-%s' % body_site
-        else:
-            hmp_site = body_site
-
-        # simplify the country
-        if country.startswith('GAZ:'):
-            country = country.split(':', 1)[-1]
-        else:
-            err_msg("Could not parse country %s" % country, new_line[0])
-            continue
-
-        if age_idx is not None:
-            age_cat = None
-            if new_line[age_idx] in ['NA', 'None']:
-                age_cat = 'Unknown'
-            else:
-                try:
-                    # PGP is currently in age ranges, ignoring those for now
-                    age = float(new_line[age_idx])
-                except ValueError:
-                    age_cat = 'Unknown'
-
-            if age_cat is not 'Unknown':
-                for low, high, cat in age_cat_map:
-                    if low <= age < high:
-                        age_cat = cat
-                        break
-                if age_cat is None:
-                    err_msg("Unknown age: %f", new_line[0])
-                    continue
-
-        if bmi_idx is not None:
-            if new_line[bmi_idx] in ['NA', '', 'None', 'no_data', 'unknown']:
-                bmi_cat = 'Unknown'
-            else:
-                bmi = float(new_line[bmi_idx])
-                bmi_cat = None
-                for low, high, cat in bmi_cat_map:
-                    if low <= bmi < high:
-                        bmi_cat = cat
-                        break
-                if bmi_cat is None:
-                    err_msg("Unknown BMI: %f" % bmi, new_line[0])
-
-        new_line.append(is_pgp)
-        new_line.append(body_site)
-        new_line.append(exp_acronym)
-        new_line.append("%s-%s" % (exp_acronym, body_site))
-        new_line[country_idx] = country
-        new_line.append(hmp_site)
-
-        if age_idx is not None:
-            new_line.append(age_cat)
-
-        if bmi_idx is not None:
-            new_line.append(bmi_cat)
-
-        new_mapping_lines.append(new_line)
-
-    out_fp.write('\n'.join(['\t'.join(l) for l in new_mapping_lines]))
-    out_fp.write('\n')
 
 
 def filter_mapping_file(in_fp, out_fp, columns_to_keep):
