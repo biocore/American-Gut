@@ -232,7 +232,6 @@ def fetch_seqs_fastq(url):
 
     return gzip.GzipFile(fileobj=res)
 
-
 def fetch_metadata_xml(accession):
     """Fetch sample metadata"""
     url_fmt = "http://www.ebi.ac.uk/ena/data/view/%(accession)s&display=xml"
@@ -255,53 +254,52 @@ def fetch_metadata_xml(accession):
 
     return metadata
 
+def fetch_study(study_accession, base_dir):
+    """Fetch and dump a study
 
-def fetch_study(accession, base_dir):
-    """Fetch and dump a full study
+    Grab and dump a study.  If sample_accessions
+    are specified, then only those specified samples
 
-    Grab and dump a full study
+    will be fetched and dumped
+
+    Parameters
+    ----------
+    study_accession : str
+       Accession ID for the study
+    base_dir : str
+       Path of base directory to save the fetched results
+
+    Note
+    ----
+    If sample_accession is None, then the entire study will be fetched
     """
-    metadata_path = os.path.join(base_dir, '%s.txt' % accession)
-    fasta_path = os.path.join(base_dir, '%s.fna' % accession)
 
-    if os.path.exists(fasta_path) and os.path.exists(metadata_path):
-        # it appears we already have the accession, so short circuit
-        return
+    # if os.path.exists(fasta_path) and os.path.exists(metadata_path):
+    #     # it appears we already have the accession, so short circuit
+    #     return
+    study_dir = os.path.join(base_dir, study_accession)
+    if not os.path.exists(study_dir):
+        os.mkdir(study_dir)
 
-    all_md = {}
-    all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
-    md_f = open(metadata_path, 'w')
-    fasta_path = open(fasta_path, 'w')
-    for sample, fastq_url in fetch_study_details(accession):
-        # in the form seqs_000007123.1075697.fastq.gz
-        # and unfortunately, the suffix (1075697) is missing and parts of the
-        # current results processing depend on the suffix.
-        fastq_filename = fastq_url.rsplit('/')[-1]
-        qiimedb_samplename = fastq_filename.split('_')[-1].rsplit('.', 2)[0]
-
-        md = fetch_metadata_xml(sample)
-        all_md[qiimedb_samplename] = md
-        all_cols.update(md)
-
-        # write out fasta
-        try:
-            for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
-                fasta_path.write(">%s\n%s\n" % (id_, seq))
-        except:
-            continue
-
-    header = list(all_cols)
-    md_f.write('#SampleID\t')
-    md_f.write('\t'.join(header))
-    md_f.write('\n')
-    for sampleid, values in all_md.iteritems():
-        to_write = [values.get(k, "no_data").encode('utf-8') for k in header]
-        to_write.insert(0, sampleid)
-        md_f.write('\t'.join(to_write))
-        md_f.write('\n')
-
-    md_f.close()
-    fasta_path.close()
+    for sample, fastq_url in fetch_study_details(study_accession):
+        sample_dir = os.path.join(study_dir, sample)
+        if not os.path.exists(sample_dir):
+            # fetch files if it isn't already present
+            os.mkdir(sample_dir)
+            metadata_path = os.path.join(sample_dir,
+                                         '%s.txt' % sample)
+            fasta_path = os.path.join(sample_dir,
+                                      '%s.fna' % sample)
+            # write out fasta
+            with open(fasta_path, 'w') as fasta_out:
+                for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
+                    fasta_out.write(">%s\n%s\n" % (id_, seq))
+            # write mapping xml
+            url_fmt = "http://www.ebi.ac.uk/ena/data/view/" +\
+              "%(accession)s&display=xml"
+            res = fetch_url(url_fmt % {'accession': sample})
+            with open(metadata_path, 'w') as md_f:
+                md_f.write(res.read())
 
 
 def count_seqs(seqs_fp, subset=None):
