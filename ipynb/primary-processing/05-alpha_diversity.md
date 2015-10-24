@@ -58,6 +58,7 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 And finally, we're going to aggregate the diversity calculations from the multiple rarefactions.
 
 ```python
+>>> !rmdir $ag_pgp_hmp_gg_100nt_1k_adiv/ALDIV_*
 >>> !collate_alpha.py -i $ag_pgp_hmp_gg_100nt_1k_adiv \
 ...                   -o $ag_pgp_hmp_gg_100nt_1k_adiv
 ```
