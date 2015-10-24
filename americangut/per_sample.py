@@ -391,12 +391,27 @@ def per_sample_directory(opts, sample_ids):
         A dict of relevant opts.
     sample_ids : iterable
         A list of sample IDs of interest
+
+    Returns
+    -------
+    dict
+        A dict containing each sample ID and any errors observed or None if
+        no error was observed for the sample.
     """
+    result = {}
+
     for id_ in sample_ids:
+        result[id_] = None
+
         path = _result_path(opts, id_)
+
         if not os.path.exists(path):
-            os.mkdir(path)
-    return {}
+            try:
+                os.mkdir(path)
+            except Exception as e:
+                result[id_] = e.args[0]
+
+    return result
 
 
 def stage_per_sample_specific_statics(opts, sample_ids):
@@ -415,14 +430,25 @@ def stage_per_sample_specific_statics(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample.
     """
+    result = {}
     chp_path = opts['chp-path']
     for id_ in sample_ids:
+        result[id_] = None
         path = _result_path(opts, id_)
+        files = []
 
         if opts['sample_type'] == 'fecal':
-            shutil.copy(os.path.join(chp_path, 'template_gut.tex'), path)
+            files.append('template_gut.tex')
         elif opts['sample_type'] in ('oral', 'skin'):
-            shutil.copy(os.path.join(chp_path, 'template_oralskin.tex'), path)
+            files.append('template_oralskin.tex')
         else:
-            raise ValueError('Unknown sample type: %s' % opts['sample_type'])
-    return {}
+            result[id_] = 'Unknown sample type: %s' % opts['sample_type']
+            continue
+
+        for f in files:
+            try:
+                shutil.copy(os.path.join(chp_path, f), path)
+            except:
+                result[id_] = "Cannot copy: %s" % f
+
+    return result

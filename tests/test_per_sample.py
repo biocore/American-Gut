@@ -1,4 +1,5 @@
 import os
+import shutil
 from unittest import TestCase, main
 
 import pandas as pd
@@ -163,7 +164,19 @@ class PerSampleTests(TestCase):
         self.assertEqual(obs, exp)
 
     def test_taxa_summaries(self):
-        self.fail()
+        ids = ['USygt45.M.418662', 'missing']
+        exp = {'USygt45.M.418662': None, 'missing': "ID not found"}
+        opts = {'per-sample-results': 'bar',
+                'ag-L6-taxa-fecal-biom': agenv.get_global_gut()[0],
+                'sample_type': 'fecal'}
+
+        os.mkdir('bar')
+        os.mkdir('bar/USygt45.M.418662')
+
+        obs = agps.taxa_summaries(opts, ids)
+        self.assertEqual(obs, exp)
+
+        shutil.rmtree('bar')
 
     def test_per_sample_directory(self):
         ids = ['test']
@@ -176,7 +189,13 @@ class PerSampleTests(TestCase):
         os.rmdir('bar')
 
     def test_stage_per_sample_specific_statics(self):
-        self.fail()
+        opts = {'chp-path': '.',
+                'per-sample-results': '',
+                'sample_type': 'fecal'}
+        ids = ['foo']
+        exp = {'foo': "Cannot copy: template_gut.tex"}
+        obs = agps.stage_per_sample_specific_statics(opts, ids)
+        self.assertEqual(obs, exp)
 
 
 if __name__ == '__main__':
