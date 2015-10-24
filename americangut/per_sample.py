@@ -11,8 +11,8 @@ import americangut.notebook_environment as agenv
 def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
     """Create a dict of options for processing functions
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     sample_type : str, {fecal, oral, skin}
         The sample type.
 
@@ -192,8 +192,8 @@ def _iter_ids_over_system_call(cmd_fmt, sample_ids, opts):
 def taxa_summaries(opts, sample_ids):
     """Produce digestable taxonomy summaries per sample
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
 
@@ -231,8 +231,8 @@ def taxa_summaries(opts, sample_ids):
 def taxon_significance(opts, sample_ids):
     """Produce OTU significance results
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -255,8 +255,8 @@ def taxon_significance(opts, sample_ids):
 def body_site_pcoa(opts, sample_ids):
     """Produce the per-sample all body site PCoA
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -282,8 +282,8 @@ def body_site_pcoa(opts, sample_ids):
 def country_pcoa(opts, sample_ids):
     """Produce the per-sample subsampled country PCoA
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -310,8 +310,8 @@ def country_pcoa(opts, sample_ids):
 def gradient_pcoa(opts, sample_ids):
     """Produce a gradient PCoA
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -338,8 +338,8 @@ def gradient_pcoa(opts, sample_ids):
 def pie_plot(opts, sample_ids):
     """Produce a pie chart
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -361,8 +361,8 @@ def pie_plot(opts, sample_ids):
 def bar_chart(opts, sample_ids):
     """Produce a bar chart
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -388,8 +388,8 @@ def bar_chart(opts, sample_ids):
 def per_sample_directory(opts, sample_ids):
     """Create a per sample directory
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
@@ -420,8 +420,8 @@ def per_sample_directory(opts, sample_ids):
 def stage_per_sample_specific_statics(opts, sample_ids):
     """Items like the Latex templates
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     opts : dict
         A dict of relevant opts.
     sample_ids : Iterable of str
