@@ -20,160 +20,160 @@ _TEST_ACCESSIONS = ['ag_testing']
 
 paths = {
     # raw files
-    'raw-sequences': '1/raw-sequences.fna',
-    'raw-metadata': '1/raw-metadata.txt',
+    'raw-sequences': '01/raw-sequences.fna',
+    'raw-metadata': '01/raw-metadata.txt',
 
     # sequences filtered for blooms
-    'filtered-sequences': '2/filtered-sequences.fna',
-    'filtered-sequences-100nt': '2/filtered-sequences-100nt.fna',
+    'filtered-sequences': '02/filtered-sequences.fna',
+    'filtered-sequences-100nt': '02/filtered-sequences-100nt.fna',
 
     # only fecal sequences (for filtering for blooms)
-    'fecal-sequences': '2/fecal-sequences.fna',
+    'fecal-sequences': '02/fecal-sequences.fna',
 
     # observed bloom sequences in samples
-    'observed-blooms': '2/observed-blooms',
-    'observed-blooms-biom': '2/observed-blooms/otu_table.biom',
+    'observed-blooms': '02/observed-blooms',
+    'observed-blooms-biom': '02/observed-blooms/otu_table.biom',
     'observed-blooms-otu-map':
-        '2/observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
+        '02/observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
 
     # resulting OTU directories
-    'ag-otus': '3/otus/gg-13_8-97-per-otus',
-    'ag-otus-100nt': '3/otus/gg-13_8-97-per-otus-with-100nt',
-    'ag-biom': '3/otus/gg-13_8-97-per-otus/otu_table.biom',
-    'ag-100nt-biom': '3/otus/gg-13_8-97-per-otus-with-100nt/otu_table.biom',
+    'ag-otus': '03/otus/gg-13_8-97-per-otus',
+    'ag-otus-100nt': '03/otus/gg-13_8-97-per-otus-with-100nt',
+    'ag-biom': '03/otus/gg-13_8-97-per-otus/otu_table.biom',
+    'ag-100nt-biom': '03/otus/gg-13_8-97-per-otus-with-100nt/otu_table.biom',
 
     # merged files for diversity analyses
-    'ag-gg-100nt-biom': '4/ag-gg-100nt.biom',
-    'pgp-hmp-100nt-biom': '4/pgp-hmp-100nt.biom',
-    'ag-pgp-hmp-gg-100nt-biom': '4/ag-pgp-hmp-gg-100nt.biom',
-    'ag-cleaned-md': '4/ag-cleaned.txt',
-    'gg-cleaned-md': '4/gg-cleaned.txt',
-    'pgp-cleaned-md': '4/pgp-cleaned.txt',
-    'hmp-cleaned-md': '4/hmp-cleaned.txt',
-    'ag-gg-cleaned-md': '4/ag-gg-cleaned.txt',
-    'pgp-hmp-cleaned-md': '4/pgp-hmp-cleaned.txt',
-    'ag-pgp-hmp-gg-cleaned-md': '4/ag-pgp-hmp-gg-cleaned.txt',
+    'ag-gg-100nt-biom': '04/ag-gg-100nt.biom',
+    'pgp-hmp-100nt-biom': '04/pgp-hmp-100nt.biom',
+    'ag-pgp-hmp-gg-100nt-biom': '04/ag-pgp-hmp-gg-100nt.biom',
+    'ag-cleaned-md': '04/ag-cleaned.txt',
+    'gg-cleaned-md': '04/gg-cleaned.txt',
+    'pgp-cleaned-md': '04/pgp-cleaned.txt',
+    'hmp-cleaned-md': '04/hmp-cleaned.txt',
+    'ag-gg-cleaned-md': '04/ag-gg-cleaned.txt',
+    'pgp-hmp-cleaned-md': '04/pgp-hmp-cleaned.txt',
+    'ag-pgp-hmp-gg-cleaned-md': '04/ag-pgp-hmp-gg-cleaned.txt',
 
     # alpha diversity analysis files
-    'ag-pgp-hmp-gg-100nt-1k-multiple': '5/ag-pgp-hmp-gg-100nt-1k-multiple',
+    'ag-pgp-hmp-gg-100nt-1k-multiple': '05/ag-pgp-hmp-gg-100nt-1k-multiple',
 
 
-    'ag-pgp-hmp-gg-100nt-1k-adiv': '5/ag-pgp-hmp-gg-100nt-1k-adiv',
+    'ag-pgp-hmp-gg-100nt-1k-adiv': '05/ag-pgp-hmp-gg-100nt-1k-adiv',
     'ag-pgp-hmp-gg-100nt-1k-adiv-pd':
-        '5/ag-pgp-hmp-gg-100nt-1k-adiv/PD_whole_tree.txt',
+        '05/ag-pgp-hmp-gg-100nt-1k-adiv/PD_whole_tree.txt',
     'ag-pgp-hmp-gg-100nt-1k-adiv-chao1':
-        '5/ag-pgp-hmp-gg-100nt-1k-adiv/chao1.txt',
+        '05/ag-pgp-hmp-gg-100nt-1k-adiv/chao1.txt',
     'ag-pgp-hmp-gg-100nt-1k-adiv-observedotus':
-        '5/ag-pgp-hmp-gg-100nt-1k-adiv/observed_otus.txt',
+        '05/ag-pgp-hmp-gg-100nt-1k-adiv/observed_otus.txt',
 
     # beta diversity analysis files
-    'ag-pgp-hmp-gg-100nt-1k-biom': '6/ag-pgp-hmp-gg-100nt-1k.biom',
-    'ag-pgp-hmp-gg-100nt-1k-bdiv': '6/ag-pgp-hmp-gg-100nt-1k-bdiv',
+    'ag-pgp-hmp-gg-100nt-1k-biom': '06/ag-pgp-hmp-gg-100nt-1k.biom',
+    'ag-pgp-hmp-gg-100nt-1k-bdiv': '06/ag-pgp-hmp-gg-100nt-1k-bdiv',
 
     'ag-100nt-1k-bdiv-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-1k.txt'),
     'ag-100nt-1k-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-1k-pc.txt'),
 
     'ag-100nt-oral-1k-bdiv-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-oral-1k.txt'),
     'ag-100nt-oral-1k-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-oral-1k-pc.txt'),
 
     'ag-100nt-fecal-1k-bdiv-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-fecal-1k.txt'),
     'ag-100nt-fecal-1k-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-fecal-1k-pc.txt'),
 
     'ag-100nt-skin-1k-bdiv-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-skin-1k.txt'),
     'ag-100nt-skin-1k-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-100nt-skin-1k-pc.txt'),
 
     'ag-pgp-hmp-gg-100nt-1k-bdiv-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-pgp-hmp-gg-100nt-1k.txt'),
     'ag-pgp-hmp-gg-100nt-1k-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-pgp-hmp-gg-100nt-1k-pc.txt'),
 
     'ag-pgp-hmp-gg-100nt-1k-bdiv-wunifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'weighted_unifrac_ag-pgp-hmp-gg-100nt-1k.txt'),
     'ag-pgp-hmp-gg-100nt-1k-wunifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'weighted_unifrac_ag-pgp-hmp-gg-100nt-1k-pc.txt'),
 
     'ag-gg-100nt-1k-bdiv-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-gg-100nt-1k.txt'),
     'ag-gg-100nt-1k-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-gg-100nt-1k-pc.txt'),
 
     'ag-gg-100nt-1k-bdiv-subsampled-unifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-gg-100nt-1k-subsampled.txt'),
     'ag-gg-100nt-1k-subsampled-unifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'unweighted_unifrac_ag-gg-100nt-1k-subsampled-pc.txt'),
 
     'ag-gg-100nt-1k-bdiv-wunifrac':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'weighted_unifrac_ag-gg-100nt-1k.txt'),
     'ag-gg-100nt-1k-wunifrac-pc':
-        ('6/ag-pgp-hmp-gg-100nt-1k-bdiv/'
+        ('06/ag-pgp-hmp-gg-100nt-1k-bdiv/'
          'weighted_unifrac_ag-gg-100nt-1k-pc.txt'),
 
     # taxonomy summaries
-    'ag-taxa': '7/taxa',
-    'ag-L2-taxa-tsv': '7/taxa/otu_table_L2.txt',
-    'ag-L2-taxa-biom': '7/taxa/otu_table_L2.biom',
-    'ag-L2-taxa-md': '7/taxa/ag-cleaned_L2.txt',
-    'ag-L3-taxa-tsv': '7/taxa/otu_table_L3.txt',
-    'ag-L3-taxa-biom': '7/taxa/otu_table_L3.biom',
-    'ag-L6-taxa-tsv': '7/taxa/otu_table_L6.txt',
-    'ag-L6-taxa-biom': '7/taxa/otu_table_L6.biom',
-    'ag-L2-taxa-skin-biom': '7/taxa/otu_table_skin_L2.biom',
-    'ag-L2-taxa-oral-biom': '7/taxa/otu_table_oral_L2.biom',
-    'ag-L2-taxa-fecal-biom': '7/taxa/otu_table_fecal_L2.biom',
-    'ag-L6-taxa-skin-biom': '7/taxa/otu_table_skin_L6.biom',
-    'ag-L6-taxa-oral-biom': '7/taxa/otu_table_oral_L6.biom',
-    'ag-L6-taxa-fecal-biom': '7/taxa/otu_table_fecal_L6.biom',
+    'ag-taxa': '07/taxa',
+    'ag-L2-taxa-tsv': '07/taxa/otu_table_L2.txt',
+    'ag-L2-taxa-biom': '07/taxa/otu_table_L2.biom',
+    'ag-L2-taxa-md': '07/taxa/ag-cleaned_L2.txt',
+    'ag-L3-taxa-tsv': '07/taxa/otu_table_L3.txt',
+    'ag-L3-taxa-biom': '07/taxa/otu_table_L3.biom',
+    'ag-L6-taxa-tsv': '07/taxa/otu_table_L6.txt',
+    'ag-L6-taxa-biom': '07/taxa/otu_table_L6.biom',
+    'ag-L2-taxa-skin-biom': '07/taxa/otu_table_skin_L2.biom',
+    'ag-L2-taxa-oral-biom': '07/taxa/otu_table_oral_L2.biom',
+    'ag-L2-taxa-fecal-biom': '07/taxa/otu_table_fecal_L2.biom',
+    'ag-L6-taxa-skin-biom': '07/taxa/otu_table_skin_L6.biom',
+    'ag-L6-taxa-oral-biom': '07/taxa/otu_table_oral_L6.biom',
+    'ag-L6-taxa-fecal-biom': '07/taxa/otu_table_fecal_L6.biom',
 
     # collapsed samples
-    'ag-100nt-1k-biom': '8/ag-100nt-1k.biom',
-    'ag-100nt-1k-fecal-biom': '8/ag-100nt-1k-fecal.biom',
-    'ag-100nt-1k-skin-biom': '8/ag-100nt-1k-oral.biom',
-    'ag-100nt-1k-oral-biom': '8/ag-100nt-1k-skin.biom',
+    'ag-100nt-1k-biom': '08/ag-100nt-1k.biom',
+    'ag-100nt-1k-fecal-biom': '08/ag-100nt-1k-fecal.biom',
+    'ag-100nt-1k-skin-biom': '08/ag-100nt-1k-oral.biom',
+    'ag-100nt-1k-oral-biom': '08/ag-100nt-1k-skin.biom',
 
-    'ag-100nt-1k-fecal-sex-biom':  '8/ag-100nt-1k-fecal-sex.biom',
-    'ag-100nt-1k-fecal-diet-biom': '8/ag-100nt-1k-fecal-diet.biom',
-    'ag-100nt-1k-fecal-age-biom':  '8/ag-100nt-1k-fecal-age.biom',
-    'ag-100nt-1k-fecal-bmi-biom':  '8/ag-100nt-1k-fecal-bmi.biom',
+    'ag-100nt-1k-fecal-sex-biom':  '08/ag-100nt-1k-fecal-sex.biom',
+    'ag-100nt-1k-fecal-diet-biom': '08/ag-100nt-1k-fecal-diet.biom',
+    'ag-100nt-1k-fecal-age-biom':  '08/ag-100nt-1k-fecal-age.biom',
+    'ag-100nt-1k-fecal-bmi-biom':  '08/ag-100nt-1k-fecal-bmi.biom',
 
-    'ag-100nt-1k-oral-sex-biom':  '8/ag-100nt-1k-oral-sex.biom',
-    'ag-100nt-1k-oral-diet-biom': '8/ag-100nt-1k-oral-diet.biom',
-    'ag-100nt-1k-oral-age-biom':  '8/ag-100nt-1k-oral-age.biom',
-    'ag-100nt-1k-oral-flossing-biom':  '8/ag-100nt-1k-oral-flossing.biom',
+    'ag-100nt-1k-oral-sex-biom':  '08/ag-100nt-1k-oral-sex.biom',
+    'ag-100nt-1k-oral-diet-biom': '08/ag-100nt-1k-oral-diet.biom',
+    'ag-100nt-1k-oral-age-biom':  '08/ag-100nt-1k-oral-age.biom',
+    'ag-100nt-1k-oral-flossing-biom':  '08/ag-100nt-1k-oral-flossing.biom',
 
-    'ag-100nt-1k-skin-sex-biom':  '8/ag-100nt-1k-skin-sex.biom',
-    'ag-100nt-1k-skin-cosmetics-biom': '8/ag-100nt-1k-skin-cosmetics.biom',
-    'ag-100nt-1k-skin-age-biom':  '8/ag-100nt-1k-skin-age.biom',
-    'ag-100nt-1k-skin-hand-biom':  '8/ag-100nt-1k-skin-hand.biom',
+    'ag-100nt-1k-skin-sex-biom':  '08/ag-100nt-1k-skin-sex.biom',
+    'ag-100nt-1k-skin-cosmetics-biom': '08/ag-100nt-1k-skin-cosmetics.biom',
+    'ag-100nt-1k-skin-age-biom':  '08/ag-100nt-1k-skin-age.biom',
+    'ag-100nt-1k-skin-hand-biom':  '08/ag-100nt-1k-skin-hand.biom',
 
     # per-sample results
-    'successful-ids': '9/successful_ids.txt',
-    'unsuccessful-ids': '9/unsuccessful_ids.txt',
-    'per-sample-results': '9/per-sample-results',
+    'successful-ids': '09/successful_ids.txt',
+    'unsuccessful-ids': '09/unsuccessful_ids.txt',
+    'per-sample-results': '09/per-sample-results',
 }
 
 
@@ -377,5 +377,5 @@ def _stage_test_accessions():
         src_fna = os.path.join(repo, 'tests/data/%s.fna' % acc)
         src_map = os.path.join(repo, 'tests/data/%s.txt' % acc)
 
-        shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '1'))
-        shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '1'))
+        shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '01'))
+        shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '01'))

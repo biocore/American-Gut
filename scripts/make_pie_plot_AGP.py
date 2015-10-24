@@ -78,7 +78,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     LEG_FONT.set_size(28)
     LEG_FONT.set_family('sans-serif')
     # Sets the general font properties
-    use_latex = True
+    use_latex = False
     rc_font_family = 'sans-serif'
     rc_font = ['Helvetica', 'Arial']
 
@@ -117,9 +117,9 @@ def main(tax_table, output_dir, samples_to_analyze=None):
                                                                  all_taxa,
                                                                  RARE_THRESH):
         # abund_fun = lambda v, i, md: i in all_taxa[samp]
-        filtered_table = tax_table.filterObservations(filt_fun)
-        sample_data = filtered_table.sampleData(samp)
-        taxa = filtered_table.ObservationIds
+        filtered_table = tax_table.filter(filt_fun, axis='observation')
+        sample_data = filtered_table.data(samp)
+        taxa = filtered_table.ids(axis='observation')
 
         # Calculates abundance and limits to the top n samples.
         abund_rank = calculate_abundance(sample=sample_data,

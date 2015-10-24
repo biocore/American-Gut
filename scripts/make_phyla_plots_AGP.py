@@ -94,23 +94,23 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
         michael_pollan = '000007108.1075657'
         cat_list = ['You', 'Average', 'Similar Diet', ' Similar BMI',
                     'Same Gender', 'Similar Age', 'Michael Pollan']
-        order = ['Sample', 'Average', 'DIET_TYPE', 'BMI_CATEGORY', 'SEX',
-                 'AGE_CATEGORY', 'MP']
+        order = ['Sample', 'Average', 'DIET_TYPE', 'BMI_CAT', 'SEX',
+                 'AGE_CAT', 'MP']
 
     elif sample_type == 'skin':
-        michael_pollan = '7113.1075702'
+        michael_pollan = '000007113.1075702'
         cat_list = ['You', 'Average', 'Similar Cosmetic Use',
                     'Same Dominant Hand', 'Same Gender', 'Same Age',
                     'Michael Pollan']
         order = ['Sample', 'Average', 'COSMETICS_FREQUENCY',
-                 'DOMINANT_HAND', 'SEX', 'AGE_CATEGORY', 'MP']
+                 'DOMINANT_HAND', 'SEX', 'AGE_CAT', 'MP']
 
     elif sample_type == 'oral':
-        michael_pollan = '7109.1075688'
+        michael_pollan = '000007109.1075688'
         cat_list = ['You', 'Average', 'Similar Diet', 'Flossing Frequency',
                     'Same Gender', 'Same Age', 'Michael Pollan']
         order = ['Sample', 'Average', 'DIET_TYPE', 'FLOSSING_FREQUENCY',
-                 'SEX', 'AGE_CATEGORY', 'MP']
+                 'SEX', 'AGE_CAT', 'MP']
 
     else:
         raise ValueError('%s is not a supported sample type.' % sample_type)
