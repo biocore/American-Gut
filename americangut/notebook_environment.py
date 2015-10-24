@@ -174,6 +174,9 @@ paths = {
     'successful-ids': '09/successful_ids.txt',
     'unsuccessful-ids': '09/unsuccessful_ids.txt',
     'per-sample-results': '09/per-sample-results',
+    'statics-fecal': '09/statics-fecal',
+    'statics-oral': '09/statics-oral',
+    'statics-skin': '09/statics-skin',
 }
 
 
@@ -226,6 +229,10 @@ def get_rarefaction_depth():
         return "100"
     else:
         return "1000"
+
+
+def is_test_env():
+    return _TEST_ENV
 
 
 def get_reference_set():

@@ -26,8 +26,14 @@ Then we'll establish our new paths as well as "per-sample-results" directory whe
 >>> successful_ids     = agu.get_new_path(agenv.paths['successful-ids'])
 >>> unsuccessful_ids   = agu.get_new_path(agenv.paths['unsuccessful-ids'])
 >>> per_sample_results = agu.get_new_path(agenv.paths['per-sample-results'])
+>>> statics_fecal      = agu.get_new_path(agenv.paths['statics-fecal'])
+>>> statics_oral       = agu.get_new_path(agenv.paths['statics-oral'])
+>>> statics_skin       = agu.get_new_path(agenv.paths['statics-skin'])
 ...
 >>> os.mkdir(per_sample_results)
+>>> os.mkdir(statics_fecal)
+>>> os.mkdir(statics_oral)
+>>> os.mkdir(statics_skin)
 ```
 
 We're also going to load up the American Gut mapping file so we can determine what samples (within the 3 major body sites at least) were processed, and what samples had errors.
@@ -69,8 +75,9 @@ And finally, these next blocks of code support the per-sample type processing. F
 And before the fun starts, let's stage static aspects of the participant results. These are things like the American Gut logo, the result template, etc.
 
 ```python
->>> agru.stage_static_files('fecal', chp_path)
->>> agru.stage_static_files('oralskin', chp_path)
+>>> agru.stage_static_files('fecal', statics_fecal)
+>>> agru.stage_static_files('oral', statics_oral)
+>>> agru.stage_static_files('skin', statics_skin)
 ```
 
 And now, let's start mass generating figures!
@@ -90,4 +97,6 @@ And we'll end with some numbers on the number of successful and unsuccessful sam
 ```python
 >>> print "Number of successfully processed samples: %d" % len([l for l in open(successful_ids) if not l.startswith('#')])
 >>> print "Number of unsuccessfully processed samples: %d" % len([l for l in open(unsuccessful_ids) if not l.startswith('#')])
+>>> if agenv.is_test_env():
+...     assert len([l for l in open(unsuccessful_ids) if not l.startswith('#')]) == 0
 ```

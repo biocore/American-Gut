@@ -1,11 +1,11 @@
 import os
-import shutil
 
 import biom
 from qiime.util import qiime_system_call
 
 import americangut.util as agu
 import americangut.notebook_environment as agenv
+import americangut.results_utils as agru
 
 
 def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
@@ -434,24 +434,21 @@ def stage_per_sample_specific_statics(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     result = {}
-    chp_path = opts['chp-path']
     for id_ in sample_ids:
         result[id_] = None
         path = _result_path(opts, id_)
-        files = []
+        template_path = os.path.join(path, 'template.tex')
+        statics_path = os.path.join(path, 'statics')
 
-        if opts['sample_type'] == 'fecal':
-            files.append('template_gut.tex')
-        elif opts['sample_type'] in ('oral', 'skin'):
-            files.append('template_oralskin.tex')
-        else:
-            result[id_] = 'Unknown sample type: %s' % opts['sample_type']
+        try:
+            agru.stage_static_latex(opts['sample_type'], template_path)
+        except:
+            result[id_] = "Cannot stage template."
             continue
 
-        for f in files:
-            try:
-                shutil.copy(os.path.join(chp_path, f), path)
-            except:
-                result[id_] = "Cannot copy: %s" % f
+        try:
+            os.symlink(opts['statics-fecal'], statics_path)
+        except:
+            result[id_] = "Cannot symlink for statics."
 
     return result

@@ -193,7 +193,7 @@ class PerSampleTests(TestCase):
                 'per-sample-results': '',
                 'sample_type': 'fecal'}
         ids = ['foo']
-        exp = {'foo': "Cannot copy: template_gut.tex"}
+        exp = {'foo': "Cannot stage template."}
         obs = agps.stage_per_sample_specific_statics(opts, ids)
         self.assertEqual(obs, exp)
 
