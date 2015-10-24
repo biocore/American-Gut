@@ -17,7 +17,7 @@ install:
   - conda create --yes -n env_name python=$PYTHON_VERSION --file conda_requirements.txt
   - source activate env_name
   - pip install -r pip_requirements.txt
-  - pip install . --no-dep
+  - pip install . --no-deps
 script:
   - nosetests --with-doctest
   - flake8 americangut/*.py
