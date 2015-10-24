@@ -1,0 +1,7 @@
+click
+biom-format
+colorbrewer
+seaborn
+qiime
+runipy
+ipymd

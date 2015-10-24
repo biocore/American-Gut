@@ -7,17 +7,14 @@ before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda3/bin:$TRAVIS_BUILD_DIR/scripts:$PATH
   - export AG_TESTING='True'
   - export AG_CPU_COUNT=1
 install:
-  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy=1.9.2 scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 notebook 
+  - conda create --yes -n env_name python=$PYTHON_VERSION --file conda_requirements.txt
   - source activate env_name
-  # upgrade click, older versions of click do not have __version__
-  - pip install .
+  - pip install -r pip_requirements.txt
+  - pip install . --no-dep
 script:
-  - source activate env_name
-  - export PYTHONPATH=$TRAVIS_BUILD_DIR:$PYTHONPATH
   - nosetests --with-doctest
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag

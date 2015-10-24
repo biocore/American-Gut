@@ -1,0 +1,15 @@
+pip
+nose
+numpy=1.9.2
+scipy
+matplotlib
+pandas>=0.15
+flake8
+statsmodels 
+lxml 
+h5py>=2.3.1 
+notebook 
+IPython<=3.9.9 
+notebook 
+scikit-bio==0.2.3 
+cython
