@@ -5,14 +5,11 @@ from unittest import TestCase, main
 from collections import defaultdict
 
 from americangut.results_utils import (
-    filter_mapping_file, clean_and_reformat_mapping,
-    count_unique_sequences_per_otu, write_bloom_fasta
+    filter_mapping_file, count_unique_sequences_per_otu,
+    write_bloom_fasta
 )
 
 class ResultsUtilsTests(TestCase):
-    def setUp(self):
-        reformat_mapping_testdata.seek(0)
-
     def test_filter_mapping_file(self):
         output = StringIO()
         # filter to just fecal samples, keep the age and title_acronym columns
@@ -40,103 +37,6 @@ class ResultsUtilsTests(TestCase):
             self.assertEqual(len(l), 4)
             self.assertEqual(l[test_sbs], 'FECAL')
             self.assertTrue(float(l[test_age]) > 20)
-
-    def test_clean_and_reformat_mapping(self):
-        """Exercise the reformat mapping code, verify expected results"""
-        out = StringIO()
-        is_pgp = ['A', 'C']
-        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
-                                   'test', pgp_ids=is_pgp)
-        out.seek(0)
-
-        # verify the resulting header structure
-        test_mapping = [l.strip().split('\t') for l in out]
-        test_header = test_mapping[0]
-        self.assertEqual(test_header[-7:], ['IS_PGP', 'SIMPLE_BODY_SITE', 
-                                            'TITLE_ACRONYM', 'TITLE_BODY_SITE', 
-                                            'HMP_SITE', 'AGE_CATEGORY', 
-                                            'BMI_CATEGORY'])
-
-        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
-                                              'UBERON_mucosa_of_tongue', '5',
-                                              'Yes', 'ORAL', 'test', 'test-ORAL',
-                                              'ORAL', '40s', 'Underweight'])
-        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
-                                              'UBERON:FECES', '10',
-                                              'No', 'FECAL', 'test', 'test-FECAL',
-                                              'FECAL', '50s', 'Underweight'])
-        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
-                                              'UBERON_FECES', '15',
-                                              'Yes', 'FECAL', 'test', 'test-FECAL',
-                                              'FECAL', 'Child', 'Underweight'])
-        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
-                                              'UBERON:SKIN', '37',
-                                              'No', 'SKIN', 'test', 'test-SKIN',
-                                              'SKIN', '50s', 'Severely obese'])
-
-    def test_clean_and_reformat_mapping_nopgp(self):
-        """Exercise the reformat mapping code, verify expected results"""
-        out = StringIO()
-        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
-                                   'test')
-        out.seek(0)
-
-        # verify the resulting header structure
-        test_mapping = [l.strip().split('\t') for l in out]
-        test_header = test_mapping[0]
-        self.assertEqual(test_header[-7:], ['IS_PGP', 'SIMPLE_BODY_SITE', 
-                                            'TITLE_ACRONYM', 'TITLE_BODY_SITE', 
-                                            'HMP_SITE', 'AGE_CATEGORY', 
-                                            'BMI_CATEGORY'])
-
-        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
-                                              'UBERON_mucosa_of_tongue', '5',
-                                              'No', 'ORAL', 'test', 'test-ORAL',
-                                              'ORAL', '40s', 'Underweight'])
-        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
-                                              'UBERON:FECES', '10',
-                                              'No', 'FECAL', 'test', 'test-FECAL',
-                                              'FECAL', '50s', 'Underweight'])
-        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
-                                              'UBERON_FECES', '15',
-                                              'No', 'FECAL', 'test', 'test-FECAL',
-                                              'FECAL', 'Child', 'Underweight'])
-        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
-                                              'UBERON:SKIN', '37',
-                                              'No', 'SKIN', 'test', 'test-SKIN',
-                                              'SKIN', '50s', 'Severely obese'])
-
-    def test_clean_and_reformat_mapping_allpgp(self):
-        """Exercise the reformat mapping code, verify expected results"""
-        out = StringIO()
-        clean_and_reformat_mapping(reformat_mapping_testdata, out, 'body_site',
-                                   'test', pgp_ids=True)
-        out.seek(0)
-
-        # verify the resulting header structure
-        test_mapping = [l.strip().split('\t') for l in out]
-        test_header = test_mapping[0]
-        self.assertEqual(test_header[-7:], ['IS_PGP', 'SIMPLE_BODY_SITE', 
-                                            'TITLE_ACRONYM', 'TITLE_BODY_SITE', 
-                                            'HMP_SITE', 'AGE_CATEGORY', 
-                                            'BMI_CATEGORY'])
-
-        self.assertEqual(test_mapping[1][:], ['A', 'w00t', '43.0',
-                                              'UBERON_mucosa_of_tongue', '5',
-                                              'Yes', 'ORAL', 'test', 'test-ORAL',
-                                              'ORAL', '40s', 'Underweight'])
-        self.assertEqual(test_mapping[2][:], ['B', 'left', '51.0',
-                                              'UBERON:FECES', '10',
-                                              'Yes', 'FECAL', 'test', 'test-FECAL',
-                                              'FECAL', '50s', 'Underweight'])
-        self.assertEqual(test_mapping[3][:], ['C', 'right', '12.0',
-                                              'UBERON_FECES', '15',
-                                              'Yes', 'FECAL', 'test', 'test-FECAL',
-                                              'FECAL', 'Child', 'Underweight'])
-        self.assertEqual(test_mapping[4][:], ['E', 'stuff', '56.0',
-                                              'UBERON:SKIN', '37',
-                                              'Yes', 'SKIN', 'test', 'test-SKIN',
-                                              'SKIN', '50s', 'Severely obese'])
 
     def test_count_unique_sequences_per_otu(self):
         input_fasta = StringIO(test_fasta)
@@ -175,14 +75,6 @@ B	United States of America	foo	51.0	FECAL
 C	United States of America	bar	12.0	FECAL
 D	United States of America	AGP	32.0	SKIN
 E	United States of America	AGP	56.0	FECAL
-""")
-reformat_mapping_testdata = StringIO(
-"""#SampleID	COUNTRY	AGE	BODY_SITE	BMI
-A	GAZ:w00t	43.0	UBERON_mucosa_of_tongue	5
-B	GAZ:left	51.0	UBERON:FECES	10
-C	GAZ:right	12.0	UBERON_FECES	15
-D	GAZ:stuff	32.0	unknown	26
-E	GAZ:stuff	56.0	UBERON:SKIN	37
 """)
 
 # Inputs for count_unique_seqs_per_otu
