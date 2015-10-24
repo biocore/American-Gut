@@ -51,7 +51,6 @@ def body_site(coords, mapping_file, output, filename, sample):
     mf = mf.loc[o.site_ids]
 
     if sample not in o.site_ids:
-        print o.site_ids
         raise ValueError("Sample %s not found" % sample)
 
     color_hmp_fecal = sns.color_palette('Paired', 12)[10]  # light brown
