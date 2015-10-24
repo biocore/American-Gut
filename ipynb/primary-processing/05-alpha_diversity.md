@@ -8,7 +8,7 @@ In this next chapter, we're going to calculate alpha diversity over all of the s
 ...
 >>> import qiime_default_reference as qdr
 ...
->>> chp_path = agenv.activate('5')
+>>> chp_path = agenv.activate('05')
 >>> greengenes_tree = qdr.get_reference_tree()
 >>> cpu_count = agenv.get_cpu_count()
 ```

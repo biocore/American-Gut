@@ -11,7 +11,7 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 >>> import americangut.per_sample as agps
 >>> import americangut.parallel as agpar
 ...
->>> chp_path = agenv.activate('9')
+>>> chp_path = agenv.activate('09')
 ```
 
 First we'll setup our existing paths that we need.

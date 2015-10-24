@@ -7,7 +7,7 @@ First, let's setup and sanity check our environment.
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('1')
+>>> chp_path = agenv.activate('01')
 ...
 >>> agp_sequences = agu.get_new_path(agenv.paths['raw-sequences'])
 >>> agp_metadata  = agu.get_new_path(agenv.paths['raw-metadata'])
