@@ -14,9 +14,11 @@ def dispatcher(success_fp, fail_fp, partitions):
     fail_fp : file-like object
         A file-like object to write a list of unsuccessful sample IDs too,
         and any associated error information
-    partitions : iterable
-        Yields a function and an iterable of IDs. It is expected that this
-        function will return a dict of {str: list}.
+    partitions : Iterable of (function, Iterable of str)
+        Yields a function and an iterable of IDs. It is expected that the
+        functions yielded will have the following signature:
+
+        {str: list} <- function(list of str)
     """
     pool = mp.Pool(processes=agenv.get_cpu_count())
 
