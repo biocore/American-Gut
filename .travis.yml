@@ -12,6 +12,9 @@ before_install:
   - ./miniconda.sh -b
   - export AG_TESTING='True'
   - export AG_CPU_COUNT=1
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
 install:
   - conda create --yes -n env_name python=$PYTHON_VERSION --file conda_requirements.txt
   - source activate env_name
