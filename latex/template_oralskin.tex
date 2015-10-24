@@ -34,7 +34,7 @@
 
 %\begin{tabularx}{\textwidth}{ X c X }     %<--does better with horizontal spacing
 \begin{tabular}{ m{4.4cm} m{16cm} }  %<--does better with vertical spacing
-	~~\includegraphics[height=0.08\textheight]{pdfs-oralskin/logoshape.pdf} & \includegraphics[height=0.065\textheight]{pdfs-oralskin/youramericangutsampletext.pdf} \\
+	~~\includegraphics[height=0.08\textheight]{statics/logoshape.pdf} & \includegraphics[height=0.065\textheight]{statics/youramericangutsampletext.pdf} \\
 \end{tabular}
 
 \hrule
@@ -67,7 +67,7 @@
 	&
 	\vspace{2mm}
 	\hspace{-5mm}
-	\includegraphics[scale=0.27]{pdfs-oralskin/figure2.pdf}
+	\includegraphics[scale=0.27]{figure2.pdf}
 	
     &
     {\normalsize 
@@ -101,9 +101,9 @@
 \begin{tabular*}{\textwidth}{ m{3.5in} m{3.7in} m{3.7in} }
 
 \vspace{-10mm}
-\begin{overpic}[width=2.10in]{pdfs-oralskin/figure4.pdf}
-	\ifthenelse{\equal{\sampletype}{oral}}{\put(-32,-42){\includegraphics[width=3.65in]{pdfs-oralskin/barchart_overlay_oral.pdf}}}{}
-	\ifthenelse{\equal{\sampletype}{skin}}{\put(-32,-42){\includegraphics[width=3.65in]{pdfs-oralskin/barchart_overlay_skin.pdf}}}{}
+\begin{overpic}[width=2.10in]{figure4.pdf}
+	\ifthenelse{\equal{\sampletype}{oral}}{\put(-32,-42){\includegraphics[width=3.65in]{statics/barchart_overlay_oral.pdf}}}{}
+	\ifthenelse{\equal{\sampletype}{skin}}{\put(-32,-42){\includegraphics[width=3.65in]{statics/barchart_overlay_skin.pdf}}}{}
 \end{overpic} 
 
 &
@@ -112,15 +112,15 @@
 \raisebox{27mm}{
 \includegraphics[scale=0.40]{pdfs-gut/figure1_legend.pdf}}
 \hspace{-2mm}
-\includegraphics[scale=0.54, trim=3.5cm 1cm 2cm 2cm, clip=true]{pdfs-oralskin/figure1.pdf}
+\includegraphics[scale=0.54, trim=3.5cm 1cm 2cm 2cm, clip=true]{figure1.pdf}
 
 &
 
 \hspace{5mm}
-\ifthenelse{\equal{\sampletype}{oral}}{\includegraphics[scale=0.40]{pdfs-oralskin/figure3_legend_firmicutes.pdf}}{}
-\ifthenelse{\equal{\sampletype}{skin}}{\includegraphics[scale=0.40]{pdfs-oralskin/figure3_legend_proteobacteria.pdf}}{}
+\ifthenelse{\equal{\sampletype}{oral}}{\includegraphics[scale=0.40]{statics/figure3_legend_firmicutes.pdf}}{}
+\ifthenelse{\equal{\sampletype}{skin}}{\includegraphics[scale=0.40]{statics/figure3_legend_proteobacteria.pdf}}{}
 \hspace{-2mm}
-\includegraphics[scale=0.54, trim=3.5cm 1.5cm 2cm 1.5cm, clip=true]{pdfs-oralskin/figure3.pdf}
+\includegraphics[scale=0.54, trim=3.5cm 1.5cm 2cm 1.5cm, clip=true]{figure3.pdf}
 
 
 \\ \addlinespace[-2mm]
