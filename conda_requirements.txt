@@ -9,7 +9,9 @@ statsmodels
 lxml 
 h5py>=2.3.1 
 notebook 
-IPython<=3.9.9 
+IPython<4.0.0
 notebook 
 scikit-bio==0.2.3 
 cython
+natsort<4.0.0
+future >= 0.14.3
