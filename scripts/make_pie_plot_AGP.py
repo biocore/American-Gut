@@ -45,10 +45,6 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         naming convention PIECHART_<SAMPLEID>.pdf.
     """
 
-    # Creates the text around hte file name
-    FILENAME_BEFORE = 'piechart_'
-    FILENAME_AFTER = '.pdf'
-
     # Handles string cleaning
     RENDER = 'LATEX'
     UNCLASSIFIED = False
@@ -95,6 +91,10 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     (tree, all_taxa) = build_tree_from_taxontable(tax_table)
 
     # Sets up samples for which tables are being generated
+    if len(samples_to_analyze) > 1:
+        # TODO: make the rest of the code reflect this...
+        raise ValueError("SCRIPT NO LONGER SUPPORTS MULTIPLE SAMPLES")
+
     if samples_to_analyze is not None:
         samples_to_test = samples_to_analyze
     else:
@@ -138,8 +138,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
-        filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp,
-                                                 FILENAME_AFTER))
+        filename = pjoin(output_dir, 'piechart.pdf')
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,

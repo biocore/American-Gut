@@ -35,11 +35,11 @@ def mod2_pcoa():
               help='Mapping file')
 @click.option('--output', required=True, type=click.Path(exists=True,
               writable=True, resolve_path=True), help='Output directory')
-@click.option('--prefix', required=True, type=str, help='Output file prefix')
-@click.option('--samples', required=False, type=str,
-              help='Comma separated list of samples to print')
-def body_site(coords, mapping_file, output, prefix, samples):
-    """Generates as many figures as samples in the coordinates file"""
+@click.option('--filename', required=True, type=str, help='Output filename')
+@click.option('--sample', required=True, type=str,
+              help='The sample to print')
+def body_site(coords, mapping_file, output, filename, sample):
+    """Generates a bodysite figure for a sample in the coordinates file"""
     o = read(coords, into=OrdinationResults)
 
     # coordinates
@@ -50,11 +50,9 @@ def body_site(coords, mapping_file, output, prefix, samples):
                      index_col='#SampleID')
     mf = mf.loc[o.site_ids]
 
-    if samples is None:
-        samples = mf.index
-    else:
-        samples = set(samples.split(',')).intersection(set(o.site_ids))
-        samples = mf.loc[samples].index
+    if sample not in o.site_ids:
+        print o.site_ids
+        raise ValueError("Sample %s not found" % sample)
 
     color_hmp_fecal = sns.color_palette('Paired', 12)[10]  # light brown
     color_agp_fecal = sns.color_palette('Paired', 12)[11]  # dark brown
@@ -74,34 +72,32 @@ def body_site(coords, mapping_file, output, prefix, samples):
                   'HMP-SKIN':  color_hmp_skin,
                   'PGP-SKIN':  color_hmp_skin}
 
-    for sample in samples:
+    # plot categories as 50 slices with random zorder
+    for grp, color in grp_colors.iteritems():
+        sub_coords = c_df[mf.TITLE_BODY_SITE == grp].values
+        for i in np.array_split(sub_coords, 50):
+            if i.size == 0:
+                continue
+            plt.scatter(i[:, 0], i[:, 1], color=color,
+                        edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
+                        alpha=ALPHA, zorder=np.random.rand())
 
-        # plot categories as 50 slices with random zorder
-        for grp, color in grp_colors.iteritems():
-            sub_coords = c_df[mf.TITLE_BODY_SITE == grp].values
-            for i in np.array_split(sub_coords, 50):
-                if i.size == 0:
-                    continue
-                plt.scatter(i[:, 0], i[:, 1], color=color,
-                            edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
-                            alpha=ALPHA, zorder=np.random.rand())
+    # plot participant's dot
+    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
+                color=grp_colors[mf.loc[sample]['TITLE_BODY_SITE']],
+                s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
+    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
+                color=grp_colors[mf.loc[sample]['TITLE_BODY_SITE']],
+                s=250, edgecolor=np.asarray(
+                grp_colors[mf.loc[sample]['TITLE_BODY_SITE']])*0.6,
+                zorder=2, lw=LINE_WIDTH_BLACK)
 
-        # plot participant's dot
-        plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=grp_colors[mf.loc[sample]['TITLE_BODY_SITE']],
-                    s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
-        plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=grp_colors[mf.loc[sample]['TITLE_BODY_SITE']],
-                    s=250, edgecolor=np.asarray(
-                    grp_colors[mf.loc[sample]['TITLE_BODY_SITE']])*0.6,
-                    zorder=2, lw=LINE_WIDTH_BLACK)
-
-        plt.axis('off')
-        my_dpi = 72
-        figsize = (1000 / my_dpi, 1000 / my_dpi)
-        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
-        plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
-        plt.close()
+    plt.axis('off')
+    my_dpi = 72
+    figsize = (1000 / my_dpi, 1000 / my_dpi)
+    out_file = os.path.join(output, filename)
+    plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
+    plt.close()
 
 
 @mod2_pcoa.command()
@@ -140,15 +136,15 @@ def subsample_dm(distmat, mapping_file, max, category, output):
               help='Mapping file')
 @click.option('--output', required=True, type=click.Path(exists=True,
               writable=True, resolve_path=True), help='Output directory')
-@click.option('--prefix', required=True, type=str, help='Output file prefix')
-@click.option('--samples', required=False, type=str,
-              help='Comma separated list of samples to print')
+@click.option('--filename', required=True, type=str, help='Output filename')
+@click.option('--sample', required=True, type=str,
+              help='The sample to print')
 @click.option('--distmat', required=True, type=click.Path(resolve_path=True,
                                                           readable=True,
                                                           exists=True),
               help=('Input distance matrix to find nearest sample (if not '
                     'present in the coordinates'))
-def country(coords, mapping_file, output, prefix, samples, distmat):
+def country(coords, mapping_file, output, filename, sample, distmat):
     """Generates as many figures as samples in the coordinates file"""
     o = read(coords, into=OrdinationResults)
     o_id_lookup = set(o.site_ids)
@@ -171,11 +167,8 @@ def country(coords, mapping_file, output, prefix, samples, distmat):
                      index_col='#SampleID')
     # mf = mf.loc[o.site_ids]
 
-    if samples is None:
-        samples = dm.ids[:]
-    else:
-        samples = set(samples.split(',')).intersection(set(dm.ids))
-        samples = mf.loc[samples].index
+    if sample not in dm.ids:
+        raise ValueError("Sample %s not found" % sample)
 
     color_Venezuela = sns.color_palette('Paired', 12)[10]
     color_Malawi = sns.color_palette('Paired', 12)[1]
@@ -208,71 +201,72 @@ def country(coords, mapping_file, output, prefix, samples, distmat):
     grp_colors['Malawi'] = color_Malawi
     grp_colors['Venezuela'] = color_Venezuela
 
-    for sample_to_plot in samples:
-        if sample_to_plot in o_id_lookup:
-            sample = sample_to_plot
-        else:
-            # find the closest sample in the distance matrix that is in the
-            # coordinates data
-            sample = None
-            for i in dm[dm_id_lookup[sample_to_plot]].argsort():
-                if i in coord_samples_in_dm:
-                    sample = dm.ids[i]
-                    break
+    sample_to_plot = sample
 
-            # this should not ever happen
-            if sample is None:
-                raise ValueError("Unable to find a similar sample?")
+    if sample_to_plot in o_id_lookup:
+        sample = sample_to_plot
+    else:
+        # find the closest sample in the distance matrix that is in the
+        # coordinates data
+        sample = None
+        for i in dm[dm_id_lookup[sample_to_plot]].argsort():
+            if i in coord_samples_in_dm:
+                sample = dm.ids[i]
+                break
 
-        # countour plot superimposed
-        sns.kdeplot(x, y, cmap='bone')
-        sns.set_context(rc={"lines.linewidth": 0.75})
+        # this should not ever happen
+        if sample is None:
+            raise ValueError("Unable to find a similar sample?")
 
-        # change particapant's country's color to color_Highlight unless
-        # country is Venezuela or Malawi
-        if (mf.loc[sample_to_plot]['COUNTRY'] != 'Malawi') & (
-                mf.loc[sample_to_plot]['COUNTRY'] != 'Venezuela'):
-            grp_colors[mf.loc[sample_to_plot]['COUNTRY']] = color_Highlight
+    # countour plot superimposed
+    sns.kdeplot(x, y, cmap='bone')
+    sns.set_context(rc={"lines.linewidth": 0.75})
 
-        # plot each country except participant's according to colors above
-        for grp, color in grp_colors.iteritems():
-            if grp == mf.loc[sample_to_plot]['COUNTRY']:
-                continue
-            sub_coords = c_df[mf.COUNTRY == grp]
-            plt.scatter(sub_coords[0], sub_coords[1], color=color,
-                        edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
-                        alpha=ALPHA)
+    # change particapant's country's color to color_Highlight unless
+    # country is Venezuela or Malawi
+    if (mf.loc[sample_to_plot]['COUNTRY'] != 'Malawi') & (
+            mf.loc[sample_to_plot]['COUNTRY'] != 'Venezuela'):
+        grp_colors[mf.loc[sample_to_plot]['COUNTRY']] = color_Highlight
 
-        # now plot participant's country
-        grp = mf.loc[sample_to_plot]['COUNTRY']
-        color = grp_colors[grp]
+    # plot each country except participant's according to colors above
+    for grp, color in grp_colors.iteritems():
+        if grp == mf.loc[sample_to_plot]['COUNTRY']:
+            continue
         sub_coords = c_df[mf.COUNTRY == grp]
         plt.scatter(sub_coords[0], sub_coords[1], color=color,
                     edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
                     alpha=ALPHA)
 
-        # plot participant's dot
-        plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
-                    s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
-        plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
-                    s=250, edgecolor=np.asarray(grp_colors[
-                        mf.loc[sample_to_plot]['COUNTRY']])*0.6,
-                    zorder=2, lw=LINE_WIDTH_BLACK)
+    # now plot participant's country
+    grp = mf.loc[sample_to_plot]['COUNTRY']
+    color = grp_colors[grp]
+    sub_coords = c_df[mf.COUNTRY == grp]
+    plt.scatter(sub_coords[0], sub_coords[1], color=color,
+                edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
+                alpha=ALPHA)
 
-        # reset particapant's country's color to color_Western unless country
-        # is Venezuela or Malawi
-        if (mf.loc[sample_to_plot]['COUNTRY'] != 'Malawi') & (
-                mf.loc[sample_to_plot]['COUNTRY'] != 'Venezuela'):
-            grp_colors[mf.loc[sample_to_plot]['COUNTRY']] = color_Western
+    # plot participant's dot
+    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
+                color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
+                s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
+    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
+                color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
+                s=250, edgecolor=np.asarray(grp_colors[
+                    mf.loc[sample_to_plot]['COUNTRY']])*0.6,
+                zorder=2, lw=LINE_WIDTH_BLACK)
 
-        plt.axis('off')
-        my_dpi = 72
-        figsize = (1000 / my_dpi, 1000 / my_dpi)
-        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
-        plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
-        plt.close()
+    # reset particapant's country's color to color_Western unless country
+    # is Venezuela or Malawi
+    if (mf.loc[sample_to_plot]['COUNTRY'] != 'Malawi') & (
+            mf.loc[sample_to_plot]['COUNTRY'] != 'Venezuela'):
+        grp_colors[mf.loc[sample_to_plot]['COUNTRY']] = color_Western
+
+    plt.axis('off')
+    my_dpi = 72
+    figsize = (1000 / my_dpi, 1000 / my_dpi)
+    out_file = os.path.join(output, filename)
+    plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
+    plt.close()
 
 
 @mod2_pcoa.command()
@@ -285,10 +279,10 @@ def country(coords, mapping_file, output, prefix, samples, distmat):
               help='Metadata category to set color by')
 @click.option('--output', required=True, type=click.Path(exists=True,
               writable=True, resolve_path=True), help='Output directory')
-@click.option('--prefix', required=True, type=str, help='Output file prefix')
-@click.option('--samples', required=False, type=str,
-              help='Comma separated list of samples to print')
-def gradient(coords, mapping_file, color, output, prefix, samples):
+@click.option('--filename', required=True, type=str, help='Output filename')
+@click.option('--sample', required=True, type=str,
+              help='The sample to print')
+def gradient(coords, mapping_file, color, output, filename, sample):
     """Generates as many figures as samples in the coordinates file"""
     o = read(coords, into=OrdinationResults)
 
@@ -301,55 +295,50 @@ def gradient(coords, mapping_file, color, output, prefix, samples):
     mf = mf.loc[o.site_ids]
     mf[color] = mf[color].convert_objects(convert_numeric=True)
 
-    if samples is None:
-        samples = mf.index
-    else:
-        samples = set(samples.split(',')).intersection(set(o.site_ids))
-        samples = mf.loc[samples].index
+    if sample not in o.site_ids:
+        raise ValueError("Sample %s not found" % sample)
 
     numeric = mf[~pd.isnull(mf[color])]
     non_numeric = mf[pd.isnull(mf[color])]
 
     color_array = plt.cm.RdBu(numeric[color]/max(numeric[color]))
 
-    for sample in samples:
+    # plot numeric metadata as colored gradient
+    ids = numeric.index
+    x, y = c_df.loc[ids][0], c_df.loc[ids][1]
+    plt.scatter(x, y, c=numeric[color], cmap=plt.get_cmap('RdBu'),
+                alpha=ALPHA, lw=LINE_WIDTH, edgecolor=color_array*0.6)
 
-        # plot numeric metadata as colored gradient
-        ids = numeric.index
-        x, y = c_df.loc[ids][0], c_df.loc[ids][1]
-        plt.scatter(x, y, c=numeric[color], cmap=plt.get_cmap('RdBu'),
-                    alpha=ALPHA, lw=LINE_WIDTH, edgecolor=color_array*0.6)
+    # plt.colorbar()
 
-        # plt.colorbar()
+    # plot non-numeric metadata as gray
+    ids = non_numeric.index
+    x, y = c_df.loc[ids][0], c_df.loc[ids][1]
+    plt.scatter(x, y, c='0.5', alpha=ALPHA, lw=LINE_WIDTH, edgecolor='0.3')
 
-        # plot non-numeric metadata as gray
-        ids = non_numeric.index
-        x, y = c_df.loc[ids][0], c_df.loc[ids][1]
-        plt.scatter(x, y, c='0.5', alpha=ALPHA, lw=LINE_WIDTH, edgecolor='0.3')
+    # plot individual's dot
+    try:
+        color_index = numeric.index.tolist().index(sample)
+    except ValueError:
+        color_index = None
 
-        # plot individual's dot
-        try:
-            color_index = numeric.index.tolist().index(sample)
-        except ValueError:
-            color_index = None
+    if color_index is None:
+        _color = (0.5, 0.5, 0.5)
+    else:
+        _color = color_array[color_index]
 
-        if color_index is None:
-            _color = (0.5, 0.5, 0.5)
-        else:
-            _color = color_array[color_index]
+    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
+                color=_color, s=270, edgecolor='w', lw=LINE_WIDTH_WHITE)
+    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
+                color=_color, s=250, edgecolor=np.asarray(_color)*0.6,
+                lw=LINE_WIDTH_BLACK)
 
-        plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=_color, s=270, edgecolor='w', lw=LINE_WIDTH_WHITE)
-        plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                    color=_color, s=250, edgecolor=np.asarray(_color)*0.6,
-                    lw=LINE_WIDTH_BLACK)
-
-        plt.axis('off')
-        my_dpi = 72
-        figsize = (1000 / my_dpi, 1000 / my_dpi)
-        out_file = os.path.join(output, '.'.join([prefix, sample, 'pdf']))
-        plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
-        plt.close()
+    plt.axis('off')
+    my_dpi = 72
+    figsize = (1000 / my_dpi, 1000 / my_dpi)
+    out_file = os.path.join(output, filename)
+    plt.savefig(out_file, figsize=figsize, dpi=my_dpi)
+    plt.close()
 
 if __name__ == '__main__':
     mod2_pcoa()

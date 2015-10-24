@@ -177,6 +177,12 @@ paths = {
     'statics-fecal': '09/statics-fecal',
     'statics-oral': '09/statics-oral',
     'statics-skin': '09/statics-skin',
+
+    # pdf business
+    'result-pdfs': '10/result_pdfs/',
+    'result-taxa': '10/result_taxa/',
+    'successful-pdfs': '10/successful_pdfs.txt',
+    'unsuccessful-pdfs': '10/unsuccessful_pdfs.txt',
 }
 
 

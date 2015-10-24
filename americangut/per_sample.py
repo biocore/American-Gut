@@ -34,6 +34,7 @@ def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
     opts['sample_type'] = sample_type
     opts['gradient_color_by'] = gradient_color_by
     opts['chp-path'] = chp_path
+    opts['rarefaction-depth'] = agenv.get_rarefaction_depth()
 
     barchart_map = {'diet': 'DIET_TYPE',
                     'sex':  'SEX',
@@ -216,15 +217,50 @@ def taxa_summaries(opts, sample_ids):
             results[id_] = 'ID not found'
         else:
             results[id_] = None
-            taxa_path = os.path.join(_result_path(opts, id_), '%s.txt')
+            taxa_path = os.path.join(_result_path(opts, id_),
+                                     '%s.txt' % id_)
 
-            with open(taxa_path % _base_barcode(id_), 'w') as fp:
+            with open(taxa_path, 'w') as fp:
                 fp.write("#taxon\trelative_abundance\n")
 
                 v = site_table.data(id_, dense=True)
                 for sorted_v, taxa in sorted(zip(v, table_taxon_ids))[::-1]:
                     if sorted_v:
                         fp.write("%s\t%f\n" % (taxa, sorted_v))
+    return results
+
+
+def check_sequence_counts(opts, sample_ids):
+    """Errors if the sequence counts post filtering are < 1000
+
+    Parameters
+    ----------
+    opts : dict
+        A dict of relevant opts.
+
+    sample_ids : Iterable of str
+        A list of sample IDs of interest
+
+    Returns
+    -------
+    dict
+        A dict containing each sample ID and any errors observed or None if
+        no error was observed for the sample. {str: str or None}
+    """
+    results = {}
+    table = biom.load_table(opts['ag-100nt-biom'])
+    minimum_depth = int(opts['rarefaction-depth'])
+
+    for id_ in sample_ids:
+        results[id_] = None
+
+        if table.exists(id_):
+            counts = table.data(id_).sum()
+            if counts < minimum_depth:
+                results[id_] = '%d seqs after filtering for blooms' % counts
+        else:
+            results[id_] = '0 seqs after filtering for blooms'
+
     return results
 
 
@@ -273,8 +309,8 @@ def body_site_pcoa(opts, sample_ids):
                         "--coords %s" % coords,
                         "--mapping_file %s" % opts['ag-cleaned-md'],
                         "--output %(result_path)s",
-                        "--prefix Figure_1",
-                        "--samples %(id)s"])
+                        "--filename figure1.pdf",
+                        "--sample %(id)s"])
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
 
@@ -301,8 +337,8 @@ def country_pcoa(opts, sample_ids):
                         "--coords %s" % coords,
                         "--mapping_file %s" % opts['ag-gg-cleaned-md'],
                         "--output %(result_path)s",
-                        "--prefix Figure_2",
-                        "--samples %(id)s"])
+                        "--filename figure2.pdf",
+                        "--sample %(id)s"])
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
 
@@ -328,9 +364,9 @@ def gradient_pcoa(opts, sample_ids):
                         "--coords %s" % coords,
                         "--mapping_file %s" % opts['ag-L2-taxa-md'],
                         "--output %(result_path)s",
-                        "--prefix Figure_3",
+                        "--filename figure3.pdf",
                         "--color %s" % opts['gradient_color_by'],
-                        "--samples %(id)s"])
+                        "--sample %(id)s"])
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
 
@@ -434,10 +470,11 @@ def stage_per_sample_specific_statics(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     result = {}
+    statics_src = opts['statics-%s' % opts['sample_type'].lower()]
     for id_ in sample_ids:
         result[id_] = None
         path = _result_path(opts, id_)
-        template_path = os.path.join(path, 'template.tex')
+        template_path = os.path.join(path, id_ + '.tex')
         statics_path = os.path.join(path, 'statics')
 
         try:
@@ -447,7 +484,7 @@ def stage_per_sample_specific_statics(opts, sample_ids):
             continue
 
         try:
-            os.symlink(opts['statics-fecal'], statics_path)
+            os.symlink(statics_src, statics_path)
         except:
             result[id_] = "Cannot symlink for statics."
 

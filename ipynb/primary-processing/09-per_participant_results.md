@@ -45,7 +45,8 @@ We're also going to load up the American Gut mapping file so we can determine wh
 And finally, these next blocks of code support the per-sample type processing. First, for every sample type, there are common outputs to produce, such as taxonomy summaries. Second, there are some functions that are specific to a sample type. And last, there are a few sample specific options.
 
 ```python
->>> common_functions = [agps.per_sample_directory,
+>>> common_functions = [agps.check_sequence_counts,
+...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
 ...                     agps.taxa_summaries,
 ...                     agps.taxon_significance,
@@ -97,6 +98,10 @@ And we'll end with some numbers on the number of successful and unsuccessful sam
 ```python
 >>> print "Number of successfully processed samples: %d" % len([l for l in open(successful_ids) if not l.startswith('#')])
 >>> print "Number of unsuccessfully processed samples: %d" % len([l for l in open(unsuccessful_ids) if not l.startswith('#')])
+```
+
+```python
 >>> if agenv.is_test_env():
-...     assert len([l for l in open(unsuccessful_ids) if not l.startswith('#')]) == 0
+...     # in the test environment, 4 samples lack sufficient sequence for results
+...     assert len([l for l in open(unsuccessful_ids) if not l.startswith('#')]) == 4
 ```
