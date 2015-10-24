@@ -232,6 +232,7 @@ def fetch_seqs_fastq(url):
 
     return gzip.GzipFile(fileobj=res)
 
+
 def fetch_metadata_xml(accession):
     """Fetch sample metadata"""
     url_fmt = "http://www.ebi.ac.uk/ena/data/view/%(accession)s&display=xml"
@@ -253,6 +254,7 @@ def fetch_metadata_xml(accession):
     metadata['Description'] = description.text.strip('" ')
 
     return metadata
+
 
 def fetch_study(study_accession, base_dir):
     """Fetch and dump a study
@@ -295,8 +297,8 @@ def fetch_study(study_accession, base_dir):
                 for id_, seq, qual in parse_fastq(fetch_seqs_fastq(fastq_url)):
                     fasta_out.write(">%s\n%s\n" % (id_, seq))
             # write mapping xml
-            url_fmt = "http://www.ebi.ac.uk/ena/data/view/" +\
-              "%(accession)s&display=xml"
+            url_fmt = "http://www.ebi.ac.uk/ena/data/view/" + \
+                      "%(accession)s&display=xml"
             res = fetch_url(url_fmt % {'accession': sample})
             with open(metadata_path, 'w') as md_f:
                 md_f.write(res.read())

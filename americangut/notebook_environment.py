@@ -12,7 +12,8 @@ from americangut.util import get_existing_path
 
 
 _TEST_ENV = os.environ.get('AG_TESTING') == 'True'
-_EBI_ACCESSIONS = ['ERP012511']
+#_EBI_ACCESSIONS = ['ERP012511']
+_EBI_ACCESSIONS = ['ERP012803']
 _TEST_ACCESSIONS = ['ag_testing']
 
 
