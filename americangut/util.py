@@ -506,9 +506,6 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
         # simplify the country
         if country.startswith('GAZ:'):
             new_line[country_idx] = country.split(':', 1)[-1]
-        else:
-            errors[('unknown_country', country)].append(sample_id)
-            continue
 
         new_line.append(body_site)
         new_line.append(exp_acronym)
