@@ -12,7 +12,7 @@ from americangut.util import get_existing_path
 
 
 _TEST_ENV = os.environ.get('AG_TESTING') == 'True'
-#_EBI_ACCESSIONS = ['ERP012511']
+# _EBI_ACCESSIONS = ['ERP012511']
 _EBI_ACCESSIONS = ['ERP012803']
 _TEST_ACCESSIONS = ['ag_testing']
 
@@ -279,7 +279,6 @@ def get_pgp():
     """Get the PGP 100nt table and mapping"""
     return _get_data('PGP', 'PGP_100nt')
 
-
 def get_global_gut():
     """Get the Global Gut table and mapping"""
     return _get_data('GG', 'GG_100nt')
@@ -371,7 +370,7 @@ def get_files(rootdir, suffix):
     for root, dirs, files in os.walk(rootdir):
         for _file in files:
             if _file.endswith(".%s" % suffix):
-                 fps.append(os.path.join(root, _file))
+                fps.append(os.path.join(root, _file))
     return fps
 
 

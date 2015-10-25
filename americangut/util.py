@@ -299,7 +299,8 @@ def from_xmls_to_mapping_file(xml_paths, mapping_fp):
         md_f.write('\t'.join(header))
         md_f.write('\n')
         for sampleid, values in all_md.iteritems():
-            to_write = [values.get(k, "no_data").encode('utf-8') for k in header]
+            to_write = [values.get(k, "no_data").encode('utf-8')
+                        for k in header]
             to_write.insert(0, sampleid)
             md_f.write('\t'.join(to_write))
             md_f.write('\n')
