@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 from StringIO import StringIO
 from unittest import TestCase, main
 
@@ -7,7 +8,7 @@ from numpy import array
 from biom import Table
 
 from americangut.util import (
-    slice_mapping_file, parse_mapping_file,
+    slice_mapping_file,parse_mapping_file,
     verify_subset, concatenate_files, trim_fasta, count_samples,
     count_seqs, count_unique_participants, clean_and_reformat_mapping
 )
@@ -19,7 +20,6 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
-
 
 class UtilTests(TestCase):
     def test_count_samples(self):
