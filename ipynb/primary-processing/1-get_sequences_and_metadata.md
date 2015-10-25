@@ -16,21 +16,23 @@ First, let's setup and sanity check our environment.
 Now that we have what appears to be a sane environment, let's setup a variable that defines the American Gut accessions.
 
 ```python
->>> accessions = agenv.get_accessions()
+>>> study_accessions = agenv.get_study_accessions()
 ```
 
 Now let's actually fetch the study data. `fetch_study` will only pull down accessions that do not appear in the current working directory.
 
 ```python
->>> for accession in accessions:
+>>> for accession in study_accessions:
 ...     agu.fetch_study(accession, chp_path)
 ```
 
 Now that we have the sequences and sample information, let's merge all the data into a single file to ease downstream processing.
 
 ```python
->>> sample_sequence_files = ' '.join(agenv.get_files(chp_path, suffix='fna'))
->>> !cat $sample_sequence_files > $agp_sequences
+>>> sample_sequence_files = agenv.get_files(chp_path, suffix='fna')
+>>> for f in sample_sequence_files:
+...     !cat $f >> $agp_sequences
+...
 >>> mapping_files = agenv.get_files(chp_path, suffix='txt')
 >>> agu.from_xmls_to_mapping_file(mapping_files, agp_metadata)
 ```
