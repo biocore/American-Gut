@@ -138,7 +138,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
-        filename = pjoin(output_dir, 'piechart.pdf')
+        filename = pjoin(output_dir, 'figure2.pdf')
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,
