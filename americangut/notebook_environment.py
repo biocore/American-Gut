@@ -11,8 +11,6 @@ from americangut.results_utils import get_repository_dir
 from americangut.util import get_existing_path
 
 
-_TEST_ENV = os.environ.get('AG_TESTING') == 'True'
-# _EBI_ACCESSIONS = ['ERP012511']
 _EBI_ACCESSIONS = ['ERP012803']
 _TEST_ACCESSIONS = ['ag_testing']
 
@@ -223,7 +221,7 @@ def get_sortmerna_index():
 
 def get_rarefaction_depth():
     """Return the rarefaction depth to use"""
-    if _TEST_ENV:
+    if ag.is_test_env():
         return "100"
     else:
         return "1000"
@@ -239,7 +237,7 @@ def get_reference_set():
     str
         The file path to the reference taxonomy.
     """
-    if _TEST_ENV:
+    if ag.is_test_env():
         repo = get_repository_dir()
         ref_seqs = os.path.join(repo, 'tests/data/otus.fna')
         ref_tax = os.path.join(repo, 'tests/data/otus.txt')
@@ -310,7 +308,7 @@ def _get_data(data_dir, tag):
         If the filepaths are not accessible
     """
     repo = get_repository_dir()
-    data = 'tests/data' if _TEST_ENV else 'data'
+    data = 'tests/data' if ag.is_test_env() else 'data'
     base = os.path.join(repo, data)
 
     table = os.path.join(base, data_dir, '%s.biom' % tag)
@@ -324,7 +322,7 @@ def _get_data(data_dir, tag):
     return table, mapping
 
 
-def get_accessions():
+def get_study_accessions():
     """Get the accessions to use, or redirect to test data
 
     Returns
@@ -339,7 +337,7 @@ def get_accessions():
     If $AG_TESTING == 'True', then the accessions returned will
     correspond to the test dataset.
     """
-    if _TEST_ENV:
+    if ag.is_test_env():
         _stage_test_accessions()
         return _TEST_ACCESSIONS[:]
     else:
@@ -402,8 +400,6 @@ def _stage_test_accessions():
     """
     repo = get_repository_dir()
     for acc in _TEST_ACCESSIONS:
-        src_fna = os.path.join(repo, 'tests/data/%s.fna' % acc)
-        src_map = os.path.join(repo, 'tests/data/%s.txt' % acc)
-
-        shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '1'))
-        shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '1'))
+        src = os.path.join(repo, 'tests/data/%s' % acc)
+        dst = os.path.join(ag.WORKING_DIR, '1/%s' % acc)
+        shutil.copytree(src, dst)

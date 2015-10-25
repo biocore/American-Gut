@@ -325,10 +325,9 @@ def fetch_study(study_accession, base_dir):
     ----
     If sample_accession is None, then the entire study will be fetched
     """
+    if ag.is_test_env():
+        return
 
-    # if os.path.exists(fasta_path) and os.path.exists(metadata_path):
-    #     # it appears we already have the accession, so short circuit
-    #     return
     study_dir = os.path.join(base_dir, study_accession)
     if not os.path.exists(study_dir):
         os.mkdir(study_dir)
