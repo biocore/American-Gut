@@ -5,3 +5,4 @@ seaborn
 qiime
 runipy
 ipymd
+future==0.15.2

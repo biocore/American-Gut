@@ -28,9 +28,9 @@ _data_files = [
 
 # These are the Latex templates for the different results types
 _templates = {
-    'fecal': ('template_gut.tex', 'macros_gut.tex'),
-    'oral': ('template_oralskin.tex', 'macros_oralskin.tex'),
-    'skin': ('template_oralskin.tex', 'macros_oralskin.tex')
+    'fecal': 'template_gut.tex',
+    'oral': 'template_oralskin.tex',
+    'skin': 'template_oralskin.tex'
 }
 
 
@@ -94,9 +94,9 @@ def get_repository_latex_pdfs(sample_type):
 def stage_static_latex(sample_type, working_dir):
     latex_dir = get_repository_latex()
 
-    for item in _templates[sample_type.lower()]:
-        src = get_path(latex_dir, item)
-        shutil.copy(src, working_dir)
+    item = _templates[sample_type.lower()]
+    src = get_path(latex_dir, item)
+    shutil.copy(src, working_dir)
 
 
 def stage_static_pdfs(sample_type, working_dir):
