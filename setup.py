@@ -57,4 +57,10 @@ setup(name='americangut',
           'ipymd'
       ],
       extras_require={'test': ["nose", "pep8", "flake8"]},
-      classifiers=classifiers)
+      classifiers=classifiers,
+      package_data={'americangut': ['tests',
+                                    'tests/data',
+                                    'latex',
+                                    'latex/pdfs-gut',
+                                    'latex/pdfs-oralskin']}
+      )
