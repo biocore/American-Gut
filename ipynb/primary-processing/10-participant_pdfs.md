@@ -37,7 +37,9 @@
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> def aggregate(opts, ids):
-...     cmd_fmt = "mv %(result_path)s/%(id)s.{txt,pdf} " + opts['result-pdfs']
+...     cmd_fmt = "mv %(result_path)s/%(id)s.pdf " + opts['result-pdfs']
+...     cmd_fmt += '; '
+...     cmd_fmt += "mv %(result_path)s/%(id)s.txt " + opts['result-taxa']
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> opts = agps.create_opts('sample-agnostic', chp_path, None, [])
