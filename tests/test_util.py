@@ -7,7 +7,7 @@ from numpy import array
 from biom import Table
 
 from americangut.util import (
-    slice_mapping_file,parse_mapping_file,
+    slice_mapping_file, parse_mapping_file,
     verify_subset, concatenate_files, trim_fasta, count_samples,
     count_seqs, count_unique_participants, clean_and_reformat_mapping
 )
