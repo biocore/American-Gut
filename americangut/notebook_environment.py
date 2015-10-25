@@ -347,6 +347,34 @@ def get_accessions():
         return _EBI_ACCESSIONS[:]
 
 
+def get_files(rootdir, suffix):
+    """Get the filepaths with a given suffix
+
+    Parameters
+    ----------
+    rootdir : str
+        The root directory to look under
+
+    Returns
+    -------
+    fps : list, str
+        List of file paths for all of the
+        sample fasta files
+
+    Note
+    ----
+    This only looks at the directory names under the
+    root directory.  This assumes that the sample names
+    correspond to the folders within the base folder
+    """
+    fps = []
+    for root, dirs, files in os.walk(rootdir):
+        for _file in files:
+            if _file.endswith(".%s" % suffix):
+                 fps.append(os.path.join(root, _file))
+    return fps
+
+
 def get_bloom_sequences():
     """Get the filepath to the bloom sequences
 

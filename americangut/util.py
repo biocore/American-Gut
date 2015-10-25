@@ -237,12 +237,31 @@ def fetch_metadata_xml(accession):
     """Fetch sample metadata"""
     url_fmt = "http://www.ebi.ac.uk/ena/data/view/%(accession)s&display=xml"
     res = fetch_url(url_fmt % {'accession': accession})
+    metadata = xml_to_dict(res)
+    return metadata
 
-    root = etree.parse(res).getroot()
+
+def xml_to_dict(xml_fp):
+    """ Converts xml string to a dictionary
+
+    Parameters
+    ----------
+    xml_fp : str
+       xml file ath
+
+    Returns
+    -------
+    metadata : dict
+       dictionary where the metadata headers are keys
+       and the values correspond participant survey results
+    """
+    root = etree.parse(xml_fp).getroot()
     sample = root.getchildren()[0]
-    attributes = sample.find('SAMPLE_ATTRIBUTES')
-
     metadata = {}
+    identifiers = sample.find('IDENTIFIERS')
+    barcode = identifiers.getchildren()[2].text.split(':')[-1]
+    metadata['#SampleID'] = barcode
+    attributes = sample.find('SAMPLE_ATTRIBUTES')
     for node in attributes.iterfind('SAMPLE_ATTRIBUTE'):
         tag, value = node.getchildren()
         if value.text is None:
@@ -252,8 +271,38 @@ def fetch_metadata_xml(accession):
 
     description = sample.find('DESCRIPTION')
     metadata['Description'] = description.text.strip('" ')
-
     return metadata
+
+
+def from_xmls_to_mapping_file(xml_paths, mapping_fp):
+    """ Create a mapping file from multiple xml strings
+
+    Accepts a list of xml paths, reads them and
+    converts them to a mapping file
+
+    Parameters
+    ----------
+    xml_paths : list, file_paths
+       List of file paths for xml files
+    mapping_fp : str
+       File path for the resulting mapping file
+    """
+    all_md = {}
+    all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
+    for xml_fp in xml_paths:
+        md = xml_to_dict(xml_fp)
+        all_md[md['#SampleID']] = md
+        all_cols.update(md)
+    with open(mapping_fp, 'w') as md_f:
+        header = list(all_cols)
+        md_f.write('#SampleID\t')
+        md_f.write('\t'.join(header))
+        md_f.write('\n')
+        for sampleid, values in all_md.iteritems():
+            to_write = [values.get(k, "no_data").encode('utf-8') for k in header]
+            to_write.insert(0, sampleid)
+            md_f.write('\t'.join(to_write))
+            md_f.write('\n')
 
 
 def fetch_study(study_accession, base_dir):
