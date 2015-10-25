@@ -97,7 +97,7 @@ class PerSampleTests(TestCase):
         exp = {'test': ('FAILED (Error: Invalid value for "--coords": Path '
                         '"foo" does not exist.): mod2_pcoa.py body_site '
                         '--coords foo --mapping_file bar --output baz/test '
-                        '--prefix Figure_1 --samples test')}
+                        '--filename figure1.pdf --sample test')}
         ids = ['test']
         opts = {'per-sample-results': 'baz',
                 'ag-pgp-hmp-gg-100nt-1k-unifrac-pc': 'foo',
@@ -110,8 +110,8 @@ class PerSampleTests(TestCase):
         exp = {'test': ('FAILED (Error: Invalid value for "--distmat": Path '
                         '"foo" does not exist.): mod2_pcoa.py country '
                         '--distmat foo --coords bar --mapping_file baz '
-                        '--output foobar/test --prefix Figure_2 '
-                        '--samples test')}
+                        '--output foobar/test --filename figure2.pdf '
+                        '--sample test')}
         ids = ['test']
         opts = {'per-sample-results': 'foobar',
                 'ag-gg-100nt-1k-subsampled-unifrac-pc': 'bar',
@@ -125,8 +125,8 @@ class PerSampleTests(TestCase):
         exp = {'test': ('FAILED (Error: Invalid value for "--coords": Path '
                         '"foo" does not exist.): mod2_pcoa.py gradient '
                         '--coords foo --mapping_file bar --output baz/test '
-                        '--prefix Figure_3 --color foobar '
-                        '--samples test')}
+                        '--filename figure3.pdf --color foobar '
+                        '--sample test')}
         ids = ['test']
         opts = {'per-sample-results': 'baz',
                 'ag-100nt-what-1k-unifrac-pc': 'foo',
@@ -191,7 +191,8 @@ class PerSampleTests(TestCase):
     def test_stage_per_sample_specific_statics(self):
         opts = {'chp-path': '.',
                 'per-sample-results': '',
-                'sample_type': 'fecal'}
+                'sample_type': 'fecal',
+                'statics-fecal': 'stuff'}
         ids = ['foo']
         exp = {'foo': "Cannot stage template."}
         obs = agps.stage_per_sample_specific_statics(opts, ids)

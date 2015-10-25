@@ -182,8 +182,8 @@ def _iter_ids_over_system_call(cmd_fmt, sample_ids, opts):
         stdout, stderr, return_value = qiime_system_call(cmd)
 
         if return_value != 0:
-            msg = stderr.splitlines()[-1]
-            results[id_] = 'FAILED (%s): %s' % (msg if msg else '', cmd)
+            msg = stderr.splitlines()
+            results[id_] = 'FAILED (%s): %s' % (msg[-1] if msg else '', cmd)
         else:
             results[id_] = None
 
