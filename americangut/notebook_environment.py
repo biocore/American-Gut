@@ -403,4 +403,8 @@ def _stage_test_accessions():
     for acc in _TEST_ACCESSIONS:
         src = os.path.join(repo, 'tests/data/%s' % acc)
         dst = os.path.join(ag.WORKING_DIR, '1/%s' % acc)
+
+        if not os.path.exists(os.path.join(ag.WORKING_DIR, '1')):
+            os.mkdir('1')
+
         shutil.copytree(src, dst)
