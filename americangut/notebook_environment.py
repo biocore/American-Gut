@@ -277,6 +277,7 @@ def get_pgp():
     """Get the PGP 100nt table and mapping"""
     return _get_data('PGP', 'PGP_100nt')
 
+
 def get_global_gut():
     """Get the Global Gut table and mapping"""
     return _get_data('GG', 'GG_100nt')
