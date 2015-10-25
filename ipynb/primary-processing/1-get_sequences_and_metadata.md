@@ -7,7 +7,7 @@ First, let's setup and sanity check our environment.
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('1')	
+>>> chp_path = agenv.activate('1')
 ...
 >>> agp_sequences = agu.get_new_path(agenv.paths['raw-sequences'])
 >>> agp_metadata  = agu.get_new_path(agenv.paths['raw-metadata'])
@@ -23,7 +23,7 @@ Now let's actually fetch the study data. `fetch_study` will only pull down acces
 
 ```python
 >>> for accession in accessions:
-...    agu.fetch_study(accession, chp_path)
+...     agu.fetch_study(accession, chp_path)
 ```
 
 Now that we have the sequences and sample information, let's merge all the data into a single file to ease downstream processing.
