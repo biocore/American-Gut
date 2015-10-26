@@ -11,8 +11,7 @@ from americangut.results_utils import get_repository_dir
 from americangut.util import get_existing_path
 
 
-_TEST_ENV = os.environ.get('AG_TESTING') == 'True'
-_EBI_ACCESSIONS = ['ERP012511']
+_EBI_ACCESSIONS = ['ERP012803']
 _TEST_ACCESSIONS = ['ag_testing']
 
 
@@ -231,14 +230,10 @@ def get_sortmerna_index():
 
 def get_rarefaction_depth():
     """Return the rarefaction depth to use"""
-    if _TEST_ENV:
+    if ag.is_test_env():
         return "100"
     else:
         return "1000"
-
-
-def is_test_env():
-    return _TEST_ENV
 
 
 def get_reference_set():
@@ -251,7 +246,7 @@ def get_reference_set():
     str
         The file path to the reference taxonomy.
     """
-    if _TEST_ENV:
+    if ag.is_test_env():
         repo = get_repository_dir()
         ref_seqs = os.path.join(repo, 'tests/data/otus.fna')
         ref_tax = os.path.join(repo, 'tests/data/otus.txt')
@@ -323,7 +318,7 @@ def _get_data(data_dir, tag):
         If the filepaths are not accessible
     """
     repo = get_repository_dir()
-    data = 'tests/data' if _TEST_ENV else 'data'
+    data = 'tests/data' if ag.is_test_env() else 'data'
     base = os.path.join(repo, data)
 
     table = os.path.join(base, data_dir, '%s.biom' % tag)
@@ -337,7 +332,7 @@ def _get_data(data_dir, tag):
     return table, mapping
 
 
-def get_accessions():
+def get_study_accessions():
     """Get the accessions to use, or redirect to test data
 
     Returns
@@ -352,11 +347,41 @@ def get_accessions():
     If $AG_TESTING == 'True', then the accessions returned will
     correspond to the test dataset.
     """
-    if _TEST_ENV:
+    if ag.is_test_env():
         _stage_test_accessions()
         return _TEST_ACCESSIONS[:]
     else:
         return _EBI_ACCESSIONS[:]
+
+
+def get_files(rootdir, suffix):
+    """Get the filepaths with a given suffix
+
+    Parameters
+    ----------
+    rootdir : str
+        The root directory to look under
+    suffix : str
+        The file suffix of the files to keep
+
+    Returns
+    -------
+    fps : list, str
+        List of file paths for all of the
+        sample fasta files
+
+    Note
+    ----
+    This only looks at the directory names under the
+    root directory.  This assumes that the sample names
+    correspond to the folders within the base folder
+    """
+    fps = []
+    for root, dirs, files in os.walk(rootdir):
+        for _file in files:
+            if _file.endswith(".%s" % suffix):
+                fps.append(os.path.join(root, _file))
+    return fps
 
 
 def get_bloom_sequences():
@@ -387,8 +412,10 @@ def _stage_test_accessions():
     """
     repo = get_repository_dir()
     for acc in _TEST_ACCESSIONS:
-        src_fna = os.path.join(repo, 'tests/data/%s.fna' % acc)
-        src_map = os.path.join(repo, 'tests/data/%s.txt' % acc)
+        src = os.path.join(repo, 'tests/data/%s' % acc)
+        dst = os.path.join(ag.WORKING_DIR, '01/%s' % acc)
 
-        shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '01'))
-        shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '01'))
+        if not os.path.exists(os.path.join(ag.WORKING_DIR, '01')):
+            os.mkdir('01')
+
+        shutil.copytree(src, dst)

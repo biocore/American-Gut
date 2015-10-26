@@ -16,31 +16,25 @@ First, let's setup and sanity check our environment.
 Now that we have what appears to be a sane environment, let's setup a variable that defines the American Gut accessions.
 
 ```python
->>> accessions = agenv.get_accessions()
+>>> study_accessions = agenv.get_study_accessions()
 ```
 
 Now let's actually fetch the study data. `fetch_study` will only pull down accessions that do not appear in the current working directory.
 
 ```python
->>> for accession in accessions:
+>>> for accession in study_accessions:
 ...     agu.fetch_study(accession, chp_path)
 ```
 
 Now that we have the sequences and sample information, let's merge all the data into a single file to ease downstream processing.
 
 ```python
->>> chp_base = os.path.split(chp_path)[-1]
->>> form_path = lambda acc, ext: agenv.get_existing_path(os.path.join(chp_base, '%s.%s' % (acc, ext)))
+>>> sample_sequence_files = agenv.get_files(chp_path, suffix='fna')
+>>> for f in sample_sequence_files:
+...     !cat $f >> $agp_sequences
 ...
->>> bash_compatible_sequence_files = ' '.join([form_path(acc, 'fna') for acc in accessions])
->>> !cat $bash_compatible_sequence_files > $agp_sequences
-...
->>> if len(accessions) > 1:
-...     qiime_compatible_mapping_files = ','.join([form_path(acc, 'txt') for acc in accessions])
-...     !merge_mapping_files.py -m $qiime_compatible_mapping_files -o $agp_metadata
->>> else:
-...     src = form_path(accessions[0], 'txt')
-...     !cp $src $agp_metadata
+>>> mapping_files = agenv.get_files(chp_path, suffix='txt')
+>>> agu.from_xmls_to_mapping_file(mapping_files, agp_metadata)
 ```
 
 And finally, let's verify that the files we expect were created.
