@@ -91,16 +91,15 @@ American Gut analyses are distributed under a BSD license. Please also provide a
 <strong>Copyright</strong>: Copyright American Gut Project, 2015<br>
 </blockquote>
 
-**Test formatting** 
 
-<!--You may also add the following optional information:
+You may also add the following optional information:
 
 * Author name
 * Author contact (i.e. email, twiter)
 * Last update
 
 
-### Table of Contents
+<!--### Table of Contents
 Describe the major sections in the notebook. We recomend using the document tools from the [ICalico Project](http://calicoproject.org/ICalico) to create a table of contents from the headers in the notebook.
 
 ### Introduction
@@ -151,4 +150,3 @@ A numbered list of references used in the document should be provided. The in-te
 
 If you're new to ``git``, you'll probably find [gitref.org](http://gitref.org/) helpful.
 -->
-
