@@ -28,7 +28,7 @@
 ```
 
 ```python
->>> ids = pd.read_csv(successful_ids, sep='\t', dtype=str, index_col='#SampleID').index
+>>> ids = pd.read_csv(successful_ids, sep='\t', dtype=str)['#SampleID']
 ```
 
 ```python
@@ -37,7 +37,8 @@
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> def aggregate(opts, ids):
-...     cmd_fmt = "mv %(result_path)s/%(id)s.pdf " + opts['result-pdfs']
+...     cmd_fmt = "echo '\n\def\yourname{unidentified}\n' >> %(result_path)s/macros.tex;" 
+...     cmd_fmt += "mv %(result_path)s/%(id)s.pdf " + opts['result-pdfs']
 ...     cmd_fmt += '; '
 ...     cmd_fmt += "mv %(result_path)s/%(id)s.txt " + opts['result-taxa']
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
