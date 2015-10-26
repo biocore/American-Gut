@@ -7,7 +7,7 @@ First, let's setup and sanity check our environment.
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('1')
+>>> chp_path = agenv.activate('01')
 ...
 >>> agp_sequences = agu.get_new_path(agenv.paths['raw-sequences'])
 >>> agp_metadata  = agu.get_new_path(agenv.paths['raw-metadata'])
@@ -29,7 +29,8 @@ Now let's actually fetch the study data. `fetch_study` will only pull down acces
 Now that we have the sequences and sample information, let's merge all the data into a single file to ease downstream processing.
 
 ```python
->>> form_path = lambda acc, ext: agenv.get_existing_path(os.path.join('1', '%s.%s' % (acc, ext)))
+>>> chp_base = os.path.split(chp_path)[-1]
+>>> form_path = lambda acc, ext: agenv.get_existing_path(os.path.join(chp_base, '%s.%s' % (acc, ext)))
 ...
 >>> bash_compatible_sequence_files = ' '.join([form_path(acc, 'fna') for acc in accessions])
 >>> !cat $bash_compatible_sequence_files > $agp_sequences

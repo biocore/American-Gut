@@ -8,7 +8,7 @@ Some of the per-results figures require various slices and perspectives of the d
 ...
 >>> import qiime_default_reference as qdr
 ...
->>> chp_path = agenv.activate('8')
+>>> chp_path = agenv.activate('08')
 ```
 
 Let's make sure we have the paths we need.

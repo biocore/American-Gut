@@ -8,7 +8,7 @@ In order to provide taxonomy information for participants, we need to summarize 
 ...
 >>> import qiime_default_reference as qdr
 ...
->>> chp_path = agenv.activate('7')
+>>> chp_path = agenv.activate('07')
 ```
 
 For this notebook, we only need a single input file.
