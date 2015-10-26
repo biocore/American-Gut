@@ -4,7 +4,7 @@ import traceback
 import sys
 from functools import partial
 
-
+import americangut as ag
 import americangut.results_utils as agru
 import americangut.notebook_environment as agenv
 
@@ -43,7 +43,7 @@ def dispatcher(success_fp, fail_fp, partitions):
 
         {str: list} <- function(list of str)
     """
-    if agenv.is_test_env():
+    if ag.is_test_env():
         logger = mp.log_to_stderr()
         logger.setLevel(logging.INFO)
 
