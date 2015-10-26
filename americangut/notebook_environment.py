@@ -236,10 +236,6 @@ def get_rarefaction_depth():
         return "1000"
 
 
-def is_test_env():
-    return _TEST_ENV
-
-
 def get_reference_set():
     """Get the reference set to use for OTU picking
 
