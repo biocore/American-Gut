@@ -11,6 +11,11 @@ _TEST_ENV = os.environ.get('AG_TESTING') == 'True'
 def is_test_env():
     return _TEST_ENV
 
+
+def staged_raw_data():
+    """Get the path of staged raw data or None"""
+    return os.environ.get('AG_RAW_DATA')
+
 __version__ = "0.0.1"
 
 __all__ = ['WORKING_DIR']

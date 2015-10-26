@@ -377,7 +377,7 @@ def get_files(rootdir, suffix):
     correspond to the folders within the base folder
     """
     fps = []
-    for root, dirs, files in os.walk(rootdir):
+    for root, dirs, files in os.walk(rootdir, followlinks=True):
         for _file in files:
             if _file.endswith(".%s" % suffix):
                 fps.append(os.path.join(root, _file))
