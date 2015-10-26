@@ -88,9 +88,12 @@ Jupyter Notebooks should more or less follow the outline of a paper.
 American Gut analyses are distributed under a BSD license. Please also provide a data of analysis. Typical text is 
 
 <blockquote><strong>License</strong>: BSD<br>
-<strong>Copyright</strong>: Copyright American Gut Project, 2015</blockquote>
+<strong>Copyright</strong>: Copyright American Gut Project, 2015<br>
+</blockquote>
 
-You may also add the following optional information:
+**Test formatting** 
+
+<!--You may also add the following optional information:
 
 * Author name
 * Author contact (i.e. email, twiter)
@@ -147,5 +150,5 @@ A numbered list of references used in the document should be provided. The in-te
 # Getting help with git
 
 If you're new to ``git``, you'll probably find [gitref.org](http://gitref.org/) helpful.
-
+-->
 
