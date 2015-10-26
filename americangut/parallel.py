@@ -1,7 +1,30 @@
 import multiprocessing as mp
+import logging
+import traceback
+import sys
+from functools import partial
+
 
 import americangut.results_utils as agru
 import americangut.notebook_environment as agenv
+
+
+def run_functor(functor, *args, **kwargs):
+    """
+    Given a functor, run it and return its result. We can use this with
+    multiprocessing.map and map it over a list of job functors to do them.
+
+    Handles getting more than multiprocessing's pitiful exception output
+
+    This function was derived from:
+    http://stackoverflow.com/a/16618842/19741
+    """
+    try:
+        # This is where you do your actual work
+        return functor(*args, **kwargs)
+    except:
+        # Put all exception text into an exception and raise that
+        raise Exception("".join(traceback.format_exception(*sys.exc_info())))
 
 
 def dispatcher(success_fp, fail_fp, partitions):
@@ -20,13 +43,18 @@ def dispatcher(success_fp, fail_fp, partitions):
 
         {str: list} <- function(list of str)
     """
+    if agenv.is_test_env():
+        logger = mp.log_to_stderr()
+        logger.setLevel(logging.INFO)
+
     pool = mp.Pool(processes=agenv.get_cpu_count())
 
     success_fp.write('%s\n' % '#SampleID')
     fail_fp.write('%s\t%s\n' % ('#SampleID', 'Error(s)'))
 
     for func, ids in partitions:
-        for success_details in pool.map(func, list(agru.chunk_list(ids))):
+        functor = partial(run_functor, func)
+        for success_details in pool.map(functor, list(agru.chunk_list(ids))):
             for id_, detail in success_details.items():
                 if detail:
                     fail_fp.write("%s\t%s\n" % (id_, '\t'.join(detail)))

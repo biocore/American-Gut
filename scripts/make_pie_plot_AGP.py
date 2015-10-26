@@ -45,10 +45,6 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         naming convention PIECHART_<SAMPLEID>.pdf.
     """
 
-    # Creates the text around hte file name
-    FILENAME_BEFORE = 'piechart_'
-    FILENAME_AFTER = '.pdf'
-
     # Handles string cleaning
     RENDER = 'LATEX'
     UNCLASSIFIED = False
@@ -78,7 +74,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     LEG_FONT.set_size(28)
     LEG_FONT.set_family('sans-serif')
     # Sets the general font properties
-    use_latex = True
+    use_latex = False
     rc_font_family = 'sans-serif'
     rc_font = ['Helvetica', 'Arial']
 
@@ -95,6 +91,10 @@ def main(tax_table, output_dir, samples_to_analyze=None):
     (tree, all_taxa) = build_tree_from_taxontable(tax_table)
 
     # Sets up samples for which tables are being generated
+    if len(samples_to_analyze) > 1:
+        # TODO: make the rest of the code reflect this...
+        raise ValueError("SCRIPT NO LONGER SUPPORTS MULTIPLE SAMPLES")
+
     if samples_to_analyze is not None:
         samples_to_test = samples_to_analyze
     else:
@@ -117,9 +117,9 @@ def main(tax_table, output_dir, samples_to_analyze=None):
                                                                  all_taxa,
                                                                  RARE_THRESH):
         # abund_fun = lambda v, i, md: i in all_taxa[samp]
-        filtered_table = tax_table.filterObservations(filt_fun)
-        sample_data = filtered_table.sampleData(samp)
-        taxa = filtered_table.ObservationIds
+        filtered_table = tax_table.filter(filt_fun, axis='observation')
+        sample_data = filtered_table.data(samp)
+        taxa = filtered_table.ids(axis='observation')
 
         # Calculates abundance and limits to the top n samples.
         abund_rank = calculate_abundance(sample=sample_data,
@@ -138,8 +138,7 @@ def main(tax_table, output_dir, samples_to_analyze=None):
         sample_freq.append(1-sum(sample_freq))
 
         # Sets up the sample filename
-        filename = pjoin(output_dir, '%s%s%s' % (FILENAME_BEFORE, samp,
-                                                 FILENAME_AFTER))
+        filename = pjoin(output_dir, 'figure2.pdf')
 
         # Creates the pie chart
         render_single_pie(data_vec=sample_freq,

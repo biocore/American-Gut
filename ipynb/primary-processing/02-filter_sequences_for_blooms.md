@@ -13,7 +13,7 @@ The filtering is only intended to be applied to fecal data. As such, this notebo
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('2')
+>>> chp_path = agenv.activate('02')
 ```
 
 Next, we'll establish the paths we will be creating.

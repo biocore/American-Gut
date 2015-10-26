@@ -7,7 +7,7 @@ Pick OTUs (for full and trimmed data) at approximately genus level resolution (9
 >>> import americangut.util as agu
 >>> import americangut.notebook_environment as agenv
 ...
->>> chp_path = agenv.activate('3')
+>>> chp_path = agenv.activate('03')
 ```
 
 Before we go too far, let's make sure the files we need are present.

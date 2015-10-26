@@ -8,7 +8,7 @@ In this next chapter, we're going to calculate alpha diversity over all of the s
 ...
 >>> import qiime_default_reference as qdr
 ...
->>> chp_path = agenv.activate('5')
+>>> chp_path = agenv.activate('05')
 >>> greengenes_tree = qdr.get_reference_tree()
 >>> cpu_count = agenv.get_cpu_count()
 ```
@@ -58,6 +58,7 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 And finally, we're going to aggregate the diversity calculations from the multiple rarefactions.
 
 ```python
+>>> !rmdir $ag_pgp_hmp_gg_100nt_1k_adiv/ALDIV_*
 >>> !collate_alpha.py -i $ag_pgp_hmp_gg_100nt_1k_adiv \
 ...                   -o $ag_pgp_hmp_gg_100nt_1k_adiv
 ```

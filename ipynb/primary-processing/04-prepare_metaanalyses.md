@@ -6,7 +6,7 @@ As before, let's first sanity check our environment.
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('4')
+>>> chp_path = agenv.activate('04')
 ...
 >>> ag_md   = agu.get_existing_path(agenv.paths['raw-metadata'])
 >>> ag_100nt_biom = agu.get_existing_path(agenv.paths['ag-100nt-biom'])
