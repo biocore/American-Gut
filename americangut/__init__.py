@@ -1,6 +1,7 @@
 import os
 
-WORKING_DIR = os.path.join(os.path.abspath('.'), 'agp_processing')
+processing_dir = os.environ.get('AG_WORKING_DIR', 'agp_processing')
+WORKING_DIR = os.path.join(os.path.abspath('.'), processing_dir)
 if not os.path.exists(WORKING_DIR):
     os.mkdir(WORKING_DIR)
 
