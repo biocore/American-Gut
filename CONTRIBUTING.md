@@ -141,7 +141,7 @@ A numbered list of references used in the document should be provided. The in-te
 
 * **Websites**
 <blockquote>
-	<ol><li>last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". <em>Website title</em>. Sponsoring organization.
+	<ol><li>last_1, i1; last_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". <em>Website title</em>. Sponsoring organization.
 	</li><li>Sponsoring Organization. (Year). "Webpage name with hyperlink." <em>Web Page title</em>.
 	</li><li>National Park Service. (2015). “<a href="http://www.nps.gov/yell/learn/nature/mammalscheck.htm">Mammal Checklist</a>.” <em>Yellowstone National Park</em>.
 	</li></ol>
