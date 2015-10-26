@@ -361,6 +361,8 @@ def get_files(rootdir, suffix):
     ----------
     rootdir : str
         The root directory to look under
+    suffix : str
+        The file suffix of the files to keep
 
     Returns
     -------
