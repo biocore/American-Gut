@@ -129,12 +129,12 @@ A numbered list of references used in the document should be provided. The in-te
 </li></ol> </blockquote>
 
 * **Book**<blockquote>
-	1. last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). <em>Title, hyperlinked if possible</em>. Edition. Publisher City: Publisher. pp. pages.
+	1. last_1, i1; last_2, i2, ..., last_last, ilast. (Year). <em>Title, hyperlinked if possible</em>. Edition. Publisher City: Publisher. pp. pages.
 	2. Zar, J. (1999) <em>Biostatistical Analysis</em>. Fourth Ed. Upper Saddle River: Prentice Hall. pp 185.</blockquote>
 
 * **Book Chapter**
 <blockquote>
-<ol><li> last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Chapter Title with hyperlink, if available." <em>Italicized Book Title</em>. Ch chapter. Edition. Publisher City: Publisher. pp. pages.
+<ol><li> last_1, i1; last_2, i2, ..., last_last, ilast. (Year). "Chapter Title with hyperlink, if available." <em>Italicized Book Title</em>. Ch chapter. Edition. Publisher City: Publisher. pp. pages.
 </li><li>Cohen, J. (1988) “<a href="http://www.lrdc.pitt.edu/schneider/p2465/Readings/Cohen,%201988%20(Statistical%20Power,%20273-406).pdf">The Analysis of Variance</a>”. <em>Statistical Power Analysis for the Behavioral Sciences</em>. Ch 8. Second Ed. Hillsdale: Lawrence Erlbaum and Associates. pp. 273 - 288.
 </li></ol>
 </blockquote>
