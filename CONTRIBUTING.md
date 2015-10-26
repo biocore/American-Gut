@@ -99,12 +99,13 @@ You may also add the following optional information:
 * Last update
 
 
-<!--### Table of Contents
+### Table of Contents
 Describe the major sections in the notebook. We recomend using the document tools from the [ICalico Project](http://calicoproject.org/ICalico) to create a table of contents from the headers in the notebook.
 
 ### Introduction
 A brief introduction to the topic addressed in the notebook. This may include theory behind the analysis technique, a brief review of relevant literature and/or a description of the data being analyzed. Scientific citations may be included in this section. The introduction may also be subdivided, as appropriate.
 
+<!--
 ### Notebook Requirements
 This provides a listing of the current versions of software used to generate the notebook. It is designed to provide a consistent environment. Typically, software compatible with the current version of QIIME is recommended.
 
