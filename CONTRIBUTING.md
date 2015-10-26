@@ -105,7 +105,6 @@ Describe the major sections in the notebook. We recomend using the document tool
 ### Introduction
 A brief introduction to the topic addressed in the notebook. This may include theory behind the analysis technique, a brief review of relevant literature and/or a description of the data being analyzed. Scientific citations may be included in this section. The introduction may also be subdivided, as appropriate.
 
-<!--
 ### Notebook Requirements
 This provides a listing of the current versions of software used to generate the notebook. It is designed to provide a consistent environment. Typically, software compatible with the current version of QIIME is recommended.
 
@@ -120,6 +119,8 @@ The analysis pipeline should then be detailed. We suggest using markdown cells t
 
 ### Discussion or Conclusions
 The notebook should end with a discussion of the relevant results. Depending on the style of the notebook, it may be more appropriate to do result-by-result discussion. In that case, a short conclusion or prospectus should be provided.
+
+<!--
 
 ### References
 A numbered list of references used in the document should be provided. The in-text references should be hyperlinked to the bibliography, at the bottom of the document. We recommend using the ICalico Bibliography plugin, although this currently only allows the use of MLA citation. Alternatively, we recommend a numbered-list of hyperlinked references. Numbered references should following the following formats:
@@ -142,7 +143,7 @@ A numbered list of references used in the document should be provided. The in-te
 
 * **Websites**
 <blockquote>
-	1. last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". *Website title*. Sponsoring organization.
+	<ol><li>last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". *Website title*. Sponsoring organization.
 	2. Sponsoring Organization. (Year). "Webpage name with hyperlink." *Web Page title*.
 	2. National Park Service. (2015). “[Mammal Checklist](http://www.nps.gov/yell/learn/nature/mammalscheck.htm).” *Yellowstone National Park*.
 </blockquote>
