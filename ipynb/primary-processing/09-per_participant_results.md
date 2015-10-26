@@ -45,7 +45,7 @@ We're also going to load up the American Gut mapping file so we can determine wh
 And finally, these next blocks of code support the per-sample type processing. First, for every sample type, there are common outputs to produce, such as taxonomy summaries. Second, there are some functions that are specific to a sample type. And last, there are a few sample specific options.
 
 ```python
->>> common_functions = [agps.check_sequence_counts,
+>>> common_functions = [agps.sufficient_sequence_counts,
 ...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
 ...                     agps.taxa_summaries,

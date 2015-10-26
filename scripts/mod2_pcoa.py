@@ -308,8 +308,6 @@ def gradient(coords, mapping_file, color, output, filename, sample):
     plt.scatter(x, y, c=numeric[color], cmap=plt.get_cmap('RdBu'),
                 alpha=ALPHA, lw=LINE_WIDTH, edgecolor=color_array*0.6)
 
-    # plt.colorbar()
-
     # plot non-numeric metadata as gray
     ids = non_numeric.index
     x, y = c_df.loc[ids][0], c_df.loc[ids][1]

@@ -230,7 +230,7 @@ def taxa_summaries(opts, sample_ids):
     return results
 
 
-def check_sequence_counts(opts, sample_ids):
+def sufficient_sequence_counts(opts, sample_ids):
     """Errors if the sequence counts post filtering are < 1000
 
     Parameters
