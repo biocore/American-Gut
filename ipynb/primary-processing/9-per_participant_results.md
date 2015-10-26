@@ -33,7 +33,8 @@ Then we'll establish our new paths as well as "per-sample-results" directory whe
 We're also going to load up the American Gut mapping file so we can determine what samples (within the 3 major body sites at least) were processed, and what samples had errors.
 
 ```python
->>> ag_cleaned_df = pd.read_csv(ag_cleaned_md, sep='\t', index_col='#SampleID')
+>>> ag_cleaned_df = pd.read_csv(ag_cleaned_md, sep='\t', dtype=str)
+>>> ag_cleaned_df.index = ag_cleaned_df['#SampleID']
 ```
 
 And finally, these next blocks of code support the per-sample type processing. First, for every sample type, there are common outputs to produce, such as taxonomy summaries. Second, there are some functions that are specific to a sample type. And last, there are a few sample specific options.
