@@ -125,7 +125,7 @@ A numbered list of references used in the document should be provided. The in-te
 
 * **Journal Articles** 
 <blockquote> <ol><li>last_1, i1; last_2, i2, ..., and last_last, ilast. (year). "Title Hyperlinked to the article." <em>Journal</em>. <strong>Volume</strong>: inclusive page numbers.</li>
-<li>Lozupone, C.; and Knight, R. (2005). “UniFrac: a new phylogenetic method for comparing microbial communities](http://www.ncbi.nlm.nih.gov/pubmed/16332807).” *Appl Enviro Microbiol.* **71**: 8228-8235.
+<li>Lozupone, C.; and Knight, R. (2005). “<a href="http://www.ncbi.nlm.nih.gov/pubmed/16332807">UniFrac: a new phylogenetic method for comparing microbial communities</a>.” <em>Appl Enviro Microbiol</em>. <strong>71</strong>: 8228-8235.
 </li></ol> </blockquote>
 
 * **Book**<blockquote>
@@ -134,16 +134,16 @@ A numbered list of references used in the document should be provided. The in-te
 
 * **Book Chapter**
 <blockquote>
-<ol><li> last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Chapter Title with hyperlink, if available." *Italicized Book Title*. Ch chapter. Edition. Publisher City: Publisher. pp. pages.
-</li><li>Cohen, J. (1988) “<a href="http://www.lrdc.pitt.edu/schneider/p2465/Readings/Cohen,%201988%20(Statistical%20Power,%20273-406).pdf">The Analysis of Variance</a>”. *Statistical Power Analysis for the Behavioral Sciences*. Ch 8. Second Ed. Hillsdale: Lawrence Erlbaum and Associates. pp. 273 - 288.
+<ol><li> last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Chapter Title with hyperlink, if available." <em>Italicized Book Title</em>. Ch chapter. Edition. Publisher City: Publisher. pp. pages.
+</li><li>Cohen, J. (1988) “<a href="http://www.lrdc.pitt.edu/schneider/p2465/Readings/Cohen,%201988%20(Statistical%20Power,%20273-406).pdf">The Analysis of Variance</a>”. <em>Statistical Power Analysis for the Behavioral Sciences</em>. Ch 8. Second Ed. Hillsdale: Lawrence Erlbaum and Associates. pp. 273 - 288.
 </li></ol>
 </blockquote>
 
 * **Websites**
 <blockquote>
-	<ol><li>last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". *Website title*. Sponsoring organization.
-	</li><li>Sponsoring Organization. (Year). "Webpage name with hyperlink." *Web Page title*.
-	</li><li>National Park Service. (2015). “[Mammal Checklist](http://www.nps.gov/yell/learn/nature/mammalscheck.htm).” *Yellowstone National Park*
+	<ol><li>last\_1, i1; last\_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". <em>Website title</em>. Sponsoring organization.
+	</li><li>Sponsoring Organization. (Year). "Webpage name with hyperlink." <em>Web Page title</em>.
+	</li><li>National Park Service. (2015). “<a href="http://www.nps.gov/yell/learn/nature/mammalscheck.htm">Mammal Checklist</a>.” <em>Yellowstone National Park</em>.
 	</li></ol>
 </blockquote>
 
