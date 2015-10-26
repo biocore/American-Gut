@@ -5,6 +5,7 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 >>> from functools import partial
 >>> import pandas as pd
 ...
+>>> import americangut as ag
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 >>> import americangut.results_utils as agru
@@ -102,7 +103,7 @@ And we'll end with some numbers on the number of successful and unsuccessful sam
 ```
 
 ```python
->>> if agenv.is_test_env():
+>>> if ag.is_test_env():
 ...     # in the test environment, 4 samples lack sufficient sequence for results
 ...     assert len([l for l in open(unsuccessful_ids) if not l.startswith('#')]) == 4
 ```
