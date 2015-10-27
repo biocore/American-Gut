@@ -1,8 +1,8 @@
-import os
 from unittest import TestCase, main
 
 import qiime
 
+import americangut as ag
 import americangut.notebook_environment as agenv
 
 
@@ -15,11 +15,11 @@ class NotebookEnvironmentTests(TestCase):
             agenv._assert_environment()
         qiime.__version__ = old
 
-    def test_get_accessions(self):
-        agenv._TEST_ENV = ''
-        self.assertEqual(agenv.get_accessions(), agenv._EBI_ACCESSIONS)
-        agenv._TEST_ENV = 'True'
-        self.assertEqual(agenv.get_accessions(), agenv._TEST_ACCESSIONS)
+    def test_get_study_accessions(self):
+        ag._TEST_ENV = ''
+        self.assertEqual(agenv.get_study_accessions(), agenv._EBI_ACCESSIONS)
+        ag._TEST_ENV = 'True'
+        self.assertEqual(agenv.get_study_accessions(), agenv._TEST_ACCESSIONS)
 
     def test_get_bloom_sequences(self):
         self.assertEqual(agenv.get_bloom_sequences().rsplit('/')[-1],

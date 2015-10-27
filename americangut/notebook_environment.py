@@ -11,8 +11,7 @@ from americangut.results_utils import get_repository_dir
 from americangut.util import get_existing_path
 
 
-_TEST_ENV = os.environ.get('AG_TESTING') == 'True'
-_EBI_ACCESSIONS = ['ERP012511']
+_EBI_ACCESSIONS = ['ERP012803']
 _TEST_ACCESSIONS = ['ag_testing']
 
 
@@ -21,205 +20,205 @@ _TEST_ACCESSIONS = ['ag_testing']
 paths = {
     # raw files
     'raw': {
-        'sequences': '1-raw/sequences.fna',
-        'metadata': '1-raw/metadata.txt',
+        'sequences': '01-raw/sequences.fna',
+        'metadata': '01-raw/metadata.txt',
         },
 
     # sequences filtered for blooms
     'filtered': {
-        'sequences': '2-filtered/sequences.fna',
-        'sequences-100nt': '2-filtered/sequences-100nt.fna',
+        'sequences': '02-filtered/sequences.fna',
+        'sequences-100nt': '02-filtered/sequences-100nt.fna',
 
         # only fecal sequences (for filtering for blooms)
-        'fecal-sequences': '2-filtered/fecal-sequences.fna',
+        'fecal-sequences': '02-filtered/fecal-sequences.fna',
 
         # observed bloom sequences in samples
-        'observed-blooms': '2-filtered/observed-blooms',
-        'observed-blooms-biom': '2-filtered/observed-blooms/otu_table.biom',
+        'observed-blooms': '02-filtered/observed-blooms',
+        'observed-blooms-biom': '02-filtered/observed-blooms/otu_table.biom',
         'observed-blooms-otu-map':
-            '2-filtered/observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
+            '02-filtered/observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
         },
 
     # resulting OTU data
     'otus': {
-        'ag': '3-otus/gg-13_8-97-percent',
-        'ag-100nt': '3-otus/gg-13_8-97-percent-100nt',
-        'ag-biom': '3-otus/gg-13_8-97-percent/otu_table.biom',
-        'ag-100nt-biom': '3-otus/gg-13_8-97-percent-100nt/otu_table.biom',
+        'ag': '03-otus/gg-13_8-97-percent',
+        'ag-100nt': '03-otus/gg-13_8-97-percent-100nt',
+        'ag-biom': '03-otus/gg-13_8-97-percent/otu_table.biom',
+        'ag-100nt-biom': '03-otus/gg-13_8-97-percent-100nt/otu_table.biom',
         },
 
     # merged files for diversity analyses
     'meta': {
-        'ag-gg-100nt-biom': '4-meta/ag-gg-100nt.biom',
-        'pgp-hmp-100nt-biom': '4-meta/pgp-hmp-100nt.biom',
-        'ag-pgp-hmp-gg-100nt-biom': '4-meta/ag-pgp-hmp-gg-100nt.biom',
-        'ag-cleaned-md': '4-meta/ag-cleaned.txt',
-        'gg-cleaned-md': '4-meta/gg-cleaned.txt',
-        'pgp-cleaned-md': '4-meta/pgp-cleaned.txt',
-        'hmp-cleaned-md': '4-meta/hmp-cleaned.txt',
-        'ag-gg-cleaned-md': '4-meta/ag-gg-cleaned.txt',
-        'pgp-hmp-cleaned-md': '4-meta/pgp-hmp-cleaned.txt',
-        'ag-pgp-hmp-gg-cleaned-md': '4-meta/ag-pgp-hmp-gg-cleaned.txt',
+        'ag-gg-100nt-biom': '04-meta/ag-gg-100nt.biom',
+        'pgp-hmp-100nt-biom': '04-meta/pgp-hmp-100nt.biom',
+        'ag-pgp-hmp-gg-100nt-biom': '04-meta/ag-pgp-hmp-gg-100nt.biom',
+        'ag-cleaned-md': '04-meta/ag-cleaned.txt',
+        'gg-cleaned-md': '04-meta/gg-cleaned.txt',
+        'pgp-cleaned-md': '04-meta/pgp-cleaned.txt',
+        'hmp-cleaned-md': '04-meta/hmp-cleaned.txt',
+        'ag-gg-cleaned-md': '04-meta/ag-gg-cleaned.txt',
+        'pgp-hmp-cleaned-md': '04-meta/pgp-hmp-cleaned.txt',
+        'ag-pgp-hmp-gg-cleaned-md': '04-meta/ag-pgp-hmp-gg-cleaned.txt',
         },
 
     # alpha diversity analysis files
     'alpha': {
         '1k': {
-            'ag-pgp-hmp-gg-100nt-multiple': '5-alpha/1k/ag-pgp-hmp-gg-100nt-multiple',
-            'ag-pgp-hmp-gg-100nt': '5-alpha/1k/ag-pgp-hmp-gg-100nt',
+            'ag-pgp-hmp-gg-100nt-multiple': '05-alpha/1k/ag-pgp-hmp-gg-100nt-multiple',
+            'ag-pgp-hmp-gg-100nt': '05-alpha/1k/ag-pgp-hmp-gg-100nt',
             'ag-pgp-hmp-gg-100nt-pd':
-                '5-alpha/1k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt',
+                '05-alpha/1k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt',
             'ag-pgp-hmp-gg-100nt-chao1':
-                '5-alpha/1k/ag-pgp-hmp-gg-100nt/chao1.txt',
+                '05-alpha/1k/ag-pgp-hmp-gg-100nt/chao1.txt',
             'ag-pgp-hmp-gg-100nt-observedotus':
-                '5-alpha/1k/ag-pgp-hmp-gg-100nt/observed_otus.txt',
+                '05-alpha/1k/ag-pgp-hmp-gg-100nt/observed_otus.txt',
             },
         '10k': {
-            'ag-pgp-hmp-gg-100nt-multiple': '5-alpha/10k/ag-pgp-hmp-gg-100nt-multiple',
-            'ag-pgp-hmp-gg-100nt': '5-alpha/10k/ag-pgp-hmp-gg-100nt',
+            'ag-pgp-hmp-gg-100nt-multiple': '05-alpha/10k/ag-pgp-hmp-gg-100nt-multiple',
+            'ag-pgp-hmp-gg-100nt': '05-alpha/10k/ag-pgp-hmp-gg-100nt',
             'ag-pgp-hmp-gg-100nt-pd':
-                '5-alpha/10k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt',
+                '05-alpha/10k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt',
             'ag-pgp-hmp-gg-100nt-chao1':
-                '5-alpha/10k/ag-pgp-hmp-gg-100nt/chao1.txt',
+                '05-alpha/10k/ag-pgp-hmp-gg-100nt/chao1.txt',
             'ag-pgp-hmp-gg-100nt-observedotus':
-                '5-alpha/10k/ag-pgp-hmp-gg-100nt/observed_otus.txt',
+                '05-alpha/10k/ag-pgp-hmp-gg-100nt/observed_otus.txt',
             }
         },
 
     # beta diversity analysis files
     'beta': {
         '1k': {
-            'ag-pgp-hmp-gg-100nt-biom': '6-beta/1k/ag-pgp-hmp-gg-100nt.biom',
-            'ag-pgp-hmp-gg-100nt': '6-beta/1k/ag-pgp-hmp-gg-100nt',
+            'ag-pgp-hmp-gg-100nt-biom': '06-beta/1k/ag-pgp-hmp-gg-100nt.biom',
+            'ag-pgp-hmp-gg-100nt': '06-beta/1k/ag-pgp-hmp-gg-100nt',
 
             'ag-100nt-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt.txt'),
             'ag-100nt-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-pc.txt'),
 
             'ag-100nt-oral-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-oral.txt'),
             'ag-100nt-oral-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-oral-pc.txt'),
 
             'ag-100nt-fecal-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-fecal.txt'),
             'ag-100nt-fecal-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-fecal-pc.txt'),
 
             'ag-100nt-skin-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-skin.txt'),
             'ag-100nt-skin-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-skin-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt.txt'),
             'ag-pgp-hmp-gg-100nt-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-wunifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-pgp-hmp-gg-100nt.txt'),
             'ag-pgp-hmp-gg-100nt-wunifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-pgp-hmp-gg-100nt-pc.txt'),
 
             'ag-gg-100nt-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt.txt'),
             'ag-gg-100nt-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-pc.txt'),
 
             'ag-gg-100nt-subsampled-unifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-subsampled.txt'),
             'ag-gg-100nt-subsampled-unifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-subsampled-pc.txt'),
 
             'ag-gg-100nt-wunifrac':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt.txt'),
             'ag-gg-100nt-wunifrac-pc':
-                ('6-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-pc.txt'),
             },
         '10k': {
-            'ag-pgp-hmp-gg-100nt-biom': '6-beta/10k/ag-pgp-hmp-gg-100nt.biom',
-            'ag-pgp-hmp-gg-100nt': '6-beta/10k/ag-pgp-hmp-gg-100nt',
+            'ag-pgp-hmp-gg-100nt-biom': '06-beta/10k/ag-pgp-hmp-gg-100nt.biom',
+            'ag-pgp-hmp-gg-100nt': '06-beta/10k/ag-pgp-hmp-gg-100nt',
 
             'ag-100nt-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt.txt'),
             'ag-100nt-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-pc.txt'),
 
             'ag-100nt-oral-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-oral.txt'),
             'ag-100nt-oral-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-oral-pc.txt'),
 
             'ag-100nt-fecal-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-fecal.txt'),
             'ag-100nt-fecal-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-fecal-pc.txt'),
 
             'ag-100nt-skin-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-skin.txt'),
             'ag-100nt-skin-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-skin-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt.txt'),
             'ag-pgp-hmp-gg-100nt-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-wunifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-pgp-hmp-gg-100nt.txt'),
             'ag-pgp-hmp-gg-100nt-wunifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-pgp-hmp-gg-100nt-pc.txt'),
 
             'ag-gg-100nt-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt.txt'),
             'ag-gg-100nt-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-pc.txt'),
 
             'ag-gg-100nt-subsampled-unifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-subsampled.txt'),
             'ag-gg-100nt-subsampled-unifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-subsampled-pc.txt'),
 
             'ag-gg-100nt-wunifrac':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt.txt'),
             'ag-gg-100nt-wunifrac-pc':
-                ('6-beta/10k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-pc.txt'),
             }
         },
@@ -227,60 +226,73 @@ paths = {
     # taxonomy summaries
     'taxa': {
         'L2': {
-            'ag-tsv': '7-taxa/otu_table_L2.txt',
-            'ag-biom': '7-taxa/otu_table_L2.biom',
-            'ag-md': '7-taxa/ag-cleaned_L2.txt',
-            'ag-skin-biom': '7-taxa/otu_table_skin_L2.biom',
-            'ag-oral-biom': '7-taxa/otu_table_oral_L2.biom',
-            'ag-fecal-biom': '7-taxa/otu_table_fecal_L2.biom',
+            'ag-tsv': '07-taxa/otu_table_L2.txt',
+            'ag-biom': '07-taxa/otu_table_L2.biom',
+            'ag-md': '07-taxa/ag-cleaned_L2.txt',
+            'ag-skin-biom': '07-taxa/otu_table_skin_L2.biom',
+            'ag-oral-biom': '07-taxa/otu_table_oral_L2.biom',
+            'ag-fecal-biom': '07-taxa/otu_table_fecal_L2.biom',
             },
         'L3': {
-            'ag-tsv': '7-taxa/otu_table_L3.txt',
-            'ag-biom': '7-taxa/otu_table_L3.biom',
-            'ag-md': '7-taxa/ag-cleaned_L3.txt',
-            'ag-skin-biom': '7-taxa/otu_table_skin_L3.biom',
-            'ag-oral-biom': '7-taxa/otu_table_oral_L3.biom',
-            'ag-fecal-biom': '7-taxa/otu_table_fecal_L3.biom',
+            'ag-tsv': '07-taxa/otu_table_L3.txt',
+            'ag-biom': '07-taxa/otu_table_L3.biom',
+            'ag-md': '07-taxa/ag-cleaned_L3.txt',
+            'ag-skin-biom': '07-taxa/otu_table_skin_L3.biom',
+            'ag-oral-biom': '07-taxa/otu_table_oral_L3.biom',
+            'ag-fecal-biom': '07-taxa/otu_table_fecal_L3.biom',
             },
         'L6': {
-            'ag-tsv': '7-taxa/otu_table_L6.txt',
-            'ag-biom': '7-taxa/otu_table_L6.biom',
-            'ag-md': '7-taxa/ag-cleaned_L6.txt',
-            'ag-skin-biom': '7-taxa/otu_table_skin_L6.biom',
-            'ag-oral-biom': '7-taxa/otu_table_oral_L6.biom',
-            'ag-fecal-biom': '7-taxa/otu_table_fecal_L6.biom',
+            'ag-tsv': '07-taxa/otu_table_L6.txt',
+            'ag-biom': '07-taxa/otu_table_L6.biom',
+            'ag-md': '07-taxa/ag-cleaned_L6.txt',
+            'ag-skin-biom': '07-taxa/otu_table_skin_L6.biom',
+            'ag-oral-biom': '07-taxa/otu_table_oral_L6.biom',
+            'ag-fecal-biom': '07-taxa/otu_table_fecal_L6.biom',
             }
         },
 
     # collapsed samples
     'collapsed': {
-        'ag-100nt-1k-biom': '8-collapsed/ag-100nt-1k.biom',
-        'ag-100nt-1k-fecal-biom': '8-collapsed/ag-100nt-1k-fecal.biom',
-        'ag-100nt-1k-skin-biom': '8-collapsed/ag-100nt-1k-oral.biom',
-        'ag-100nt-1k-oral-biom': '8-collapsed/ag-100nt-1k-skin.biom',
+        'ag-100nt-1k-biom': '08-collapsed/ag-100nt-1k.biom',
+        'ag-100nt-1k-fecal-biom': '08-collapsed/ag-100nt-1k-fecal.biom',
+        'ag-100nt-1k-skin-biom': '08-collapsed/ag-100nt-1k-oral.biom',
+        'ag-100nt-1k-oral-biom': '08-collapsed/ag-100nt-1k-skin.biom',
 
-        'ag-100nt-1k-fecal-sex-biom':  '8-collapsed/ag-100nt-1k-fecal-sex.biom',
-        'ag-100nt-1k-fecal-diet-biom': '8-collapsed/ag-100nt-1k-fecal-diet.biom',
-        'ag-100nt-1k-fecal-age-biom':  '8-collapsed/ag-100nt-1k-fecal-age.biom',
-        'ag-100nt-1k-fecal-bmi-biom':  '8-collapsed/ag-100nt-1k-fecal-bmi.biom',
+        'ag-100nt-1k-fecal-sex-biom':  '08-collapsed/ag-100nt-1k-fecal-sex.biom',
+        'ag-100nt-1k-fecal-diet-biom': '08-collapsed/ag-100nt-1k-fecal-diet.biom',
+        'ag-100nt-1k-fecal-age-biom':  '08-collapsed/ag-100nt-1k-fecal-age.biom',
+        'ag-100nt-1k-fecal-bmi-biom':  '08-collapsed/ag-100nt-1k-fecal-bmi.biom',
 
-        'ag-100nt-1k-oral-sex-biom':  '8-collapsed/ag-100nt-1k-oral-sex.biom',
-        'ag-100nt-1k-oral-diet-biom': '8-collapsed/ag-100nt-1k-oral-diet.biom',
-        'ag-100nt-1k-oral-age-biom':  '8-collapsed/ag-100nt-1k-oral-age.biom',
-        'ag-100nt-1k-oral-flossing-biom':  '8-collapsed/ag-100nt-1k-oral-flossing.biom',
+        'ag-100nt-1k-oral-sex-biom':  '08-collapsed/ag-100nt-1k-oral-sex.biom',
+        'ag-100nt-1k-oral-diet-biom': '08-collapsed/ag-100nt-1k-oral-diet.biom',
+        'ag-100nt-1k-oral-age-biom':  '08-collapsed/ag-100nt-1k-oral-age.biom',
+        'ag-100nt-1k-oral-flossing-biom':  '08-collapsed/ag-100nt-1k-oral-flossing.biom',
 
-        'ag-100nt-1k-skin-sex-biom':  '8-collapsed/ag-100nt-1k-skin-sex.biom',
-        'ag-100nt-1k-skin-cosmetics-biom': '8-collapsed/ag-100nt-1k-skin-cosmetics.biom',
-        'ag-100nt-1k-skin-age-biom':  '8-collapsed/ag-100nt-1k-skin-age.biom',
-        'ag-100nt-1k-skin-hand-biom':  '8-collapsed/ag-100nt-1k-skin-hand.biom',
+        'ag-100nt-1k-skin-sex-biom':  '08-collapsed/ag-100nt-1k-skin-sex.biom',
+        'ag-100nt-1k-skin-cosmetics-biom': '08-collapsed/ag-100nt-1k-skin-cosmetics.biom',
+        'ag-100nt-1k-skin-age-biom':  '08-collapsed/ag-100nt-1k-skin-age.biom',
+        'ag-100nt-1k-skin-hand-biom':  '08-collapsed/ag-100nt-1k-skin-hand.biom',
     },
 
     # per-sample results
     'per-sample': {
-        'successful-ids': '8-per-sample/successful_ids.txt',
-        'unsuccessful-ids': '8-per-sample/unsuccessful_ids.txt',
-        'per-sample-results': '8-per-sample/results',
+        'successful-ids': '09-per-sample/successful_ids.txt',
+        'unsuccessful-ids': '09-per-sample/unsuccessful_ids.txt',
+        'per-sample-results': '09-per-sample/results',
+        'statics-fecal': '09/statics-fecal',
+        'statics-oral': '09/statics-oral',
+        'statics-skin': '09/statics-skin',
     },
+
+    'populated-results': {
+        'result-pdfs': '10/result_pdfs/',
+        'result-taxa': '10/result_taxa/',
+        'successful-pdfs': '10/successful_pdfs.txt',
+        'unsuccessful-pdfs': '10/unsuccessful_pdfs.txt',
+    },
+
+    'demux': {},
+    'otu-map': {},
 }
 
 
@@ -329,8 +341,13 @@ def get_sortmerna_index():
 
 def get_rarefaction_depth():
     """Return the rarefaction depth to use"""
+<<<<<<< HEAD
     if _TEST_ENV:
         return ("100", "200")
+=======
+    if ag.is_test_env():
+        return "100"
+>>>>>>> master
     else:
         return ("1000", "10000")
 
@@ -345,7 +362,7 @@ def get_reference_set():
     str
         The file path to the reference taxonomy.
     """
-    if _TEST_ENV:
+    if ag.is_test_env():
         repo = get_repository_dir()
         ref_seqs = os.path.join(repo, 'tests/data/otus.fna')
         ref_tax = os.path.join(repo, 'tests/data/otus.txt')
@@ -417,7 +434,7 @@ def _get_data(data_dir, tag):
         If the filepaths are not accessible
     """
     repo = get_repository_dir()
-    data = 'tests/data' if _TEST_ENV else 'data'
+    data = 'tests/data' if ag.is_test_env() else 'data'
     base = os.path.join(repo, data)
 
     table = os.path.join(base, data_dir, '%s.biom' % tag)
@@ -431,7 +448,7 @@ def _get_data(data_dir, tag):
     return table, mapping
 
 
-def get_accessions():
+def get_study_accessions():
     """Get the accessions to use, or redirect to test data
 
     Returns
@@ -446,11 +463,41 @@ def get_accessions():
     If $AG_TESTING == 'True', then the accessions returned will
     correspond to the test dataset.
     """
-    if _TEST_ENV:
+    if ag.is_test_env():
         _stage_test_accessions()
         return _TEST_ACCESSIONS[:]
     else:
         return _EBI_ACCESSIONS[:]
+
+
+def get_files(rootdir, suffix):
+    """Get the filepaths with a given suffix
+
+    Parameters
+    ----------
+    rootdir : str
+        The root directory to look under
+    suffix : str
+        The file suffix of the files to keep
+
+    Returns
+    -------
+    fps : list, str
+        List of file paths for all of the
+        sample fasta files
+
+    Note
+    ----
+    This only looks at the directory names under the
+    root directory.  This assumes that the sample names
+    correspond to the folders within the base folder
+    """
+    fps = []
+    for root, dirs, files in os.walk(rootdir):
+        for _file in files:
+            if _file.endswith(".%s" % suffix):
+                fps.append(os.path.join(root, _file))
+    return fps
 
 
 def get_bloom_sequences():
@@ -481,8 +528,15 @@ def _stage_test_accessions():
     """
     repo = get_repository_dir()
     for acc in _TEST_ACCESSIONS:
-        src_fna = os.path.join(repo, 'tests/data/%s.fna' % acc)
-        src_map = os.path.join(repo, 'tests/data/%s.txt' % acc)
+        src = os.path.join(repo, 'tests/data/%s' % acc)
+        dst = os.path.join(ag.WORKING_DIR, '01/%s' % acc)
 
+        if not os.path.exists(os.path.join(ag.WORKING_DIR, '01')):
+            os.mkdir('01')
+
+<<<<<<< HEAD
         shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '1-raw'))
         shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '1-raw'))
+=======
+        shutil.copytree(src, dst)
+>>>>>>> master
