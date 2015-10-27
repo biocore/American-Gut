@@ -326,7 +326,7 @@ def fetch_study(study_accession, base_dir):
     If sample_accession is None, then the entire study will be fetched
     """
     if ag.is_test_env():
-        return
+        return 0
 
     study_dir = os.path.join(base_dir, study_accession)
 
