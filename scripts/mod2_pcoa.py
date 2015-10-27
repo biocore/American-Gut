@@ -46,8 +46,9 @@ def body_site(coords, mapping_file, output, filename, sample):
     c_df = pd.DataFrame(o.site, o.site_ids)
 
     # mapping file
-    mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
-                     index_col='#SampleID')
+    mf = pd.read_csv(mapping_file, sep='\t', dtype=str)
+    mf.set_index('#SampleID', inplace=True)
+
     mf = mf.loc[o.site_ids]
 
     if sample not in o.site_ids:
@@ -116,7 +117,9 @@ def body_site(coords, mapping_file, output, filename, sample):
 def subsample_dm(distmat, mapping_file, max, category, output):
     """Subsample the distmat to max samples per category value"""
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
-                     index_col='#SampleID')
+                     dtype=str)
+    mf.set_index('#SampleID', inplace=True)
+
     id_to_cat = dict(mf[category])
 
     def bin_f(x):
@@ -163,8 +166,9 @@ def country(coords, mapping_file, output, filename, sample, distmat):
 
     # mapping file
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
-                     index_col='#SampleID')
-    # mf = mf.loc[o.site_ids]
+                     dtype=str)
+    mf.set_index('#SampleID', inplace=True)
+    mf = mf.loc[o.site_ids]
 
     if sample not in dm.ids:
         raise ValueError("Sample %s not found" % sample)
@@ -290,7 +294,8 @@ def gradient(coords, mapping_file, color, output, filename, sample):
 
     # mapping file
     mf = pd.read_csv(mapping_file, '\t', converters=defaultdict(str),
-                     index_col='#SampleID')
+                     dtype=str)
+    mf.set_index('#SampleID', inplace=True)
     mf = mf.loc[o.site_ids]
     mf[color] = mf[color].convert_objects(convert_numeric=True)
 

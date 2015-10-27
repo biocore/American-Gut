@@ -23,7 +23,8 @@ Now let's actually fetch the study data. `fetch_study` will only pull down acces
 
 ```python
 >>> for accession in study_accessions:
-...     agu.fetch_study(accession, chp_path)
+...     new_samples = agu.fetch_study(accession, chp_path)
+>>> print "New samples received: %d" % new_samples
 ```
 
 Now that we have the sequences and sample information, let's merge all the data into a single file to ease downstream processing.

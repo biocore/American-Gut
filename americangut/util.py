@@ -326,11 +326,16 @@ def fetch_study(study_accession, base_dir):
     If sample_accession is None, then the entire study will be fetched
     """
     if ag.is_test_env():
-        return
+        return 0
 
     study_dir = os.path.join(base_dir, study_accession)
-    if not os.path.exists(study_dir):
+
+    if ag.staged_raw_data() is not None:
+        os.symlink(ag.staged_raw_data(), study_dir)
+    elif not os.path.exists(study_dir):
         os.mkdir(study_dir)
+
+    new_samples = 0
 
     for sample, fastq_url in fetch_study_details(study_accession):
         sample_dir = os.path.join(study_dir, sample)
@@ -351,6 +356,9 @@ def fetch_study(study_accession, base_dir):
             res = fetch_url(url_fmt % {'accession': sample})
             with open(metadata_path, 'w') as md_f:
                 md_f.write(res.read())
+
+            new_samples += 1
+    return new_samples
 
 
 def count_seqs(seqs_fp, subset=None):
