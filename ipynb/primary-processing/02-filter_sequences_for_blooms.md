@@ -66,7 +66,7 @@ The next thing we need to do is setup the parameters for SortMeRNA, which is the
 >>> _params_file = agu.get_path('sortmerna_pick_params.txt')
 >>> with open(_params_file, 'w') as f:
 ...     f.write("pick_otus:otu_picking_method sortmerna\n")
-...     f.write("pick_otus:threads %d\n" % multiprocessing.cpu_count())
+...     f.write("pick_otus:threads %d\n" % agenv.get_cpu_count())
 ...
 >>> !pick_closed_reference_otus.py -i $fecal_sequences \
 ...                                -o $observed_blooms \
