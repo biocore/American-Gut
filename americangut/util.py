@@ -260,7 +260,6 @@ def xml_to_dict(xml_fp):
     metadata = {}
     identifiers = sample.find('IDENTIFIERS')
     barcode = identifiers.getchildren()[2].text.split(':')[-1]
-    metadata['#SampleID'] = barcode
     attributes = sample.find('SAMPLE_ATTRIBUTES')
     for node in attributes.iterfind('SAMPLE_ATTRIBUTE'):
         tag, value = node.getchildren()
@@ -271,7 +270,7 @@ def xml_to_dict(xml_fp):
 
     description = sample.find('DESCRIPTION')
     metadata['Description'] = description.text.strip('" ')
-    return metadata
+    return barcode, metadata
 
 
 def from_xmls_to_mapping_file(xml_paths, mapping_fp):
@@ -290,8 +289,8 @@ def from_xmls_to_mapping_file(xml_paths, mapping_fp):
     all_md = {}
     all_cols = set(['BarcodeSequence', 'LinkerPrimerSequence'])
     for xml_fp in xml_paths:
-        md = xml_to_dict(xml_fp)
-        all_md[md['#SampleID']] = md
+        bc, md = xml_to_dict(xml_fp)
+        all_md[bc] = md
         all_cols.update(md)
     with open(mapping_fp, 'w') as md_f:
         header = list(all_cols)
