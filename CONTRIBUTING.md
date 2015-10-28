@@ -14,19 +14,19 @@ When considering submitting a new analysis to American Gut, you should begin by 
 * For new analyses, you’ll want to describe the new approach. Explain why you have selected this approach, citing as necessary. Your analysis should be presented as an Jupyter Notebook (see below).
 
 * For bug fixes, you should provide a detailed description of the bug so other developers can reproduce it. Bugs may relate to errors in code, documentation, test, or the data hosted in the repository.
-<br/>You should the following information in your bug report:
+<br/>You should include the following information in your bug report:
     * The exact command or function call that can be run to reproduce the bug.
     * A link to all necessary input files for reproducing the bug, or a list of samples which produce the bug. This is *extremely* useful to other developers, and it is likely that if you don’t provide this information, you will not get the response you’re asking for. 
 <br>Often, this process will help you understand the bug, as well.
 
-* For documentation issues, please first post an issue describing what you propose to add, where you’d like to add it, and a description of why it is an important addition/ For documentation improvements and fixes, you should post an issue of what is currently wrong or missing, and how you propose to address it. 
+* For documentation issues, please first post an issue describing what you propose to add, where you’d like to add it, and a description of why it is an important addition. For documentation improvements and fixes, you should post an issue of what is currently wrong or missing, and how you propose to address it. 
 
 When you post your issue, the American Gut developers will respond to let you know if we agree with the addition or change. It’s important to go through this step to avoid wasting time working on a feature that will not be included.
 
 ## Code Review
 When you submit code in American Gut, it will be reviewed by one or more American Gut developer. These reviews are intended to confirm a few points:
 * Your code is sufficiently well tested (see Testing Guidelines below)
-* Your analyses adheres to submission guidelines (see Jupyter Notebooks below)
+* Your analysis adheres to submission guidelines (see Jupyter Notebooks below)
 * Your code and analysis are sufficiently well documented
 * Your update provides relevant changes or additions.
 
@@ -85,7 +85,7 @@ Please update the [index notebook](https://github.com/biocore/American-Gut/blob/
 Jupyter Notebooks should more or less follow the outline of a paper.
 
 ### Credits and License
-American Gut analyses are distributed under a BSD license. Please also provide a data of analysis. Typical text is 
+American Gut analyses are distributed under a BSD license. Please also provide a date of analysis. Typical text is 
 
 <blockquote><strong>License</strong>: BSD<br>
 <strong>Copyright</strong>: Copyright American Gut Project, 2015<br>
