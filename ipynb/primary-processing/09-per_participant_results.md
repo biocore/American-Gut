@@ -41,7 +41,7 @@ We're also going to load up the American Gut mapping file so we can determine wh
 
 ```python
 >>> ag_cleaned_df = pd.read_csv(ag_cleaned_md, sep='\t', dtype=str)
->>> ag_cleaned_df.index = ag_cleaned_df['#SampleID']
+>>> ag_cleaned_df.set_index('#SampleID', inplace=True)
 ```
 
 And finally, these next blocks of code support the per-sample type processing. First, for every sample type, there are common outputs to produce, such as taxonomy summaries. Second, there are some functions that are specific to a sample type. And last, there are a few sample specific options.

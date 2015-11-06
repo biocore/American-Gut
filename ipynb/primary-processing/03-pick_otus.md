@@ -19,7 +19,7 @@ We're going to now setup a parameters file for the OTU picking runs. It is possi
 ...
 >>> with open(_params_file, 'w') as f:
 ...     f.write("pick_otus:otu_picking_method sortmerna\n")
-...     f.write("pick_otus:threads %d\n" % multiprocessing.cpu_count())
+...     f.write("pick_otus:threads %d\n" % agenv.get_cpu_count())
 ...
 ...     if agenv.get_sortmerna_index():
 ...         f.write("pick_otus:sortmerna_db %s\n" % agenv.get_sortmerna_index())

@@ -33,7 +33,8 @@
 
 ```python
 >>> def create_pdf(opts, ids):
-...     cmd_fmt = "cd %(result_path)s; lualatex %(id)s.tex"
+...     cmd_fmt = "echo '\n\def\yourname{unidentified}\n' >> %(result_path)s/macros.tex;" 
+...     cmd_fmt += "cd %(result_path)s; lualatex %(id)s.tex"
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> def aggregate(opts, ids):
