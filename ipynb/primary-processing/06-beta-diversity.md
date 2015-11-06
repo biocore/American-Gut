@@ -25,35 +25,6 @@ Let's first setup the files that we need for processing.
 >>> ag_pgp_hmp_gg_cleaned_md = agu.get_existing_path(agenv.paths['meta']['ag-pgp-hmp-gg-cleaned-md'])
 ```
 
-Next, we'll setup the paths that we're going to create and need.
-
-```python
->>> #ag_pgp_hmp_gg_100nt_1k_biom    = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-biom'])
-...
-... # beta diversity distance matrices
-... # ag_100nt_1k_bdiv_u             = agu.get_new_path(agenv.paths['ag-100nt-1k-bdiv-unifrac'])
-... # ag_100nt_fecal_1k_bdiv_u       = agu.get_new_path(agenv.paths['ag-100nt-fecal-1k-bdiv-unifrac'])
-... # ag_100nt_oral_1k_bdiv_u        = agu.get_new_path(agenv.paths['ag-100nt-oral-1k-bdiv-unifrac'])
-... # ag_100nt_skin_1k_bdiv_u        = agu.get_new_path(agenv.paths['ag-100nt-skin-1k-bdiv-unifrac'])
-... ag_gg_100nt_1k_bdiv_u          = agu.get_new_path(agenv.paths['beta']['1k']['ag-gg-100nt-1k-bdiv-unifrac'])
->>> # ag_gg_100nt_1k_bdiv_u_ss       = agu.get_new_path(agenv.paths['ag-gg-100nt-1k-bdiv-subsampled-unifrac'])
-... # ag_gg_100nt_1k_bdiv_wu         = agu.get_new_path(agenv.paths['ag-gg-100nt-1k-bdiv-wunifrac'])
-... # ag_pgp_hmp_gg_100nt_1k_bdiv    = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-bdiv'])
-... ag_pgp_hmp_gg_100nt_1k_bdiv_u  = agu.get_new_path(agenv.paths['beta']['1k']['ag-pgp-hmp-gg-100nt-unifrac'])
->>> # ag_pgp_hmp_gg_100nt_1k_bdiv_wu = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-bdiv-wunifrac'])
-...
-... # principal coordinates
-... # ag_100nt_1k_u_pc               = agu.get_new_path(agenv.paths['ag-100nt-1k-unifrac-pc'])
-... # ag_100nt_fecal_1k_u_pc         = agu.get_new_path(agenv.paths['ag-100nt-fecal-1k-unifrac-pc'])
-... # ag_100nt_oral_1k_u_pc          = agu.get_new_path(agenv.paths['ag-100nt-oral-1k-unifrac-pc'])
-... # ag_100nt_skin_1k_u_pc          = agu.get_new_path(agenv.paths['ag-100nt-skin-1k-unifrac-pc'])
-... # ag_gg_100nt_1k_u_pc            = agu.get_new_path(agenv.paths['ag-gg-100nt-1k-unifrac-pc'])
-... # ag_gg_100nt_1k_wu_pc           = agu.get_new_path(agenv.paths['ag-gg-100nt-1k-wunifrac-pc'])
-... # ag_gg_100nt_1k_u_ss_pc         = agu.get_new_path(agenv.paths['ag-gg-100nt-1k-subsampled-unifrac-pc'])
-... # ag_pgp_hmp_gg_100nt_1k_u_pc    = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-unifrac-pc'])
-... # ag_pgp_hmp_gg_100nt_1k_wu_pc   = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-1k-wunifrac-pc'])
-```
-
 Like alpha diversity, beta diversity is sensitive to sequencing effort. And while rarefaction is a random process, a single rarefaction gives a rough idea of how samples relate to each other. It is possible to perform beta diversity calculations over multiple rarefactions but that is outside of the scope of this notebook.
 
 Before we start computation, we're going to get the depth to sample at. The depth is abstracted out for integration testing purposes.
