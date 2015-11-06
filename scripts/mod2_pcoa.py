@@ -250,7 +250,7 @@ def country(coords, mapping_file, output, filename, sample, distmat):
 
     # plot participant's dot
     plt.scatter(c_df.loc[sample_to_plot][0], c_df.loc[sample_to_plot][1],
-                color=color_Highlight,
+                color=color_highlight,
                 s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
     plt.scatter(c_df.loc[sample_to_plot][0], c_df.loc[sample_to_plot][1],
                 color=color_Highlight,
