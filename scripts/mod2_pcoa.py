@@ -176,7 +176,7 @@ def country(coords, mapping_file, output, filename, sample, distmat):
     color_Venezuela = sns.color_palette('Paired', 12)[10]
     color_Malawi = sns.color_palette('Paired', 12)[1]
     color_Western = sns.color_palette('Paired', 12)[4]
-    color_Highlight = sns.color_palette('Paired', 12)[5]
+    color_highlight = sns.color_palette('Paired', 12)[5]
     color_no_data = (0.5, 0.5, 0.5)
 
     grp_colors = OrderedDict()
@@ -224,11 +224,11 @@ def country(coords, mapping_file, output, filename, sample, distmat):
     sns.kdeplot(x, y, cmap='bone')
     sns.set_context(rc={"lines.linewidth": 0.75})
 
-    # change particapant's country's color to color_Highlight unless
+    # change particapant's country's color to color_highlight unless
     # country is Venezuela or Malawi
     if (mf.loc[sample_to_plot]['COUNTRY'] != 'Malawi') & (
             mf.loc[sample_to_plot]['COUNTRY'] != 'Venezuela'):
-        grp_colors[mf.loc[sample_to_plot]['COUNTRY']] = color_Highlight
+        grp_colors[mf.loc[sample_to_plot]['COUNTRY']] = color_highlight
 
     # plot each country except participant's according to colors above
     for grp, color in grp_colors.iteritems():
@@ -253,7 +253,7 @@ def country(coords, mapping_file, output, filename, sample, distmat):
                 color=color_highlight,
                 s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
     plt.scatter(c_df.loc[sample_to_plot][0], c_df.loc[sample_to_plot][1],
-                color=color_Highlight,
+                color=color_highlight,
                 s=250, edgecolor=np.asarray(grp_colors[
                     mf.loc[sample_to_plot]['COUNTRY']])*0.6,
                 zorder=2, lw=LINE_WIDTH_BLACK)
