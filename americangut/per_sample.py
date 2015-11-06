@@ -284,7 +284,7 @@ def taxon_significance(opts, sample_ids):
     map_path = opts['ag-cleaned-md']
 
     cmd_fmt = 'generate_otu_signifigance_tables_AGP.py -i %s ' % table_path
-    cmd_fmt += '-o %(result_path)s -s %(id)s'
+    cmd_fmt += '-o %(result_path)s -s %(id)s '
     cmd_fmt += '-m %s' % map_path
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
