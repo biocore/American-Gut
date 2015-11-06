@@ -87,14 +87,14 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
 
     # Names categories being plotted
     if sample_type == 'fecal':
-        michael_pollan = '000007108.1075657'
+        michael_pollan = '10317.000007108'
         cat_list = ['You', 'Average', 'Similar Diet', ' Similar BMI',
                     'Same Gender', 'Similar Age', 'Michael Pollan']
         order = ['Sample', 'Average', 'DIET_TYPE', 'BMI_CAT', 'SEX',
                  'AGE_CAT', 'MP']
 
     elif sample_type == 'skin':
-        michael_pollan = '000007113.1075702'
+        michael_pollan = '10317.000007113'
         cat_list = ['You', 'Average', 'Similar Cosmetic Use',
                     'Same Dominant Hand', 'Same Gender', 'Same Age',
                     'Michael Pollan']
@@ -102,7 +102,7 @@ def main(otu_table, mapping_data, cat_tables, output_dir, sample_type='fecal',
                  'DOMINANT_HAND', 'SEX', 'AGE_CAT', 'MP']
 
     elif sample_type == 'oral':
-        michael_pollan = '000007109.1075688'
+        michael_pollan = '10317.000007109'
         cat_list = ['You', 'Average', 'Similar Diet', 'Flossing Frequency',
                     'Same Gender', 'Same Age', 'Michael Pollan']
         order = ['Sample', 'Average', 'DIET_TYPE', 'FLOSSING_FREQUENCY',

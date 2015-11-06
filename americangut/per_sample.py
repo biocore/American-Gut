@@ -30,11 +30,27 @@ def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
     dict
         The paths and desired options.
     """
-    opts = {k: agu.get_path(v) for k, v in agenv.paths.items()}
+    def attach_dict(d, items):
+        return [(d, i) for i in items]
+
+    opts = {}
+    queue = attach_dict(opts, agenv.paths.items())
+
+    while queue:
+        d, (key, value) = queue.pop()
+        if isinstance(value, dict):
+            # get the relevant dict or a new dict
+            nested_d = d.get(key, {})
+            d[key] = nested_d
+
+            queue.extend(attach_dict(nested_d, value.items()))
+        else:
+            d[key] = agu.get_path(value)
+
     opts['sample_type'] = sample_type
     opts['gradient_color_by'] = gradient_color_by
     opts['chp-path'] = chp_path
-    opts['rarefaction-depth'] = agenv.get_rarefaction_depth()
+    opts['rarefaction-depth'] = int(agenv.get_rarefaction_depth()[0])
 
     barchart_map = {'diet': 'DIET_TYPE',
                     'sex':  'SEX',
@@ -49,7 +65,8 @@ def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
         if cat not in barchart_map:
             raise KeyError("%s is not known" % cat)
 
-        cat_path = opts['ag-100nt-1k-%s-%s-biom' % (sample_type, cat)]
+        table_key = 'ag-%s-%s-biom' % (sample_type, cat)
+        cat_path = opts['collapsed']['100nt']['1k'][table_key]
         fmt.append("%s:%s" % (barchart_map[cat], cat_path))
 
     opts['barchart_categories'] = '"%s"' % ', '.join(fmt)
@@ -93,7 +110,7 @@ def sample_type_processor(functions, opts, ids):
 
 def _result_path(opts, id_):
     """Form a ID specific result path"""
-    return os.path.join(opts['per-sample-results'], id_)
+    return os.path.join(opts['per-sample']['results'], id_)
 
 
 def _base_barcode(id_):
@@ -208,8 +225,8 @@ def taxa_summaries(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     results = {}
-    table_path = opts['ag-L6-taxa-%s-biom' % opts['sample_type']]
-    site_table = biom.load_table(table_path)
+    path = opts['taxa']['notrim']['L6']['ag-%s-biom' % opts['sample_type']]
+    site_table = biom.load_table(path)
     table_taxon_ids = site_table.ids(axis='observation')
 
     for id_ in sample_ids:
@@ -248,8 +265,9 @@ def sufficient_sequence_counts(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     results = {}
-    table = biom.load_table(opts['ag-100nt-biom'])
-    minimum_depth = int(opts['rarefaction-depth'])
+    table = biom.load_table(opts['otus']['100nt']['ag-biom'])
+
+    minimum_depth = opts['rarefaction-depth']
 
     for id_ in sample_ids:
         results[id_] = None
@@ -280,9 +298,9 @@ def taxon_significance(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    table_path = opts['ag-L6-taxa-%s-biom' % opts['sample_type']]
+    path = opts['taxa']['notrim']['L6']['ag-%s-biom' % opts['sample_type']]
 
-    cmd_fmt = 'generate_otu_signifigance_tables_AGP.py -i %s ' % table_path
+    cmd_fmt = 'generate_otu_signifigance_tables_AGP.py -i %s ' % path
     cmd_fmt += '-o %(result_path)s -s %(id)s'
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
@@ -304,10 +322,10 @@ def body_site_pcoa(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    coords = opts['ag-pgp-hmp-gg-100nt-1k-unifrac-pc']
+    coords = opts['beta']['1k']['ag-pgp-hmp-gg-100nt-unifrac-pc']
     cmd_fmt = ' '.join(["mod2_pcoa.py body_site",
                         "--coords %s" % coords,
-                        "--mapping_file %s" % opts['ag-cleaned-md'],
+                        "--mapping_file %s" % opts['meta']['ag-cleaned-md'],
                         "--output %(result_path)s",
                         "--filename figure1.pdf",
                         "--sample %(id)s"])
@@ -331,11 +349,12 @@ def country_pcoa(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    coords = opts['ag-gg-100nt-1k-subsampled-unifrac-pc']
+    beta1k = opts['beta']['1k']
+    coords = beta1k['ag-gg-100nt-subsampled-unifrac-pc']
     cmd_fmt = ' '.join(["mod2_pcoa.py country",
-                        "--distmat %s" % opts['ag-gg-100nt-1k-bdiv-unifrac'],
+                        "--distmat %s" % beta1k['ag-gg-100nt-unifrac'],
                         "--coords %s" % coords,
-                        "--mapping_file %s" % opts['ag-gg-cleaned-md'],
+                        "--mapping_file %s" % opts['meta']['ag-gg-cleaned-md'],
                         "--output %(result_path)s",
                         "--filename figure2.pdf",
                         "--sample %(id)s"])
@@ -359,10 +378,11 @@ def gradient_pcoa(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    coords = opts['ag-100nt-%s-1k-unifrac-pc' % opts['sample_type']]
+    mapping = opts['taxa']['notrim']['L2']['ag-md']
+    coords = opts['beta']['1k']['ag-100nt-%s-unifrac-pc' % opts['sample_type']]
     cmd_fmt = ' '.join(["mod2_pcoa.py gradient",
                         "--coords %s" % coords,
-                        "--mapping_file %s" % opts['ag-L2-taxa-md'],
+                        "--mapping_file %s" % mapping,
                         "--output %(result_path)s",
                         "--filename figure3.pdf",
                         "--color %s" % opts['gradient_color_by'],
@@ -388,7 +408,7 @@ def pie_plot(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     cmd_fmt = ' '.join(['make_pie_plot_AGP.py',
-                        '-i %s' % opts['ag-L3-taxa-tsv'],
+                        '-i %s' % opts['taxa']['notrim']['L3']['ag-tsv'],
                         '-o %(result_path)s',
                         '-s %(id)s'])
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
@@ -410,10 +430,10 @@ def bar_chart(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    table_path = opts['ag-100nt-1k-%s-biom' % opts['sample_type']]
+    path = opts['collapsed']['notrim']['1k']['ag-%s-biom' % opts['sample_type']]
     cmd_fmt = ' '.join(['make_phyla_plots_AGP.py',
-                        '-i %s' % table_path,
-                        '-m %s' % opts['ag-cleaned-md'],
+                        '-i %s' % path,
+                        '-m %s' % opts['meta']['ag-cleaned-md'],
                         '-o %(result_path)s',
                         '-c %s' % opts['barchart_categories'],
                         '-t %s' % opts['sample_type'],
@@ -470,7 +490,7 @@ def stage_per_sample_specific_statics(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     result = {}
-    statics_src = opts['statics-%s' % opts['sample_type'].lower()]
+    statics_src = opts['per-sample']['statics-%s' % opts['sample_type'].lower()]
     for id_ in sample_ids:
         result[id_] = None
         path = _result_path(opts, id_)

@@ -26,7 +26,7 @@ paths = {
 
     # sequences filtered for blooms
     'filtered': {
-        'sequences': '02-filtered/sequences.fna',
+        'sequences-notrim': '02-filtered/sequences-notrim.fna',
         'sequences-100nt': '02-filtered/sequences-100nt.fna',
 
         # only fecal sequences (for filtering for blooms)
@@ -41,11 +41,15 @@ paths = {
 
     # resulting OTU data
     'otus': {
-        'ag': '03-otus/gg-13_8-97-percent',
-        'ag-100nt': '03-otus/gg-13_8-97-percent-100nt',
-        'ag-biom': '03-otus/gg-13_8-97-percent/otu_table.biom',
-        'ag-100nt-biom': '03-otus/gg-13_8-97-percent-100nt/otu_table.biom',
-        },
+        'notrim': {
+            'ag': '03-otus/notrim/gg-13_8-97-percent',
+            'ag-biom': '03-otus/notrim/gg-13_8-97-percent/otu_table.biom'
+            },
+        '100nt': {
+            'ag': '03-otus/100nt/gg-13_8-97-percent',
+            'ag-biom': '03-otus/100nt/gg-13_8-97-percent/otu_table.biom'
+        }
+    },
 
     # merged files for diversity analyses
     'meta': {
@@ -64,6 +68,13 @@ paths = {
     # alpha diversity analysis files
     'alpha': {
         '1k': {
+            'ag-notrim-multiple': '05-alpha/1k/ag-notrim-multiple',
+            'ag-notrim': '05-alpha/1k/ag-notrim',
+            'ag-notrim-pd': '05-alpha/1k/ag-notrim/PD_whole_tree.txt',
+            'ag-notrim-chao1': '05-alpha/1k/ag-notrim/chao1.txt',
+            'ag-notrim-observedotus': '05-alpha/1k/ag-notrim/observed_otus.txt',
+            'ag-notrim-shannon': '05-alpha/1k/ag-notrim/shannon.txt',
+
             'ag-pgp-hmp-gg-100nt-multiple': '05-alpha/1k/ag-pgp-hmp-gg-100nt-multiple',
             'ag-pgp-hmp-gg-100nt': '05-alpha/1k/ag-pgp-hmp-gg-100nt',
             'ag-pgp-hmp-gg-100nt-pd':
@@ -72,8 +83,17 @@ paths = {
                 '05-alpha/1k/ag-pgp-hmp-gg-100nt/chao1.txt',
             'ag-pgp-hmp-gg-100nt-observedotus':
                 '05-alpha/1k/ag-pgp-hmp-gg-100nt/observed_otus.txt',
+            'ag-pgp-hmp-gg-100nt-shannon':
+                '05-alpha/1k/ag-pgp-hmp-gg-100nt/shannon.txt',
             },
         '10k': {
+            'ag-notrim-multiple': '05-alpha/10k/ag-notrim-multiple',
+            'ag-notrim': '05-alpha/10k/ag-notrim',
+            'ag-notrim-pd': '05-alpha/10k/ag-notrim/PD_whole_tree.txt',
+            'ag-notrim-chao1': '05-alpha/10k/ag-notrim/chao1.txt',
+            'ag-notrim-observedotus': '05-alpha/10k/ag-notrim/observed_otus.txt',
+            'ag-notrim-shannon': '05-alpha/10k/ag-notrim/shannon.txt',
+
             'ag-pgp-hmp-gg-100nt-multiple': '05-alpha/10k/ag-pgp-hmp-gg-100nt-multiple',
             'ag-pgp-hmp-gg-100nt': '05-alpha/10k/ag-pgp-hmp-gg-100nt',
             'ag-pgp-hmp-gg-100nt-pd':
@@ -82,12 +102,56 @@ paths = {
                 '05-alpha/10k/ag-pgp-hmp-gg-100nt/chao1.txt',
             'ag-pgp-hmp-gg-100nt-observedotus':
                 '05-alpha/10k/ag-pgp-hmp-gg-100nt/observed_otus.txt',
+            'ag-pgp-hmp-gg-100nt-shannon':
+                '05-alpha/10k/ag-pgp-hmp-gg-100nt/shannon.txt',
             }
         },
 
     # beta diversity analysis files
     'beta': {
         '1k': {
+            'ag-notrim-biom': '06-beta/1k/ag-notrim.biom',
+            'ag-notrim': '06-beta/1k/ag-notrim',
+
+            'ag-notrim-unifrac':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim.txt',
+            'ag-notrim-unifrac-pc':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-pc.txt',
+
+            'ag-notrim-oral-unifrac':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-oral.txt',
+            'ag-notrim-oral-unifrac-pc':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-oral-pc.txt',
+
+            'ag-notrim-skin-unifrac':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-skin.txt',
+            'ag-notrim-skin-unifrac-pc':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-skin-pc.txt',
+
+            'ag-notrim-fecal-unifrac':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-fecal.txt',
+            'ag-notrim-fecal-unifrac-pc':
+                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-fecal-pc.txt',
+            'ag-notrim-wunifrac':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim.txt',
+            'ag-notrim-wunifrac-pc':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-pc.txt',
+
+            'ag-notrim-oral-wunifrac':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-oral.txt',
+            'ag-notrim-oral-wunifrac-pc':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-oral-pc.txt',
+
+            'ag-notrim-skin-wunifrac':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-skin.txt',
+            'ag-notrim-skin-wunifrac-pc':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-skin-pc.txt',
+
+            'ag-notrim-fecal-wunifrac':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-fecal.txt',
+            'ag-notrim-fecal-wunifrac-pc':
+                '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim-fecal-pc.txt',
+
             'ag-pgp-hmp-gg-100nt-biom': '06-beta/1k/ag-pgp-hmp-gg-100nt.biom',
             'ag-pgp-hmp-gg-100nt': '06-beta/1k/ag-pgp-hmp-gg-100nt',
 
@@ -119,12 +183,82 @@ paths = {
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-skin-pc.txt'),
 
+            'ag-100nt-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt.txt'),
+            'ag-100nt-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-pc.txt'),
+
+            'ag-100nt-oral-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-oral.txt'),
+            'ag-100nt-oral-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-oral-pc.txt'),
+
+            'ag-100nt-fecal-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-fecal.txt'),
+            'ag-100nt-fecal-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-fecal-pc.txt'),
+
+            'ag-100nt-skin-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-skin.txt'),
+            'ag-100nt-skin-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-skin-pc.txt'),
+
             'ag-pgp-hmp-gg-100nt-unifrac':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt.txt'),
             'ag-pgp-hmp-gg-100nt-unifrac-pc':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-skin-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-skin.txt'),
+            'ag-pgp-hmp-gg-100nt-skin-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-skin-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-oral-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-oral.txt'),
+            'ag-pgp-hmp-gg-100nt-oral-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-oral-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-fecal-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-fecal.txt'),
+            'ag-pgp-hmp-gg-100nt-fecal-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-fecal-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-skin-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-skin.txt'),
+            'ag-pgp-hmp-gg-100nt-skin-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-skin-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-oral-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-oral.txt'),
+            'ag-pgp-hmp-gg-100nt-oral-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-oral-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-fecal-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-fecal.txt'),
+            'ag-pgp-hmp-gg-100nt-fecal-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-fecal-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-wunifrac':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
@@ -140,12 +274,26 @@ paths = {
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-pc.txt'),
 
-            'ag-gg-100nt-subsampled-unifrac':
+            'ag-gg-100nt-skin-unifrac':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
-                 'unweighted_unifrac_ag-gg-100nt-subsampled.txt'),
-            'ag-gg-100nt-subsampled-unifrac-pc':
+                 'unweighted_unifrac_ag-gg-100nt-skin.txt'),
+            'ag-gg-100nt-skin-unifrac-pc':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
-                 'unweighted_unifrac_ag-gg-100nt-subsampled-pc.txt'),
+                 'unweighted_unifrac_ag-gg-100nt-skin-pc.txt'),
+
+            'ag-gg-100nt-oral-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-oral.txt'),
+            'ag-gg-100nt-oral-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-oral-pc.txt'),
+
+            'ag-gg-100nt-fecal-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-fecal.txt'),
+            'ag-gg-100nt-fecal-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-fecal-pc.txt'),
 
             'ag-gg-100nt-wunifrac':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
@@ -153,8 +301,79 @@ paths = {
             'ag-gg-100nt-wunifrac-pc':
                 ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-pc.txt'),
+
+            'ag-gg-100nt-skin-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-skin.txt'),
+            'ag-gg-100nt-skin-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-skin-pc.txt'),
+
+            'ag-gg-100nt-oral-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-oral.txt'),
+            'ag-gg-100nt-oral-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-oral-pc.txt'),
+
+            'ag-gg-100nt-fecal-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-fecal.txt'),
+            'ag-gg-100nt-fecal-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-fecal-pc.txt'),
+
+            'ag-gg-100nt-subsampled-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-subsampled.txt'),
+            'ag-gg-100nt-subsampled-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-subsampled-pc.txt'),
+
             },
         '10k': {
+            'ag-notrim-biom': '06-beta/10k/ag-notrim.biom',
+            'ag-notrim': '06-beta/10k/ag-notrim',
+
+            'ag-notrim-unifrac':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim.txt',
+            'ag-notrim-unifrac-pc':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-pc.txt',
+
+            'ag-notrim-oral-unifrac':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-oral.txt',
+            'ag-notrim-oral-unifrac-pc':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-oral-pc.txt',
+
+            'ag-notrim-skin-unifrac':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-skin.txt',
+            'ag-notrim-skin-unifrac-pc':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-skin-pc.txt',
+
+            'ag-notrim-fecal-unifrac':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-fecal.txt',
+            'ag-notrim-fecal-unifrac-pc':
+                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-fecal-pc.txt',
+            'ag-notrim-wunifrac':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim.txt',
+            'ag-notrim-wunifrac-pc':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-pc.txt',
+
+            'ag-notrim-oral-wunifrac':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-oral.txt',
+            'ag-notrim-oral-wunifrac-pc':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-oral-pc.txt',
+
+            'ag-notrim-skin-wunifrac':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-skin.txt',
+            'ag-notrim-skin-wunifrac-pc':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-skin-pc.txt',
+
+            'ag-notrim-fecal-wunifrac':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-fecal.txt',
+            'ag-notrim-fecal-wunifrac-pc':
+                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-fecal-pc.txt',
+
             'ag-pgp-hmp-gg-100nt-biom': '06-beta/10k/ag-pgp-hmp-gg-100nt.biom',
             'ag-pgp-hmp-gg-100nt': '06-beta/10k/ag-pgp-hmp-gg-100nt',
 
@@ -186,12 +405,82 @@ paths = {
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-100nt-skin-pc.txt'),
 
+            'ag-100nt-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt.txt'),
+            'ag-100nt-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-pc.txt'),
+
+            'ag-100nt-oral-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-oral.txt'),
+            'ag-100nt-oral-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-oral-pc.txt'),
+
+            'ag-100nt-fecal-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-fecal.txt'),
+            'ag-100nt-fecal-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-fecal-pc.txt'),
+
+            'ag-100nt-skin-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-skin.txt'),
+            'ag-100nt-skin-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-100nt-skin-pc.txt'),
+
             'ag-pgp-hmp-gg-100nt-unifrac':
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt.txt'),
             'ag-pgp-hmp-gg-100nt-unifrac-pc':
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-pgp-hmp-gg-100nt-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-skin-unifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-skin.txt'),
+            'ag-pgp-hmp-gg-100nt-skin-unifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-skin-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-oral-unifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-oral.txt'),
+            'ag-pgp-hmp-gg-100nt-oral-unifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-oral-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-fecal-unifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-fecal.txt'),
+            'ag-pgp-hmp-gg-100nt-fecal-unifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-pgp-hmp-gg-100nt-fecal-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-skin-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-skin.txt'),
+            'ag-pgp-hmp-gg-100nt-skin-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-skin-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-oral-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-oral.txt'),
+            'ag-pgp-hmp-gg-100nt-oral-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-oral-pc.txt'),
+
+            'ag-pgp-hmp-gg-100nt-fecal-wunifrac':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-fecal.txt'),
+            'ag-pgp-hmp-gg-100nt-fecal-wunifrac-pc':
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-pgp-hmp-gg-100nt-fecal-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-wunifrac':
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
@@ -207,6 +496,27 @@ paths = {
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-pc.txt'),
 
+            'ag-gg-100nt-skin-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-skin.txt'),
+            'ag-gg-100nt-skin-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-skin-pc.txt'),
+
+            'ag-gg-100nt-oral-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-oral.txt'),
+            'ag-gg-100nt-oral-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-oral-pc.txt'),
+
+            'ag-gg-100nt-fecal-unifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-fecal.txt'),
+            'ag-gg-100nt-fecal-unifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'unweighted_unifrac_ag-gg-100nt-fecal-pc.txt'),
+
             'ag-gg-100nt-subsampled-unifrac':
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-subsampled.txt'),
@@ -220,75 +530,197 @@ paths = {
             'ag-gg-100nt-wunifrac-pc':
                 ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-pc.txt'),
+
+            'ag-gg-100nt-skin-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-skin.txt'),
+            'ag-gg-100nt-skin-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-skin-pc.txt'),
+
+            'ag-gg-100nt-oral-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-oral.txt'),
+            'ag-gg-100nt-oral-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-oral-pc.txt'),
+
+            'ag-gg-100nt-fecal-wunifrac':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-fecal.txt'),
+            'ag-gg-100nt-fecal-wunifrac-pc':
+                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                 'weighted_unifrac_ag-gg-100nt-fecal-pc.txt'),
+
             }
         },
 
     # taxonomy summaries
     'taxa': {
-        'L2': {
-            'ag-tsv': '07-taxa/otu_table_L2.txt',
-            'ag-biom': '07-taxa/otu_table_L2.biom',
-            'ag-md': '07-taxa/ag-cleaned_L2.txt',
-            'ag-skin-biom': '07-taxa/otu_table_skin_L2.biom',
-            'ag-oral-biom': '07-taxa/otu_table_oral_L2.biom',
-            'ag-fecal-biom': '07-taxa/otu_table_fecal_L2.biom',
+        '100nt': {
+            'base': '07-taxa/100nt',
+            'L2': {
+                'ag-tsv': '07-taxa/100nt/otu_table_L2.txt',
+                'ag-biom': '07-taxa/100nt/otu_table_L2.biom',
+                'ag-md': '07-taxa/100nt/ag-cleaned_L2.txt',
+                'ag-skin-biom': '07-taxa/100nt/otu_table_skin_L2.biom',
+                'ag-oral-biom': '07-taxa/100nt/otu_table_oral_L2.biom',
+                'ag-fecal-biom': '07-taxa/100nt/otu_table_fecal_L2.biom',
+                },
+            'L3': {
+                'ag-tsv': '07-taxa/100nt/otu_table_L3.txt',
+                'ag-biom': '07-taxa/100nt/otu_table_L3.biom',
+                'ag-md': '07-taxa/100nt/ag-cleaned_L3.txt',
+                'ag-skin-biom': '07-taxa/100nt/otu_table_skin_L3.biom',
+                'ag-oral-biom': '07-taxa/100nt/otu_table_oral_L3.biom',
+                'ag-fecal-biom': '07-taxa/100nt/otu_table_fecal_L3.biom',
+                },
+            'L6': {
+                'ag-tsv': '07-taxa/100nt/otu_table_L6.txt',
+                'ag-biom': '07-taxa/100nt/otu_table_L6.biom',
+                'ag-md': '07-taxa/100nt/ag-cleaned_L6.txt',
+                'ag-skin-biom': '07-taxa/100nt/otu_table_skin_L6.biom',
+                'ag-oral-biom': '07-taxa/100nt/otu_table_oral_L6.biom',
+                'ag-fecal-biom': '07-taxa/100nt/otu_table_fecal_L6.biom',
+                }
             },
-        'L3': {
-            'ag-tsv': '07-taxa/otu_table_L3.txt',
-            'ag-biom': '07-taxa/otu_table_L3.biom',
-            'ag-md': '07-taxa/ag-cleaned_L3.txt',
-            'ag-skin-biom': '07-taxa/otu_table_skin_L3.biom',
-            'ag-oral-biom': '07-taxa/otu_table_oral_L3.biom',
-            'ag-fecal-biom': '07-taxa/otu_table_fecal_L3.biom',
-            },
-        'L6': {
-            'ag-tsv': '07-taxa/otu_table_L6.txt',
-            'ag-biom': '07-taxa/otu_table_L6.biom',
-            'ag-md': '07-taxa/ag-cleaned_L6.txt',
-            'ag-skin-biom': '07-taxa/otu_table_skin_L6.biom',
-            'ag-oral-biom': '07-taxa/otu_table_oral_L6.biom',
-            'ag-fecal-biom': '07-taxa/otu_table_fecal_L6.biom',
+        'notrim': {
+            'base': '07-taxa/notrim',
+            'L2': {
+                'ag-tsv': '07-taxa/notrim/otu_table_L2.txt',
+                'ag-biom': '07-taxa/notrim/otu_table_L2.biom',
+                'ag-md': '07-taxa/notrim/ag-cleaned_L2.txt',
+                'ag-skin-biom': '07-taxa/notrim/otu_table_skin_L2.biom',
+                'ag-oral-biom': '07-taxa/notrim/otu_table_oral_L2.biom',
+                'ag-fecal-biom': '07-taxa/notrim/otu_table_fecal_L2.biom',
+                },
+            'L3': {
+                'ag-tsv': '07-taxa/notrim/otu_table_L3.txt',
+                'ag-biom': '07-taxa/notrim/otu_table_L3.biom',
+                'ag-md': '07-taxa/notrim/ag-cleaned_L3.txt',
+                'ag-skin-biom': '07-taxa/notrim/otu_table_skin_L3.biom',
+                'ag-oral-biom': '07-taxa/notrim/otu_table_oral_L3.biom',
+                'ag-fecal-biom': '07-taxa/notrim/otu_table_fecal_L3.biom',
+                },
+            'L6': {
+                'ag-tsv': '07-taxa/notrim/otu_table_L6.txt',
+                'ag-biom': '07-taxa/notrim/otu_table_L6.biom',
+                'ag-md': '07-taxa/notrim/ag-cleaned_L6.txt',
+                'ag-skin-biom': '07-taxa/notrim/otu_table_skin_L6.biom',
+                'ag-oral-biom': '07-taxa/notrim/otu_table_oral_L6.biom',
+                'ag-fecal-biom': '07-taxa/notrim/otu_table_fecal_L6.biom',
+                }
             }
         },
 
     # collapsed samples
     'collapsed': {
-        'ag-100nt-1k-biom': '08-collapsed/ag-100nt-1k.biom',
-        'ag-100nt-1k-fecal-biom': '08-collapsed/ag-100nt-1k-fecal.biom',
-        'ag-100nt-1k-skin-biom': '08-collapsed/ag-100nt-1k-oral.biom',
-        'ag-100nt-1k-oral-biom': '08-collapsed/ag-100nt-1k-skin.biom',
+        '100nt': {
+            '1k': {
+                'ag-biom': '08-collapsed/100nt/1k/ag.biom',
+                'ag-fecal-biom': '08-collapsed/100nt/1k/ag-fecal.biom',
+                'ag-skin-biom': '08-collapsed/100nt/1k/ag-oral.biom',
+                'ag-oral-biom': '08-collapsed/100nt/1k/ag-skin.biom',
 
-        'ag-100nt-1k-fecal-sex-biom':  '08-collapsed/ag-100nt-1k-fecal-sex.biom',
-        'ag-100nt-1k-fecal-diet-biom': '08-collapsed/ag-100nt-1k-fecal-diet.biom',
-        'ag-100nt-1k-fecal-age-biom':  '08-collapsed/ag-100nt-1k-fecal-age.biom',
-        'ag-100nt-1k-fecal-bmi-biom':  '08-collapsed/ag-100nt-1k-fecal-bmi.biom',
+                'ag-fecal-sex-biom':  '08-collapsed/100nt/1k/ag-fecal-sex.biom',
+                'ag-fecal-diet-biom': '08-collapsed/100nt/1k/ag-fecal-diet.biom',
+                'ag-fecal-age-biom':  '08-collapsed/100nt/1k/ag-fecal-age.biom',
+                'ag-fecal-bmi-biom':  '08-collapsed/100nt/1k/ag-fecal-bmi.biom',
 
-        'ag-100nt-1k-oral-sex-biom':  '08-collapsed/ag-100nt-1k-oral-sex.biom',
-        'ag-100nt-1k-oral-diet-biom': '08-collapsed/ag-100nt-1k-oral-diet.biom',
-        'ag-100nt-1k-oral-age-biom':  '08-collapsed/ag-100nt-1k-oral-age.biom',
-        'ag-100nt-1k-oral-flossing-biom':  '08-collapsed/ag-100nt-1k-oral-flossing.biom',
+                'ag-oral-sex-biom':  '08-collapsed/100nt/1k/ag-oral-sex.biom',
+                'ag-oral-diet-biom': '08-collapsed/100nt/1k/ag-oral-diet.biom',
+                'ag-oral-age-biom':  '08-collapsed/100nt/1k/ag-oral-age.biom',
+                'ag-oral-flossing-biom':  '08-collapsed/100nt/1k/ag-oral-flossing.biom',
 
-        'ag-100nt-1k-skin-sex-biom':  '08-collapsed/ag-100nt-1k-skin-sex.biom',
-        'ag-100nt-1k-skin-cosmetics-biom': '08-collapsed/ag-100nt-1k-skin-cosmetics.biom',
-        'ag-100nt-1k-skin-age-biom':  '08-collapsed/ag-100nt-1k-skin-age.biom',
-        'ag-100nt-1k-skin-hand-biom':  '08-collapsed/ag-100nt-1k-skin-hand.biom',
-    },
+                'ag-skin-sex-biom':  '08-collapsed/100nt/1k/ag-skin-sex.biom',
+                'ag-skin-cosmetics-biom': '08-collapsed/100nt/1k/ag-skin-cosmetics.biom',
+                'ag-skin-age-biom':  '08-collapsed/100nt/1k/ag-skin-age.biom',
+                'ag-skin-hand-biom':  '08-collapsed/100nt/1k/ag-skin-hand.biom',
+                },
+            '10k': {
+                'ag-biom': '08-collapsed/100nt/10k/ag.biom',
+                'ag-fecal-biom': '08-collapsed/100nt/10k/ag-fecal.biom',
+                'ag-skin-biom': '08-collapsed/100nt/10k/ag-oral.biom',
+                'ag-oral-biom': '08-collapsed/100nt/10k/ag-skin.biom',
+
+                'ag-fecal-sex-biom':  '08-collapsed/100nt/10k/ag-fecal-sex.biom',
+                'ag-fecal-diet-biom': '08-collapsed/100nt/10k/ag-fecal-diet.biom',
+                'ag-fecal-age-biom':  '08-collapsed/100nt/10k/ag-fecal-age.biom',
+                'ag-fecal-bmi-biom':  '08-collapsed/100nt/10k/ag-fecal-bmi.biom',
+
+                'ag-oral-sex-biom':  '08-collapsed/100nt/10k/ag-oral-sex.biom',
+                'ag-oral-diet-biom': '08-collapsed/100nt/10k/ag-oral-diet.biom',
+                'ag-oral-age-biom':  '08-collapsed/100nt/10k/ag-oral-age.biom',
+                'ag-oral-flossing-biom':  '08-collapsed/100nt/10k/ag-oral-flossing.biom',
+
+                'ag-skin-sex-biom':  '08-collapsed/100nt/10k/ag-skin-sex.biom',
+                'ag-skin-cosmetics-biom': '08-collapsed/100nt/10k/ag-skin-cosmetics.biom',
+                'ag-skin-age-biom':  '08-collapsed/100nt/10k/ag-skin-age.biom',
+                'ag-skin-hand-biom':  '08-collapsed/100nt/10k/ag-skin-hand.biom',
+                }
+            },
+        'notrim': {
+            '1k': {
+                'ag-biom': '08-collapsed/notrim/1k/ag.biom',
+                'ag-fecal-biom': '08-collapsed/notrim/1k/ag-fecal.biom',
+                'ag-skin-biom': '08-collapsed/notrim/1k/ag-oral.biom',
+                'ag-oral-biom': '08-collapsed/notrim/1k/ag-skin.biom',
+
+                'ag-fecal-sex-biom':  '08-collapsed/notrim/1k/ag-fecal-sex.biom',
+                'ag-fecal-diet-biom': '08-collapsed/notrim/1k/ag-fecal-diet.biom',
+                'ag-fecal-age-biom':  '08-collapsed/notrim/1k/ag-fecal-age.biom',
+                'ag-fecal-bmi-biom':  '08-collapsed/notrim/1k/ag-fecal-bmi.biom',
+
+                'ag-oral-sex-biom':  '08-collapsed/notrim/1k/ag-oral-sex.biom',
+                'ag-oral-diet-biom': '08-collapsed/notrim/1k/ag-oral-diet.biom',
+                'ag-oral-age-biom':  '08-collapsed/notrim/1k/ag-oral-age.biom',
+                'ag-oral-flossing-biom':  '08-collapsed/notrim/1k/ag-oral-flossing.biom',
+
+                'ag-skin-sex-biom':  '08-collapsed/notrim/1k/ag-skin-sex.biom',
+                'ag-skin-cosmetics-biom': '08-collapsed/notrim/1k/ag-skin-cosmetics.biom',
+                'ag-skin-age-biom':  '08-collapsed/notrim/1k/ag-skin-age.biom',
+                'ag-skin-hand-biom':  '08-collapsed/notrim/1k/ag-skin-hand.biom',
+                },
+            '10k': {
+                'ag-biom': '08-collapsed/notrim/10k/ag.biom',
+                'ag-fecal-biom': '08-collapsed/notrim/10k/ag-fecal.biom',
+                'ag-skin-biom': '08-collapsed/notrim/10k/ag-oral.biom',
+                'ag-oral-biom': '08-collapsed/notrim/10k/ag-skin.biom',
+
+                'ag-fecal-sex-biom':  '08-collapsed/notrim/10k/ag-fecal-sex.biom',
+                'ag-fecal-diet-biom': '08-collapsed/notrim/10k/ag-fecal-diet.biom',
+                'ag-fecal-age-biom':  '08-collapsed/notrim/10k/ag-fecal-age.biom',
+                'ag-fecal-bmi-biom':  '08-collapsed/notrim/10k/ag-fecal-bmi.biom',
+
+                'ag-oral-sex-biom':  '08-collapsed/notrim/10k/ag-oral-sex.biom',
+                'ag-oral-diet-biom': '08-collapsed/notrim/10k/ag-oral-diet.biom',
+                'ag-oral-age-biom':  '08-collapsed/notrim/10k/ag-oral-age.biom',
+                'ag-oral-flossing-biom':  '08-collapsed/notrim/10k/ag-oral-flossing.biom',
+
+                'ag-skin-sex-biom':  '08-collapsed/notrim/10k/ag-skin-sex.biom',
+                'ag-skin-cosmetics-biom': '08-collapsed/notrim/10k/ag-skin-cosmetics.biom',
+                'ag-skin-age-biom':  '08-collapsed/notrim/10k/ag-skin-age.biom',
+                'ag-skin-hand-biom':  '08-collapsed/notrim/10k/ag-skin-hand.biom',
+                }
+            }
+        },
+
 
     # per-sample results
     'per-sample': {
         'successful-ids': '09-per-sample/successful_ids.txt',
         'unsuccessful-ids': '09-per-sample/unsuccessful_ids.txt',
-        'per-sample-results': '09-per-sample/results',
-        'statics-fecal': '09/statics-fecal',
-        'statics-oral': '09/statics-oral',
-        'statics-skin': '09/statics-skin',
+        'results': '09-per-sample/results',
+        'statics-fecal': '09-per-sample/statics-fecal',
+        'statics-oral': '09-per-sample/statics-oral',
+        'statics-skin': '09-per-sample/statics-skin',
     },
 
-    'populated-results': {
-        'result-pdfs': '10/result_pdfs/',
-        'result-taxa': '10/result_taxa/',
-        'successful-pdfs': '10/successful_pdfs.txt',
-        'unsuccessful-pdfs': '10/unsuccessful_pdfs.txt',
+    'populated-templates': {
+        'result-pdfs': '10-populated-templates/pdfs/',
+        'result-taxa': '10-populated-templates/taxa/',
+        'successful-pdfs': '10-populated-templates/successful_ids.txt',
+        'unsuccessful-pdfs': '10-populated-templates/unsuccessful_ids.txt',
     },
 
     'demux': {},
@@ -341,13 +773,8 @@ def get_sortmerna_index():
 
 def get_rarefaction_depth():
     """Return the rarefaction depth to use"""
-<<<<<<< HEAD
-    if _TEST_ENV:
-        return ("100", "200")
-=======
     if ag.is_test_env():
-        return "100"
->>>>>>> master
+        return ("50", "100")
     else:
         return ("1000", "10000")
 
@@ -529,14 +956,9 @@ def _stage_test_accessions():
     repo = get_repository_dir()
     for acc in _TEST_ACCESSIONS:
         src = os.path.join(repo, 'tests/data/%s' % acc)
-        dst = os.path.join(ag.WORKING_DIR, '01/%s' % acc)
+        dst = os.path.join(ag.WORKING_DIR, '01-raw/%s' % acc)
 
-        if not os.path.exists(os.path.join(ag.WORKING_DIR, '01')):
-            os.mkdir('01')
+        if not os.path.exists(os.path.join(ag.WORKING_DIR, '01-raw')):
+            os.mkdir('01-raw')
 
-<<<<<<< HEAD
-        shutil.copy(src_fna, os.path.join(ag.WORKING_DIR, '1-raw'))
-        shutil.copy(src_map, os.path.join(ag.WORKING_DIR, '1-raw'))
-=======
         shutil.copytree(src, dst)
->>>>>>> master

@@ -9,22 +9,22 @@
 >>> import americangut.per_sample as agps
 >>> import americangut.parallel as agpar
 ...
->>> chp_path = agenv.activate('10')
+>>> chp_path = agenv.activate('10-populated-templates')
 ```
 
 ```python
->>> result_pdfs          = agu.get_new_path(agenv.paths['result-pdfs'])
->>> result_taxa          = agu.get_new_path(agenv.paths['result-taxa'])
->>> successful_pdfs      = agu.get_new_path(agenv.paths['successful-pdfs'])
->>> unsuccessful_pdfs    = agu.get_new_path(agenv.paths['unsuccessful-pdfs'])
+>>> result_pdfs          = agu.get_new_path(agenv.paths['populated-templates']['result-pdfs'])
+>>> result_taxa          = agu.get_new_path(agenv.paths['populated-templates']['result-taxa'])
+>>> successful_pdfs      = agu.get_new_path(agenv.paths['populated-templates']['successful-pdfs'])
+>>> unsuccessful_pdfs    = agu.get_new_path(agenv.paths['populated-templates']['unsuccessful-pdfs'])
 ...
 >>> os.mkdir(result_pdfs)
 >>> os.mkdir(result_taxa)
 ```
 
 ```python
->>> per_sample_results = agu.get_existing_path(agenv.paths['per-sample-results'])
->>> successful_ids     = agu.get_existing_path(agenv.paths['successful-ids'])
+>>> per_sample_results = agu.get_existing_path(agenv.paths['per-sample']['results'])
+>>> successful_ids     = agu.get_existing_path(agenv.paths['per-sample']['successful-ids'])
 ```
 
 ```python
@@ -37,10 +37,10 @@
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> def aggregate(opts, ids):
-...     cmd_fmt = "echo '\n\def\yourname{unidentified}\n' >> %(result_path)s/macros.tex;" 
-...     cmd_fmt += "mv %(result_path)s/%(id)s.pdf " + opts['result-pdfs']
+...     cmd_fmt = "echo '\n\def\yourname{unidentified}\n' >> %(result_path)s/macros.tex;"
+...     cmd_fmt += "mv %(result_path)s/%(id)s.pdf " + opts['populated-templates']['result-pdfs']
 ...     cmd_fmt += '; '
-...     cmd_fmt += "mv %(result_path)s/%(id)s.txt " + opts['result-taxa']
+...     cmd_fmt += "mv %(result_path)s/%(id)s.txt " + opts['populated-templates']['result-taxa']
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> opts = agps.create_opts('sample-agnostic', chp_path, None, [])

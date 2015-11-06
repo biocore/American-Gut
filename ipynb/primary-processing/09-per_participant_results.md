@@ -5,30 +5,31 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 >>> from functools import partial
 >>> import pandas as pd
 ...
+>>> import americangut as ag
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 >>> import americangut.results_utils as agru
 >>> import americangut.per_sample as agps
 >>> import americangut.parallel as agpar
 ...
->>> chp_path = agenv.activate('09')
+>>> chp_path = agenv.activate('09-per-sample')
 ```
 
 First we'll setup our existing paths that we need.
 
 ```python
->>> ag_cleaned_md = agu.get_existing_path(agenv.paths['ag-cleaned-md'])
+>>> ag_cleaned_md = agu.get_existing_path(agenv.paths['meta']['ag-cleaned-md'])
 ```
 
 Then we'll establish our new paths as well as "per-sample-results" directory where the individual figures will go.
 
 ```python
->>> successful_ids     = agu.get_new_path(agenv.paths['successful-ids'])
->>> unsuccessful_ids   = agu.get_new_path(agenv.paths['unsuccessful-ids'])
->>> per_sample_results = agu.get_new_path(agenv.paths['per-sample-results'])
->>> statics_fecal      = agu.get_new_path(agenv.paths['statics-fecal'])
->>> statics_oral       = agu.get_new_path(agenv.paths['statics-oral'])
->>> statics_skin       = agu.get_new_path(agenv.paths['statics-skin'])
+>>> successful_ids     = agu.get_new_path(agenv.paths['per-sample']['successful-ids'])
+>>> unsuccessful_ids   = agu.get_new_path(agenv.paths['per-sample']['unsuccessful-ids'])
+>>> per_sample_results = agu.get_new_path(agenv.paths['per-sample']['results'])
+>>> statics_fecal      = agu.get_new_path(agenv.paths['per-sample']['statics-fecal'])
+>>> statics_oral       = agu.get_new_path(agenv.paths['per-sample']['statics-oral'])
+>>> statics_skin       = agu.get_new_path(agenv.paths['per-sample']['statics-skin'])
 ...
 >>> os.mkdir(per_sample_results)
 >>> os.mkdir(statics_fecal)
@@ -46,6 +47,7 @@ We're also going to load up the American Gut mapping file so we can determine wh
 And finally, these next blocks of code support the per-sample type processing. First, for every sample type, there are common outputs to produce, such as taxonomy summaries. Second, there are some functions that are specific to a sample type. And last, there are a few sample specific options.
 
 ```python
+>>> reload(agps)
 >>> common_functions = [agps.sufficient_sequence_counts,
 ...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
@@ -102,7 +104,7 @@ And we'll end with some numbers on the number of successful and unsuccessful sam
 ```
 
 ```python
->>> if agenv.is_test_env():
+>>> if ag.is_test_env():
 ...     # in the test environment, 4 samples lack sufficient sequence for results
 ...     assert len([l for l in open(unsuccessful_ids) if not l.startswith('#')]) == 4
 ```
