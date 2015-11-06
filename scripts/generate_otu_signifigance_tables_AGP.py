@@ -51,7 +51,14 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     # Sets up the way samples should be converted
     SAMPLE_CONVERTER = {'feces': 'fecal',
                         'oral_cavity': 'oral',
-                        'oral cavity': 'oral',
+                        'skin': 'skin'}
+
+    DUMMY = ['', '', '', '']
+    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
+
+    # Sets up the way samples should be converted
+    SAMPLE_CONVERTER = {'feces': 'fecal',
+                        'oral_cavity': 'oral',
                         'skin': 'skin'}
 
     DUMMY = ['', '', '', '']
@@ -87,7 +94,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
 
     UNKNOWNS = set(['None', 'NONE', 'none', 'NA', 'na', 'UNKNOWN', 'unknown'])
     DATE_OUT = '%B %d, %Y'
-    TIME_FIELD = 'COLLECTION_TIME'
+    TIME_FIELD = 'SAMPLE_TIME'
 
     # Number of taxa shown is an indexing value, it is one less than what is
     # actually shown.

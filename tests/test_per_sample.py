@@ -84,11 +84,10 @@ class PerSampleTests(TestCase):
                         'error: The supplied taxonomy file does not exist '
                         'in the path.): '
                         'generate_otu_signifigance_tables_AGP.py '
-                        '-i bar.biom -o foo/test -s test -m baz')}
+                        '-i bar.biom -o foo/test -s test')}
         ids = ['test']
         opts = {'per-sample-results': 'foo',
                 'ag-L6-taxa-bar-biom': 'bar.biom',
-                'ag-cleaned-md': 'baz',
                 'sample_type': 'bar'}
 
         obs = agps.taxon_significance(opts, ids)
@@ -102,7 +101,7 @@ class PerSampleTests(TestCase):
         ids = ['test']
         opts = {'per-sample-results': 'baz',
                 'ag-pgp-hmp-gg-100nt-1k-unifrac-pc': 'foo',
-                'ag-pgp-hmp-gg-cleaned-md': 'bar'}
+                'ag-cleaned-md': 'bar'}
 
         obs = agps.body_site_pcoa(opts, ids)
         self.assertEqual(obs, exp)

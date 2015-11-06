@@ -40,6 +40,39 @@ We're also going to generate some new files, so let's get them setup.
 >>> ag_pgp_hmp_gg_cleaned_md = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-cleaned-md'])
 ```
 
+The first step in the process is to merge the the individual tables into larger ones, and then to merge the larger tables into a final one. We're not using QIIME's `parallel_merge_otu_tables.py` here as we also need one of the intermediate tables for subsequent processing.
+
+The first merge we'll do is between the Global Gut and the American Gut.
+
+```python
+>>> to_merge = ','.join([ag_100nt_biom, gg_100nt_biom])
+>>> !merge_otu_tables.py -i $to_merge -o $ag_gg_100nt_biom
+```
+
+The second merge we'll do is between the Personal Genome Project microbiome samples and the Human Microbiome Project v35 16S samples.
+
+```python
+>>> to_merge = ','.join([pgp_100nt_biom, hmp_100nt_biom])
+>>> !merge_otu_tables.py -i $to_merge -o $pgp_hmp_100nt_biom
+```
+
+And the last merge will bring them all into a single table.
+
+```python
+>>> to_merge = ','.join([ag_gg_100nt_biom, pgp_hmp_100nt_biom])
+>>> !merge_otu_tables.py -i $to_merge -o $ag_pgp_hmp_gg_100nt_biom
+```
+
+Before we proceed, let's dump out a little information about the two merged tables we'll be using for subsequent analysis.
+
+```python
+>>> !biom summarize-table -i $ag_pgp_hmp_gg_100nt_biom | head
+```
+
+```python
+>>> !biom summarize-table -i $ag_gg_100nt_biom | head
+```
+
 We also need to make sure the metadata (the information about the samples) are also merged and consistent. Prior to merge, we're going to add in some additional detail about every sample, such as a column in the mapping file that is the combination of the study title and the body site. We're also going to "generalize" body sites to the type of site they're from (e.g., the back of the hand is just "skin"). This process will also clean the metadata to remove blanks and unknown sample types.
 
 ```python
@@ -71,45 +104,6 @@ Now let's merge the mapping files so we can move on to the diversity analyses!
 >>> !merge_mapping_files.py -m $to_merge -o $ag_pgp_hmp_gg_cleaned_md
 ```
 
-The second step in the process is to merge the the individual tables into larger ones, and then to merge the larger tables into a final one. We're not using QIIME's `parallel_merge_otu_tables.py` here as we also need one of the intermediate tables for subsequent processing.
-
-First, we'll filter the American Gut table down to just the samples that make sense to process (i.e., we're not including blanks for the meta analyses).
-
-```python
->>> tmp_name = agu.get_new_path('ag-100nt-cleaned.biom')
->>> !filter_samples_from_otu_table.py -i $ag_100nt_biom -o $tmp_name --sample_id_fp $ag_cleaned_md
-```
-
-Then, we'll merge the Global Gut and the American Gut.
-
-```python
->>> to_merge = ','.join([tmp_name, gg_100nt_biom])
->>> !merge_otu_tables.py -i $to_merge -o $ag_gg_100nt_biom
-```
-
-The second merge we'll do is between the Personal Genome Project microbiome samples and the Human Microbiome Project v35 16S samples.
-
-```python
->>> to_merge = ','.join([pgp_100nt_biom, hmp_100nt_biom])
->>> !merge_otu_tables.py -i $to_merge -o $pgp_hmp_100nt_biom
-```
-
-And the last merge will bring them all into a single table.
-
-```python
->>> to_merge = ','.join([ag_gg_100nt_biom, pgp_hmp_100nt_biom])
->>> !merge_otu_tables.py -i $to_merge -o $ag_pgp_hmp_gg_100nt_biom
-```
-
-Before we proceed, let's dump out a little information about the two merged tables we'll be using for subsequent analysis.
-
-```python
->>> !biom summarize-table -i $ag_pgp_hmp_gg_100nt_biom | head
-```
-
-```python
->>> !biom summarize-table -i $ag_gg_100nt_biom | head
-```
 And, we'll finish up with a few sanity checks on the resulting metadata.
 
 ```python
