@@ -299,9 +299,11 @@ def taxon_significance(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     path = opts['taxa']['notrim']['L6']['ag-%s-biom' % opts['sample_type']]
+    map_path = opts['meta']['ag-cleaned-md']
 
     cmd_fmt = 'generate_otu_signifigance_tables_AGP.py -i %s ' % path
-    cmd_fmt += '-o %(result_path)s -s %(id)s'
+    cmd_fmt += '-o %(result_path)s -s %(id)s '
+    cmd_fmt += '-m %s' % map_path
 
     return _iter_ids_over_system_call(cmd_fmt, sample_ids, opts)
 
@@ -325,7 +327,7 @@ def body_site_pcoa(opts, sample_ids):
     coords = opts['beta']['1k']['ag-pgp-hmp-gg-100nt-unifrac-pc']
     cmd_fmt = ' '.join(["mod2_pcoa.py body_site",
                         "--coords %s" % coords,
-                        "--mapping_file %s" % opts['meta']['ag-cleaned-md'],
+                        "--mapping_file %s" % opts['meta']['ag-pgp-hmp-gg-cleaned-md'],
                         "--output %(result_path)s",
                         "--filename figure1.pdf",
                         "--sample %(id)s"])
