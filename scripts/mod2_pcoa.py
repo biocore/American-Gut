@@ -123,7 +123,7 @@ def subsample_dm(distmat, mapping_file, max, category, output):
     id_to_cat = dict(mf[category])
 
     def bin_f(x):
-        return id_to_cat[x]
+        return id_to_cat.get(x)
 
     dm = read(distmat, into=DistanceMatrix)
     dm = dm.filter([id for _, id in isubsample(dm.ids, max, bin_f=bin_f)])
@@ -205,21 +205,20 @@ def country(coords, mapping_file, output, filename, sample, distmat):
     grp_colors['Venezuela'] = color_Venezuela
 
     sample_to_plot = sample
-
-    if sample_to_plot in o_id_lookup:
-        sample = sample_to_plot
-    else:
+    if sample not in o_id_lookup:
         # find the closest sample in the distance matrix that is in the
         # coordinates data
-        sample = None
+        closest_sample = None
         for i in dm[dm_id_lookup[sample_to_plot]].argsort():
             if i in coord_samples_in_dm:
-                sample = dm.ids[i]
+                closest_sample = dm.ids[i]
                 break
 
         # this should not ever happen
-        if sample is None:
+        if closest_sample is None:
             raise ValueError("Unable to find a similar sample?")
+
+        sample_to_plot = closest_sample
 
     # countour plot superimposed
     sns.kdeplot(x, y, cmap='bone')
@@ -243,17 +242,18 @@ def country(coords, mapping_file, output, filename, sample, distmat):
     # now plot participant's country
     grp = mf.loc[sample_to_plot]['COUNTRY']
     color = grp_colors[grp]
+
     sub_coords = c_df[mf.COUNTRY == grp]
     plt.scatter(sub_coords[0], sub_coords[1], color=color,
                 edgecolor=np.asarray(color)*0.6, lw=LINE_WIDTH,
                 alpha=ALPHA)
 
     # plot participant's dot
-    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
+    plt.scatter(c_df.loc[sample_to_plot][0], c_df.loc[sample_to_plot][1],
+                color=color_Highlight,
                 s=270, edgecolor='w', zorder=1, lw=LINE_WIDTH_WHITE)
-    plt.scatter(c_df.loc[sample][0], c_df.loc[sample][1],
-                color=grp_colors[mf.loc[sample_to_plot]['COUNTRY']],
+    plt.scatter(c_df.loc[sample_to_plot][0], c_df.loc[sample_to_plot][1],
+                color=color_Highlight,
                 s=250, edgecolor=np.asarray(grp_colors[
                     mf.loc[sample_to_plot]['COUNTRY']])*0.6,
                 zorder=2, lw=LINE_WIDTH_BLACK)

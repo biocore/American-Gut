@@ -4,7 +4,7 @@ do
         continue
     fi
 
-    runipy ${1}/${file}
+    runipy ${1}/${file} last_notebook
     if [ $? -ne 0 ]; then
         echo "Failed!"
         break

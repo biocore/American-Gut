@@ -88,6 +88,7 @@ class PerSampleTests(TestCase):
         ids = ['test']
         opts = {'per-sample-results': 'foo',
                 'ag-L6-taxa-bar-biom': 'bar.biom',
+                'ag-cleaned-md': 'baz',
                 'sample_type': 'bar'}
 
         obs = agps.taxon_significance(opts, ids)
@@ -101,7 +102,7 @@ class PerSampleTests(TestCase):
         ids = ['test']
         opts = {'per-sample-results': 'baz',
                 'ag-pgp-hmp-gg-100nt-1k-unifrac-pc': 'foo',
-                'ag-cleaned-md': 'bar'}
+                'ag-pgp-hmp-gg-cleaned-md': 'bar'}
 
         obs = agps.body_site_pcoa(opts, ids)
         self.assertEqual(obs, exp)

@@ -51,14 +51,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     # Sets up the way samples should be converted
     SAMPLE_CONVERTER = {'feces': 'fecal',
                         'oral_cavity': 'oral',
-                        'skin': 'skin'}
-
-    DUMMY = ['', '', '', '']
-    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
-
-    # Sets up the way samples should be converted
-    SAMPLE_CONVERTER = {'feces': 'fecal',
-                        'oral_cavity': 'oral',
+                        'oral cavity': 'oral',
                         'skin': 'skin'}
 
     DUMMY = ['', '', '', '']
