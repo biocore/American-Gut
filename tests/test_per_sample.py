@@ -84,7 +84,7 @@ class PerSampleTests(TestCase):
                         'error: The supplied taxonomy file does not exist '
                         'in the path.): '
                         'generate_otu_signifigance_tables_AGP.py '
-                        '-i bar.biom -o foo/test -s test')}
+                        '-i bar.biom -o foo/test -s test -m baz')}
         ids = ['test']
         opts = {'per-sample-results': 'foo',
                 'ag-L6-taxa-bar-biom': 'bar.biom',
