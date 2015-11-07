@@ -36,7 +36,8 @@ paths = {
         'observed-blooms': '02-filtered/observed-blooms',
         'observed-blooms-biom': '02-filtered/observed-blooms/otu_table.biom',
         'observed-blooms-otu-map':
-            '02-filtered/observed-blooms/sortmerna_picked_otus/fecal-sequences_otus.txt',
+            ('02-filtered/observed-blooms/sortmerna_picked_otus/'
+             'fecal-sequences_otus.txt'),
         },
 
     # resulting OTU data
@@ -72,10 +73,12 @@ paths = {
             'ag-notrim': '05-alpha/1k/ag-notrim',
             'ag-notrim-pd': '05-alpha/1k/ag-notrim/PD_whole_tree.txt',
             'ag-notrim-chao1': '05-alpha/1k/ag-notrim/chao1.txt',
-            'ag-notrim-observedotus': '05-alpha/1k/ag-notrim/observed_otus.txt',
+            'ag-notrim-observedotus': ('05-alpha/1k/ag-notrim/'
+                                       'observed_otus.txt'),
             'ag-notrim-shannon': '05-alpha/1k/ag-notrim/shannon.txt',
 
-            'ag-pgp-hmp-gg-100nt-multiple': '05-alpha/1k/ag-pgp-hmp-gg-100nt-multiple',
+            'ag-pgp-hmp-gg-100nt-multiple': ('05-alpha/1k/'
+                                             'ag-pgp-hmp-gg-100nt-multiple'),
             'ag-pgp-hmp-gg-100nt': '05-alpha/1k/ag-pgp-hmp-gg-100nt',
             'ag-pgp-hmp-gg-100nt-pd':
                 '05-alpha/1k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt',
@@ -91,10 +94,12 @@ paths = {
             'ag-notrim': '05-alpha/10k/ag-notrim',
             'ag-notrim-pd': '05-alpha/10k/ag-notrim/PD_whole_tree.txt',
             'ag-notrim-chao1': '05-alpha/10k/ag-notrim/chao1.txt',
-            'ag-notrim-observedotus': '05-alpha/10k/ag-notrim/observed_otus.txt',
+            'ag-notrim-observedotus': ('05-alpha/10k/ag-notrim/'
+                                       'observed_otus.txt'),
             'ag-notrim-shannon': '05-alpha/10k/ag-notrim/shannon.txt',
 
-            'ag-pgp-hmp-gg-100nt-multiple': '05-alpha/10k/ag-pgp-hmp-gg-100nt-multiple',
+            'ag-pgp-hmp-gg-100nt-multiple': ('05-alpha/10k/'
+                                             'ag-pgp-hmp-gg-100nt-multiple'),
             'ag-pgp-hmp-gg-100nt': '05-alpha/10k/ag-pgp-hmp-gg-100nt',
             'ag-pgp-hmp-gg-100nt-pd':
                 '05-alpha/10k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt',
@@ -121,17 +126,20 @@ paths = {
             'ag-notrim-oral-unifrac':
                 '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-oral.txt',
             'ag-notrim-oral-unifrac-pc':
-                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-oral-pc.txt',
+                ('06-beta/1k/ag-notrim/'
+                 'unweighted_unifrac_ag-notrim-oral-pc.txt'),
 
             'ag-notrim-skin-unifrac':
                 '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-skin.txt',
             'ag-notrim-skin-unifrac-pc':
-                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-skin-pc.txt',
+                ('06-beta/1k/ag-notrim/'
+                 'unweighted_unifrac_ag-notrim-skin-pc.txt'),
 
             'ag-notrim-fecal-unifrac':
                 '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-fecal.txt',
             'ag-notrim-fecal-unifrac-pc':
-                '06-beta/1k/ag-notrim/unweighted_unifrac_ag-notrim-fecal-pc.txt',
+                ('06-beta/1k/ag-notrim/'
+                 'unweighted_unifrac_ag-notrim-fecal-pc.txt'),
             'ag-notrim-wunifrac':
                 '06-beta/1k/ag-notrim/weighted_unifrac_ag-notrim.txt',
             'ag-notrim-wunifrac-pc':
@@ -343,17 +351,20 @@ paths = {
             'ag-notrim-oral-unifrac':
                 '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-oral.txt',
             'ag-notrim-oral-unifrac-pc':
-                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-oral-pc.txt',
+                ('06-beta/10k/ag-notrim/'
+                 'unweighted_unifrac_ag-notrim-oral-pc.txt'),
 
             'ag-notrim-skin-unifrac':
                 '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-skin.txt',
             'ag-notrim-skin-unifrac-pc':
-                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-skin-pc.txt',
+                ('06-beta/10k/ag-notrim/'
+                 'unweighted_unifrac_ag-notrim-skin-pc.txt'),
 
             'ag-notrim-fecal-unifrac':
                 '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-fecal.txt',
             'ag-notrim-fecal-unifrac-pc':
-                '06-beta/10k/ag-notrim/unweighted_unifrac_ag-notrim-fecal-pc.txt',
+                ('06-beta/10k/ag-notrim/'
+                 'unweighted_unifrac_ag-notrim-fecal-pc.txt'),
             'ag-notrim-wunifrac':
                 '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim.txt',
             'ag-notrim-wunifrac-pc':
@@ -372,7 +383,8 @@ paths = {
             'ag-notrim-fecal-wunifrac':
                 '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-fecal.txt',
             'ag-notrim-fecal-wunifrac-pc':
-                '06-beta/10k/ag-notrim/weighted_unifrac_ag-notrim-fecal-pc.txt',
+                ('06-beta/10k/ag-notrim/'
+                 'weighted_unifrac_ag-notrim-fecal-pc.txt'),
 
             'ag-pgp-hmp-gg-100nt-biom': '06-beta/10k/ag-pgp-hmp-gg-100nt.biom',
             'ag-pgp-hmp-gg-100nt': '06-beta/10k/ag-pgp-hmp-gg-100nt',
@@ -622,20 +634,27 @@ paths = {
                 'ag-skin-biom': '08-collapsed/100nt/1k/ag-oral.biom',
                 'ag-oral-biom': '08-collapsed/100nt/1k/ag-skin.biom',
 
-                'ag-fecal-sex-biom':  '08-collapsed/100nt/1k/ag-fecal-sex.biom',
-                'ag-fecal-diet-biom': '08-collapsed/100nt/1k/ag-fecal-diet.biom',
-                'ag-fecal-age-biom':  '08-collapsed/100nt/1k/ag-fecal-age.biom',
-                'ag-fecal-bmi-biom':  '08-collapsed/100nt/1k/ag-fecal-bmi.biom',
+                'ag-fecal-sex-biom':  ('08-collapsed/100nt/1k/'
+                                       'ag-fecal-sex.biom'),
+                'ag-fecal-diet-biom': ('08-collapsed/100nt/1k/'
+                                       'ag-fecal-diet.biom'),
+                'ag-fecal-age-biom':  ('08-collapsed/100nt/1k/'
+                                       'ag-fecal-age.biom'),
+                'ag-fecal-bmi-biom':  ('08-collapsed/100nt/1k/'
+                                       'ag-fecal-bmi.biom'),
 
                 'ag-oral-sex-biom':  '08-collapsed/100nt/1k/ag-oral-sex.biom',
                 'ag-oral-diet-biom': '08-collapsed/100nt/1k/ag-oral-diet.biom',
                 'ag-oral-age-biom':  '08-collapsed/100nt/1k/ag-oral-age.biom',
-                'ag-oral-flossing-biom':  '08-collapsed/100nt/1k/ag-oral-flossing.biom',
+                'ag-oral-flossing-biom':  ('08-collapsed/100nt/1k/'
+                                           'ag-oral-flossing.biom'),
 
                 'ag-skin-sex-biom':  '08-collapsed/100nt/1k/ag-skin-sex.biom',
-                'ag-skin-cosmetics-biom': '08-collapsed/100nt/1k/ag-skin-cosmetics.biom',
-                'ag-skin-age-biom':  '08-collapsed/100nt/1k/ag-skin-age.biom',
-                'ag-skin-hand-biom':  '08-collapsed/100nt/1k/ag-skin-hand.biom',
+                'ag-skin-cosmetics-biom': ('08-collapsed/100nt/1k/'
+                                           'ag-skin-cosmetics.biom'),
+                'ag-skin-age-biom': '08-collapsed/100nt/1k/ag-skin-age.biom',
+                'ag-skin-hand-biom': ('08-collapsed/100nt/1k/'
+                                      'ag-skin-hand.biom'),
                 },
             '10k': {
                 'ag-biom': '08-collapsed/100nt/10k/ag.biom',
@@ -643,20 +662,28 @@ paths = {
                 'ag-skin-biom': '08-collapsed/100nt/10k/ag-oral.biom',
                 'ag-oral-biom': '08-collapsed/100nt/10k/ag-skin.biom',
 
-                'ag-fecal-sex-biom':  '08-collapsed/100nt/10k/ag-fecal-sex.biom',
-                'ag-fecal-diet-biom': '08-collapsed/100nt/10k/ag-fecal-diet.biom',
-                'ag-fecal-age-biom':  '08-collapsed/100nt/10k/ag-fecal-age.biom',
-                'ag-fecal-bmi-biom':  '08-collapsed/100nt/10k/ag-fecal-bmi.biom',
+                'ag-fecal-sex-biom': ('08-collapsed/100nt/10k/'
+                                      'ag-fecal-sex.biom'),
+                'ag-fecal-diet-biom': ('08-collapsed/100nt/10k/'
+                                       'ag-fecal-diet.biom'),
+                'ag-fecal-age-biom': ('08-collapsed/100nt/10k/'
+                                      'ag-fecal-age.biom'),
+                'ag-fecal-bmi-biom': ('08-collapsed/100nt/10k/'
+                                      'ag-fecal-bmi.biom'),
 
                 'ag-oral-sex-biom':  '08-collapsed/100nt/10k/ag-oral-sex.biom',
-                'ag-oral-diet-biom': '08-collapsed/100nt/10k/ag-oral-diet.biom',
-                'ag-oral-age-biom':  '08-collapsed/100nt/10k/ag-oral-age.biom',
-                'ag-oral-flossing-biom':  '08-collapsed/100nt/10k/ag-oral-flossing.biom',
+                'ag-oral-diet-biom': ('08-collapsed/100nt/10k/'
+                                      'ag-oral-diet.biom'),
+                'ag-oral-age-biom': '08-collapsed/100nt/10k/ag-oral-age.biom',
+                'ag-oral-flossing-biom': ('08-collapsed/100nt/10k/'
+                                          'ag-oral-flossing.biom'),
 
-                'ag-skin-sex-biom':  '08-collapsed/100nt/10k/ag-skin-sex.biom',
-                'ag-skin-cosmetics-biom': '08-collapsed/100nt/10k/ag-skin-cosmetics.biom',
-                'ag-skin-age-biom':  '08-collapsed/100nt/10k/ag-skin-age.biom',
-                'ag-skin-hand-biom':  '08-collapsed/100nt/10k/ag-skin-hand.biom',
+                'ag-skin-sex-biom': '08-collapsed/100nt/10k/ag-skin-sex.biom',
+                'ag-skin-cosmetics-biom': ('08-collapsed/100nt/10k/'
+                                           'ag-skin-cosmetics.biom'),
+                'ag-skin-age-biom': '08-collapsed/100nt/10k/ag-skin-age.biom',
+                'ag-skin-hand-biom': ('08-collapsed/100nt/10k/'
+                                      'ag-skin-hand.biom'),
                 }
             },
         'notrim': {
@@ -666,20 +693,28 @@ paths = {
                 'ag-skin-biom': '08-collapsed/notrim/1k/ag-oral.biom',
                 'ag-oral-biom': '08-collapsed/notrim/1k/ag-skin.biom',
 
-                'ag-fecal-sex-biom':  '08-collapsed/notrim/1k/ag-fecal-sex.biom',
-                'ag-fecal-diet-biom': '08-collapsed/notrim/1k/ag-fecal-diet.biom',
-                'ag-fecal-age-biom':  '08-collapsed/notrim/1k/ag-fecal-age.biom',
-                'ag-fecal-bmi-biom':  '08-collapsed/notrim/1k/ag-fecal-bmi.biom',
+                'ag-fecal-sex-biom': ('08-collapsed/notrim/1k/'
+                                      'ag-fecal-sex.biom'),
+                'ag-fecal-diet-biom': ('08-collapsed/notrim/1k/'
+                                       'ag-fecal-diet.biom'),
+                'ag-fecal-age-biom': ('08-collapsed/notrim/1k/'
+                                      'ag-fecal-age.biom'),
+                'ag-fecal-bmi-biom': ('08-collapsed/notrim/1k/'
+                                      'ag-fecal-bmi.biom'),
 
                 'ag-oral-sex-biom':  '08-collapsed/notrim/1k/ag-oral-sex.biom',
-                'ag-oral-diet-biom': '08-collapsed/notrim/1k/ag-oral-diet.biom',
+                'ag-oral-diet-biom': ('08-collapsed/notrim/1k/'
+                                      'ag-oral-diet.biom'),
                 'ag-oral-age-biom':  '08-collapsed/notrim/1k/ag-oral-age.biom',
-                'ag-oral-flossing-biom':  '08-collapsed/notrim/1k/ag-oral-flossing.biom',
+                'ag-oral-flossing-biom': ('08-collapsed/notrim/1k/'
+                                          'ag-oral-flossing.biom'),
 
                 'ag-skin-sex-biom':  '08-collapsed/notrim/1k/ag-skin-sex.biom',
-                'ag-skin-cosmetics-biom': '08-collapsed/notrim/1k/ag-skin-cosmetics.biom',
+                'ag-skin-cosmetics-biom': ('08-collapsed/notrim/1k/'
+                                           'ag-skin-cosmetics.biom'),
                 'ag-skin-age-biom':  '08-collapsed/notrim/1k/ag-skin-age.biom',
-                'ag-skin-hand-biom':  '08-collapsed/notrim/1k/ag-skin-hand.biom',
+                'ag-skin-hand-biom': ('08-collapsed/notrim/1k/'
+                                      'ag-skin-hand.biom'),
                 },
             '10k': {
                 'ag-biom': '08-collapsed/notrim/10k/ag.biom',
@@ -687,20 +722,28 @@ paths = {
                 'ag-skin-biom': '08-collapsed/notrim/10k/ag-oral.biom',
                 'ag-oral-biom': '08-collapsed/notrim/10k/ag-skin.biom',
 
-                'ag-fecal-sex-biom':  '08-collapsed/notrim/10k/ag-fecal-sex.biom',
-                'ag-fecal-diet-biom': '08-collapsed/notrim/10k/ag-fecal-diet.biom',
-                'ag-fecal-age-biom':  '08-collapsed/notrim/10k/ag-fecal-age.biom',
-                'ag-fecal-bmi-biom':  '08-collapsed/notrim/10k/ag-fecal-bmi.biom',
+                'ag-fecal-sex-biom': ('08-collapsed/notrim/10k/'
+                                      'ag-fecal-sex.biom'),
+                'ag-fecal-diet-biom': ('08-collapsed/notrim/10k/'
+                                       'ag-fecal-diet.biom'),
+                'ag-fecal-age-biom':  ('08-collapsed/notrim/10k/'
+                                       'ag-fecal-age.biom'),
+                'ag-fecal-bmi-biom':  ('08-collapsed/notrim/10k/'
+                                       'ag-fecal-bmi.biom'),
 
-                'ag-oral-sex-biom':  '08-collapsed/notrim/10k/ag-oral-sex.biom',
-                'ag-oral-diet-biom': '08-collapsed/notrim/10k/ag-oral-diet.biom',
-                'ag-oral-age-biom':  '08-collapsed/notrim/10k/ag-oral-age.biom',
-                'ag-oral-flossing-biom':  '08-collapsed/notrim/10k/ag-oral-flossing.biom',
+                'ag-oral-sex-biom': '08-collapsed/notrim/10k/ag-oral-sex.biom',
+                'ag-oral-diet-biom': ('08-collapsed/notrim/10k/'
+                                      'ag-oral-diet.biom'),
+                'ag-oral-age-biom': '08-collapsed/notrim/10k/ag-oral-age.biom',
+                'ag-oral-flossing-biom': ('08-collapsed/notrim/10k/'
+                                          'ag-oral-flossing.biom'),
 
-                'ag-skin-sex-biom':  '08-collapsed/notrim/10k/ag-skin-sex.biom',
-                'ag-skin-cosmetics-biom': '08-collapsed/notrim/10k/ag-skin-cosmetics.biom',
-                'ag-skin-age-biom':  '08-collapsed/notrim/10k/ag-skin-age.biom',
-                'ag-skin-hand-biom':  '08-collapsed/notrim/10k/ag-skin-hand.biom',
+                'ag-skin-sex-biom': '08-collapsed/notrim/10k/ag-skin-sex.biom',
+                'ag-skin-cosmetics-biom': ('08-collapsed/notrim/10k/'
+                                           'ag-skin-cosmetics.biom'),
+                'ag-skin-age-biom': '08-collapsed/notrim/10k/ag-skin-age.biom',
+                'ag-skin-hand-biom':  ('08-collapsed/notrim/10k/'
+                                       'ag-skin-hand.biom'),
                 }
             }
         },

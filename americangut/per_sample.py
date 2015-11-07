@@ -325,9 +325,10 @@ def body_site_pcoa(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     coords = opts['beta']['1k']['ag-pgp-hmp-gg-100nt-unifrac-pc']
+    mapping = opts['meta']['ag-pgp-hmp-gg-cleaned-md']
     cmd_fmt = ' '.join(["mod2_pcoa.py body_site",
                         "--coords %s" % coords,
-                        "--mapping_file %s" % opts['meta']['ag-pgp-hmp-gg-cleaned-md'],
+                        "--mapping_file %s" % mapping,
                         "--output %(result_path)s",
                         "--filename figure1.pdf",
                         "--sample %(id)s"])
@@ -432,7 +433,8 @@ def bar_chart(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    path = opts['collapsed']['notrim']['1k']['ag-%s-biom' % opts['sample_type']]
+    sample_type = opts['sample_type']
+    path = opts['collapsed']['notrim']['1k']['ag-%s-biom' % sample_type]
     cmd_fmt = ' '.join(['make_phyla_plots_AGP.py',
                         '-i %s' % path,
                         '-m %s' % opts['meta']['ag-cleaned-md'],
@@ -492,7 +494,8 @@ def stage_per_sample_specific_statics(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     result = {}
-    statics_src = opts['per-sample']['statics-%s' % opts['sample_type'].lower()]
+    sample_type = opts['sample_type'].lower()
+    statics_src = opts['per-sample']['statics-%s' % sample_type]
     for id_ in sample_ids:
         result[id_] = None
         path = _result_path(opts, id_)
