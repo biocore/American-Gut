@@ -497,24 +497,24 @@ paths = {
                  'unweighted_unifrac_ag-gg-100nt-pc.txt'),
 
             'ag-gg-100nt-skin-unifrac':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-skin.txt'),
             'ag-gg-100nt-skin-unifrac-pc':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-skin-pc.txt'),
 
             'ag-gg-100nt-oral-unifrac':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-oral.txt'),
             'ag-gg-100nt-oral-unifrac-pc':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-oral-pc.txt'),
 
             'ag-gg-100nt-fecal-unifrac':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-fecal.txt'),
             'ag-gg-100nt-fecal-unifrac-pc':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'unweighted_unifrac_ag-gg-100nt-fecal-pc.txt'),
 
             'ag-gg-100nt-subsampled-unifrac':
@@ -532,24 +532,24 @@ paths = {
                  'weighted_unifrac_ag-gg-100nt-pc.txt'),
 
             'ag-gg-100nt-skin-wunifrac':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-skin.txt'),
             'ag-gg-100nt-skin-wunifrac-pc':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-skin-pc.txt'),
 
             'ag-gg-100nt-oral-wunifrac':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-oral.txt'),
             'ag-gg-100nt-oral-wunifrac-pc':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-oral-pc.txt'),
 
             'ag-gg-100nt-fecal-wunifrac':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-fecal.txt'),
             'ag-gg-100nt-fecal-wunifrac-pc':
-                ('06-beta/1k/ag-pgp-hmp-gg-100nt/'
+                ('06-beta/10k/ag-pgp-hmp-gg-100nt/'
                  'weighted_unifrac_ag-gg-100nt-fecal-pc.txt'),
 
             }
