@@ -40,7 +40,7 @@ We're also going to generate some new files, so let's get them setup.
 >>> ag_pgp_hmp_gg_cleaned_md = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-cleaned-md'])
 ```
 
-We also need to make sure the metadata (the information about the samples) are also merged and consistent. Prior to merge, we're going to add in some additional detail about every sample, such as a column in the mapping file that is the combination of the study title and the body site. We're also going to "generalize" body sites to the type of site they're from (e.g., the back of the hand is just "skin"). This process will also clean the metadata to remove blanks and unknown sample types.
+We also need to make sure the metadata (the information about the samples) are also merged and consistent. All of the metadata will be stored in what we call a mapping file.  Prior to merge, we're going to add in some additional detail about every sample, such as a column in the mapping file that is the combination of the study title and the body site. We're also going to "generalize" body sites to the type of site they're from (e.g., the back of the hand is just "skin"). This process will also clean the metadata to remove blanks and unknown sample types.
 
 ```python
 >>> original_clean_category_acronym = \
