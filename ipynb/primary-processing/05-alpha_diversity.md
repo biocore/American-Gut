@@ -53,6 +53,7 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 ...                              -o $ag_pgp_hmp_gg_100nt_1k_adiv \
 ...                              -t $greengenes_tree \
 ...                              -O $cpu_count
+...                              -m shannon,PD_whole_tree,chao1,observed_otus
 ```
 
 And finally, we're going to aggregate the diversity calculations from the multiple rarefactions.
