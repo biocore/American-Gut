@@ -92,11 +92,10 @@ def horizontal_to_longtable(sample, map_, categories, metrics, compare=False):
     cat_check = np.array([cat in map_cats for cat in categories])
     if not met_check.all():
         raise ValueError('Values for %s cannot be found.'
-                         % (', ').join(np.array(metrics)[met_check == False]))
+                         % (', ').join(np.array(metrics)[~met_check]))
     if not cat_check.all():
         raise ValueError('Values for %s cannot be found.'
-                         % (', ').join(np.array(categories)[cat_check ==
-                                                            False]))
+                         % (', ').join(np.array(categories)[~cat_check]))
 
     # Sets up the longform table
     long_ = pd.DataFrame(columns=['category', 'group', 'alpha', 'metric'])
