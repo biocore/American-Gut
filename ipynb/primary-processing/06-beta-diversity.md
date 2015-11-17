@@ -37,17 +37,24 @@ Before we start computation, we're going to get the depth to sample at. The dept
 >>> def parameter_iterator():
 ...     """A helper iterator for getting the different parameters"""
 ...     # for the depth and the rarefaction label
-...     for depth, rarefaction in zip([low_depth, high_depth], ['1k', '10k']):
-...         if not os.path.exists(os.path.join(chp_path, rarefaction)):
-...             os.mkdir(os.path.join(chp_path, rarefaction))
+...     for trim, trim_table in zip(['100nt', 'notrim'], [ag_pgp_hmp_gg_100nt_biom, ag_notrim_biom]):
+...         if not os.path.exists(os.path.join(chp_path, trim)):
+...             os.mkdir(os.path.join(chp_path, trim))
 ...
-...         # for each table and the base key label
-...         for table, keybase in zip([ag_pgp_hmp_gg_100nt_biom, ag_notrim_biom],
-...                                   ['ag-pgp-hmp-gg-100nt', 'ag-notrim']):
-...             rarefied_table  = agu.get_path(agenv.paths['beta'][rarefaction][keybase + '-biom'])
-...             bdiv_directory  = agu.get_path(agenv.paths['beta'][rarefaction][keybase])
+...         keybases = ['ag']
+...         if trim == '100nt':
+...             keybases += ['ag-pgp-hmp-gg']
 ...
-...             yield (table, depth, rarefaction, rarefied_table, bdiv_directory, keybase)
+...         for depth, rarefaction in zip([low_depth, high_depth], ['1k', '10k']):
+...             if not os.path.exists(os.path.join(chp_path, trim, rarefaction)):
+...                 os.mkdir(os.path.join(chp_path, trim, rarefaction))
+...
+...             # for each table and the base key label
+...             for keybase in keybases:
+...                 rarefied_table  = agu.get_path(agenv.paths['beta'][trim][rarefaction][keybase + '-biom'])
+...                 bdiv_directory  = agu.get_path(agenv.paths['beta'][trim][rarefaction][keybase])
+...
+...                 yield (trim_table, depth, rarefaction, rarefied_table, bdiv_directory, keybase)
 ```
 
 ```python
@@ -70,11 +77,11 @@ Next, we'll compute the distances between samples. By default, this method will 
 These set of next cells are going to filter down the distance matrix to interesting subsets. Notably, the AG and GG subset, just the AG samples, the oral subset within AG , the skin subset within AG and the fecal subset within AG.
 
 ```python
->>> # Create a AG + GG distance matrices
+>>> # Create a AG + GG distance matrices, only doing this for 100nt as GG is 100nt
 ... for rarefaction in ['1k', '10k']:
 ...     for metric in ['unifrac', 'wunifrac']:
-...         input_dm  = agu.get_existing_path(agenv.paths['beta'][rarefaction]['ag-pgp-hmp-gg-100nt-%s' % metric])
-...         output_dm = agu.get_new_path(agenv.paths['beta'][rarefaction]['ag-gg-100nt-%s' % metric])
+...         input_dm  = agu.get_existing_path(agenv.paths['beta']['100nt'][rarefaction]['ag-pgp-hmp-gg-%s' % metric])
+...         output_dm = agu.get_new_path(agenv.paths['beta']['100nt'][rarefaction]['ag-gg-%s' % metric])
 ...
 ...         !filter_distance_matrix.py -i $input_dm \
 ...                                    -o $output_dm \
@@ -82,30 +89,20 @@ These set of next cells are going to filter down the distance matrix to interest
 ```
 
 ```python
->>> # Create AG only distance matrices
-... for rarefaction in ['1k', '10k']:
-...     for metric in ['unifrac', 'wunifrac']:
-...         input_dm  = agu.get_existing_path(agenv.paths['beta'][rarefaction]['ag-pgp-hmp-gg-100nt-%s' % metric])
-...         output_dm = agu.get_new_path(agenv.paths['beta'][rarefaction]['ag-100nt-%s' % metric])
-...
-...         !filter_distance_matrix.py -i $input_dm \
-...                                    -o $output_dm \
-...                                    --sample_id_fp $ag_cleaned_md
-```
-
-```python
 >>> # Iterate over the distance matrices and generate parameters for per-body site filtering
 ... def dm_parameter_iterator():
 ...     """A helper iterator for getting the different parameters"""
 ...     # for the depth and the rarefaction label
-...     for rarefaction in ['1k', '10k']:
-...         paths = agenv.paths['beta'][rarefaction]
-...         for keybase in ['ag-pgp-hmp-gg-100nt', 'ag-notrim', 'ag-100nt', 'ag-gg-100nt']:
-...             for site in ['ORAL', 'SKIN', 'FECAL']:
-...                 for metric in ['unifrac', 'wunifrac']:
-...                     input_dm  = agu.get_existing_path(paths[keybase + '-%s' % metric])
-...                     output_dm = agu.get_new_path(paths[keybase + '-%s-%s' % (site.lower(), metric)])
-...                     yield (input_dm, output_dm, site)
+...     for trim, keybases in zip(['100nt', 'notrim'], [['ag-pgp-hmp-gg', 'ag-gg', 'ag'], ['ag']]):
+...         for rarefaction in ['1k', '10k']:
+...             paths = agenv.paths['beta'][trim][rarefaction]
+...             for keybase in keybases:
+...                 for site in ['ORAL', 'SKIN', 'FECAL']:
+...                     for metric in ['unifrac', 'wunifrac']:
+...                         input_dm  = agu.get_existing_path(paths[keybase + '-%s' % metric])
+...                         output_dm = agu.get_new_path(paths[keybase + '-%s-%s' % (site.lower(), metric)])
+...
+...                         yield (input_dm, output_dm, site)
 ```
 
 ```python
@@ -121,10 +118,10 @@ These set of next cells are going to filter down the distance matrix to interest
 For one of the figures, the volume of US samples dominates those from other countries. To help mitigate the sample size effect, we're going to subsample the distance matrix prior to producing principal coordinates.
 
 ```python
->>> ag_gg_100nt_1k_bdiv_u     = agu.get_existing_path(agenv.paths['beta']['1k']['ag-gg-100nt-unifrac'])
->>> ag_gg_100nt_10k_bdiv_u    = agu.get_existing_path(agenv.paths['beta']['10k']['ag-gg-100nt-unifrac'])
->>> ag_gg_100nt_1k_ss_bdiv_u  = agu.get_new_path(agenv.paths['beta']['1k']['ag-gg-100nt-subsampled-unifrac'])
->>> ag_gg_100nt_10k_ss_bdiv_u = agu.get_new_path(agenv.paths['beta']['10k']['ag-gg-100nt-subsampled-unifrac'])
+>>> ag_gg_100nt_1k_bdiv_u     = agu.get_existing_path(agenv.paths['beta']['100nt']['1k']['ag-gg-unifrac'])
+>>> ag_gg_100nt_10k_bdiv_u    = agu.get_existing_path(agenv.paths['beta']['100nt']['10k']['ag-gg-unifrac'])
+>>> ag_gg_100nt_1k_ss_bdiv_u  = agu.get_new_path(agenv.paths['beta']['100nt']['1k']['ag-gg-subsampled-unifrac'])
+>>> ag_gg_100nt_10k_ss_bdiv_u = agu.get_new_path(agenv.paths['beta']['100nt']['10k']['ag-gg-subsampled-unifrac'])
 ...
 >>> !mod2_pcoa.py subsample_dm --distmat $ag_gg_100nt_1k_bdiv_u \
 ...                            --max 500 \
@@ -157,7 +154,10 @@ To end, as always, let's sanity check and make sure the files of specific intere
 
 ```python
 >>> error = False
->>> for key, value in agenv.paths['beta']['1k'].items() + agenv.paths['beta']['10k'].items():
+>>> for key, value in (agenv.paths['beta']['notrim']['1k'].items() +
+...                    agenv.paths['beta']['notrim']['10k'].items() +
+...                    agenv.paths['beta']['100nt']['1k'].items() +
+...                    agenv.paths['beta']['100nt']['10k'].items()):
 ...     if key.endswith('-pc'):
 ...         path = agu.get_path(value)
 ...         if not os.path.exists(path):

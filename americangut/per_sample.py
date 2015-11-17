@@ -324,7 +324,7 @@ def body_site_pcoa(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    coords = opts['beta']['1k']['ag-pgp-hmp-gg-100nt-unifrac-pc']
+    coords = opts['beta']['100nt']['1k']['ag-pgp-hmp-gg-unifrac-pc']
     mapping = opts['meta']['ag-pgp-hmp-gg-cleaned-md']
     cmd_fmt = ' '.join(["mod2_pcoa.py body_site",
                         "--coords %s" % coords,
@@ -352,10 +352,10 @@ def country_pcoa(opts, sample_ids):
         A dict containing each sample ID and any errors observed or None if
         no error was observed for the sample. {str: str or None}
     """
-    beta1k = opts['beta']['1k']
-    coords = beta1k['ag-gg-100nt-subsampled-unifrac-pc']
+    beta1k = opts['beta']['100nt']['1k']
+    coords = beta1k['ag-gg-subsampled-unifrac-pc']
     cmd_fmt = ' '.join(["mod2_pcoa.py country",
-                        "--distmat %s" % beta1k['ag-gg-100nt-unifrac'],
+                        "--distmat %s" % beta1k['ag-gg-unifrac'],
                         "--coords %s" % coords,
                         "--mapping_file %s" % opts['meta']['ag-gg-cleaned-md'],
                         "--output %(result_path)s",
@@ -382,7 +382,8 @@ def gradient_pcoa(opts, sample_ids):
         no error was observed for the sample. {str: str or None}
     """
     mapping = opts['taxa']['notrim']['L2']['ag-md']
-    coords = opts['beta']['1k']['ag-100nt-%s-unifrac-pc' % opts['sample_type']]
+    coords_key = 'ag-%s-unifrac-pc' % opts['sample_type']
+    coords = opts['beta']['100nt']['1k'][coords_key]
     cmd_fmt = ' '.join(["mod2_pcoa.py gradient",
                         "--coords %s" % coords,
                         "--mapping_file %s" % mapping,
