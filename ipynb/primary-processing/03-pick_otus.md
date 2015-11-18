@@ -10,8 +10,6 @@ Pick OTUs (for full and trimmed data) at approximately genus level resolution (9
 >>> chp_path = agenv.activate('03-otus')
 ```
 
-And, let's make sure that the output files we need do not already exist.
-
 We're going to now setup a parameters file for the OTU picking runs. It is possible to specify a precomputed SortMeRNA index by indicating it's path as the environment variable `$AG_SMR_INDEX`. The reason we're using an environment variable is that it makes it much easier to inject an index during continuous integration testing.
 
 ```python
