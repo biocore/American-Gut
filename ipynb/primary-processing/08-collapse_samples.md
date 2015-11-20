@@ -8,204 +8,126 @@ Some of the per-results figures require various slices and perspectives of the d
 ...
 >>> import qiime_default_reference as qdr
 ...
->>> chp_path = agenv.activate('08')
+>>> chp_path = agenv.activate('08-collapsed')
 ```
 
 Let's make sure we have the paths we need.
 
 ```python
->>> ag_100nt_biom = agu.get_existing_path(agenv.paths['ag-100nt-biom'])
->>> ag_cleaned_md = agu.get_existing_path(agenv.paths['ag-cleaned-md'])
-```
-
-And let's setup all the paths that we're going to create.
-
-```python
->>> ag_100nt_1k_biom       = agu.get_new_path(agenv.paths['ag-100nt-1k-biom'])
->>> ag_100nt_1k_fecal_biom = agu.get_new_path(agenv.paths['ag-100nt-1k-fecal-biom'])
->>> ag_100nt_1k_skin_biom  = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-biom'])
->>> ag_100nt_1k_oral_biom  = agu.get_new_path(agenv.paths['ag-100nt-1k-oral-biom'])
-...
->>> ag_100nt_1k_fecal_sex_biom  = agu.get_new_path(agenv.paths['ag-100nt-1k-fecal-sex-biom'])
->>> ag_100nt_1k_fecal_diet_biom = agu.get_new_path(agenv.paths['ag-100nt-1k-fecal-diet-biom'])
->>> ag_100nt_1k_fecal_age_biom  = agu.get_new_path(agenv.paths['ag-100nt-1k-fecal-age-biom'])
->>> ag_100nt_1k_fecal_bmi_biom  = agu.get_new_path(agenv.paths['ag-100nt-1k-fecal-bmi-biom'])
-...
->>> ag_100nt_1k_oral_sex_biom       = agu.get_new_path(agenv.paths['ag-100nt-1k-oral-sex-biom'])
->>> ag_100nt_1k_oral_diet_biom      = agu.get_new_path(agenv.paths['ag-100nt-1k-oral-diet-biom'])
->>> ag_100nt_1k_oral_age_biom       = agu.get_new_path(agenv.paths['ag-100nt-1k-oral-age-biom'])
->>> ag_100nt_1k_oral_flossing_biom  = agu.get_new_path(agenv.paths['ag-100nt-1k-oral-flossing-biom'])
-...
->>> ag_100nt_1k_skin_sex_biom       = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-sex-biom'])
->>> ag_100nt_1k_skin_cosmetics_biom = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-cosmetics-biom'])
->>> ag_100nt_1k_skin_age_biom       = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-age-biom'])
->>> ag_100nt_1k_skin_hand_biom      = agu.get_new_path(agenv.paths['ag-100nt-1k-skin-hand-biom'])
-...
->>> # A file path that was necessary for the system call but not used after the fact
->>> ignored = 'foo'
+>>> ag_cleaned_md  = agu.get_existing_path(agenv.paths['meta']['ag-cleaned-md'])
 ```
 
 First, we're going to operate on rarefied data again.
 
 ```python
->>> depth = agenv.get_rarefaction_depth()
+>>> low_depth, high_depth = agenv.get_rarefaction_depth()
 ```
 
 ```python
->>> !single_rarefaction.py -i $ag_100nt_biom \
-...                        -o $ag_100nt_1k_biom \
-...                        -d $depth
+>>> def rarefaction_parameters():
+...     for trim in ['100nt', 'notrim']:
+...         trimpath = os.path.join(chp_path, trim)
+...         if not os.path.exists(trimpath):
+...             os.mkdir(trimpath)
+...
+...         for depth, rarefaction in zip([low_depth, high_depth], ['1k', '10k']):
+...             rarepath = os.path.join(trimpath, rarefaction)
+...             if not os.path.exists(rarepath):
+...                 os.mkdir(rarepath)
+...
+...             table  = agu.get_existing_path(agenv.paths['otus'][trim]['ag-biom'])
+...             output = agu.get_new_path(agenv.paths['collapsed'][trim][rarefaction]['ag-biom'])
+...
+...             yield (table, output, depth)
+```
+
+```python
+>>> for table, output, depth in rarefaction_parameters():
+...     !single_rarefaction.py -i $table \
+...                            -o $output \
+...                            -d $depth
 ```
 
 Next, we're going to partition the data into per-body site tables.
 
 ```python
->>> !filter_samples_from_otu_table.py -i $ag_100nt_1k_biom \
-...                                   -o $ag_100nt_1k_fecal_biom \
-...                                   -m $ag_cleaned_md \
-...                                   -s "SIMPLE_BODY_SITE:FECAL"
+>>> def filter_parameters():
+...     for trim in ['100nt', 'notrim']:
+...         for rarefaction in ['1k', '10k']:
+...             for site in ['oral', 'fecal', 'skin']:
+...                 table  = agu.get_existing_path(agenv.paths['collapsed'][trim][rarefaction]['ag-biom'])
+...                 output = agu.get_new_path(agenv.paths['collapsed'][trim][rarefaction]['ag-%s-biom' % site])
+...                 criteria = "SIMPLE_BODY_SITE:%s" % site.upper()
+...
+...                 yield (table, output, criteria)
 ```
 
 ```python
->>> !filter_samples_from_otu_table.py -i $ag_100nt_1k_biom \
-...                                   -o $ag_100nt_1k_skin_biom \
-...                                   -m $ag_cleaned_md \
-...                                   -s "SIMPLE_BODY_SITE:SKIN"
-```
-
-```python
->>> !filter_samples_from_otu_table.py -i $ag_100nt_1k_biom \
-...                                   -o $ag_100nt_1k_oral_biom \
-...                                   -m $ag_cleaned_md \
-...                                   -s "SIMPLE_BODY_SITE:ORAL"
+>>> for table, output, criteria in filter_parameters():
+...     !filter_samples_from_otu_table.py -i $table \
+...                                       -o $output \
+...                                       -m $ag_cleaned_md \
+...                                       -s $criteria
 ```
 
 Finally, within each body site, we're going to collapse over categories of interest.
 
 ```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_fecal_sex_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_fecal_biom \
-...                      --collapse_fields "SEX" \
-...                      --output_mapping_fp $ignored
+>>> def collapse_parameters():
+...     # [(site, (category, file-label))]
+...     categories = [('fecal', (('SEX', 'sex'),
+...                              ('DIET_TYPE', 'diet'),
+...                              ('AGE_CAT', 'age'),
+...                              ('BMI_CAT', 'bmi'))),
+...                   ('oral',  (('SEX', 'sex'),
+...                              ('DIET_TYPE', 'diet'),
+...                              ('AGE_CAT', 'age'),
+...                              ('FLOSSING_FREQUENCY', 'flossing'))),
+...                   ('skin',  (('SEX', 'sex'),
+...                              ('COSMETICS_FREQUENCY', 'cosmetics'),
+...                              ('AGE_CAT', 'age'),
+...                              ('DOMINANT_HAND', 'hand')))]
+...
+...     for trim in ['100nt', 'notrim']:
+...         for rarefaction in ['1k', '10k']:
+...             paths = agenv.paths['collapsed'][trim][rarefaction]
+...
+...             for site, cats in categories:
+...                 table = agu.get_existing_path(paths['ag-%s-biom' % site])
+...
+...                 for cat, cat_label in cats:
+...                     output = agu.get_new_path(paths['ag-%s-%s-biom' % (site, cat_label)])
+...
+...                     yield (table, output, cat)
 ```
 
 ```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_fecal_diet_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_fecal_biom \
-...                      --collapse_fields "DIET_TYPE" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_fecal_age_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_fecal_biom \
-...                      --collapse_fields "AGE_CAT" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_fecal_bmi_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_fecal_biom \
-...                      --collapse_fields "BMI_CAT" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_oral_sex_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_oral_biom \
-...                      --collapse_fields "SEX" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_oral_diet_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_oral_biom \
-...                      --collapse_fields "DIET_TYPE" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_oral_age_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_oral_biom \
-...                      --collapse_fields "AGE_CAT" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_oral_flossing_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_oral_biom \
-...                      --collapse_fields "FLOSSING_FREQUENCY" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_skin_sex_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_skin_biom \
-...                      --collapse_fields "SEX" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_skin_cosmetics_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_skin_biom \
-...                      --collapse_fields "COSMETICS_FREQUENCY" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_skin_age_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_skin_biom \
-...                      --collapse_fields "AGE_CAT" \
-...                      --output_mapping_fp $ignored
-```
-
-```python
->>> !collapse_samples.py -m $ag_cleaned_md \
-...                      --output_biom_fp $ag_100nt_1k_skin_hand_biom \
-...                      --normalize \
-...                      -b $ag_100nt_1k_skin_biom \
-...                      --collapse_fields "DOMINANT_HAND" \
-...                      --output_mapping_fp $ignored
+>>> ignored = 'foo'  # a necessary but unused parameter
+>>> for table, output, cat in collapse_parameters():
+...     !collapse_samples.py -m $ag_cleaned_md \
+...                          --output_biom_fp $output \
+...                          --normalize \
+...                          -b $table \
+...                          --collapse_fields $cat \
+...                          --output_mapping_fp $ignored
 ```
 
 As usual, let's make sure we have files.
 
 ```python
->>> assert os.stat(ag_100nt_1k_fecal_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_skin_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_oral_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_fecal_sex_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_fecal_diet_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_fecal_age_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_fecal_bmi_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_oral_sex_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_oral_diet_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_oral_age_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_oral_flossing_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_skin_sex_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_skin_hand_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_skin_age_biom).st_size > 0
->>> assert os.stat(ag_100nt_1k_skin_cosmetics_biom).st_size > 0
+>>> error = False
+...
+>>> for trim in ['100nt', 'notrim']:
+...     for rarefaction in ['1k', '10k']:
+...         for path in agenv.paths['collapsed'][trim][rarefaction].values():
+...             filepath = agu.get_path(path)
+...             if not os.path.exists(filepath):
+...                 print "Could not find: %s" % filepath
+...                 error = True
+...             else:
+...                 if os.stat(filepath) == 0:
+...                     print "File appears to be empty: %s" % filepath
+...                     error = True
+...
+>>> assert not error
 ```

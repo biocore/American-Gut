@@ -13,18 +13,18 @@ The filtering is only intended to be applied to fecal data. As such, this notebo
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('02')
+>>> chp_path = agenv.activate('02-filtered')
 ```
 
 Next, we'll establish the paths we will be creating.
 
 ```python
->>> fecal_sequences          = agu.get_new_path(agenv.paths['fecal-sequences'])
->>> filtered_sequences       = agu.get_new_path(agenv.paths['filtered-sequences'])
->>> filtered_sequences_100nt = agu.get_new_path(agenv.paths['filtered-sequences-100nt'])
->>> observed_blooms          = agu.get_new_path(agenv.paths['observed-blooms'])
->>> observed_blooms_biom     = agu.get_new_path(agenv.paths['observed-blooms-biom'])
->>> observed_blooms_otu_map  = agu.get_new_path(agenv.paths['observed-blooms-otu-map'])
+>>> fecal_sequences          = agu.get_new_path(agenv.paths['filtered']['fecal-sequences'])
+>>> filtered_sequences       = agu.get_new_path(agenv.paths['filtered']['sequences-notrim'])
+>>> filtered_sequences_100nt = agu.get_new_path(agenv.paths['filtered']['sequences-100nt'])
+>>> observed_blooms          = agu.get_new_path(agenv.paths['filtered']['observed-blooms'])
+>>> observed_blooms_biom     = agu.get_new_path(agenv.paths['filtered']['observed-blooms-biom'])
+>>> observed_blooms_otu_map  = agu.get_new_path(agenv.paths['filtered']['observed-blooms-otu-map'])
 ```
 
 This next call will setup and verify the path to the bloom sequences used for filtering.
@@ -37,8 +37,8 @@ Now let's setup the paths to the sequences to filter. We need the metadata as we
 
 ```python
 >>> # If you are filtering your own data, please update these filepath variables as necessary
-... sequences = agenv.get_existing_path(agenv.paths['raw-sequences'])
->>> metadata  = agenv.get_existing_path(agenv.paths['raw-metadata'])
+... sequences = agenv.get_existing_path(agenv.paths['raw']['sequences'])
+>>> metadata  = agenv.get_existing_path(agenv.paths['raw']['metadata'])
 ```
 
 We also need to specify what specific metadata category and value indicate which samples are fecal. It is possible that these values are study specific, so please modify these as needed if you filtering other datasets.

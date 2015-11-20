@@ -33,7 +33,7 @@ class PerSampleTests(TestCase):
 
     def test_result_path(self):
         self.assertEqual(agps._result_path(agenv.paths, 'a'),
-                         agenv.paths['per-sample-results'] + '/a')
+                         agenv.paths['per-sample']['results'] + '/a')
 
     def test_base_barcode(self):
         self.assertEqual(agps._base_barcode('asd.foo'), 'foo')
@@ -65,7 +65,7 @@ class PerSampleTests(TestCase):
     def test_iter_ids_over_system_call(self):
         cmd_fmt = "ls %(result_path)s %(id)s"
         ids = ['/', '/asdasd', '/usr']
-        opts = {'per-sample-results': ''}
+        opts = {'per-sample': {'results': ''}}
 
         obs = agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 
@@ -86,9 +86,9 @@ class PerSampleTests(TestCase):
                         'generate_otu_signifigance_tables_AGP.py '
                         '-i bar.biom -o foo/test -s test -m baz')}
         ids = ['test']
-        opts = {'per-sample-results': 'foo',
-                'ag-L6-taxa-bar-biom': 'bar.biom',
-                'ag-cleaned-md': 'baz',
+        opts = {'per-sample': {'results': 'foo'},
+                'taxa': {'notrim': {'L6': {'ag-bar-biom': 'bar.biom'}}},
+                'meta': {'ag-cleaned-md': 'baz'},
                 'sample_type': 'bar'}
 
         obs = agps.taxon_significance(opts, ids)
@@ -100,9 +100,12 @@ class PerSampleTests(TestCase):
                         '--coords foo --mapping_file bar --output baz/test '
                         '--filename figure1.pdf --sample test')}
         ids = ['test']
-        opts = {'per-sample-results': 'baz',
-                'ag-pgp-hmp-gg-100nt-1k-unifrac-pc': 'foo',
-                'ag-pgp-hmp-gg-cleaned-md': 'bar'}
+        opts = {'per-sample': {'results': 'baz'},
+                'beta':
+                    {'100nt':
+                        {'1k':
+                            {'ag-pgp-hmp-gg-unifrac-pc': 'foo'}}},
+                'meta': {'ag-pgp-hmp-gg-cleaned-md': 'bar'}}
 
         obs = agps.body_site_pcoa(opts, ids)
         self.assertEqual(obs, exp)
@@ -114,10 +117,13 @@ class PerSampleTests(TestCase):
                         '--output foobar/test --filename figure2.pdf '
                         '--sample test')}
         ids = ['test']
-        opts = {'per-sample-results': 'foobar',
-                'ag-gg-100nt-1k-subsampled-unifrac-pc': 'bar',
-                'ag-gg-100nt-1k-bdiv-unifrac': 'foo',
-                'ag-gg-cleaned-md': 'baz'}
+        opts = {'per-sample': {'results': 'foobar'},
+                'beta':
+                    {'100nt':
+                        {'1k':
+                            {'ag-gg-subsampled-unifrac-pc': 'bar',
+                             'ag-gg-unifrac': 'foo'}}},
+                'meta': {'ag-gg-cleaned-md': 'baz'}}
 
         obs = agps.country_pcoa(opts, ids)
         self.assertEqual(obs, exp)
@@ -129,9 +135,9 @@ class PerSampleTests(TestCase):
                         '--filename figure3.pdf --color foobar '
                         '--sample test')}
         ids = ['test']
-        opts = {'per-sample-results': 'baz',
-                'ag-100nt-what-1k-unifrac-pc': 'foo',
-                'ag-L2-taxa-md': 'bar',
+        opts = {'per-sample': {'results': 'baz'},
+                'beta': {'100nt': {'1k': {'ag-what-unifrac-pc': 'foo'}}},
+                'taxa': {'notrim': {'L2': {'ag-md': 'bar'}}},
                 'sample_type': 'what',
                 'gradient_color_by': 'foobar'}
 
@@ -143,8 +149,8 @@ class PerSampleTests(TestCase):
                         'taxonomy file does not exist in the path.): '
                         'make_pie_plot_AGP.py -i foo -o bar/test -s test')}
         ids = ['test']
-        opts = {'per-sample-results': 'bar',
-                'ag-L3-taxa-tsv': 'foo'}
+        opts = {'per-sample': {'results': 'bar'},
+                'taxa': {'notrim': {'L3': {'ag-tsv': 'foo'}}}}
 
         obs = agps.pie_plot(opts, ids)
         self.assertEqual(obs, exp)
@@ -155,9 +161,11 @@ class PerSampleTests(TestCase):
                         'make_phyla_plots_AGP.py -i foo -m baz -o bar/test '
                         '-c stuff -t what -s test')}
         ids = ['test']
-        opts = {'per-sample-results': 'bar',
-                'ag-100nt-1k-what-biom': 'foo',
-                'ag-cleaned-md': 'baz',
+        opts = {'per-sample': {'results': 'bar'},
+                'collapsed':
+                    {'notrim':
+                        {'1k': {'ag-what-biom': 'foo'}}},
+                'meta': {'ag-cleaned-md': 'baz'},
                 'barchart_categories': 'stuff',
                 'sample_type': 'what'}
 
@@ -167,8 +175,9 @@ class PerSampleTests(TestCase):
     def test_taxa_summaries(self):
         ids = ['USygt45.M.418662', 'missing']
         exp = {'USygt45.M.418662': None, 'missing': "ID not found"}
-        opts = {'per-sample-results': 'bar',
-                'ag-L6-taxa-fecal-biom': agenv.get_global_gut()[0],
+        opts = {'per-sample': {'results': 'bar'},
+                'taxa': {'notrim': {'L6': {'ag-fecal-biom':
+                                           agenv.get_global_gut()[0]}}},
                 'sample_type': 'fecal'}
 
         os.mkdir('bar')
@@ -181,7 +190,7 @@ class PerSampleTests(TestCase):
 
     def test_per_sample_directory(self):
         ids = ['test']
-        opts = {'per-sample-results': 'bar'}
+        opts = {'per-sample': {'results': 'bar'}}
         os.mkdir('bar')
         agps.per_sample_directory(opts, ids)
 
@@ -191,9 +200,9 @@ class PerSampleTests(TestCase):
 
     def test_stage_per_sample_specific_statics(self):
         opts = {'chp-path': '.',
-                'per-sample-results': '',
-                'sample_type': 'fecal',
-                'statics-fecal': 'stuff'}
+                'per-sample': {'statics-fecal': 'stuff',
+                               'results': ''},
+                'sample_type': 'fecal'}
         ids = ['foo']
         exp = {'foo': "Cannot stage template."}
         obs = agps.stage_per_sample_specific_statics(opts, ids)

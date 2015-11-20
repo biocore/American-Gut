@@ -6,10 +6,11 @@ As before, let's first sanity check our environment.
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('04')
+>>> chp_path = agenv.activate('04-meta')
 ...
->>> ag_md   = agu.get_existing_path(agenv.paths['raw-metadata'])
->>> ag_100nt_biom = agu.get_existing_path(agenv.paths['ag-100nt-biom'])
+>>> ag_md          = agu.get_existing_path(agenv.paths['raw']['metadata'])
+>>> ag_100nt_biom  = agu.get_existing_path(agenv.paths['otus']['100nt']['ag-biom'])
+>>> ag_notrim_biom = agu.get_existing_path(agenv.paths['otus']['notrim']['ag-biom'])
 ```
 
 But, we also want to include other interesting datasets, specifically the Human Microbiome Project, microbiome samples from the Personal Genome Project, and the Global Gut samples.
@@ -24,20 +25,20 @@ We're also going to generate some new files, so let's get them setup.
 
 ```python
 >>> # the merged BIOM tables
-... ag_gg_100nt_biom         = agu.get_new_path(agenv.paths['ag-gg-100nt-biom'])
->>> pgp_hmp_100nt_biom       = agu.get_new_path(agenv.paths['pgp-hmp-100nt-biom'])
->>> ag_pgp_hmp_gg_100nt_biom = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-100nt-biom'])
+... ag_gg_100nt_biom         = agu.get_new_path(agenv.paths['meta']['ag-gg-100nt-biom'])
+>>> pgp_hmp_100nt_biom       = agu.get_new_path(agenv.paths['meta']['pgp-hmp-100nt-biom'])
+>>> ag_pgp_hmp_gg_100nt_biom = agu.get_new_path(agenv.paths['meta']['ag-pgp-hmp-gg-100nt-biom'])
 ...
 >>> # the cleaned and simplified metadata
-... ag_cleaned_md  = agu.get_new_path(agenv.paths['ag-cleaned-md'])
->>> gg_cleaned_md  = agu.get_new_path(agenv.paths['gg-cleaned-md'])
->>> pgp_cleaned_md = agu.get_new_path(agenv.paths['pgp-cleaned-md'])
->>> hmp_cleaned_md = agu.get_new_path(agenv.paths['hmp-cleaned-md'])
+... ag_cleaned_md  = agu.get_new_path(agenv.paths['meta']['ag-cleaned-md'])
+>>> gg_cleaned_md  = agu.get_new_path(agenv.paths['meta']['gg-cleaned-md'])
+>>> pgp_cleaned_md = agu.get_new_path(agenv.paths['meta']['pgp-cleaned-md'])
+>>> hmp_cleaned_md = agu.get_new_path(agenv.paths['meta']['hmp-cleaned-md'])
 ...
 >>> # the merged simplified metadata
-... ag_gg_cleaned_md         = agu.get_new_path(agenv.paths['ag-gg-cleaned-md'])
->>> pgp_hmp_cleaned_md       = agu.get_new_path(agenv.paths['pgp-hmp-cleaned-md'])
->>> ag_pgp_hmp_gg_cleaned_md = agu.get_new_path(agenv.paths['ag-pgp-hmp-gg-cleaned-md'])
+... ag_gg_cleaned_md         = agu.get_new_path(agenv.paths['meta']['ag-gg-cleaned-md'])
+>>> pgp_hmp_cleaned_md       = agu.get_new_path(agenv.paths['meta']['pgp-hmp-cleaned-md'])
+>>> ag_pgp_hmp_gg_cleaned_md = agu.get_new_path(agenv.paths['meta']['ag-pgp-hmp-gg-cleaned-md'])
 ```
 
 We also need to make sure the metadata (the information about the samples) are also merged and consistent. All of the metadata will be stored in what we call a mapping file.  Prior to merge, we're going to add in some additional detail about every sample, such as a column in the mapping file that is the combination of the study title and the body site. We're also going to "generalize" body sites to the type of site they're from (e.g., the back of the hand is just "skin"). This process will also clean the metadata to remove blanks and unknown sample types.
@@ -104,12 +105,15 @@ And the last merge will bring them all into a single table.
 Before we proceed, let's dump out a little information about the two merged tables we'll be using for subsequent analysis.
 
 ```python
->>> !biom summarize-table -i $ag_pgp_hmp_gg_100nt_biom | head
+>>> summary = !biom summarize-table -i $ag_gg_100nt_biom
+>>> print '\n'.join(summary[:10])
 ```
 
 ```python
->>> !biom summarize-table -i $ag_gg_100nt_biom | head
+>>> summary = !biom summarize-table -i $ag_pgp_hmp_gg_100nt_biom
+>>> print '\n'.join(summary[:10])
 ```
+
 And, we'll finish up with a few sanity checks on the resulting metadata.
 
 ```python

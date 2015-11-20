@@ -7,10 +7,10 @@ First, let's setup and sanity check our environment.
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
->>> chp_path = agenv.activate('01')
+>>> chp_path = agenv.activate('01-raw')
 ...
->>> agp_sequences = agu.get_new_path(agenv.paths['raw-sequences'])
->>> agp_metadata  = agu.get_new_path(agenv.paths['raw-metadata'])
+>>> agp_sequences = agu.get_new_path(agenv.paths['raw']['sequences'])
+>>> agp_metadata  = agu.get_new_path(agenv.paths['raw']['metadata'])
 ```
 
 Now that we have what appears to be a sane environment, let's setup a variable that defines the American Gut accessions.
