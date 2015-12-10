@@ -67,7 +67,9 @@ The next thing we need to do is setup the parameters for SortMeRNA, which is the
 >>> with open(_params_file, 'w') as f:
 ...     f.write("pick_otus:otu_picking_method sortmerna\n")
 ...     f.write("pick_otus:threads %d\n" % agenv.get_cpu_count())
-...
+```
+
+```python
 >>> !pick_closed_reference_otus.py -i $fecal_sequences \
 ...                                -o $observed_blooms \
 ...                                -r $bloom_sequences \
@@ -97,4 +99,32 @@ Finally, let's do a quick sanity check that we have sequence data, and that the 
 >>> assert os.stat(filtered_sequences_100nt).st_size > 0
 ...
 >>> !biom summarize-table -i $observed_blooms_biom | head -n 25
+Num samples: 5
+Num observations: 7
+Total count: 864
+Table density (fraction of non-zero values): 0.400
+
+Counts/sample summary:
+ Min: 1.0
+ Max: 500.0
+ Median: 59.000
+ Mean: 172.800
+ Std. dev.: 197.986
+ Sample Metadata Categories: None provided
+ Observation Metadata Categories: taxonomy
+
+Counts/sample detail:
+10317.000002244: 1.0
+10317.000007118: 1.0
+10317.000005844: 59.0
+10317.000002035: 303.0
+10317.000009111: 500.0
+```
+
+```python
+
+```
+
+```python
+
 ```

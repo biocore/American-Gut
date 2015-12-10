@@ -17,6 +17,7 @@ And then we'll pull in the files we need for processing.
 
 ```python
 >>> ag_notrim_biom           = agu.get_existing_path(agenv.paths['otus']['notrim']['ag-biom'])
+>>> ag_md                    = agu.get_existing_path(agenv.paths['raw']['metadata'])
 >>> ag_pgp_hmp_gg_100nt_biom = agu.get_existing_path(agenv.paths['meta']['ag-pgp-hmp-gg-100nt-biom'])
 >>> ag_gg_100nt_biom         = agu.get_existing_path(agenv.paths['meta']['ag-gg-100nt-biom'])
 >>> ag_pgp_hmp_gg_cleaned_md = agu.get_existing_path(agenv.paths['meta']['ag-pgp-hmp-gg-cleaned-md'])
@@ -64,15 +65,50 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 ...                                  -O $cpu_count
 ```
 
-And finally, we're going to aggregate the diversity calculations from the multiple rarefactions.
+We're going to aggregate the diversity calculations from the multiple rarefactions.
 
 ```python
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
 ...     # sometimes QIIME leaves this directory, unsure why.
-...     !rmdir $adiv_directory/ALDIV_*
+...     if os.path.exists(os.path.join(adiv_directory, 'ALDIV_*')):
+...         !rmdir $adiv_directory/ALDIV_*
 ...     !collate_alpha.py -i $adiv_directory \
 ...                       -o $adiv_directory
+Traceback (most recent call last):
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
+    main()
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
+    file_name_table = map(parse_rarefaction_fname, file_names)
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
+    iters = int(root_list.pop())
+ValueError: invalid literal for int() with base 10: 'chao1'
+Traceback (most recent call last):
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
+    main()
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
+    file_name_table = map(parse_rarefaction_fname, file_names)
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
+    iters = int(root_list.pop())
+ValueError: invalid literal for int() with base 10: 'chao1'
+Traceback (most recent call last):
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
+    main()
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
+    file_name_table = map(parse_rarefaction_fname, file_names)
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
+    iters = int(root_list.pop())
+ValueError: invalid literal for int() with base 10: 'chao1'
+Traceback (most recent call last):
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
+    main()
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
+    file_name_table = map(parse_rarefaction_fname, file_names)
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
+    iters = int(root_list.pop())
+ValueError: invalid literal for int() with base 10: 'chao1'
 ```
+
+Finally, we're going to
 
 To end, we're going to verify that the files of interest exist and contain data.
 
@@ -81,4 +117,8 @@ To end, we're going to verify that the files of interest exist and contain data.
 ...     for metric in ['pd', 'chao1', 'observedotus', 'shannon']:
 ...         metric_file = agu.get_existing_path(agenv.paths['alpha'][rarefaction][keybase + '-%s' % metric])
 ...         assert os.stat(metric_file).st_size > 0
+```
+
+```python
+
 ```

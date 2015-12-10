@@ -39,7 +39,7 @@ setup(name='americangut',
       scripts=glob('scripts/*py'),
       setup_requires=['numpy >= 1.9.2'],
       install_requires=[
-          'IPython < 4.0.0',
+          'IPython',
           'matplotlib >= 1.4.3',
           'numpy >= 1.9.2',
           'pandas >= 0.15',

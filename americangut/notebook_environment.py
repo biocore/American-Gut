@@ -778,7 +778,1088 @@ paths = {
 
     'demux': {},
     'otu-map': {},
-}
+
+    'package': {
+        'split': {
+            'notrim-map': '01-raw/metadata.txt',
+            'notrim-raw-otu': ('03-otus/notrim/gg-13_8-97-percent/'
+                               'otu_table.biom'),
+            'notrim-raw-dir': '11-packaged/split/notrim/raw/',
+            'notrim-1k-otu': '06-beta/notrim/1k/ag.biom',
+            'notrim-1k-dir': '11-packaged/split/notrim/1k/',
+            'notrim-10k-otu': '06-beta/notrim/10k/ag.biom',
+            'notrim-10k-dir': '11-packaged/split/notrim/10k/',
+
+            '100nt-map': '01-raw/metadata.txt',
+            '100nt-raw-otu': '03-otus/100nt/gg-13_8-97-percent/otu_table.biom',
+            '100nt-raw-dir': '11-packaged/split/100nt/raw/',
+            '100nt-1k-otu': '06-beta/100nt/1k/ag.biom',
+            '100nt-1k-dir': '11-packaged/split/100nt/1k/',
+            '100nt-10k-otu': '06-beta/100nt/10k/ag.biom',
+            '100nt-10k-dir': '11-packaged/split/100nt/10k/',
+            },
+
+        'single_ids': {
+            'fecal-1k': '11-packaged/fecal/single_ids_1k.txt',
+            'fecal-10k': '11-packaged/fecal/single_ids_10k.txt',
+            'fecal-unrare': '11-packaged/fecal/single_ids_unrarefied.txt',
+
+            'oral-1k': '11-packaged/oral/single_ids_1k.txt',
+            'oral-10k': '11-packaged/oral/single_ids_10k.txt',
+            'oral-unrare': '11-packaged/oral/single_ids_unrarefied.txt',
+
+            'skin-1k': '11-packaged/skin/single_ids_1k.txt',
+            'skin-10k': '11-packaged/skin/single_ids_10k.txt',
+            'skin-unrare': '11-packaged/skin/single_ids_unrarefied.txt',
+            },
+
+        'all_participants_all_samples': {
+            'fecal': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'feces__.biom'),
+                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'feces__.txt'),
+
+                    'source-1k-otu': ('11-packaged/split/notrim/1k/'
+                                      'ag__BODY_HABITAT_UBERON:feces__.biom'),
+                    'source-1k-map': ('11-packaged/split/notrim/1k/'
+                                      'metadata__BODY_HABITAT_UBERON:'
+                                      'feces__.txt'),
+                    'source-1k-pd': '05-alpha/1k/ag-notrim/PD_whole_tree.txt',
+                    'source-1k-chao1': '05-alpha/1k/ag-notrim/chao1.txt',
+                    'source-1k-observedotus': ('05-alpha/1k/ag-notrim/'
+                                               'observed_otus.txt'),
+                    'source-1k-shannon': '05-alpha/1k/ag-notrim/shannon.txt',
+                    'source-1k-unweighted-unifrac': ('06-beta/notrim/1k/ag/'
+                                                     'unweighted_unifrac_ag-'
+                                                     'fecal.txt'),
+                    'source-1k-weighted-unifrac': ('06-beta/notrim/1k/ag/'
+                                                   'weighted_unifrac_ag-'
+                                                   'fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/split/notrim/10k/'
+                                       'ag__BODY_HABITAT_UBERON:feces__.biom'),
+                    'source-10k-map': ('11-packaged/split/notrim/10k/'
+                                       'metadata__BODY_HABITAT_UBERON:feces__.'
+                                       'txt'),
+                    'source-10k-pd': ('05-alpha/10k/ag-notrim/PD_whole_tree.'
+                                      'txt'),
+                    'source-10k-chao1': ('05-alpha/10k/ag-notrim/chao1.'
+                                         'txt'),
+                    'source-10k-observedotus': ('05-alpha/10k/ag-notrim/'
+                                                'observed_otus.txt'),
+                    'source-10k-shannon': '05-alpha/10k/ag-notrim/shannon.txt',
+                    'source-10k-unweighted-unifrac': ('06-beta/notrim/10k/ag/'
+                                                      'unweighted_unifrac_ag'
+                                                      '-fecal.txt'),
+                    'source-10k-weighted-unifrac': ('06-beta/notrim/10k/ag/'
+                                                    'weighted_unifrac_ag-'
+                                                    'fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/notrim/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/notrim/'
+                                        'ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/notrim/'
+                                        'ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/notrim/'
+                                    'all_participants/all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/notrim/'
+                                    'all_participants/all_samples/1k/'
+                                    'ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/notrim/'
+                                    'all_participants/all_samples/1k/'
+                                    'ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                 'all_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/notrim/'
+                                     'all_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/notrim/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/notrim/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                    'all_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                  'all_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'fecal.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'feces__.biom'),
+                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'feces__.txt'),
+
+                    'source-1k-otu': ('11-packaged/split/100nt/1k/'
+                                      'ag__BODY_HABITAT_UBERON:feces__.biom'),
+                    'source-1k-map': ('11-packaged/split/100nt/1k/'
+                                      'metadata__BODY_HABITAT_UBERON:'
+                                      'feces__.txt'),
+                    'source-1k-pd': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                     'PD_whole_tree.txt'),
+                    'source-1k-chao1': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                        'chao1.txt'),
+                    'source-1k-observedotus': ('05-alpha/1k/'
+                                               'ag-pgp-hmp-gg-100nt/'
+                                               'observed_otus.txt'),
+                    'source-1k-shannon': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                          'shannon.txt'),
+                    'source-1k-unweighted-unifrac': ('06-beta/100nt/1k/ag/'
+                                                     'unweighted_unifrac_ag-'
+                                                     'fecal.txt'),
+                    'source-1k-weighted-unifrac': ('06-beta/100nt/1k/ag/'
+                                                   'weighted_unifrac_ag-'
+                                                   'fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/split/100nt/10k/'
+                                       'ag__BODY_HABITAT_UBERON:feces__.biom'),
+                    'source-10k-map': ('11-packaged/split/100nt/10k/metadata'
+                                       '__BODY_HABITAT_UBERON:feces__.txt'),
+                    'source-10k-pd': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/'
+                                      'PD_whole_tree.txt'),
+                    'source-10k-chao1': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/'
+                                         'chao1.txt'),
+                    'source-10k-observedotus': ('05-alpha/10k/'
+                                                'ag-pgp-hmp-gg-100nt/'
+                                                'observed_otus.txt'),
+                    'source-10k-shannon': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/'
+                                           'shannon.txt'),
+                    'source-10k-unweighted-unifrac': ('06-beta/100nt/10k/ag/'
+                                                      'unweighted_unifrac_ag-'
+                                                      'fecal.txt'),
+                    'source-10k-weighted-unifrac': ('06-beta/100nt/10k/ag/'
+                                                    'weighted_unifrac_ag-'
+                                                    'fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/100nt/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/100nt/'
+                                        'ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/100nt/'
+                                        'ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/100nt/all_participants/'
+                                    'all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/100nt/all_participants/'
+                                    'all_samples/1k/ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/100nt/all_participants/'
+                                    'all_samples/1k/ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                 'all_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/100nt/'
+                                     'all_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/100nt/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/100nt/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                    'all_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                  'all_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'fecal.txt'),
+                    },
+                },
+            'oral': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'oral cavity__.biom'),
+                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:oral '
+                                          'cavity__.txt'),
+
+                    'source-1k-otu': ('11-packaged/split/notrim/1k/'
+                                      'ag__BODY_HABITAT_UBERON:oral '
+                                      'cavity__.biom'),
+                    'source-1k-map': ('11-packaged/split/notrim/1k/'
+                                      'metadata__BODY_HABITAT_UBERON:oral '
+                                      'cavity__.txt'),
+                    'source-1k-pd': '05-alpha/1k/ag-notrim/PD_whole_tree.txt',
+                    'source-1k-chao1': ('05-alpha/1k/ag-notrim/chao1.txt'),
+                    'source-1k-observedotus': ('05-alpha/1k/ag-notrim/'
+                                               'observed_otus.txt'),
+                    'source-1k-shannon': '05-alpha/1k/ag-notrim/shannon.txt',
+                    'source-1k-unweighted-unifrac': ('06-beta/notrim/1k/ag/'
+                                                     'unweighted_unifrac_ag-'
+                                                     'oral.txt'),
+                    'source-1k-weighted-unifrac': ('06-beta/notrim/1k/ag/'
+                                                   'weighted_unifrac_ag-oral.'
+                                                   'txt'),
+
+                    'source-10k-otu': ('11-packaged/split/notrim/10k/'
+                                       'ag__BODY_HABITAT_UBERON:oral '
+                                       'cavity__.biom'),
+                    'source-10k-map': ('11-packaged/split/notrim/10k/'
+                                       'metadata__BODY_HABITAT_UBERON:oral '
+                                       'cavity__.txt'),
+                    'source-10k-pd': ('05-alpha/10k/ag-notrim/'
+                                      'PD_whole_tree.txt'),
+                    'source-10k-chao1': '05-alpha/10k/ag-notrim/chao1.txt',
+                    'source-10k-observedotus': ('05-alpha/10k/ag-notrim/'
+                                                'observed_otus.txt'),
+                    'source-10k-shannon': '05-alpha/10k/ag-notrim/shannon.txt',
+                    'source-10k-unweighted-unifrac': ('06-beta/notrim/10k/ag/'
+                                                      'unweighted_unifrac_ag'
+                                                      '-oral.txt'),
+                    'source-10k-weighted-unifrac': ('06-beta/notrim/10k/ag/'
+                                                    'weighted_unifrac_ag-'
+                                                    'oral.txt'),
+
+                    'sink-unrare-dir': '11-packaged/oral/notrim/',
+                    'sink-unrare-otu': '11-packaged/oral/notrim/ag_oral.biom',
+                    'sink-unrare-map': '11-packaged/oral/notrim/ag_oral.txt',
+
+                    'sink-1k-dir': ('11-packaged/oral/notrim/all_participants/'
+                                    'all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/oral/notrim/all_participants/'
+                                    'all_samples/1k/ag_1k_oral.biom'),
+                    'sink-1k-map': ('11-packaged/oral/notrim/all_participants/'
+                                    'all_samples/1k/ag_1k_oral.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/oral/notrim/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'oral.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/oral/notrim/'
+                                                 'all_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'oral.txt'),
+
+                    'sink-10k-dir': ('11-packaged/oral/notrim/'
+                                     'all_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/oral/notrim/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_oral.biom'),
+                    'sink-10k-map': ('11-packaged/oral/notrim/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_oral.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/oral/notrim/'
+                                                    'all_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_oral.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/oral/notrim/'
+                                                  'all_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'oral.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'oral cavity__.biom'),
+                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:oral '
+                                          'cavity__.txt'),
+
+                    'source-1k-otu': ('11-packaged/split/100nt/1k/'
+                                      'ag__BODY_HABITAT_UBERON:'
+                                      'oral cavity__.biom'),
+                    'source-1k-map': ('11-packaged/split/100nt/1k/'
+                                      'metadata__BODY_HABITAT_UBERON:'
+                                      'oral cavity__.txt'),
+                    'source-1k-pd': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                     'PD_whole_tree.txt'),
+                    'source-1k-chao1': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                        'chao1.txt'),
+                    'source-1k-observedotus': ('05-alpha/1k/ag-pgp-hmp-gg-'
+                                               '100nt/observed_otus.txt'),
+                    'source-1k-shannon': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                          'shannon.txt'),
+                    'source-1k-unweighted-unifrac': ('06-beta/100nt/1k/ag/'
+                                                     'unweighted_unifrac_ag-'
+                                                     'oral.txt'),
+                    'source-1k-weighted-unifrac': ('06-beta/100nt/1k/ag/'
+                                                   'weighted_unifrac_ag-oral'
+                                                   '.txt'),
+
+                    'source-10k-otu': ('11-packaged/split/100nt/10k/'
+                                       'ag__BODY_HABITAT_UBERON:oral '
+                                       'cavity__.biom'),
+                    'source-10k-map': ('11-packaged/split/100nt/10k/'
+                                       'metadata__BODY_HABITAT_UBERON:oral '
+                                       'cavity__.txt'),
+                    'source-10k-pd': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/'
+                                      'PD_whole_tree.txt'),
+                    'source-10k-chao1': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/'
+                                         'chao1.txt'),
+                    'source-10k-observedotus': ('05-alpha/10k/ag-pgp-hmp-gg-'
+                                                '100nt/observed_otus.txt'),
+                    'source-10k-shannon': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/'
+                                           'shannon.txt'),
+                    'source-10k-unweighted-unifrac': ('06-beta/100nt/10k/ag/'
+                                                      'unweighted_unifrac_ag-'
+                                                      'oral.txt'),
+                    'source-10k-weighted-unifrac': ('06-beta/100nt/10k/ag/'
+                                                    'weighted_unifrac_ag-oral'
+                                                    '.txt'),
+
+                    'sink-unrare-dir': '11-packaged/oral/100nt/',
+                    'sink-unrare-otu': '11-packaged/oral/100nt/ag_oral.biom',
+                    'sink-unrare-map': '11-packaged/oral/100nt/ag_oral.txt',
+
+                    'sink-1k-dir': ('11-packaged/oral/100nt/all_participants/'
+                                    'all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/oral/100nt/all_participants/'
+                                    'all_samples/1k/ag_1k_oral.biom'),
+                    'sink-1k-map': ('11-packaged/oral/100nt/all_participants/'
+                                    'all_samples/1k/ag_1k_oral.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/oral/100nt/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'oral.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/oral/100nt/'
+                                                 'all_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'oral.txt'),
+
+                    'sink-10k-dir': ('11-packaged/oral/100nt/all_participants/'
+                                     'all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/oral/100nt/all_participants/'
+                                     'all_samples/10k/ag_10k_oral.biom'),
+                    'sink-10k-map': ('11-packaged/oral/100nt/all_participants/'
+                                     'all_samples/10k/ag_10k_oral.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/oral/100nt/'
+                                                    'all_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_10k'
+                                                    '_oral.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/oral/100nt/'
+                                                  'all_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'oral.txt'),
+                    },
+                },
+            'skin': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'skin__.biom'),
+                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'skin__.txt'),
+
+                    'source-1k-otu': ('11-packaged/split/notrim/1k/'
+                                      'ag__BODY_HABITAT_UBERON:skin__.biom'),
+                    'source-1k-map': ('11-packaged/split/notrim/1k/'
+                                      'metadata__BODY_HABITAT_UBERON:'
+                                      'skin__.txt'),
+                    'source-1k-pd': '05-alpha/1k/ag-notrim/PD_whole_tree.txt',
+                    'source-1k-chao1': '05-alpha/1k/ag-notrim/chao1.txt',
+                    'source-1k-observedotus': ('05-alpha/1k/ag-notrim/'
+                                               'observed_otus.txt'),
+                    'source-1k-shannon': '05-alpha/1k/ag-notrim/shannon.txt',
+                    'source-1k-unweighted-unifrac': ('06-beta/notrim/1k/ag/'
+                                                     'unweighted_unifrac_ag-'
+                                                     'skin.txt'),
+                    'source-1k-weighted-unifrac': ('06-beta/notrim/1k/ag/'
+                                                   'weighted_unifrac_ag-'
+                                                   'skin.txt'),
+
+                    'source-10k-otu': ('11-packaged/split/notrim/10k/'
+                                       'ag__BODY_HABITAT_UBERON:skin__.biom'),
+                    'source-10k-map': ('11-packaged/split/notrim/10k/'
+                                       'metadata__BODY_HABITAT_UBERON:'
+                                       'skin__.txt'),
+                    'source-10k-pd': ('05-alpha/10k/ag-notrim/PD_whole_'
+                                      'tree.txt'),
+                    'source-10k-chao1': '05-alpha/10k/ag-notrim/chao1.txt',
+                    'source-10k-observedotus': ('05-alpha/10k/ag-notrim/'
+                                                'observed_otus.txt'),
+                    'source-10k-shannon': '05-alpha/10k/ag-notrim/shannon.txt',
+                    'source-10k-unweighted-unifrac': ('06-beta/notrim/10k/ag/'
+                                                      'unweighted_unifrac_ag-'
+                                                      'skin.txt'),
+                    'source-10k-weighted-unifrac': ('06-beta/notrim/10k/ag/'
+                                                    'weighted_unifrac_ag-'
+                                                    'skin.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/skin/notrim/'
+                                        'all_participants/all_samples/'),
+                    'sink-unrare-otu': '11-packaged/skin/notrim/ag_skin.biom',
+                    'sink-unrare-map': '11-packaged/skin/notrim/ag_skin.txt',
+
+                    'sink-1k-dir': ('11-packaged/skin/notrim/all_participants/'
+                                    'all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/skin/notrim/all_participants/'
+                                    'all_samples/1k/ag_1k_skin.biom'),
+                    'sink-1k-map': ('11-packaged/skin/notrim/all_participants/'
+                                    'all_samples/1k/ag_1k_skin.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/skin/notrim/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'skin.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/skin/notrim/'
+                                                 'all_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'skin.txt'),
+
+                    'sink-10k-dir': ('11-packaged/skin/notrim/'
+                                     'all_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/skin/notrim/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_skin.biom'),
+                    'sink-10k-map': ('11-packaged/skin/notrim/'
+                                     'all_participants/all_samples/10k/'
+                                     'ag_10k_skin.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/skin/notrim/'
+                                                    'all_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_skin.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/skin/notrim/'
+                                                  'all_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'skin.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'skin__.biom'),
+                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'skin__.txt'),
+
+                    'source-1k-otu': ('11-packaged/split/100nt/1k/'
+                                      'ag__BODY_HABITAT_UBERON:skin__.biom'),
+                    'source-1k-map': ('11-packaged/split/100nt/1k/'
+                                      'metadata__BODY_HABITAT_UBERON:'
+                                      'skin__.txt'),
+                    'source-1k-pd': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                     'PD_whole_tree.txt'),
+                    'source-1k-chao1': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                        'chao1.txt'),
+                    'source-1k-observedotus': ('05-alpha/1k/'
+                                               'ag-pgp-hmp-gg-100nt/'
+                                               'observed_otus.txt'),
+                    'source-1k-shannon': ('05-alpha/1k/ag-pgp-hmp-gg-100nt/'
+                                          'shannon.txt'),
+                    'source-1k-unweighted-unifrac': ('06-beta/100nt/1k/ag/'
+                                                     'unweighted_unifrac_ag-'
+                                                     'skin.txt'),
+                    'source-1k-weighted-unifrac': ('06-beta/100nt/1k/ag/'
+                                                   'weighted_unifrac_ag-'
+                                                   'skin.txt'),
+
+                    'source-10k-otu': ('11-packaged/split/100nt/10k/ag__BODY_HABITAT_UBERON:skin__.biom'),
+                    'source-10k-map': ('11-packaged/split/100nt/10k/metadata__BODY_HABITAT_UBERON:skin__.txt'),
+                    'source-10k-pd': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/PD_whole_tree.txt'),
+                    'source-10k-chao1': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/chao1.txt'),
+                    'source-10k-observedotus': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/observed_otus.txt'),
+                    'source-10k-shannon': ('05-alpha/10k/ag-pgp-hmp-gg-100nt/shannon.txt'),
+                    'source-10k-unweighted-unifrac': ('06-beta/100nt/10k/ag/unweighted_unifrac_ag-skin.txt'),
+                    'source-10k-weighted-unifrac': ('06-beta/100nt/10k/ag/weighted_unifrac_ag-skin.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/skin/100nt/all_participants/all_samples/'),
+                    'sink-unrare-otu': ('11-packaged/skin/100nt/ag_skin.biom'),
+                    'sink-unrare-map': ('11-packaged/skin/100nt/ag_skin.txt'),
+
+                    'sink-1k-dir': ('11-packaged/skin/100nt/all_participants/all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/skin/100nt/all_participants/all_samples/1k/ag_1k_skin.biom'),
+                    'sink-1k-map': ('11-packaged/skin/100nt/all_participants/all_samples/1k/ag_1k_skin.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_skin.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/1k/weighted_unifrac_ag_1k_skin.txt'),
+
+                    'sink-10k-dir': ('11-packaged/skin/100nt/all_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/skin/100nt/all_participants/all_samples/10k/ag_10k_skin.biom'),
+                    'sink-10k-map': ('11-packaged/skin/100nt/all_participants/all_samples/10k/ag_10k_skin.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_skin.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/10k/weighted_unifrac_ag_10k_skin.txt'),
+                    },
+                },
+            },
+
+        'all_participants_one_sample': {
+            'fecal': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/fecal/notrim/ag_fecal.biom'),
+                    'source-unrare-map': ('11-packaged/fecal/notrim/ag_fecal.txt'),
+
+                    'source-1k-otu': ('11-packaged/fecal/notrim/all_participants/all_samples/1k/ag_1k_fecal.biom'),
+                    'source-1k-map': ('11-packaged/fecal/notrim/all_participants/all_samples/1k/ag_1k_fecal.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/fecal/notrim/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_fecal.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/fecal/notrim/all_participants/all_samples/1k/weighted_unifrac_ag_1k_fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/fecal/notrim/all_participants/all_samples/10k/ag_10k_fecal.biom'),
+                    'source-10k-map': ('11-packaged/fecal/notrim/all_participants/all_samples/10k/ag_10k_fecal.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/fecal/notrim/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_fecal.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/fecal/notrim/all_participants/all_samples/10k/weighted_unifrac_ag_10k_fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/notrim/all_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/notrim/all_participants/one_sample/ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/notrim/all_participants/one_sample/ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/notrim/all_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/notrim/all_participants/one_sample/1k/ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/notrim/all_participants/one_sample/1k/ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/notrim/all_participants/one_sample/1k/unweighted_unifrac_ag_1k_fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/notrim/all_participants/one_sample/1k/weighted_unifrac_ag_1k_fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/notrim/all_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/notrim/all_participants/one_sample/10k/ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/notrim/all_participants/one_sample/10k/ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/notrim/all_participants/one_sample/10k/unweighted_unifrac_ag_10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/notrim/all_participants/one_sample/10k/weighted_unifrac_ag_10k_fecal.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/fecal/100nt/ag_fecal.biom'),
+                    'source-unrare-map': ('11-packaged/fecal/100nt/ag_fecal.txt'),
+
+                    'source-1k-otu': ('11-packaged/fecal/100nt/all_participants/all_samples/1k/ag_1k_fecal.biom'),
+                    'source-1k-map': ('11-packaged/fecal/100nt/all_participants/all_samples/1k/ag_1k_fecal.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/fecal/100nt/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_fecal.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/fecal/100nt/all_participants/all_samples/1k/weighted_unifrac_ag_1k_fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/fecal/100nt/all_participants/all_samples/10k/ag_10k_fecal.biom'),
+                    'source-10k-map': ('11-packaged/fecal/100nt/all_participants/all_samples/10k/ag_10k_fecal.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/fecal/100nt/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_fecal.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/fecal/100nt/all_participants/all_samples/10k/weighted_unifrac_ag_10k_fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/100nt/all_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/100nt/all_participants/one_sample/ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/100nt/all_participants/one_sample/ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/100nt/all_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/100nt/all_participants/one_sample/1k/ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/100nt/all_participants/one_sample/1k/ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/100nt/all_participants/one_sample/1k/unweighted_unifrac_ag_1k_fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/100nt/all_participants/one_sample/1k/weighted_unifrac_ag_1k_fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/100nt/all_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/100nt/all_participants/one_sample/10k/ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/100nt/all_participants/one_sample/10k/ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/100nt/all_participants/one_sample/10k/unweighted_unifrac_ag_10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/100nt/all_participants/one_sample/10k/weighted_unifrac_ag_10k_fecal.txt'),
+                    },
+                },
+            'oral': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/oral/notrim/ag_oral.biom'),
+                    'source-unrare-map': ('11-packaged/oral/notrim/ag_oral.txt'),
+
+                    'source-1k-otu': ('11-packaged/oral/notrim/all_participants/all_samples/1k/ag_1k_oral.biom'),
+                    'source-1k-map': ('11-packaged/oral/notrim/all_participants/all_samples/1k/ag_1k_oral.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/oral/notrim/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_oral.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/oral/notrim/all_participants/all_samples/1k/weighted_unifrac_ag_1k_oral.txt'),
+
+                    'source-10k-otu': ('11-packaged/oral/notrim/all_participants/all_samples/10k/ag_10k_oral.biom'),
+                    'source-10k-map': ('11-packaged/oral/notrim/all_participants/all_samples/10k/ag_10k_oral.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/oral/notrim/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_oral.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/oral/notrim/all_participants/all_samples/10k/weighted_unifrac_ag_10k_oral.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/oral/notrim/all_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/oral/notrim/all_participants/one_sample/ag_oral.biom'),
+                    'sink-unrare-map': ('11-packaged/oral/notrim/all_participants/one_sample/ag_oral.txt'),
+
+                    'sink-1k-dir': ('11-packaged/oral/notrim/all_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/oral/notrim/all_participants/one_sample/1k/ag_1k_oral.biom'),
+                    'sink-1k-map': ('11-packaged/oral/notrim/all_participants/one_sample/1k/ag_1k_oral.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/oral/notrim/all_participants/one_sample/1k/unweighted_unifrac_ag_1k_oral.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/oral/notrim/all_participants/one_sample/1k/weighted_unifrac_ag_1k_oral.txt'),
+
+                    'sink-10k-dir': ('11-packaged/oral/notrim/all_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/oral/notrim/all_participants/one_sample/10k/ag_10k_oral.biom'),
+                    'sink-10k-map': ('11-packaged/oral/notrim/all_participants/one_sample/10k/ag_10k_oral.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/oral/notrim/all_participants/one_sample/10k/unweighted_unifrac_ag_10k_oral.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/oral/notrim/all_participants/one_sample/10k/weighted_unifrac_ag_10k_oral.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/oral/100nt/ag_oral.biom'),
+                    'source-unrare-map': ('11-packaged/oral/100nt/ag_oral.txt'),
+
+                    'source-1k-otu': ('11-packaged/oral/100nt/all_participants/all_samples/1k/ag_1k_oral.biom'),
+                    'source-1k-map': ('11-packaged/oral/100nt/all_participants/all_samples/1k/ag_1k_oral.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/oral/100nt/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_oral.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/oral/100nt/all_participants/all_samples/1k/weighted_unifrac_ag_1k_oral.txt'),
+
+                    'source-10k-otu': ('11-packaged/oral/100nt/all_participants/all_samples/10k/ag_10k_oral.biom'),
+                    'source-10k-map': ('11-packaged/oral/100nt/all_participants/all_samples/10k/ag_10k_oral.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/oral/100nt/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_oral.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/oral/100nt/all_participants/all_samples/10k/weighted_unifrac_ag_10k_oral.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/oral/100nt/all_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/oral/100nt/all_participants/one_sample/ag_oral.biom'),
+                    'sink-unrare-map': ('11-packaged/oral/100nt/all_participants/one_sample/ag_oral.txt'),
+
+                    'sink-1k-dir': ('11-packaged/oral/100nt/all_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/oral/100nt/all_participants/one_sample/1k/ag_1k_oral.biom'),
+                    'sink-1k-map': ('11-packaged/oral/100nt/all_participants/one_sample/1k/ag_1k_oral.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/oral/100nt/all_participants/one_sample/1k/unweighted_unifrac_ag_1k_oral.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/oral/100nt/all_participants/one_sample/1k/weighted_unifrac_ag_1k_oral.txt'),
+
+                    'sink-10k-dir': ('11-packaged/oral/100nt/all_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/oral/100nt/all_participants/one_sample/10k/ag_10k_oral.biom'),
+                    'sink-10k-map': ('11-packaged/oral/100nt/all_participants/one_sample/10k/ag_10k_oral.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/oral/100nt/all_participants/one_sample/10k/unweighted_unifrac_ag_10k_oral.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/oral/100nt/all_participants/one_sample/10k/weighted_unifrac_ag_10k_oral.txt'),
+                    },
+                },
+            'skin': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/skin/notrim/ag_skin.biom'),
+                    'source-unrare-map': ('11-packaged/skin/notrim/ag_skin.txt'),
+
+                    'source-1k-otu': ('11-packaged/skin/notrim/all_participants/all_samples/1k/ag_1k_skin.biom'),
+                    'source-1k-map': ('11-packaged/skin/notrim/all_participants/all_samples/1k/ag_1k_skin.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/skin/notrim/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_skin.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/skin/notrim/all_participants/all_samples/1k/weighted_unifrac_ag_1k_skin.txt'),
+
+                    'source-10k-otu': ('11-packaged/skin/notrim/all_participants/all_samples/10k/ag_10k_skin.biom'),
+                    'source-10k-map': ('11-packaged/skin/notrim/all_participants/all_samples/10k/ag_10k_skin.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/skin/notrim/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_skin.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/skin/notrim/all_participants/all_samples/10k/weighted_unifrac_ag_10k_skin.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/skin/notrim/all_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/skin/notrim/all_participants/one_sample/ag_skin.biom'),
+                    'sink-unrare-map': ('11-packaged/skin/notrim/all_participants/one_sample/ag_skin.txt'),
+
+                    'sink-1k-dir': ('11-packaged/skin/notrim/all_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/skin/notrim/all_participants/one_sample/1k/ag_1k_skin.biom'),
+                    'sink-1k-map': ('11-packaged/skin/notrim/all_participants/one_sample/1k/ag_1k_skin.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/skin/notrim/all_participants/one_sample/1k/unweighted_unifrac_ag_1k_skin.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/skin/notrim/all_participants/one_sample/1k/weighted_unifrac_ag_1k_skin.txt'),
+
+                    'sink-10k-dir': ('11-packaged/skin/notrim/all_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/skin/notrim/all_participants/one_sample/10k/ag_10k_skin.biom'),
+                    'sink-10k-map': ('11-packaged/skin/notrim/all_participants/one_sample/10k/ag_10k_skin.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/skin/notrim/all_participants/one_sample/10k/unweighted_unifrac_ag_10k_skin.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/skin/notrim/all_participants/one_sample/10k/weighted_unifrac_ag_10k_skin.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/skin/100nt/ag_skin.biom'),
+                    'source-unrare-map': ('11-packaged/skin/100nt/ag_skin.txt'),
+
+                    'source-1k-otu': ('11-packaged/skin/100nt/all_participants/all_samples/1k/ag_1k_skin.biom'),
+                    'source-1k-map': ('11-packaged/skin/100nt/all_participants/all_samples/1k/ag_1k_skin.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/1k/unweighted_unifrac_ag_1k_skin.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/1k/weighted_unifrac_ag_1k_skin.txt'),
+
+                    'source-10k-otu': ('11-packaged/skin/100nt/all_participants/all_samples/10k/ag_10k_skin.biom'),
+                    'source-10k-map': ('11-packaged/skin/100nt/all_participants/all_samples/10k/ag_10k_skin.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/10k/unweighted_unifrac_ag_10k_skin.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/skin/100nt/all_participants/all_samples/10k/weighted_unifrac_ag_10k_skin.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/skin/100nt/all_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/skin/100nt/all_participants/one_sample/ag_skin.biom'),
+                    'sink-unrare-map': ('11-packaged/skin/100nt/all_participants/one_sample/ag_skin.txt'),
+
+                    'sink-1k-dir': ('11-packaged/skin/100nt/all_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/skin/100nt/all_participants/one_sample/1k/ag_1k_skin.biom'),
+                    'sink-1k-map': ('11-packaged/skin/100nt/all_participants/one_sample/1k/ag_1k_skin.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/skin/100nt/all_participants/one_sample/1k/unweighted_unifrac_ag_1k_skin.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/skin/100nt/all_participants/one_sample/1k/weighted_unifrac_ag_1k_skin.txt'),
+
+                    'sink-10k-dir': ('11-packaged/skin/100nt/all_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/skin/100nt/all_participants/one_sample/10k/ag_10k_skin.biom'),
+                    'sink-10k-map': ('11-packaged/skin/100nt/all_participants/one_sample/10k/ag_10k_skin.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/skin/100nt/all_participants/one_sample/10k/unweighted_unifrac_ag_10k_skin.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/skin/100nt/all_participants/one_sample/10k/weighted_unifrac_ag_10k_skin.txt'),
+                    },
+                },
+            },
+
+        'sub_participants_all_samples': {
+            'fecal': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/fecal/notrim/'
+                                          'ag_fecal.biom'),
+                    'source-unrare-map': ('11-packaged/fecal/notrim/'
+                                          'ag_fecal.txt'),
+
+                    'source-1k-otu': ('11-packaged/fecal/notrim/'
+                                      'all_participants/all_samples/1k/'
+                                      'ag_1k_fecal.biom'),
+                    'source-1k-map': ('11-packaged/fecal/notrim/'
+                                      'all_participants/all_samples/1k/'
+                                      'ag_1k_fecal.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                     'notrim/all_participants/'
+                                                     'all_samples/1k/'
+                                                     'unweighted_unifrac_ag_'
+                                                     '1k_fecal.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'weighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/fecal/notrim/'
+                                       'all_participants/all_samples/10k/'
+                                       'ag_10k_fecal.biom'),
+                    'source-10k-map': ('11-packaged/fecal/notrim/'
+                                       'all_participants/all_samples/10k/'
+                                       'ag_10k_fecal.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                      'notrim/'
+                                                      'all_participants/'
+                                                      'all_samples/10k/'
+                                                      'unweighted_unifrac_'
+                                                      'ag_10k_fecal.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                    'all_participants/'
+                                                    'all_samples/10k/'
+                                                    'weighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/notrim/'
+                                        'sub_participants/all_samples/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/notrim/'
+                                        'sub_participants/all_samples/'
+                                        'ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/notrim/'
+                                        'sub_participants/all_samples/'
+                                        'ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/notrim/'
+                                    'sub_participants/all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/notrim/'
+                                    'sub_participants/all_samples/1k/'
+                                    'ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/notrim/'
+                                    'sub_participants/all_samples/1k/'
+                                    'ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                   'sub_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                 'sub_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/notrim/'
+                                     'sub_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/notrim/'
+                                     'sub_participants/all_samples/10k/'
+                                     'ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/notrim/'
+                                     'sub_participants/all_samples/10k/'
+                                     'ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                    'notrim/sub_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                  'sub_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'fecal.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/fecal/100nt/'
+                                          'ag_fecal.biom'),
+                    'source-unrare-map': ('11-packaged/fecal/100nt/'
+                                          'ag_fecal.txt'),
+
+                    'source-1k-otu': ('11-packaged/fecal/100nt/'
+                                      'all_participants/all_samples/1k/'
+                                      'ag_1k_fecal.biom'),
+                    'source-1k-map': ('11-packaged/fecal/100nt/'
+                                      'all_participants/all_samples/1k/'
+                                      'ag_1k_fecal.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                     'all_participants/'
+                                                     'all_samples/1k/'
+                                                     'unweighted_unifrac_ag_'
+                                                     '1k_fecal.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                   'all_participants/'
+                                                   'all_samples/1k/'
+                                                   'weighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/fecal/100nt/'
+                                       'all_participants/all_samples/10k/'
+                                       'ag_10k_fecal.biom'),
+                    'source-10k-map': ('11-packaged/fecal/100nt/'
+                                       'all_participants/all_samples/10k/'
+                                       'ag_10k_fecal.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                      '100nt/all_participants/'
+                                                      'all_samples/10k/'
+                                                      'unweighted_unifrac_ag_'
+                                                      '10k_fecal.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/fecal/'
+                                                    '100nt/all_participants/'
+                                                    'all_samples/10k/'
+                                                    'weighted_unifrac_ag_10k_'
+                                                    'fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/100nt/'
+                                        'sub_participants/all_samples/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/100nt/'
+                                        'sub_participants/all_samples/'
+                                        'ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/100nt/'
+                                        'sub_participants/all_samples/'
+                                        'ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/100nt/sub_participants/'
+                                    'all_samples/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/100nt/sub_participants/'
+                                    'all_samples/1k/ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/100nt/sub_participants/'
+                                    'all_samples/1k/ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                   'sub_participants/'
+                                                   'all_samples/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                 'sub_participants/'
+                                                 'all_samples/1k/'
+                                                 'weighted_unifrac_ag_1k_'
+                                                 'fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/100nt/'
+                                     'sub_participants/all_samples/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/100nt/'
+                                     'sub_participants/all_samples/10k/'
+                                     'ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/100nt/'
+                                     'sub_participants/all_samples/10k/'
+                                     'ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                    'sub_participants/'
+                                                    'all_samples/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                  'sub_participants/'
+                                                  'all_samples/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'fecal.txt'),
+                    },
+                },
+            },
+
+        'sub_participants_one_sample': {
+            'fecal': {
+                'notrim': {
+                    'source-unrare-otu': ('11-packaged/fecal/notrim/'
+                                          'all_participants/one_sample/'
+                                          'ag_fecal.biom'),
+                    'source-unrare-map': ('11-packaged/fecal/notrim/'
+                                          'all_participants/one_sample/'
+                                          'ag_fecal.txt'),
+
+                    'source-1k-otu': ('11-packaged/fecal/notrim/'
+                                      'all_participants/one_sample/1k/'
+                                      'ag_1k_fecal.biom'),
+                    'source-1k-map': ('11-packaged/fecal/notrim/'
+                                      'all_participants/one_sample/1k/'
+                                      'ag_1k_fecal.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                     'notrim/all_participants/'
+                                                     'one_sample/1k/'
+                                                     'unweighted_unifrac_ag_'
+                                                     '1k_fecal.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/fecal/'
+                                                   'notrim/all_participants/'
+                                                   'one_sample/1k/weighted_'
+                                                   'unifrac_ag_1k_fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/fecal/notrim/'
+                                       'all_participants/one_sample/10k/'
+                                       'ag_10k_fecal.biom'),
+                    'source-10k-map': ('11-packaged/fecal/notrim/'
+                                       'all_participants/one_sample/10k/'
+                                       'ag_10k_fecal.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                      'notrim/'
+                                                      'all_participants/'
+                                                      'one_sample/10k/'
+                                                      'nweighted_unifrac_ag_'
+                                                      '10k_fecal.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/fecal/'
+                                                    'notrim/all_participants/'
+                                                    'one_sample/10k/'
+                                                    'weighted_unifrac_ag_10k_'
+                                                    'fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/notrim/'
+                                        'sub_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/notrim/'
+                                        'sub_participants/one_sample/'
+                                        'ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/notrim/'
+                                        'sub_participants/one_sample/'
+                                        'ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/notrim/'
+                                    'sub_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/notrim/'
+                                    'sub_participants/one_sample/1k/'
+                                    'ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/notrim/'
+                                    'sub_participants/one_sample/1k/'
+                                    'ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                   'notrim/sub_participants/'
+                                                   'one_sample/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                 'sub_participants/one_sample/'
+                                                 '1k/weighted_unifrac_ag_1k_'
+                                                 'fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/notrim/'
+                                     'sub_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/notrim/'
+                                     'sub_participants/one_sample/10k/'
+                                     'ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/notrim/'
+                                     'sub_participants/one_sample/10k/'
+                                     'ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                    'notrim/sub_participants/'
+                                                    'one_sample/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/notrim/'
+                                                  'sub_participants/'
+                                                  'one_sample/10k/'
+                                                  'weighted_unifrac_ag_10k_'
+                                                  'fecal.txt'),
+                    },
+                '100nt': {
+                    'source-unrare-otu': ('11-packaged/fecal/100nt/'
+                                          'all_participants/one_sample/'
+                                          'ag_fecal.biom'),
+                    'source-unrare-map': ('11-packaged/fecal/100nt/'
+                                          'all_participants/one_sample/'
+                                          'ag_fecal.txt'),
+
+                    'source-1k-otu': ('11-packaged/fecal/100nt/'
+                                      'all_participants/one_sample/1k/ag_1k_'
+                                      'fecal.biom'),
+                    'source-1k-map': ('11-packaged/fecal/100nt/'
+                                      'all_participants/one_sample/1k/ag_1k_'
+                                      'fecal.txt'),
+                    'source-1k-unweighted-unifrac': ('11-packaged/fecal/100nt'
+                                                     '/all_participants/'
+                                                     'one_sample/1k/'
+                                                     'unweighted_unifrac_ag_'
+                                                     '1k_fecal.txt'),
+                    'source-1k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                   'all_participants/'
+                                                   'one_sample/1k/'
+                                                   'weighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+
+                    'source-10k-otu': ('11-packaged/fecal/100nt/'
+                                       'all_participants/one_sample/10k/'
+                                       'ag_10k_fecal.biom'),
+                    'source-10k-map': ('11-packaged/fecal/100nt/'
+                                       'all_participants/one_sample/10k/'
+                                       'ag_10k_fecal.txt'),
+                    'source-10k-unweighted-unifrac': ('11-packaged/fecal/'
+                                                      '100nt/all_participants/'
+                                                      'one_sample/10k/'
+                                                      'unweighted_unifrac_ag_'
+                                                      '10k_fecal.txt'),
+                    'source-10k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                    'all_participants/'
+                                                    'one_sample/10k/'
+                                                    'weighted_unifrac_ag_10k_'
+                                                    'fecal.txt'),
+
+                    'sink-unrare-dir': ('11-packaged/fecal/100nt/'
+                                        'sub_participants/one_sample/'),
+                    'sink-unrare-otu': ('11-packaged/fecal/100nt/'
+                                        'sub_participants/one_sample/'
+                                        'ag_fecal.biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/100nt/'
+                                        'sub_participants/one_sample/'
+                                        'ag_fecal.txt'),
+
+                    'sink-1k-dir': ('11-packaged/fecal/100nt/'
+                                    'sub_participants/one_sample/1k'),
+                    'sink-1k-otu': ('11-packaged/fecal/100nt/'
+                                    'sub_participants/one_sample/1k/'
+                                    'ag_1k_fecal.biom'),
+                    'sink-1k-map': ('11-packaged/fecal/100nt/'
+                                    'sub_participants/one_sample/1k/'
+                                    'ag_1k_fecal.txt'),
+                    'sink-1k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                   'sub_participants/'
+                                                   'one_sample/1k/'
+                                                   'unweighted_unifrac_ag_1k_'
+                                                   'fecal.txt'),
+                    'sink-1k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                 'sub_participants/one_sample/'
+                                                 '1k/weighted_unifrac_ag_1k_'
+                                                 'fecal.txt'),
+
+                    'sink-10k-dir': ('11-packaged/fecal/100nt/'
+                                     'sub_participants/one_sample/10k'),
+                    'sink-10k-otu': ('11-packaged/fecal/100nt/'
+                                     'sub_participants/one_sample/10k/'
+                                     'ag_10k_fecal.biom'),
+                    'sink-10k-map': ('11-packaged/fecal/100nt/'
+                                     'sub_participants/one_sample/10k/'
+                                     'ag_10k_fecal.txt'),
+                    'sink-10k-unweighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                    'sub_participants/'
+                                                    'one_sample/10k/'
+                                                    'unweighted_unifrac_ag_'
+                                                    '10k_fecal.txt'),
+                    'sink-10k-weighted-unifrac': ('11-packaged/fecal/100nt/'
+                                                  'sub_participants/'
+                                                  'one_sample/10k/weighted_'
+                                                  'unifrac_ag_10k_fecal.txt'),
+                    },
+                },
+            },
+        },
+    }
 
 
 def _assert_environment():
@@ -1015,3 +2096,299 @@ def _stage_test_accessions():
             os.mkdir('01-raw')
 
         shutil.copytree(src, dst)
+
+
+def write_readme():
+    """Writes the readme file for the processed data"""
+
+    with open('readme.txt', 'w') as f_:
+        f_.write('\n'.join(readme))
+
+
+readme = ["American Gut File Sets",
+          "----------------------",
+          "",
+          "The American Gut data has been packaged into directories for easy"
+          " access.",
+          "",
+          "Datasets",
+          "========",
+          "",
+          "American Gut data was primarily divided by sequence trim length, "
+          "bodysite and rarefaction depth. Trimmed sequences were used to "
+          "facilitate meta analysis with other datasets. Participant results"
+          " are returned at a lower rarefaction depth than are used in "
+          "analysis.",
+          "",
+          "We've chosen to organize the data by bodysite, trim length, and "
+          "then by rarefaction depth. For each bodysite and trim length, an "
+          "unrarefied mapping file and biom table are provided. ",
+          "",
+          "Data is additionally partitioned into all the samples from all "
+          "participants at a particiular bodysite, and a single sample per "
+          "indiviudual at each bodysite. The single sample was selected at "
+          "random from all the samples from an individual which met the "
+          "rarefaction criteria. This sample is used across all datasets. If "
+          "no sample met the rarefaction critieria, the level is stepped down"
+          " and the proceedure is repeated. This way, the sample selected for"
+          " each individual is consistent across all the datasets while "
+          "maximizing the number of samples for analysis.",
+          "",
+          "A list of the barcodes in each single sample dataset are provided "
+          "for each bodysite (i.e. `single_1k.txt`).",
+          "",
+          "For the fecal samples, we additionally filtered the data to include"
+          " samples from individuals in a healthy subset of adults. The "
+          "criteria for a participant to be included in this group included a"
+          " reported age between 20 and 69, a BMI between 18.5 and 30, and no"
+          " reported history of Inflammatory Bowel Disease, Diabetes, or "
+          "antibiotic use in the past year. A single sample per individual is"
+          " provided in each subset.",
+          "",
+          "Data Dictionary",
+          "===============",
+          "A data dictionary describing all the base columns in the mapping "
+          "file is provided as the `data_dictionary.csv` in the parent "
+          "partition directory.",
+          "",
+          "",
+          "Files",
+          "=====",
+          "Within each dataset directory, the following files are provided:",
+          "",
+          "Metadata file",
+          "+++++++++++++",
+          "The mapping file downloaded from EBI. Alpha diversity (PD whole "
+          "tree, shannon, choa1, and observed OTUs) for the rarefaction "
+          "depth, and every depth lower have been added.",
+          "",
+          "OTU table",
+          "+++++++++",
+          "A rarefied biom table.",
+          "",
+          "Distance Matrices",
+          "+++++++++++++++++",
+          "The weighted and unweighted UniFrac distance associated with the "
+          "set of samples.",
+          "",
+          "",
+          "Analysis Directory Structure",
+          "============================",
+          "fecal/",
+          "   single_ids_1k.txt",
+          "   single_ids_10k.txt",
+          "   single_ids_unrarefied.txt",
+          "   100nt/",
+          "       ag_fecal.biom",
+          "       ag_fecal.txt",
+          "       all_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "       sub_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "   notrim/",
+          "       100nt/",
+          "       ag_fecal.biom",
+          "       ag_fecal.txt",
+          "       all_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "       sub_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_fecal.biom",
+          "                   ag_1k_fecal.txt",
+          "                   unweighted_unifrac_ag_1k_fecal.txt",
+          "                   weighted_unifrac_ag_1k_fecal.txt",
+          "               10k/",
+          "                   ag_10k_fecal.biom",
+          "                   ag_10k_fecal.txt",
+          "                   unweighted_unifrac_ag_10k_fecal.txt",
+          "                   weighted_unifrac_ag_10k_fecal.txt",
+          "oral/",
+          "   single_ids_1k.txt",
+          "   single_ids_10k.txt",
+          "   single_ids_unrarefied.txt",
+          "   100nt/",
+          "       ag_oral.biom",
+          "       ag_oral.txt",
+          "       all_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_oral.biom",
+          "                   ag_1k_oral.txt",
+          "                   unweighted_unifrac_ag_1k_oral.txt",
+          "                   weighted_unifrac_ag_1k_oral.txt",
+          "               10k/",
+          "                   ag_10k_oral.biom",
+          "                   ag_10k_oral.txt",
+          "                   unweighted_unifrac_ag_10k_oral.txt",
+          "                   weighted_unifrac_ag_10k_oral.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_oral.biom",
+          "                   ag_1k_oral.txt",
+          "                   unweighted_unifrac_ag_1k_oral.txt",
+          "                   weighted_unifrac_ag_1k_oral.txt",
+          "               10k/",
+          "                   ag_10k_oral.biom",
+          "                   ag_10k_oral.txt",
+          "                   unweighted_unifrac_ag_10k_oral.txt",
+          "                   weighted_unifrac_ag_10k_oral.txt",
+          "   notrim/",
+          "       100nt/",
+          "       ag_oral.biom",
+          "       ag_oral.txt",
+          "       all_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_oral.biom",
+          "                   ag_1k_oral.txt",
+          "                   unweighted_unifrac_ag_1k_oral.txt",
+          "                   weighted_unifrac_ag_1k_oral.txt",
+          "               10k/",
+          "                   ag_10k_oral.biom",
+          "                   ag_10k_oral.txt",
+          "                   unweighted_unifrac_ag_10k_oral.txt",
+          "                   weighted_unifrac_ag_10k_oral.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_oral.biom",
+          "                   ag_1k_oral.txt",
+          "                   unweighted_unifrac_ag_1k_oral.txt",
+          "                   weighted_unifrac_ag_1k_oral.txt",
+          "               10k/",
+          "                   ag_10k_oral.biom",
+          "                   ag_10k_oral.txt",
+          "                   unweighted_unifrac_ag_10k_oral.txt",
+          "                   weighted_unifrac_ag_10k_oral.txt",
+          "skin/",
+          "   single_ids_1k.txt",
+          "   single_ids_10k.txt",
+          "   single_ids_unrarefied.txt",
+          "   100nt/",
+          "       ag_skin.biom",
+          "       ag_skin.txt",
+          "       all_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_skin.biom",
+          "                   ag_1k_skin.txt",
+          "                   unweighted_unifrac_ag_1k_skin.txt",
+          "                   weighted_unifrac_ag_1k_skin.txt",
+          "               10k/",
+          "                   ag_10k_skin.biom",
+          "                   ag_10k_skin.txt",
+          "                   unweighted_unifrac_ag_10k_skin.txt",
+          "                   weighted_unifrac_ag_10k_skin.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_skin.biom",
+          "                   ag_1k_skin.txt",
+          "                   unweighted_unifrac_ag_1k_skin.txt",
+          "                   weighted_unifrac_ag_1k_skin.txt",
+          "               10k/",
+          "                   ag_10k_skin.biom",
+          "                   ag_10k_skin.txt",
+          "                   unweighted_unifrac_ag_10k_skin.txt",
+          "                   weighted_unifrac_ag_10k_skin.txt",
+          "   notrim/",
+          "       100nt/",
+          "       ag_skin.biom",
+          "       ag_skin.txt",
+          "       all_participants/",
+          "           all_samples/",
+          "               1k/",
+          "                   ag_1k_skin.biom",
+          "                   ag_1k_skin.txt",
+          "                   unweighted_unifrac_ag_1k_skin.txt",
+          "                   weighted_unifrac_ag_1k_skin.txt",
+          "               10k/",
+          "                   ag_10k_skin.biom",
+          "                   ag_10k_skin.txt",
+          "                   unweighted_unifrac_ag_10k_skin.txt",
+          "                   weighted_unifrac_ag_10k_skin.txt",
+          "           one_sample/",
+          "               1k/",
+          "                   ag_1k_skin.biom",
+          "                   ag_1k_skin.txt",
+          "                   unweighted_unifrac_ag_1k_skin.txt",
+          "                   weighted_unifrac_ag_1k_skin.txt",
+          "               10k/",
+          "                   ag_10k_skin.biom",
+          "                   ag_10k_skin.txt",
+          "                   unweighted_unifrac_ag_10k_skin.txt",
+          "                   weighted_unifrac_ag_10k_skin.txt",
+          ]

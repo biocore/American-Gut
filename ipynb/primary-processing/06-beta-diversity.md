@@ -134,6 +134,26 @@ For one of the figures, the volume of US samples dominates those from other coun
 ...                            --category COUNTRY \
 ...                            --mapping_file $ag_gg_cleaned_md \
 ...                            --output $ag_gg_100nt_10k_ss_bdiv_u
+Traceback (most recent call last):
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/mod2_pcoa.py", line 4, in <module>
+    __import__('pkg_resources').require('americangut==0.0.1')
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 3095, in <module>
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 3081, in _call_aside
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 3108, in _initialize_master_working_set
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 660, in _build_master
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 673, in _build_from_requirements
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 846, in resolve
+pkg_resources.DistributionNotFound: The 'IPython<4.0.0' distribution was not found and is required by americangut
+Traceback (most recent call last):
+  File "/Users/jwdebelius/anaconda/envs/americangut/bin/mod2_pcoa.py", line 4, in <module>
+    __import__('pkg_resources').require('americangut==0.0.1')
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 3095, in <module>
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 3081, in _call_aside
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 3108, in _initialize_master_working_set
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 660, in _build_master
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 673, in _build_from_requirements
+  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/setuptools-18.5-py2.7.egg/pkg_resources/__init__.py", line 846, in resolve
+pkg_resources.DistributionNotFound: The 'IPython<4.0.0' distribution was not found and is required by americangut
 ```
 
 And finally, we'll produce principal coordinates from the different distance matrices produced above.
@@ -148,6 +168,70 @@ And finally, we'll produce principal coordinates from the different distance mat
 ...             pc_filename = os.path.join(directory, dm_basename + '-pc.txt')
 ...
 ...             !principal_coordinates.py -i $dm_filename -o $pc_filename
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -8.36228927449e-06 and the largest is 0.201037662373.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.00585800148341 and the largest is 0.150213923426.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0570613541406 and the largest is 2.44188989496.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.000563013884505 and the largest is 0.0501361977778.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0634852183095 and the largest is 4.41030436665.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0125769761048 and the largest is 0.176897688215.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0657716582459 and the largest is 2.05188229841.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0125769761048 and the largest is 0.176897688215.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0673975590609 and the largest is 2.41280504429.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -7.92008482334e-05 and the largest is 0.0377396239742.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0197936957677 and the largest is 2.69925100996.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -7.92008482334e-05 and the largest is 0.0377396239742.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0730382493733 and the largest is 4.2540617994.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -7.25715612149e-06 and the largest is 0.286896774631.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0545446154772 and the largest is 2.40748198756.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.00103158503795 and the largest is 0.0526739537408.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0733557672067 and the largest is 4.26067098905.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -7.19916657783e-06 and the largest is 0.214818378104.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0720774466297 and the largest is 1.89223776186.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -7.19916657783e-06 and the largest is 0.214818378104.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0790847402418 and the largest is 2.60265317828.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.000121838575273 and the largest is 0.0247020018299.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.00158319774517 and the largest is 0.0926805661722.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0407323272701 and the largest is 2.84345262978.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.000121838575273 and the largest is 0.0247020018299.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.00158319774517 and the largest is 0.0926805661722.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0751636902393 and the largest is 4.47786788005.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0575209209403 and the largest is 1.25141269592.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.000510788317219 and the largest is 0.0389040597018.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0220203589103 and the largest is 2.38103151051.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0474971610626 and the largest is 1.13288747823.
+  RuntimeWarning
+/Users/jwdebelius/.virtualenvs/this_is_fucking_ridiculous/lib/python2.7/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:107: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.0168165244083 and the largest is 2.23870030046.
+  RuntimeWarning
 ```
 
 To end, as always, let's sanity check and make sure the files of specific interest exist and contain data.
@@ -168,4 +252,14 @@ To end, as always, let's sanity check and make sure the files of specific intere
 ...                 print "File appears empty: %s" % path
 ...                 error = True
 >>> assert not error
+Could not find: /Users/jwdebelius/Repositories/American-Gut/ipynb/primary-processing/agp_processing/06-beta/100nt/1k/ag-pgp-hmp-gg/unweighted_unifrac_ag-gg-subsampled-pc.txt
+Could not find: /Users/jwdebelius/Repositories/American-Gut/ipynb/primary-processing/agp_processing/06-beta/100nt/10k/ag-pgp-hmp-gg/unweighted_unifrac_ag-gg-subsampled-pc.txt
+```
+
+```python
+
+```
+
+```python
+
 ```

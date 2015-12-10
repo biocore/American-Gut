@@ -1,0 +1,253 @@
+Analysis focused on a paricular dataset often starts with seperating the data by bodysite. This notebook, and subsequent notebooks (12-15) will seperate the American Gut dataset by bodysite and rarefaction depth.
+
+```python
+import itertools
+import os
+
+import numpy as np
+import pandas as pd
+
+import americangut.util as agu
+import americangut.notebook_environment as agenv
+
+chp_path = agenv.activate('11-packaged')
+```
+
+We're also going to set up a series of reference variables, which we'll use through this analysis.
+
+```python
+alpha_metrics = {'pd': 'PD_whole_tree',
+                 'chao1': 'chao1',
+                 'shannon': 'shannon',
+                 'observedotus': 'observed_otus'
+                }
+depths = agenv.get_rarefaction_depth()
+depth_names = ['1k', '10k']
+```
+
+We'll start by splitting the raw OTU table and metadata by the `BODY_HABITAT` field, so we have an OTU table for each bodysite.
+
+```python
+for trim in ['notrim', '100nt']:
+    for depth in ['raw', '1k', '10k']:
+        meta = agu.get_existing_path(agenv.paths['package']['split']['%s-map' % trim])
+        otus = agu.get_existing_path(agenv.paths['package']['split']['%s-%s-otu' % (trim, depth)])
+        odir = agu.get_new_path(agenv.paths['package']['split']['%s-%s-dir' % (trim, depth)])
+
+        !mkdir -p $odir
+        !split_otu_table.py -i $otus \
+                            -m $meta \
+                            -o $odir \
+                            -f BODY_HABITAT
+```
+
+Next, we'll move the unrarefied tables, split by bodysite, for each of the bodysites we're interested in. For this, we're going to write a quick parameter iterator, that will let us generate the samples we need.
+
+```python
+def iterate_bodysite():
+    for bodysite in ['fecal', 'oral', 'skin']:
+        for trim in ['notrim', '100nt']:
+            # Gets the original filepath
+            source_otu = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-unrare-otu'])
+            source_map = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-unrare-map'])
+
+            # Gets the final paths
+            sink_dir =  agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-unrare-dir'])
+            sink_otu = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-unrare-otu'])
+            sink_map = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-unrare-map'])
+            
+            yield bodysite, trim, source_otu, source_map, sink_dir, sink_otu, sink_map
+```
+
+Now, let's move the split files to an easier to access location.
+
+```python
+for bodysite, trim, source_otu, source_map, sink_dir, sink_otu, sink_map in iterate_bodysite():
+    pass
+    # Makes the new directory
+    !mkdir -p $sink_dir
+
+    # Copies the files over
+    !cp $source_otu $sink_otu
+    !cp $source_map $sink_map
+```
+
+We'll follow by moving over the files for all participants. We're going to have a mapping file including alpha diversity, a rarefied OTU table, and distance matrices for each rarefaction depth. Once again, we'll build a helper function to find our file names, and then move them over.
+
+```python
+def rarefied_parameter_iterator(): 
+    for bodysite in ['fecal', 'oral', 'skin']:
+        for trim in ['notrim', '100nt']:
+            for depth_id, depth in enumerate(['1k', '10k']):
+                source_otu = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-otu' % depth])
+                source_map = agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-map' % depth])
+                
+                source_alpha = {
+                    '%s_%s' % (alpha_metrics[met], dep):
+                    agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-%s' % (dep, met)])
+                    for (met, dep) in itertools.product(alpha_metrics.keys(), depth_names[:(depth_id+1)])
+                } 
+                
+                source_beta = [
+                    agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-unweighted-unifrac' % depth]),
+                    agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-weighted-unifrac' % depth]),
+                ]
+                
+                sink_dir = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-dir' % depth])
+                sink_otu = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-otu' % depth])
+                sink_map = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-map' % depth])
+                sink_beta = [
+                    agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-unweighted-unifrac' % depth]),
+                    agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-weighted-unifrac' % depth]),
+                    ]
+                
+                yield (bodysite, depth, source_otu, source_map, source_alpha, source_beta, sink_dir, sink_otu, sink_map, sink_beta)
+```
+
+Let's use our helper function to add the alpha diversity to our mapping file, and move the rest of the data we need.
+
+```python
+for (bodysite, depth, source_otu, source_map, source_alpha, 
+     source_beta, sink_dir, sink_otu, sink_map, sink_beta) in rarefied_parameter_iterator():
+    # Creates the sink directory
+    !mkdir -p $sink_dir
+    
+    # Loads the mapping file
+    map_ = pd.read_csv(source_map, sep='\t', dtype=str)
+    map_.set_index('#SampleID', inplace=True)
+    
+    # Loads the alpha diveristy file
+    alphas = {metric : pd.read_csv(fp, sep='\t', dtype=str).set_index('Unnamed: 0').transpose()
+              for (metric, fp) in source_alpha.iteritems()
+             }
+    
+    # Adds alpha diversity to the map
+    alpha_map = agu.add_alpha_diversity(map_, alphas)
+    alpha_map.to_csv(sink_map, sep='\t', index_label='#SampleID')
+    
+    # Moves the OTU table
+    !cp $source_otu $sink_otu
+    
+    # Moves the beta diversity tables
+    for source, sink in zip(*(source_beta, sink_beta)):
+        !cp $source $sink
+```
+
+We're going to select a single sample for each subject at each body site. The human microbiome project [doi: ] demonstrated that differences across bodysites are larger than interpersonal differences within a single bodysite. However, other studies (ie Caporaso 2011 [[doi: 10.1186/gb-2011-12-5-r50](http://www.ncbi.nlm.nih.gov/pubmed/21624126)], Wu 2011 [[doi: 10.1126/science](http://www.ncbi.nlm.nih.gov/pubmed/21885731)]) suggest a high degree of stability within individual communities. A single sample can be use to avoid the bias associated with multiple closely related samples from a single individual.
+
+We select the sample using a constrained, random method. Samples which are sequenced at depths greater than the highest rarefaction depth are given priority. However, if multiple samples exist greater than this depth, the sample is selected at random. The process is repeated for each rarefaction depth, until a sample can be identified. This way, the same sample can be retained across analysis performed at multiple depths.
+
+```python
+for bodysite, trim, source_otu, source_map, sink_dir, sink_otu, sink_map in iterate_bodysite():
+    # We only need to do this once
+    if not trim == 'notrim':
+        continue
+
+    # Reads in a subset of the mapping file
+    map_ = pd.read_csv(sink_map, 
+                       sep='\t', 
+                       dtype=str, 
+                       usecols=['#SampleID', 'HOST_SUBJECT_ID', 'BODY_HABITAT']
+                      )
+    map_.set_index('#SampleID', inplace=True)
+    
+    # Reads in the depth information
+    all_depth = !biom summarize-table -i $sink_otu
+    all_depth = pd.DataFrame([l.split(': ') for l in all_depth[15:]], 
+                     columns=['#SampleID', 'depth'])
+    all_depth.set_index('#SampleID', inplace=True)
+    
+    # Combines the depth information with the map information
+    map_ = map_.join(all_depth)
+
+    # Identifies a single sample per individual
+    single_ids = agu.get_single_id_lists(map_, depths)
+
+    for depth_name, depth in zip(*(['unrare', '1k', '10k'], single_ids.keys())):
+        id_fp = agu.get_new_path(agenv.paths['package']['single_ids']['%s-%s' % (bodysite, depth_name)])
+        with open(id_fp, 'w') as f_:
+            f_.write('\n'.join(single_ids[depth]))
+```
+
+We're going to define another helper function, to work through the single sample files. We're then going to filter the data.
+
+```python
+def single_sample_iterator():
+    for bodysite in ['fecal', 'oral', 'skin']:
+        for depth_name in depth_names:
+            single_fp = agu.get_existing_path(agenv.paths['package']['single_ids']['%s-%s' % (bodysite, depth_name)])
+            for trim in ['notrim', '100nt']:
+                source_otu = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-otu' % depth_name])
+                source_map = agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-map' % depth_name])
+                source_unweighted = agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-unweighted-unifrac' % depth_name])
+                source_weighted = agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-weighted-unifrac' % depth_name])
+                
+                sink_dir = agu.get_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-dir' % depth_name])
+                sink_otu = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-otu' % depth_name])
+                sink_map = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-map' % depth_name])
+                sink_unweighted = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-unweighted-unifrac' % depth_name])
+                sink_weighted = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-weighted-unifrac' % depth_name])
+        
+                yield (bodysite, depth_name, trim, single_fp,
+                       source_otu, source_map, source_unweighted, source_weighted,
+                       sink_dir, sink_otu, sink_map, sink_unweighted, sink_weighted)
+```
+
+Let's use the helper function to partition the data into a single sample from each participant.
+
+```python
+for (bodysite, depth_name, trim, single_fp, source_otu, source_map, source_unweighted, source_weighted,
+     sink_dir, sink_otu, sink_map, sink_unweighted, sink_weighted) in single_sample_iterator():
+    
+    # Makes the destination directory
+    !mkdir -p $sink_dir
+    
+    # Filters the OTU table, and distance matrices
+    !filter_samples_from_otu_table.py -i $source_otu -o $sink_otu --sample_id_fp $single_fp
+    !filter_distance_matrix.py -i $source_unweighted -o $sink_unweighted --sample_id_fp $single_fp
+    !filter_distance_matrix.py -i $source_weighted -o $sink_weighted --sample_id_fp $single_fp
+    
+    # Filters the mapping file
+    with open(single_fp, 'r') as f_:
+        ids = np.array([i for i in f_.read().split('\n')])
+    map_ = pd.read_csv(source_map, sep='\t', dtype=str)
+    map_.set_index('#SampleID', inplace=True)
+    smap = map_.loc[ids]
+    smap.to_csv(sink_map, sep='\t', index_label='#SampleID')
+```
+
+Finally, we're going to go through the fecal samples, and generate a set of samples loosely described as "healthy adults". These are individuals 20-69 with a BMI between 18.5 and 30 who report no history of diabetes, inflammatory bowel disease, and have not used antibiotics in the past year. 
+
+```python
+for trim in ['notrim',]: #'100nt']:
+    for sample_number in ['all_samples', 'one_sample']:
+        for depth_name in ['1k']: #, '10k']:
+            source_otu = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-otu' % depth_name])
+            source_map = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-map' % depth_name])
+            source_unweighted = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-unweighted-unifrac' % depth_name])
+            source_weighted = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-weighted-unifrac' % depth_name])
+            
+            sink_dir = agu.get_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-dir' % depth_name])
+            sink_otu = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-otu' % depth_name])
+            sink_map = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-map' % depth_name])
+            sink_unweighted = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-unweighted-unifrac' % depth_name])
+            sink_weighted = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-weighted-unifrac' % depth_name])
+            
+            !mkdir -p $sink_dir
+            
+            # Filters the OTU tables and distance matrices
+            !filter_samples_from_otu_table.py -i $source_otu -m $source_map -o $sink_otu -s 'SUBSET_HEALTHY:true'
+            !filter_distance_matrix.py -i $source_unweighted -m $source_map -o $sink_unweighted -s 'SUBSET_HEALTHY:true'
+            !filter_distance_matrix.py -i $source_weighted -m $source_map -o $sink_weighted -s 'SUBSET_HEALTHY:true'
+            
+            # Filters the mapping file
+            map_ = pd.read_csv(source_map, sep='\t', dtype=str).set_index('#SampleID')
+            smap = map_.loc[map_.SUBSET_HEALTHY == 'true']
+            smap.to_csv(sink_map, sep='\t', index_label='#SampleID')
+```
+
+Finally, we're going to add a readme file to the directory. 
+
+```python
+agenv.write_readme()
+```

@@ -107,19 +107,57 @@ Before we proceed, let's dump out a little information about the two merged tabl
 ```python
 >>> summary = !biom summarize-table -i $ag_gg_100nt_biom
 >>> print '\n'.join(summary[:10])
+Num samples: 25
+Num observations: 6847
+Total count: 19597078
+Table density (fraction of non-zero values): 0.141
+
+Counts/sample summary:
+ Min: 2.0
+ Max: 2365234.0
+ Median: 757.000
+ Mean: 783883.120
 ```
 
 ```python
 >>> summary = !biom summarize-table -i $ag_pgp_hmp_gg_100nt_biom
 >>> print '\n'.join(summary[:10])
+Num samples: 45
+Num observations: 8101
+Total count: 19767534
+Table density (fraction of non-zero values): 0.077
+
+Counts/sample summary:
+ Min: 2.0
+ Max: 2365234.0
+ Median: 4095.000
+ Mean: 439278.533
 ```
 
 And, we'll finish up with a few sanity checks on the resulting metadata.
 
 ```python
 >>> !print_metadata_stats.py -m $ag_pgp_hmp_gg_cleaned_md -c TITLE_BODY_SITE
+AGP-FECAL	6
+AGP-ORAL	4
+AGP-SKIN	5
+GG-FECAL	10
+HMP-FECAL	1
+HMP-ORAL	3
+HMP-SKIN	6
+PGP-FECAL	1
+PGP-ORAL	4
+PGP-SKIN	5
 ```
 
 ```python
 >>> !print_metadata_stats.py -m $ag_gg_cleaned_md -c TITLE_BODY_SITE
+AGP-FECAL	6
+AGP-ORAL	4
+AGP-SKIN	5
+GG-FECAL	10
+```
+
+```python
+
 ```
