@@ -17,7 +17,6 @@ And then we'll pull in the files we need for processing.
 
 ```python
 >>> ag_notrim_biom           = agu.get_existing_path(agenv.paths['otus']['notrim']['ag-biom'])
->>> ag_md                    = agu.get_existing_path(agenv.paths['raw']['metadata'])
 >>> ag_pgp_hmp_gg_100nt_biom = agu.get_existing_path(agenv.paths['meta']['ag-pgp-hmp-gg-100nt-biom'])
 >>> ag_gg_100nt_biom         = agu.get_existing_path(agenv.paths['meta']['ag-gg-100nt-biom'])
 >>> ag_pgp_hmp_gg_cleaned_md = agu.get_existing_path(agenv.paths['meta']['ag-pgp-hmp-gg-cleaned-md'])
@@ -75,8 +74,6 @@ We're going to aggregate the diversity calculations from the multiple rarefactio
 ...     !collate_alpha.py -i $adiv_directory \
 ...                       -o $adiv_directory
 ```
-
-Finally, we're going to
 
 To end, we're going to verify that the files of interest exist and contain data.
 
