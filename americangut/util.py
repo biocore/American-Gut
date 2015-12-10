@@ -587,20 +587,28 @@ def get_single_id_lists(map_, depths):
     Returns
     -------
     single_ids : dict
-        A list of sample IDs where each ID represents a single sample for a
-        subject, and the samples exist at the rarefaction depth specified
-        by the key.
+        A dictionary keyed by rarefaction depth, where each value is a list
+        of samples representing a single sample from each subject.
 
     """
+    # Determines the numebr of depths and sorts the list
     num_depths = len(depths)
+    depths = sorted(depths)
 
+    # Sets up the output
     single_ids = {depth: [] for depth in depths}
     single_ids['unrare'] = []
 
+    # Casts the depths column explictly to a float
+    subject['depth'] = subject['depth'].astype(float)
+
     for hsi, subject in map_.groupby('HOST_SUBJECT_ID'):
+        # For each depth, we check to see if there is one or more samples that
+        # have suffecient sequences for that depth. If there is a sample
+        # which meets the depth requirement, one is chosen at random from
+        # the avaliable set of samples, and no additonal depths are considered
         for depth_id, depth in enumerate(depths[::-1]):
-            # Checks the subject has at least one sample at the specified depth
-            if (subject['depth'].astype(float) >= float(depth)).any():
+            if (subject['depth'] >= float(depth)).any():
                 # Chooses one sample at random
                 id_ = np.random.choice(
                     subject.loc[subject['depth'] >= float(depth)].index,
@@ -608,6 +616,9 @@ def get_single_id_lists(map_, depths):
                     )
                 single_ids[depth].append(id_)
                 break
+        # If a subject does not have suffecient sequences to meet the
+        # subsampling requirements for the lowest rarefaction depth,
+        # a sample is selected at random and included in the unrarefied list.
         else:
             # A sample does not exist at the lowest depth. However, it falls
             # into the full list

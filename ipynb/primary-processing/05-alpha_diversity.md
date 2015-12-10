@@ -74,38 +74,6 @@ We're going to aggregate the diversity calculations from the multiple rarefactio
 ...         !rmdir $adiv_directory/ALDIV_*
 ...     !collate_alpha.py -i $adiv_directory \
 ...                       -o $adiv_directory
-Traceback (most recent call last):
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
-    main()
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
-    file_name_table = map(parse_rarefaction_fname, file_names)
-  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
-    iters = int(root_list.pop())
-ValueError: invalid literal for int() with base 10: 'chao1'
-Traceback (most recent call last):
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
-    main()
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
-    file_name_table = map(parse_rarefaction_fname, file_names)
-  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
-    iters = int(root_list.pop())
-ValueError: invalid literal for int() with base 10: 'chao1'
-Traceback (most recent call last):
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
-    main()
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
-    file_name_table = map(parse_rarefaction_fname, file_names)
-  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
-    iters = int(root_list.pop())
-ValueError: invalid literal for int() with base 10: 'chao1'
-Traceback (most recent call last):
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 130, in <module>
-    main()
-  File "/Users/jwdebelius/anaconda/envs/americangut/bin/collate_alpha.py", line 96, in main
-    file_name_table = map(parse_rarefaction_fname, file_names)
-  File "/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/qiime/parse.py", line 379, in parse_rarefaction_fname
-    iters = int(root_list.pop())
-ValueError: invalid literal for int() with base 10: 'chao1'
 ```
 
 Finally, we're going to

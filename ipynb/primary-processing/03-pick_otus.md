@@ -52,29 +52,6 @@ And we'll end with some sanity checking of the outputs.
 ...     print "Trim: %s" % trim
 ...     print '\n'.join(summary[:10])
 ...     print
-Trim: notrim
-Num samples: 15
-Num observations: 11
-Total count: 6065
-Table density (fraction of non-zero values): 0.485
-
-Counts/sample summary:
- Min: 2.0
- Max: 1273.0
- Median: 318.000
- Mean: 404.333
-
-Trim: 100nt
-Num samples: 15
-Num observations: 11
-Total count: 6065
-Table density (fraction of non-zero values): 0.485
-
-Counts/sample summary:
- Min: 2.0
- Max: 1273.0
- Median: 318.000
- Mean: 404.333
 ```
 
 ```python
