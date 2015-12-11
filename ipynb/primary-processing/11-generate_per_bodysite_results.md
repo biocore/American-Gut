@@ -29,7 +29,7 @@ We'll start by splitting the raw OTU table and metadata by the `BODY_HABITAT` fi
 
 ```python
 >>> for trim in ['notrim', '100nt']:
-...     meta = agu.get_existing_path(agenv.paths['package']['split']['raw-map' % trim])
+...     meta = agu.get_existing_path(agenv.paths['package']['split']['%s-raw-map' % trim])
 ...     otus = agu.get_existing_path(agenv.paths['package']['split']['%s-raw-otu' % (trim, depth)])
 ...     odir = agu.get_new_path(agenv.paths['package']['split']['%s-%raw-dir' % trim])
 ...
