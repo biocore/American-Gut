@@ -1995,7 +1995,7 @@ paths = {
                                                       'notrim/'
                                                       'all_participants/'
                                                       'one_sample/10k/'
-                                                      'nweighted_unifrac_ag_'
+                                                      'unweighted_unifrac_ag_'
                                                       '10k_fecal.txt'),
                     'source-10k-weighted-unifrac': ('11-packaged/fecal/'
                                                     'notrim/all_participants/'

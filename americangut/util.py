@@ -600,7 +600,7 @@ def get_single_id_lists(map_, depths):
     single_ids['unrare'] = []
 
     # Casts the depths column explictly to a float
-    subject['depth'] = subject['depth'].astype(float)
+    map_['depth'] = map_['depth'].astype(float)
 
     for hsi, subject in map_.groupby('HOST_SUBJECT_ID'):
         # For each depth, we check to see if there is one or more samples that
