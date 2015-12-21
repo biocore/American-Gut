@@ -497,7 +497,7 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
             body_site = body_site.split('_', 1)[-1].replace("_", " ")
         elif body_site.startswith('UBERON:'):
             body_site = body_site.split(':', 1)[-1]
-        elif body_site in ['NA', 'unknown', '', 'no_data', 'None']:
+        elif body_site in ['NA', 'unknown', '', 'no_data', 'None', 'Unknown']:
             errors[('unspecified_bodysite', body_site)].append(sample_id)
             continue
         else:
