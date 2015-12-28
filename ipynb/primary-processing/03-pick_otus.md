@@ -53,7 +53,3 @@ And we'll end with some sanity checking of the outputs.
 ...     print '\n'.join(summary[:10])
 ...     print
 ```
-
-```python
-
-```

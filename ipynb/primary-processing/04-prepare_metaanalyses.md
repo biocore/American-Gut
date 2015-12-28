@@ -123,7 +123,3 @@ And, we'll finish up with a few sanity checks on the resulting metadata.
 ```python
 >>> !print_metadata_stats.py -m $ag_gg_cleaned_md -c TITLE_BODY_SITE
 ```
-
-```python
-
-```

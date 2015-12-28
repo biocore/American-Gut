@@ -169,11 +169,3 @@ To end, as always, let's sanity check and make sure the files of specific intere
 ...                 error = True
 >>> assert not error
 ```
-
-```python
-
-```
-
-```python
-
-```

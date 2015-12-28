@@ -816,12 +816,6 @@ paths = {
         'all_participants_all_samples': {
             'fecal': {
                 'notrim': {
-                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
-                                          'otu_table__BODY_HABITAT_UBERON:'
-                                          'feces__.biom'),
-                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
-                                          'metadata__BODY_HABITAT_UBERON:'
-                                          'feces__.txt'),
 
                     'source-1k-otu': ('11-packaged/split/notrim/1k/'
                                       'ag__BODY_HABITAT_UBERON:feces__.biom'),
@@ -858,12 +852,6 @@ paths = {
                     'source-10k-weighted-unifrac': ('06-beta/notrim/10k/ag/'
                                                     'weighted_unifrac_ag-'
                                                     'fecal.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/fecal/notrim/'),
-                    'sink-unrare-otu': ('11-packaged/fecal/notrim/'
-                                        'ag_fecal.biom'),
-                    'sink-unrare-map': ('11-packaged/fecal/notrim/'
-                                        'ag_fecal.txt'),
 
                     'sink-1k-dir': ('11-packaged/fecal/notrim/'
                                     'all_participants/all_samples/1k'),
@@ -904,12 +892,6 @@ paths = {
                                                   'fecal.txt'),
                     },
                 '100nt': {
-                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
-                                          'otu_table__BODY_HABITAT_UBERON:'
-                                          'feces__.biom'),
-                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
-                                          'metadata__BODY_HABITAT_UBERON:'
-                                          'feces__.txt'),
 
                     'source-1k-otu': ('11-packaged/split/100nt/1k/'
                                       'ag__BODY_HABITAT_UBERON:feces__.biom'),
@@ -952,12 +934,6 @@ paths = {
                                                     'weighted_unifrac_ag-'
                                                     'fecal.txt'),
 
-                    'sink-unrare-dir': ('11-packaged/fecal/100nt/'),
-                    'sink-unrare-otu': ('11-packaged/fecal/100nt/'
-                                        'ag_fecal.biom'),
-                    'sink-unrare-map': ('11-packaged/fecal/100nt/'
-                                        'ag_fecal.txt'),
-
                     'sink-1k-dir': ('11-packaged/fecal/100nt/all_participants/'
                                     'all_samples/1k'),
                     'sink-1k-otu': ('11-packaged/fecal/100nt/all_participants/'
@@ -997,13 +973,6 @@ paths = {
                 },
             'oral': {
                 'notrim': {
-                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
-                                          'otu_table__BODY_HABITAT_UBERON:'
-                                          'oral cavity__.biom'),
-                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
-                                          'metadata__BODY_HABITAT_UBERON:oral '
-                                          'cavity__.txt'),
-
                     'source-1k-otu': ('11-packaged/split/notrim/1k/'
                                       'ag__BODY_HABITAT_UBERON:oral '
                                       'cavity__.biom'),
@@ -1040,10 +1009,6 @@ paths = {
                     'source-10k-weighted-unifrac': ('06-beta/notrim/10k/ag/'
                                                     'weighted_unifrac_ag-'
                                                     'oral.txt'),
-
-                    'sink-unrare-dir': '11-packaged/oral/notrim/',
-                    'sink-unrare-otu': '11-packaged/oral/notrim/ag_oral.biom',
-                    'sink-unrare-map': '11-packaged/oral/notrim/ag_oral.txt',
 
                     'sink-1k-dir': ('11-packaged/oral/notrim/all_participants/'
                                     'all_samples/1k'),
@@ -1082,12 +1047,6 @@ paths = {
                                                   'oral.txt'),
                     },
                 '100nt': {
-                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
-                                          'otu_table__BODY_HABITAT_UBERON:'
-                                          'oral cavity__.biom'),
-                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
-                                          'metadata__BODY_HABITAT_UBERON:oral '
-                                          'cavity__.txt'),
 
                     'source-1k-otu': ('11-packaged/split/100nt/1k/'
                                       'ag__BODY_HABITAT_UBERON:'
@@ -1131,10 +1090,6 @@ paths = {
                                                     'weighted_unifrac_ag-oral'
                                                     '.txt'),
 
-                    'sink-unrare-dir': '11-packaged/oral/100nt/',
-                    'sink-unrare-otu': '11-packaged/oral/100nt/ag_oral.biom',
-                    'sink-unrare-map': '11-packaged/oral/100nt/ag_oral.txt',
-
                     'sink-1k-dir': ('11-packaged/oral/100nt/all_participants/'
                                     'all_samples/1k'),
                     'sink-1k-otu': ('11-packaged/oral/100nt/all_participants/'
@@ -1172,13 +1127,6 @@ paths = {
                 },
             'skin': {
                 'notrim': {
-                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
-                                          'otu_table__BODY_HABITAT_UBERON:'
-                                          'skin__.biom'),
-                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
-                                          'metadata__BODY_HABITAT_UBERON:'
-                                          'skin__.txt'),
-
                     'source-1k-otu': ('11-packaged/split/notrim/1k/'
                                       'ag__BODY_HABITAT_UBERON:skin__.biom'),
                     'source-1k-map': ('11-packaged/split/notrim/1k/'
@@ -1213,11 +1161,6 @@ paths = {
                     'source-10k-weighted-unifrac': ('06-beta/notrim/10k/ag/'
                                                     'weighted_unifrac_ag-'
                                                     'skin.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/skin/notrim/'
-                                        'all_participants/all_samples/'),
-                    'sink-unrare-otu': '11-packaged/skin/notrim/ag_skin.biom',
-                    'sink-unrare-map': '11-packaged/skin/notrim/ag_skin.txt',
 
                     'sink-1k-dir': ('11-packaged/skin/notrim/all_participants/'
                                     'all_samples/1k'),
@@ -1256,12 +1199,6 @@ paths = {
                                                   'skin.txt'),
                     },
                 '100nt': {
-                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
-                                          'otu_table__BODY_HABITAT_UBERON:'
-                                          'skin__.biom'),
-                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
-                                          'metadata__BODY_HABITAT_UBERON:'
-                                          'skin__.txt'),
 
                     'source-1k-otu': ('11-packaged/split/100nt/1k/'
                                       'ag__BODY_HABITAT_UBERON:skin__.biom'),
@@ -1304,11 +1241,6 @@ paths = {
                     'source-10k-weighted-unifrac': ('06-beta/100nt/10k/ag/'
                                                     'weighted_unifrac_ag-'
                                                     'skin.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/skin/100nt/'
-                                        'all_participants/all_samples/'),
-                    'sink-unrare-otu': '11-packaged/skin/100nt/ag_skin.biom',
-                    'sink-unrare-map': '11-packaged/skin/100nt/ag_skin.txt',
 
                     'sink-1k-dir': ('11-packaged/skin/100nt/all_participants/'
                                     'all_samples/1k'),
@@ -1784,11 +1716,6 @@ paths = {
         'sub_participants_all_samples': {
             'fecal': {
                 'notrim': {
-                    'source-unrare-otu': ('11-packaged/fecal/notrim/'
-                                          'ag_fecal.biom'),
-                    'source-unrare-map': ('11-packaged/fecal/notrim/'
-                                          'ag_fecal.txt'),
-
                     'source-1k-otu': ('11-packaged/fecal/notrim/'
                                       'all_participants/all_samples/1k/'
                                       'ag_1k_fecal.biom'),
@@ -1823,15 +1750,6 @@ paths = {
                                                     'all_samples/10k/'
                                                     'weighted_unifrac_ag_'
                                                     '10k_fecal.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/fecal/notrim/'
-                                        'sub_participants/all_samples/'),
-                    'sink-unrare-otu': ('11-packaged/fecal/notrim/'
-                                        'sub_participants/all_samples/'
-                                        'ag_fecal.biom'),
-                    'sink-unrare-map': ('11-packaged/fecal/notrim/'
-                                        'sub_participants/all_samples/'
-                                        'ag_fecal.txt'),
 
                     'sink-1k-dir': ('11-packaged/fecal/notrim/'
                                     'sub_participants/all_samples/1k'),
@@ -1872,11 +1790,6 @@ paths = {
                                                   'fecal.txt'),
                     },
                 '100nt': {
-                    'source-unrare-otu': ('11-packaged/fecal/100nt/'
-                                          'ag_fecal.biom'),
-                    'source-unrare-map': ('11-packaged/fecal/100nt/'
-                                          'ag_fecal.txt'),
-
                     'source-1k-otu': ('11-packaged/fecal/100nt/'
                                       'all_participants/all_samples/1k/'
                                       'ag_1k_fecal.biom'),
@@ -1910,15 +1823,6 @@ paths = {
                                                     'all_samples/10k/'
                                                     'weighted_unifrac_ag_10k_'
                                                     'fecal.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/fecal/100nt/'
-                                        'sub_participants/all_samples/'),
-                    'sink-unrare-otu': ('11-packaged/fecal/100nt/'
-                                        'sub_participants/all_samples/'
-                                        'ag_fecal.biom'),
-                    'sink-unrare-map': ('11-packaged/fecal/100nt/'
-                                        'sub_participants/all_samples/'
-                                        'ag_fecal.txt'),
 
                     'sink-1k-dir': ('11-packaged/fecal/100nt/sub_participants/'
                                     'all_samples/1k'),
@@ -1962,12 +1866,6 @@ paths = {
         'sub_participants_one_sample': {
             'fecal': {
                 'notrim': {
-                    'source-unrare-otu': ('11-packaged/fecal/notrim/'
-                                          'all_participants/one_sample/'
-                                          'ag_fecal.biom'),
-                    'source-unrare-map': ('11-packaged/fecal/notrim/'
-                                          'all_participants/one_sample/'
-                                          'ag_fecal.txt'),
 
                     'source-1k-otu': ('11-packaged/fecal/notrim/'
                                       'all_participants/one_sample/1k/'
@@ -2002,15 +1900,6 @@ paths = {
                                                     'one_sample/10k/'
                                                     'weighted_unifrac_ag_10k_'
                                                     'fecal.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/fecal/notrim/'
-                                        'sub_participants/one_sample/'),
-                    'sink-unrare-otu': ('11-packaged/fecal/notrim/'
-                                        'sub_participants/one_sample/'
-                                        'ag_fecal.biom'),
-                    'sink-unrare-map': ('11-packaged/fecal/notrim/'
-                                        'sub_participants/one_sample/'
-                                        'ag_fecal.txt'),
 
                     'sink-1k-dir': ('11-packaged/fecal/notrim/'
                                     'sub_participants/one_sample/1k'),
@@ -2050,12 +1939,6 @@ paths = {
                                                   'fecal.txt'),
                     },
                 '100nt': {
-                    'source-unrare-otu': ('11-packaged/fecal/100nt/'
-                                          'all_participants/one_sample/'
-                                          'ag_fecal.biom'),
-                    'source-unrare-map': ('11-packaged/fecal/100nt/'
-                                          'all_participants/one_sample/'
-                                          'ag_fecal.txt'),
 
                     'source-1k-otu': ('11-packaged/fecal/100nt/'
                                       'all_participants/one_sample/1k/ag_1k_'
@@ -2090,15 +1973,6 @@ paths = {
                                                     'one_sample/10k/'
                                                     'weighted_unifrac_ag_10k_'
                                                     'fecal.txt'),
-
-                    'sink-unrare-dir': ('11-packaged/fecal/100nt/'
-                                        'sub_participants/one_sample/'),
-                    'sink-unrare-otu': ('11-packaged/fecal/100nt/'
-                                        'sub_participants/one_sample/'
-                                        'ag_fecal.biom'),
-                    'sink-unrare-map': ('11-packaged/fecal/100nt/'
-                                        'sub_participants/one_sample/'
-                                        'ag_fecal.txt'),
 
                     'sink-1k-dir': ('11-packaged/fecal/100nt/'
                                     'sub_participants/one_sample/1k'),
@@ -2378,10 +2252,10 @@ def _stage_test_accessions():
         shutil.copytree(src, dst)
 
 
-def write_readme():
+def write_readme(chp_path):
     """Writes the readme file for the processed data"""
 
-    with open('readme.txt', 'w') as f_:
+    with open(os.path.join(chp_path, 'readme.txt'), 'w') as f_:
         f_.write('\n'.join(readme))
 
 

@@ -215,7 +215,6 @@ Finally, we're going to go through the fecal samples, and generate a set of samp
 >>> for trim in ['notrim', '100nt']:
 ...     for sample_number in ['all_samples', 'one_sample']:
 ...         for depth_name in ['1k', '10k']:
-...             print trim, sample_number, depth_name
 ...             source_otu = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-otu' % depth_name])
 ...             source_map = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-map' % depth_name])
 ...             source_unweighted = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-unweighted-unifrac' % depth_name])
@@ -240,8 +239,40 @@ Finally, we're going to go through the fecal samples, and generate a set of samp
 ...             smap.to_csv(sink_map, sep='\t', index_label='#SampleID')
 ```
 
-Finally, we're going to add a readme file to the directory.
+We're going to add a readme file to the directory.
 
 ```python
->>> agenv.write_readme()
+>>> agenv.write_readme(chp_path)
+```
+
+Finally, we're going to check that we've generated the files we expect.
+
+```python
+>>> error = False
+...
+>>> for path in agenv.paths['package']['split'].values():
+...     filepath = agu.get_path(path)
+...     if not os.path.exists(filepath):
+...             print "Could not find: %s" % filepath
+...             error = True
+...
+>>> for path in agenv.paths['package']['single_ids'].values():
+...     filepath = agu.get_path(path)
+...     if not os.path.exists(filepath):
+...             print "Could not find: %s" % filepath
+...             error = True
+...
+>>> for collection in ['all_participants_all_samples', 'all_participants_one_sample',
+...                    'sub_participants_all_samples', 'sub_participants_one_sample']:
+...     for bodysite in ['fecal', 'oral', 'skin']:
+...         if collection in {'sub_participants_all_samples', 'sub_participants_one_sample'} and bodysite in {'oral', 'skin'}:
+...             continue
+...         for trim in ['notrim', '100nt']:
+...             for key, path in agenv.paths['package'][collection][bodysite][trim].iteritems():
+...                 filepath = agu.get_path(path)
+...                 if not os.path.exists(filepath):
+...                     print "Could not find: %s" % filepath
+...                     error = True
+...
+>>> assert not error
 ```

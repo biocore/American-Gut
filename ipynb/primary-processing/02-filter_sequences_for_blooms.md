@@ -100,11 +100,3 @@ Finally, let's do a quick sanity check that we have sequence data, and that the 
 ...
 >>> !biom summarize-table -i $observed_blooms_biom | head -n 25
 ```
-
-```python
-
-```
-
-```python
-
-```

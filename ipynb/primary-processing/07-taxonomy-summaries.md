@@ -84,7 +84,3 @@ And finally, we'll sanity check that the files appear to be there.
 ...                     error = True
 >>> assert not error
 ```
-
-```python
-
-```

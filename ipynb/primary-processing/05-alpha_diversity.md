@@ -83,7 +83,3 @@ To end, we're going to verify that the files of interest exist and contain data.
 ...         metric_file = agu.get_existing_path(agenv.paths['alpha'][rarefaction][keybase + '-%s' % metric])
 ...         assert os.stat(metric_file).st_size > 0
 ```
-
-```python
-
-```
