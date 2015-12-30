@@ -52,10 +52,12 @@ And finally, these next blocks of code support the per-sample type processing. F
 ...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
 ...                     agps.taxa_summaries,
+...                     agps.alpha_plot,
 ...                     agps.taxon_significance,
 ...                     agps.body_site_pcoa,
 ...                     agps.gradient_pcoa,
-...                     agps.bar_chart]
+...                     agps.bar_chart,
+...                    ]
 ...
 >>> fecal_functions = common_functions + [agps.country_pcoa]
 >>> oral_functions  = common_functions + [agps.pie_plot]

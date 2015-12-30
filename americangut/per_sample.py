@@ -1,11 +1,14 @@
 import os
 
 import biom
+import pandas as pd
 from qiime.util import qiime_system_call
 
 import americangut.util as agu
 import americangut.notebook_environment as agenv
 import americangut.results_utils as agru
+
+from americangut.alpha_dist_plots import plot_alpha
 
 
 def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
@@ -244,6 +247,38 @@ def taxa_summaries(opts, sample_ids):
                 for sorted_v, taxa in sorted(zip(v, table_taxon_ids))[::-1]:
                     if sorted_v:
                         fp.write("%s\t%f\n" % (taxa, sorted_v))
+    return results
+
+
+def alpha_plot(opts, sample_ids):
+    """Produces digestable alpha diversity distribution plots per sample"""
+
+    alpha_map = pd.read_csv(
+        agu.get_existing_path(opts['collapsed']['100nt']['alpha-map']),
+        sep='\t',
+        dtype=str,
+        )
+    alpha_map.set_index('#SampleID', inplace=True)
+
+    results = {}
+    for id_ in sample_ids:
+        if id_ not in alpha_map:
+            results[id_] = 'ID not found'
+        else:
+            results[id_] = None
+            # Generates the shannon diversity figure
+            shannon_path = os.path.join(_result_path(opts, id_),
+                                        'shannon1k_%s.pdf' % id_)
+            shannon = plot_alpha(sample, alpha_map, 'shannon_1k',
+                                 xlabel='Shannon Diversity')
+            shannon.savefig(shannon_path, dpi=300)
+            # Generates the pd whole tree diversity figure
+            pd_path = os.path.join(_result_path(opts, id_),
+                                   'pd1k_%s.pdf' % id_)
+            pd_div = plot_alpha(sample, alpha_map, 'PD_whole_tree_1k',
+                            xlabel='PD Whole Tree Diversity')
+            pd_div.savefig(pd_path, dpi=300)
+
     return results
 
 

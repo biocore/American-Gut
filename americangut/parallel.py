@@ -57,6 +57,6 @@ def dispatcher(success_fp, fail_fp, partitions):
         for success_details in pool.map(functor, list(agru.chunk_list(ids))):
             for id_, detail in success_details.items():
                 if detail:
-                    fail_fp.write("%s\t%s\n" % (id_, '\t'.join(detail)))
+                    fail_fp.write("%s\t%s\n\n" % (id_, '\t'.join(detail)))
                 else:
-                    success_fp.write("%s\n" % id_)
+                    success_fp.write("%s\n\n" % id_)

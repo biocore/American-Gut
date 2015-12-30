@@ -1,7 +1,5 @@
 import os
 
-import click
-
 import numpy as np
 import pandas as pd
 import seaborn as sn
@@ -30,38 +28,8 @@ __maintainer__ = "Justine Debelius"
 __email__ = "Justine.Debelius@colorado.edu"
 
 
-@click.group()
-def alpha_plots():
-    pass
-
-
-@alpha_plots.command()
-@click.option('--sample', required=True, type=str, help='sample to be plotted')
-@click.option('--alpha_map',
-              required=True,
-              help="The mapping file with alpha diversity. The sample id "
-              "column should be named `'#SampleID'`, and the alpha diversity"
-              " metric should be specified by `alpha_field`.",
-              type=click.Path(resolve_path=True, readable=True, exists=True,))
-@click.option('--output_dir', required=True,
-              help='The location where the alpha diversity figures should be'
-              ' saved.',
-              type=click.Path(exists=True))
-@click.option('--alpha_field', required=True,
-              type=click.Choice(['PD_whole_tree_1k', 'PD_whole_tree_10k',
-                                 'chao1_1k', 'chao1_10k',
-                                 'observed_otus_1k', 'observed_otus_10k',
-                                 'shannon_1k', 'shannon_10k', 'alpha']),
-              help='The name of the column in `alpha_map` which gives the '
-              'alpha diversity values')
-@click.option('--group_field', type=str, default='SIMPLE_BODY_SITE',
-              help='The name of the column in `alpha_map` which provides '
-              'the grouping for generating distribution plots. For example,'
-              ' if a mapping file encompasses multiple bodysites, it may be '
-              'useful to split by bodysite.')
-@click.option('--xlabel', type=str, help='The label for the x axis.')
-def plot_alpha(sample, alpha_map, alpha_field='alpha',
-               group_field='SIMPLE_BODY_SITE', output_dir=None, xlabel=None):
+def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
+               output_dir=None, xlabel=None, debug=False):
     """Generates a distrbution plot for the data
 
     Parameters
@@ -76,9 +44,7 @@ def plot_alpha(sample, alpha_map, alpha_field='alpha',
         used to seperate the data for making the distribution plot.
     alpha_field : str
         The name of the column in `alpha_map` which includes the alpha
-        diversity values. Options include 'PD_whole_tree_1k',
-        'PD_whole_tree_10k', 'chao1_1k', 'chao1_10k','observed_otus_1k',
-        'observed_otus_10k', 'shannon_1k', 'shannon_10k', or 'alpha'
+        diversity values.
     group_field : str
         Default is 'SIMPLE_BODY_SITE'. The name of the column in `alpha_map`
         which provides the grouping for generating distribution plots.
@@ -89,31 +55,31 @@ def plot_alpha(sample, alpha_map, alpha_field='alpha',
 
     Returns
     -------
-    A plot with the alpha diversity distribution and the sample value
-    highlighted.
+    If the sample is not included in the the mapping file, a string is returned
+    stating this fact.
+
+    If the sample is present, a matplotlib figure with the alpha diversity
+    distribution and a line indicating the sample value is returned.
+
+    If debug is passed, the following parameters are returned:
+        group : str
+            The value of the `group_field` for the sample
+        group_alpha : ndarray
+            The alpha diversity values assoicated with the group
+        sample_alpha : float
+            The alpha diversity for the sample
+        xlabel : str
+            The label used for the x-axis of the plot.
 
     Raises
     ------
-    TypeError
-        If alpha_map is not a filepath string or pandas dataframe.
-    ValueError
-        If the sample is not in the mapping file.
     ValueError
         If the alpha_field is not in alpha_map
     ValueError
         If the group_field is not in alpha_map
 
     """
-    
 
-    alpha_map = pd.read_csv(alpha_map, sep='\t', dtype=str)
-    alpha_map.set_index('#SampleID', inplace=True)
-
-    click.echo(alpha_map.columns)
-
-    # Checks the same is in the mapping file
-    if sample not in alpha_map.index:
-        raise ValueError('%s is not a valid sample.' % sample)
     # Checks the alpha_field is in the mapping file
     if alpha_field not in alpha_map.columns:
         raise ValueError('%s is not a valid alpha diversity field name.'
@@ -121,6 +87,10 @@ def plot_alpha(sample, alpha_map, alpha_field='alpha',
     # Checks the group_field is in the mapping file
     if group_field not in alpha_map.columns:
         raise ValueError('%s is not a valid field name.' % group_field)
+    # Checks the same is in the mapping file
+    if sample not in alpha_map.index:
+        return ('%s does not have an alpha diversity value for %s.'
+                % (alpha_field, sample))
 
     # Explicitly casts the alpha diversity to a float
     alpha_map[alpha_field] = alpha_map[alpha_field].astype(float)
@@ -132,6 +102,9 @@ def plot_alpha(sample, alpha_map, alpha_field='alpha',
 
     if xlabel is None:
         xlabel = '%sdiversity' % alpha_field.split('1')[0].replace('_', ' ')
+
+    if debug:
+        return group, group_alpha, sample_alpha, xlabel
 
     # Defines the group color. This is currently hardcoded, although the
     # longer term plan is to substitute in function which will define the color
@@ -176,11 +149,4 @@ def plot_alpha(sample, alpha_map, alpha_field='alpha',
     fig.set_size_inches((5, 2.5))
     ax.set_position((0.125, 0.375, 0.75, 0.5))
 
-    if output_dir is not None:
-        out_fp = os.path.join(output_dir, '%s_%s.pdf' % (alpha_field, sample))
-        fig.savefig(out_fp, dpi=300)
-    else:
-        return fig
-
-if __name__ == '__main__':
-    alpha_plots()
+    return fig
