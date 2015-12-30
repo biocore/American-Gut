@@ -638,6 +638,7 @@ paths = {
     # collapsed samples
     'collapsed': {
         '100nt': {
+            'alpha-map': '08-collapsed/100nt/alpha_map.txt',
             '1k': {
                 'ag-biom': '08-collapsed/100nt/1k/ag.biom',
                 'ag-fecal-biom': '08-collapsed/100nt/1k/ag-fecal.biom',
@@ -697,6 +698,7 @@ paths = {
                 }
             },
         'notrim': {
+            'alpha-map': '08-collapsed/notrim/alpha-map.txt',
             '1k': {
                 'ag-biom': '08-collapsed/notrim/1k/ag.biom',
                 'ag-fecal-biom': '08-collapsed/notrim/1k/ag-fecal.biom',
@@ -779,6 +781,12 @@ paths = {
     'demux': {},
     'otu-map': {},
 }
+
+alpha_metrics = {'pd': 'PD_whole_tree',
+                 'chao1': 'chao1',
+                 'shannon': 'shannon',
+                 'observedotus': 'observed_otus'
+                 }
 
 
 def _assert_environment():
