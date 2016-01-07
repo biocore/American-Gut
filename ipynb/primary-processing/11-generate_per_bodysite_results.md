@@ -3,13 +3,13 @@ This notebook will seperate the American Gut dataset by bodysite and rarefaction
 ```python
 >>> import itertools
 >>> import os
->>> 
+...
 >>> import numpy as np
 >>> import pandas as pd
->>> 
+...
 >>> import americangut.util as agu
 >>> import americangut.notebook_environment as agenv
->>> 
+...
 >>> chp_path = agenv.activate('11-packaged')
 ```
 
@@ -49,14 +49,16 @@ In this block of code, and the rest of the notebook, we'll refer to files which 
 >>> def iterate_bodysite():
 ...     for bodysite in ['fecal', 'oral', 'skin']:
 ...         for trim in ['notrim', '100nt']:
+...             dataset = agenv.paths['package']['all_participants_all_samples'][bodysite][trim]
+...
 ...             # Gets the original filepath
-...             source_otu = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-unrare-otu'])
-...             source_map = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-unrare-map'])
+...             source_otu = '"%s"' % agu.get_existing_path(dataset['source-unrare-otu'])
+...             source_map = '"%s"' % agu.get_existing_path(dataset['source-unrare-map'])
 ...
 ...             # Gets the final paths
-...             sink_dir =  agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-unrare-dir'])
-...             sink_otu = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-unrare-otu'])
-...             sink_map = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-unrare-map'])
+...             sink_dir =  agu.get_path(dataset['sink-unrare-dir'])
+...             sink_otu = agu.get_path(dataset['sink-unrare-otu'])
+...             sink_map = agu.get_path(dataset['sink-unrare-map'])
 ...
 ...             yield bodysite, trim, source_otu, source_map, sink_dir, sink_otu, sink_map
 ```
@@ -173,16 +175,17 @@ We're going to define another helper function, to work through the single sample
 ...         for depth_name in depth_names:
 ...             single_fp = agu.get_existing_path(agenv.paths['package']['single_ids']['%s-%s' % (bodysite, depth_name)])
 ...             for trim in ['notrim', '100nt']:
-...                 source_otu = agu.get_existing_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['source-%s-otu' % depth_name])
-...                 source_map = agu.get_existing_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['source-%s-map' % depth_name])
-...                 source_unweighted = agu.get_existing_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['source-%s-unweighted-unifrac' % depth_name])
-...                 source_weighted = agu.get_existing_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['source-%s-weighted-unifrac' % depth_name])
+...                 dataset = agenv.paths['package']['all_participants_one_sample'][bodysite][trim]
+...                 source_otu = agu.get_existing_path(dataset['source-%s-otu' % depth_name])
+...                 source_map = agu.get_existing_path(dataset['source-%s-map' % depth_name])
+...                 source_unweighted = agu.get_existing_path(dataset['source-%s-unweighted-unifrac' % depth_name])
+...                 source_weighted = agu.get_existing_path(dataset['source-%s-weighted-unifrac' % depth_name])
 ...
-...                 sink_dir = agu.get_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-dir' % depth_name])
-...                 sink_otu = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-otu' % depth_name])
-...                 sink_map = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-map' % depth_name])
-...                 sink_unweighted = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-unweighted-unifrac' % depth_name])
-...                 sink_weighted = agu.get_new_path(agenv.paths['package']['all_participants_one_sample'][bodysite][trim]['sink-%s-weighted-unifrac' % depth_name])
+...                 sink_dir = agu.get_path(dataset['sink-%s-dir' % depth_name])
+...                 sink_otu = agu.get_new_path(dataset['sink-%s-otu' % depth_name])
+...                 sink_map = agu.get_new_path(dataset['sink-%s-map' % depth_name])
+...                 sink_unweighted = agu.get_new_path(dataset['sink-%s-unweighted-unifrac' % depth_name])
+...                 sink_weighted = agu.get_new_path(dataset['sink-%s-weighted-unifrac' % depth_name])
 ...
 ...                 yield (bodysite, depth_name, trim, single_fp,
 ...                        source_otu, source_map, source_unweighted, source_weighted,
@@ -218,16 +221,17 @@ Finally, we're going to go through the fecal samples, and generate a set of samp
 >>> for trim in ['notrim', '100nt']:
 ...     for sample_number in ['all_samples', 'one_sample']:
 ...         for depth_name in ['1k', '10k']:
-...             source_otu = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-otu' % depth_name])
-...             source_map = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-map' % depth_name])
-...             source_unweighted = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-unweighted-unifrac' % depth_name])
-...             source_weighted = agu.get_existing_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['source-%s-weighted-unifrac' % depth_name])
+...             dataset = agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]
+...             source_otu = agu.get_existing_path(dataset['source-%s-otu' % depth_name])
+...             source_map = agu.get_existing_path(dataset['source-%s-map' % depth_name])
+...             source_unweighted = agu.get_existing_path(dataset['source-%s-unweighted-unifrac' % depth_name])
+...             source_weighted = agu.get_existing_path(dataset['source-%s-weighted-unifrac' % depth_name])
 ...
-...             sink_dir = agu.get_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-dir' % depth_name])
-...             sink_otu = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-otu' % depth_name])
-...             sink_map = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-map' % depth_name])
-...             sink_unweighted = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-unweighted-unifrac' % depth_name])
-...             sink_weighted = agu.get_new_path(agenv.paths['package']['sub_participants_%s' % sample_number]['fecal'][trim]['sink-%s-weighted-unifrac' % depth_name])
+...             sink_dir = agu.get_path(dataset['sink-%s-dir' % depth_name])
+...             sink_otu = agu.get_new_path(dataset['sink-%s-otu' % depth_name])
+...             sink_map = agu.get_new_path(dataset['sink-%s-map' % depth_name])
+...             sink_unweighted = agu.get_new_path(dataset['sink-%s-unweighted-unifrac' % depth_name])
+...             sink_weighted = agu.get_new_path(dataset['sink-%s-weighted-unifrac' % depth_name])
 ...
 ...             !mkdir -p $sink_dir
 ...

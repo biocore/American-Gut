@@ -816,6 +816,17 @@ paths = {
         'all_participants_all_samples': {
             'fecal': {
                 'notrim': {
+                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'feces__.biom'),
+                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'feces__.txt'),
+                    'sink-unrare-dir': ('11-packaged/fecal/notrim'),
+                    'sink-unrare-otu': ('11-packaged/fecal/notrim/ag_fecal.'
+                                        'biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/notrim/ag_fecal.'
+                                        'txt'),
 
                     'source-1k-otu': ('11-packaged/split/notrim/1k/'
                                       'ag__BODY_HABITAT_UBERON:feces__.biom'),
@@ -892,6 +903,17 @@ paths = {
                                                   'fecal.txt'),
                     },
                 '100nt': {
+                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'feces__.biom'),
+                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'feces__.txt'),
+                    'sink-unrare-dir': ('11-packaged/fecal/100nt'),
+                    'sink-unrare-otu': ('11-packaged/fecal/100nt/ag_fecal.'
+                                        'biom'),
+                    'sink-unrare-map': ('11-packaged/fecal/100nt/ag_fecal.'
+                                        'txt'),
 
                     'source-1k-otu': ('11-packaged/split/100nt/1k/'
                                       'ag__BODY_HABITAT_UBERON:feces__.biom'),
@@ -973,6 +995,18 @@ paths = {
                 },
             'oral': {
                 'notrim': {
+                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'oral cavity__.biom'),
+                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'oral cavity__.txt'),
+                    'sink-unrare-dir': ('11-packaged/oral/notrim'),
+                    'sink-unrare-otu': ('11-packaged/oral/notrim/ag_oral.'
+                                        'biom'),
+                    'sink-unrare-map': ('11-packaged/oral/notrim/ag_oral.'
+                                        'txt'),
+
                     'source-1k-otu': ('11-packaged/split/notrim/1k/'
                                       'ag__BODY_HABITAT_UBERON:oral '
                                       'cavity__.biom'),
@@ -1047,6 +1081,17 @@ paths = {
                                                   'oral.txt'),
                     },
                 '100nt': {
+                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'oral cavity__.biom'),
+                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'oral cavity__.txt'),
+                    'sink-unrare-dir': ('11-packaged/oral/100nt'),
+                    'sink-unrare-otu': ('11-packaged/oral/100nt/ag_oral.'
+                                        'biom'),
+                    'sink-unrare-map': ('11-packaged/oral/100nt/ag_oral.'
+                                        'txt'),
 
                     'source-1k-otu': ('11-packaged/split/100nt/1k/'
                                       'ag__BODY_HABITAT_UBERON:'
@@ -1127,6 +1172,18 @@ paths = {
                 },
             'skin': {
                 'notrim': {
+                    'source-unrare-otu': ('11-packaged/split/notrim/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:'
+                                          'skin__.biom'),
+                    'source-unrare-map': ('11-packaged/split/notrim/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'skin__.txt'),
+                    'sink-unrare-dir': ('11-packaged/skin/notrim'),
+                    'sink-unrare-otu': ('11-packaged/skin/notrim/ag_skin.'
+                                        'biom'),
+                    'sink-unrare-map': ('11-packaged/skin/notrim/ag_skin.'
+                                        'txt'),
+
                     'source-1k-otu': ('11-packaged/split/notrim/1k/'
                                       'ag__BODY_HABITAT_UBERON:skin__.biom'),
                     'source-1k-map': ('11-packaged/split/notrim/1k/'
@@ -1199,6 +1256,17 @@ paths = {
                                                   'skin.txt'),
                     },
                 '100nt': {
+                    'source-unrare-otu': ('11-packaged/split/100nt/raw/'
+                                          'otu_table__BODY_HABITAT_UBERON:skin'
+                                          '__.biom'),
+                    'source-unrare-map': ('11-packaged/split/100nt/raw/'
+                                          'metadata__BODY_HABITAT_UBERON:'
+                                          'skin__.txt'),
+                    'sink-unrare-dir': ('11-packaged/skin/100nt'),
+                    'sink-unrare-otu': ('11-packaged/skin/100nt/ag_skin.'
+                                        'biom'),
+                    'sink-unrare-map': ('11-packaged/skin/100nt/ag_skin.'
+                                        'txt'),
 
                     'source-1k-otu': ('11-packaged/split/100nt/1k/'
                                       'ag__BODY_HABITAT_UBERON:skin__.biom'),
