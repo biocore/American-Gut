@@ -568,11 +568,11 @@ def get_single_id_lists(map_, depths):
     """Identifies a single sample per individual
 
     Single samples are identified based on host subject id, and then by
-    randomly selecting samples from avaliable samples at the highest
+    randomly selecting samples from available samples at the highest
     rarefaction depth. If an individual has multiple samples, but only one
-    above the rarefaction threshhold, the sample with the higher sequencing
-    depth is selected, and then inherieted across lists. If there are two
-    samples above the same threshhold, the sample is selected randomly.
+    above the rarefaction threshold, the sample with the higher sequencing
+    depth is selected, and then inherited across lists. If there are two
+    samples above the same threshold, the sample is selected randomly.
 
     Parameters
     ----------

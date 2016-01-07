@@ -1,15 +1,15 @@
-Analysis focused on a paricular dataset often starts with seperating the data by bodysite. This notebook, and subsequent notebooks (12-15) will seperate the American Gut dataset by bodysite and rarefaction depth.
+This notebook will seperate the American Gut dataset by bodysite and rarefaction depth to generate datasets which are easy to use for analysis.
 
 ```python
 >>> import itertools
 >>> import os
-...
+>>> 
 >>> import numpy as np
 >>> import pandas as pd
-...
+>>> 
 >>> import americangut.util as agu
 >>> import americangut.notebook_environment as agenv
-...
+>>> 
 >>> chp_path = agenv.activate('11-packaged')
 ```
 
@@ -42,6 +42,8 @@ We'll start by splitting the raw OTU table and metadata by the `BODY_HABITAT` fi
 ```
 
 Next, we'll move the unrarefied tables, split by bodysite, for each of the bodysites we're interested in. For this, we're going to write a quick parameter iterator, that will let us generate the samples we need.
+
+In this block of code, and the rest of the notebook, we'll refer to files which already exist as source files. These will be modified and moved to a final location, refered to here as sink files.
 
 ```python
 >>> def iterate_bodysite():
@@ -79,26 +81,27 @@ We'll follow by moving over the files for all participants. We're going to have 
 ...     for bodysite in ['fecal', 'oral', 'skin']:
 ...         for trim in ['notrim', '100nt']:
 ...             for depth_id, depth in enumerate(['1k', '10k']):
-...                 source_otu = '"%s"' % agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-otu' % depth])
-...                 source_map = agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-map' % depth])
+...                 dataset = agenv.paths['package']['all_participants_all_samples'][bodysite][trim]
+...                 source_otu = '"%s"' % agu.get_existing_path(dataset['source-%s-otu' % depth])
+...                 source_map = agu.get_existing_path(dataset['source-%s-map' % depth])
 ...
 ...                 source_alpha = {
 ...                     '%s_%s' % (alpha_metrics[met], dep):
-...                     agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-%s' % (dep, met)])
+...                     agu.get_existing_path(dataset['source-%s-%s' % (dep, met)])
 ...                     for (met, dep) in itertools.product(alpha_metrics.keys(), depth_names[:(depth_id+1)])
 ...                 }
 ...
 ...                 source_beta = [
-...                     agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-unweighted-unifrac' % depth]),
-...                     agu.get_existing_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['source-%s-weighted-unifrac' % depth]),
+...                     agu.get_existing_path(dataset['source-%s-unweighted-unifrac' % depth]),
+...                     agu.get_existing_path(dataset['source-%s-weighted-unifrac' % depth]),
 ...                 ]
 ...
-...                 sink_dir = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-dir' % depth])
-...                 sink_otu = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-otu' % depth])
-...                 sink_map = agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-map' % depth])
+...                 sink_dir = agu.get_path(dataset['sink-%s-dir' % depth])
+...                 sink_otu = agu.get_path(dataset['sink-%s-otu' % depth])
+...                 sink_map = agu.get_path(dataset['sink-%s-map' % depth])
 ...                 sink_beta = [
-...                     agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-unweighted-unifrac' % depth]),
-...                     agu.get_path(agenv.paths['package']['all_participants_all_samples'][bodysite][trim]['sink-%s-weighted-unifrac' % depth]),
+...                     agu.get_path(dataset['sink-%s-unweighted-unifrac' % depth]),
+...                     agu.get_path(dataset['sink-%s-weighted-unifrac' % depth]),
 ...                     ]
 ...
 ...                 yield (bodysite, depth, source_otu, source_map, source_alpha, source_beta, sink_dir, sink_otu, sink_map, sink_beta)
@@ -132,9 +135,9 @@ Let's use our helper function to add the alpha diversity to our mapping file, an
 ...         !cp $source $sink
 ```
 
-We're going to select a single sample for each subject at each body site. The human microbiome project [doi: ] demonstrated that differences across bodysites are larger than interpersonal differences within a single bodysite. However, other studies (ie Caporaso 2011 [[doi: 10.1186/gb-2011-12-5-r50](http://www.ncbi.nlm.nih.gov/pubmed/21624126)], Wu 2011 [[doi: 10.1126/science](http://www.ncbi.nlm.nih.gov/pubmed/21885731)]) suggest a high degree of stability within individual communities. A single sample can be use to avoid the bias associated with multiple closely related samples from a single individual.
+We're going to select a single sample for each subject at each body site. The human microbiome project [PMID: [22699609](http://www.ncbi.nlm.nih.gov/pubmed/22699609)] demonstrated that differences across bodysites are larger than interpersonal differences within a single bodysite. However, other studies (ie Caporaso 2011 [[PMID: 21624126](http://www.ncbi.nlm.nih.gov/pubmed/21624126)], Wu 2011 [[PMID: 21885731](http://www.ncbi.nlm.nih.gov/pubmed/21885731)]) suggest a high degree of stability within individual communities. A single sample can be use to avoid the bias associated with multiple closely related samples from a single individual.
 
-We select the sample using a constrained, random method. Samples which are sequenced at depths greater than the highest rarefaction depth are given priority. However, if multiple samples exist greater than this depth, the sample is selected at random. The process is repeated for each rarefaction depth, until a sample can be identified. This way, the same sample can be retained across analysis performed at multiple depths.
+We select the sample using a constrained random method. Samples which are sequenced at depths greater than the highest rarefaction depth are given priority. However, if multiple samples exist greater than this depth, the sample is selected at random. The process is repeated for each rarefaction depth, until a sample can be identified. This way, the same sample can be retained across analysis performed at multiple depths.
 
 ```python
 >>> for bodysite, trim, source_otu, source_map, sink_dir, sink_otu, sink_map in iterate_bodysite():
