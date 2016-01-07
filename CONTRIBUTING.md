@@ -99,9 +99,6 @@ You may also add the following optional information:
 * Last update
 
 
-### Table of Contents
-Describe the major sections in the notebook. We recomend using the document tools from the [ICalico Project](http://calicoproject.org/ICalico) to create a table of contents from the headers in the notebook.
-
 ### Introduction
 A brief introduction to the topic addressed in the notebook. This may include theory behind the analysis technique, a brief review of relevant literature and/or a description of the data being analyzed. Scientific citations may be included in this section. The introduction may also be subdivided, as appropriate.
 
@@ -121,31 +118,7 @@ The analysis pipeline should then be detailed. We suggest using markdown cells t
 The notebook should end with a discussion of the relevant results. Depending on the style of the notebook, it may be more appropriate to do result-by-result discussion. In that case, a short conclusion or prospectus should be provided.
 
 ### References
-A numbered list of references used in the document should be provided. The in-text references should be hyperlinked to the bibliography, at the bottom of the document. We recommend using the ICalico Bibliography plugin, although this currently only allows the use of MLA citation. Alternatively, we recommend a numbered-list of hyperlinked references. Numbered references should following the following formats:
-
-* **Journal Articles** 
-<blockquote> <ol><li>last_1, i1; last_2, i2, ..., and last_last, ilast. (year). "Title Hyperlinked to the article." <em>Journal</em>. <strong>Volume</strong>: inclusive page numbers.</li>
-<li>Lozupone, C.; and Knight, R. (2005). “<a href="http://www.ncbi.nlm.nih.gov/pubmed/16332807">UniFrac: a new phylogenetic method for comparing microbial communities</a>.” <em>Appl Enviro Microbiol</em>. <strong>71</strong>: 8228-8235.
-</li></ol> </blockquote>
-
-* **Book**<blockquote>
-	1. last_1, i1; last_2, i2, ..., last_last, ilast. (Year). <em>Title, hyperlinked if possible</em>. Edition. Publisher City: Publisher. pp. pages.
-	2. Zar, J. (1999) <em>Biostatistical Analysis</em>. Fourth Ed. Upper Saddle River: Prentice Hall. pp 185.</blockquote>
-
-* **Book Chapter**
-<blockquote>
-<ol><li> last_1, i1; last_2, i2, ..., last_last, ilast. (Year). "Chapter Title with hyperlink, if available." <em>Italicized Book Title</em>. Ch chapter. Edition. Publisher City: Publisher. pp. pages.
-</li><li>Cohen, J. (1988) “<a href="http://www.lrdc.pitt.edu/schneider/p2465/Readings/Cohen,%201988%20(Statistical%20Power,%20273-406).pdf">The Analysis of Variance</a>”. <em>Statistical Power Analysis for the Behavioral Sciences</em>. Ch 8. Second Ed. Hillsdale: Lawrence Erlbaum and Associates. pp. 273 - 288.
-</li></ol>
-</blockquote>
-
-* **Websites**
-<blockquote>
-	<ol><li>last_1, i1; last_2, i2, ..., last_last, ilast. (Year). "Webpage name with hyperlink". <em>Website title</em>. Sponsoring organization.
-	</li><li>Sponsoring Organization. (Year). "Webpage name with hyperlink." <em>Web Page title</em>.
-	</li><li>National Park Service. (2015). “<a href="http://www.nps.gov/yell/learn/nature/mammalscheck.htm">Mammal Checklist</a>.” <em>Yellowstone National Park</em>.
-	</li></ol>
-</blockquote>
+Sources should be cited using a Pubmed ID (PMID) or DOI. Citations should be linked to the cited article, if possible.
 
 # Getting help with git
 
