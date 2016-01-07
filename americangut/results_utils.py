@@ -28,8 +28,9 @@ _data_files = [
 
 # These are the Latex templates for the different results types
 _templates = {
-    'fecal': ('template_gut.tex', 'macros_gut.tex'),
-    'oralskin': ('template_oralskin.tex', 'macros_oralskin.tex')
+    'fecal': 'template_gut.tex',
+    'oral': 'template_oralskin.tex',
+    'skin': 'template_oralskin.tex'
 }
 
 
@@ -72,8 +73,11 @@ def get_repository_latex():
 def get_repository_latex_pdfs(sample_type):
     """Get the Latex static PDFs directory"""
     latex_dir = get_repository_latex()
+    sample_type = sample_type.lower()
 
-    if sample_type == 'oralskin':
+    if sample_type == 'skin':
+        pdfs_dir = get_path(latex_dir, 'pdfs-oralskin')
+    elif sample_type == 'oral':
         pdfs_dir = get_path(latex_dir, 'pdfs-oralskin')
     elif sample_type == 'fecal':
         pdfs_dir = get_path(latex_dir, 'pdfs-gut')
@@ -87,15 +91,15 @@ def get_repository_latex_pdfs(sample_type):
     return pdfs_dir
 
 
-def _stage_static_latex(sample_type, working_dir):
+def stage_static_latex(sample_type, working_dir):
     latex_dir = get_repository_latex()
 
-    for item in _templates[sample_type]:
-        src = get_path(latex_dir, item)
-        shutil.copy(src, working_dir)
+    item = _templates[sample_type.lower()]
+    src = get_path(latex_dir, item)
+    shutil.copy(src, working_dir)
 
 
-def _stage_static_pdfs(sample_type, working_dir):
+def stage_static_pdfs(sample_type, working_dir):
     pdfs_dir = get_repository_latex_pdfs(sample_type)
 
     for f in os.listdir(pdfs_dir):
@@ -129,8 +133,8 @@ def _stage_static_mod1(working_dir):
 
 def stage_static_files(sample_type, working_dir, debug=False):
     """Stage static files in the current working directory"""
-    _stage_static_latex(sample_type, working_dir)
-    _stage_static_pdfs(sample_type, working_dir)
+    stage_static_latex(sample_type, working_dir)
+    stage_static_pdfs(sample_type, working_dir)
 
 
 # use participant names only if the data are available.

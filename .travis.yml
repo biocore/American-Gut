@@ -1,31 +1,26 @@
+sudo: false
 language: python
 env:
   - PYTHON_VERSION=2.7
+addons:
+    apt:
+        packages:
+            - texlive
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
-  - export PATH=/home/travis/miniconda3/bin:$TRAVIS_BUILD_DIR/scripts:$PATH
+  - export PATH=/home/travis/miniconda3/bin:$PATH
   - export AG_TESTING='True'
   - export AG_CPU_COUNT=1
 install:
-  - conda create --yes -n env_name python=$PYTHON_VERSION pip nose numpy=1.9.2 scipy matplotlib pandas>=0.15 flake8 statsmodels lxml h5py>=2.3.1 notebook 
+  - conda create --yes -n env_name python=$PYTHON_VERSION --file conda_requirements.txt
   - source activate env_name
-  # upgrade click, older versions of click do not have __version__
-  - pip install .
+  - pip install -r pip_requirements.txt
+  - pip install -e . --no-deps
 script:
-  - source activate env_name
-  - export PYTHONPATH=$TRAVIS_BUILD_DIR:$PYTHONPATH
   - nosetests --with-doctest
   - flake8 americangut/*.py
   - flake8 scripts/*.py scripts/ag
   - ipymd --from markdown --to notebook ipynb/primary-processing/*.md
-  - runipy ipynb/primary-processing/1-get_sequences_and_metadata.ipynb
-  - runipy ipynb/primary-processing/2-filter_sequences_for_blooms.ipynb
-  - runipy ipynb/primary-processing/3-pick_otus.ipynb
-  - runipy ipynb/primary-processing/4-prepare_metaanalyses.ipynb
-  - runipy ipynb/primary-processing/5-alpha_diversity.ipynb
-  - runipy ipynb/primary-processing/6-beta-diversity.ipynb
-  - runipy ipynb/primary-processing/7-taxonomy-summaries.ipynb
-  - runipy ipynb/primary-processing/8-collapse_samples.ipynb
-  - runipy ipynb/primary-processing/9-per_participant_results.ipynb
+  - travis_wait 30 ./scripts/run_the_ipys.sh ipynb/primary-processing/

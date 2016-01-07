@@ -51,14 +51,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     # Sets up the way samples should be converted
     SAMPLE_CONVERTER = {'feces': 'fecal',
                         'oral_cavity': 'oral',
-                        'skin': 'skin'}
-
-    DUMMY = ['', '', '', '']
-    COUNT = [0, 1, 2, 3, 4, 5, 6, 7]
-
-    # Sets up the way samples should be converted
-    SAMPLE_CONVERTER = {'feces': 'fecal',
-                        'oral_cavity': 'oral',
+                        'oral cavity': 'oral',
                         'skin': 'skin'}
 
     DUMMY = ['', '', '', '']
@@ -88,16 +81,13 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
     MACRO_FORM_ABUNDANCE = [lambda x: clean_greengenes_string(x,
                             render_mode='LATEX'), lambda x: x]
 
-    FILE_PRECURSER = 'macros_'
-    FILE_EXTENSION = '.tex'
-
     DATE_FIELD = 'COLLECTION_DATE'
     DATE_FORMAT_SHORT = '%m/%d/%y'
     DATE_FORMAT_LONG = '%m/%d/%Y'
 
     UNKNOWNS = set(['None', 'NONE', 'none', 'NA', 'na', 'UNKNOWN', 'unknown'])
     DATE_OUT = '%B %d, %Y'
-    TIME_FIELD = 'SAMPLE_TIME'
+    TIME_FIELD = 'COLLECTION_TIME'
 
     # Number of taxa shown is an indexing value, it is one less than what is
     # actually shown.
@@ -126,8 +116,7 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
                                                                  all_taxa,
                                                                  RARE_THRESH):
         # Sets up filename
-        file_name = pjoin(output_dir, '%s%s%s' % (FILE_PRECURSER, samp,
-                          FILE_EXTENSION))
+        file_name = pjoin(output_dir, 'macros.tex')
 
         def filt_fun(v, i, md):
             return v.sum() > 0
