@@ -1,6 +1,5 @@
 This notebook will seperate the American Gut dataset by bodysite and rarefaction depth to generate datasets which are easy to use for analysis.
 
-
 ```python
 >>> import itertools
 >>> import os
@@ -177,6 +176,7 @@ We're going to define another helper function, to work through the single sample
 ...             single_fp = agu.get_existing_path(agenv.paths['package']['single_ids']['%s-%s' % (bodysite, depth_name)])
 ...             for trim in ['notrim', '100nt']:
 ...                 dataset = agenv.paths['package']['all_participants_one_sample'][bodysite][trim]
+...
 ...                 source_otu = agu.get_existing_path(dataset['source-%s-otu' % depth_name])
 ...                 source_map = agu.get_existing_path(dataset['source-%s-map' % depth_name])
 ...                 source_unweighted = agu.get_existing_path(dataset['source-%s-unweighted-unifrac' % depth_name])
