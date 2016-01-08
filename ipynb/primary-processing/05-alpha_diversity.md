@@ -64,12 +64,13 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 ...                                  -O $cpu_count
 ```
 
-And finally, we're going to aggregate the diversity calculations from the multiple rarefactions.
+We're going to aggregate the diversity calculations from the multiple rarefactions.
 
 ```python
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
 ...     # sometimes QIIME leaves this directory, unsure why.
-...     !rmdir $adiv_directory/ALDIV_*
+...     if os.path.exists(os.path.join(adiv_directory, 'ALDIV_*')):
+...         !rmdir $adiv_directory/ALDIV_*
 ...     !collate_alpha.py -i $adiv_directory \
 ...                       -o $adiv_directory
 ```
