@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 
 import os
+
+import pandas as pd
+
 from StringIO import StringIO
 from unittest import TestCase, main
 
-from numpy import array
+from numpy import array, nan
 from biom import Table
+from pandas.util.testing import assert_frame_equal
 
 from americangut.util import (
-    slice_mapping_file,parse_mapping_file,
+    slice_mapping_file, parse_mapping_file,
     verify_subset, concatenate_files, trim_fasta, count_samples,
-    count_seqs, count_unique_participants, clean_and_reformat_mapping
+    count_seqs, count_unique_participants, clean_and_reformat_mapping,
+    add_alpha_diversity, get_single_id_lists
 )
 
 __author__ = "Daniel McDonald"
@@ -20,6 +25,7 @@ __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@colorado.edu"
+
 
 class UtilTests(TestCase):
     def test_count_samples(self):
@@ -92,7 +98,6 @@ class UtilTests(TestCase):
                       ['a','b','x'])
         self.assertFalse(verify_subset(table, metadata))
 
-
     def test_slice_mapping_file(self):
         header, metadata = parse_mapping_file(StringIO(test_mapping))
         table = Table(array([[1,2],[4,5]]),
@@ -103,14 +108,12 @@ class UtilTests(TestCase):
         obs = slice_mapping_file(table, metadata)
         self.assertEqual(obs,exp)
 
-
     def test_parse_mapping_file(self):
         exp = ("#SampleIDs\tfoo\tbar", [['a','1\t123123'],
                                         ['b','yy\txxx'],
                                         ['c',"poop\tdoesn't matter"]])
         obs = parse_mapping_file(StringIO(test_mapping))
         self.assertEqual(obs, exp)
-
 
     def test_concatenate_files(self):
         expected_output = concat_test_input + concat_test_input
@@ -129,7 +132,6 @@ class UtilTests(TestCase):
         concatenate_files(input_files, output_file, 2)
         output_file.seek(0)
         self.assertEqual(expected_output, output_file.read())
-
 
     def test_trim_fasta(self):
         infasta = StringIO(test_fasta)
@@ -242,6 +244,75 @@ class UtilTests(TestCase):
                                               'SKIN', 'test', 'test-SKIN',
                                               'SKIN'])
 
+    def test_add_alpha_diversity(self):
+        map_ = pd.DataFrame(
+            array([
+                ['GAZ:w00t', '43.0', 'UBERON_mucosa_of_tongue',  '5'],
+                ['GAZ:left', '51.0', 'UBERON:FECES', '10'],
+                ['GAZ:right', '12.0', 'UBERON_FECES', '15'],
+                ['GAZ:stuff', '32.0', 'unknown', '26'],
+                ['GAZ:stuff', '56.0', 'UBERON:SKIN', '37'],
+            ]),
+            columns=['COUNTRY', 'AGE', 'BODY_SITE', 'BMI'],
+            index=['A', 'B', 'C', 'D', 'E']
+        )
+        alpha = {
+            'alpha_1': pd.DataFrame(
+                array([
+                    ['0', '1', '2', '3', '4'],
+                    ['100', '100', '100', '100', '100'],
+                    [nan, nan, nan, nan, nan],
+                    ['14.5', '14.0', '15.1', '14.7', '14.4'],
+                    ['12.1', '15.2', '13.1', '14.1', '12.8'],
+                    ['16.2', '16.5', '16.9', '15.9', '16.2'],
+                    ['10.1',  '9.8', '10.5', '10.0', '10.2'],
+                    ]),
+                columns=[
+                    'alpha_rarefaction_100_0.txt',
+                    'alpha_rarefaction_100_1.txt',
+                    'alpha_rarefaction_100_2.txt',
+                    'alpha_rarefaction_100_3.txt',
+                    'alpha_rarefaction_100_4.txt',
+                ],
+                index=['sequences per sample', 'iteration',
+                       'A', 'B', 'C', 'D', 'E']
+                )
+        }
+        expected = pd.DataFrame(
+            array([
+                ['GAZ:left', '51.0', 'UBERON:FECES', '10', 14.54],
+                ['GAZ:right', '12.0', 'UBERON_FECES', '15', 13.46],
+                ['GAZ:stuff', '32.0', 'unknown', '26', 16.34],
+                ['GAZ:stuff', '56.0', 'UBERON:SKIN', '37', 10.12]
+                ]),
+            index=['B', 'C', 'D', 'E'],
+            columns=['COUNTRY', 'AGE', 'BODY_SITE', 'BMI', 'alpha_1']
+            )
+        expected['alpha_1'] = expected['alpha_1'].astype(float)
+
+        test = add_alpha_diversity(map_, alpha)
+        assert_frame_equal(expected, test)
+
+    def test_get_single_id_list(self):
+        map_ = pd.DataFrame(
+            array([
+                ['GAZ:w00t', '43.0', 'UBERON_mucosa_of_tongue',  '5', 'A',
+                 '12'],
+                ['GAZ:left', '51.0', 'UBERON:FECES', '10', 'B', '1500'],
+                ['GAZ:right', '12.0', 'UBERON_FECES', '15', 'C', '121'],
+                ['GAZ:stuff', '32.0', 'unknown', '26', 'D', '150'],
+                ['GAZ:stuff', '56.0', 'UBERON:SKIN', '37', 'E', '201'],
+            ]),
+            columns=['COUNTRY', 'AGE', 'BODY_SITE', 'BMI', 'HOST_SUBJECT_ID',
+                     'depth'],
+            index=['A', 'B', 'C', 'D', 'E']
+        )
+        depths = [100]
+        test = get_single_id_lists(map_, depths)
+        known = {100: ['B', 'C', 'D', 'E'],
+                 'unrare': ['A', 'B', 'C', 'D', 'E']}
+        self.assertEqual(test, known)
+
 
 test_mapping = """#SampleIDs\tfoo\tbar
 a\t1\t123123
@@ -270,6 +341,7 @@ C	GAZ:right	12.0	UBERON_FECES	15
 D	GAZ:stuff	32.0	unknown	26
 E	GAZ:stuff	56.0	UBERON:SKIN	37
 """)
+
 
 if __name__ == '__main__':
     main()

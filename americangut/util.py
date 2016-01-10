@@ -4,6 +4,10 @@ import os
 import urllib2
 import gzip
 import time
+
+import numpy as np
+import pandas as pd
+
 from itertools import izip
 from StringIO import StringIO
 from collections import defaultdict
@@ -16,7 +20,8 @@ import americangut as ag
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2013, The American Gut Project"
-__credits__ = ["Daniel McDonald", "Adam Robbins-Pianka"]
+__credits__ = ["Daniel McDonald", "Adam Robbins-Pianka", "Jamie Morton",
+               "Justine Debelius"]
 __license__ = "BSD"
 __version__ = "unversioned"
 __maintainer__ = "Daniel McDonald"
@@ -525,3 +530,108 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
     out_fp.write('\n')
 
     return errors
+
+
+def add_alpha_diversity(map_, alphas):
+    """Adds alpha diversity to the metadata
+
+    Parameters
+    ----------
+    map_ : DataFrame
+        The metadata for all samples
+    alphas : dict
+        A dictionary keying the column name to a dataframe of the alpha
+        diversity information loaded from the `collate_alpha.py` alpha
+        diversity files.
+
+    Returns
+    -------
+    alpha_map : DataFrame
+        A pandas data frame with the alpha diveristy map attached
+    """
+
+    alpha_means = pd.DataFrame.from_dict({
+        '%s' % metric: adf.astype(float).mean(1)
+        for metric, adf in alphas.iteritems()
+        })
+
+    metric = sorted(alpha_means.keys())[-1]
+    alpha_map_ = map_.join(alpha_means)
+
+    keep = alpha_map_[metric].apply(lambda x: not pd.isnull(x))
+    alpha_map_ = alpha_map_.loc[keep]
+
+    return alpha_map_
+
+
+def get_single_id_lists(map_, depths):
+    """Identifies a single sample per individual
+
+    Single samples are identified based on host subject id, and then by
+    randomly selecting samples from available samples at the highest
+    rarefaction depth. If an individual has multiple samples, but only one
+    above the rarefaction threshold, the sample with the higher sequencing
+    depth is selected, and then inherited across lists. If there are two
+    samples above the same threshold, the sample is selected randomly.
+
+    Parameters
+    ----------
+    map_: DataFrame
+        A pandas dataframe where the index designates the sample ID, and
+        columns include 'HOST_SUBJECT_ID' for the unique individual identifier,
+        and 'DEPTH', containing the sequencing depth.
+    depths: iterable
+        The rarefaction depths used for analysis. Depths may be an iterable
+        of floats or castable strings.
+
+    Returns
+    -------
+    single_ids : dict
+        A dictionary keyed by rarefaction depth, where each value is a list
+        of samples representing a single sample from each subject.
+
+    """
+    # Determines the numebr of depths and sorts the list
+    num_depths = len(depths)
+    depths = sorted(depths)
+
+    # Sets up the output
+    single_ids = {depth: [] for depth in depths}
+    single_ids['unrare'] = []
+
+    # Casts the depths column explictly to a float
+    map_['depth'] = map_['depth'].astype(float)
+
+    for hsi, subject in map_.groupby('HOST_SUBJECT_ID'):
+        # For each depth, we check to see if there is one or more samples that
+        # have suffecient sequences for that depth. If there is a sample
+        # which meets the depth requirement, one is chosen at random from
+        # the avaliable set of samples, and no additonal depths are considered
+        for depth_id, depth in enumerate(depths[::-1]):
+            if (subject['depth'] >= float(depth)).any():
+                # Chooses one sample at random
+                id_ = np.random.choice(
+                    subject.loc[subject['depth'] >= float(depth)].index,
+                    replace=False
+                    )
+                single_ids[depth].append(id_)
+                break
+        # If a subject does not have suffecient sequences to meet the
+        # subsampling requirements for the lowest rarefaction depth,
+        # a sample is selected at random and included in the unrarefied list.
+        else:
+            # A sample does not exist at the lowest depth. However, it falls
+            # into the full list
+            single_ids['unrare'].append(
+                np.random.choice(subject.index, replace=False)
+            )
+
+    # Updates the list so lower rarefaction depths inheriet the ids at higher
+    # depths
+    for idx, lowest in zip(*(np.arange(num_depths, 0, -1) - 1, depths[::-1])):
+        if idx == 0:
+            single_ids['unrare'].extend(single_ids[depth])
+        else:
+            single_ids[depths[idx - 1]].extend(single_ids[depths[idx]])
+
+    return single_ids
