@@ -253,6 +253,7 @@ def taxa_summaries(opts, sample_ids):
 def alpha_plot(opts, sample_ids):
     """Produces digestable alpha diversity distribution plots per sample"""
 
+    results = {}
     alpha_map = pd.read_csv(
         agu.get_existing_path(opts['collapsed']['100nt']['alpha-map']),
         sep='\t',
@@ -260,24 +261,27 @@ def alpha_plot(opts, sample_ids):
         )
     alpha_map.set_index('#SampleID', inplace=True)
 
+    results['index'] = alpha_map.index
+
     results = {}
     for id_ in sample_ids:
-        if id_ not in alpha_map:
+        if id_ not in alpha_map.index:
             results[id_] = 'ID not found'
         else:
             results[id_] = None
             # Generates the shannon diversity figure
             shannon_path = os.path.join(_result_path(opts, id_),
-                                        'shannon1k_%s.pdf' % id_)
+                                        'shannon.pdf')
             shannon = plot_alpha(id_, alpha_map, 'shannon_1k',
                                  xlabel='Shannon Diversity')
             shannon.savefig(shannon_path, dpi=300)
-            # Generates the pd whole tree diversity figure
-            pd_path = os.path.join(_result_path(opts, id_),
-                                   'pd1k_%s.pdf' % id_)
-            pd_div = plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
-                                xlabel='PD Whole Tree Diversity')
-            pd_div.savefig(pd_path, dpi=300)
+            shannon.clf()
+            # # Generates the pd whole tree diversity figure
+            # pd_path = os.path.join(_result_path(opts, id_),
+            #                        'pd1k_%s.pdf' % id_)
+            # pd_div = plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
+            #                     xlabel='PD Whole Tree Diversity')
+            # pd_div.savefig(pd_path, dpi=300)
 
     return results
 
