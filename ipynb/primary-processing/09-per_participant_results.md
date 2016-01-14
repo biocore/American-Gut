@@ -51,17 +51,16 @@ And finally, these next blocks of code support the per-sample type processing. F
 >>> common_functions = [agps.sufficient_sequence_counts,
 ...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
-...                     agps.taxa_summaries,
-...                     agps.alpha_plot,
-...                     agps.taxon_significance,
-...                     agps.body_site_pcoa,
-...                     agps.gradient_pcoa,
-...                     agps.bar_chart,
+>>> #                     agps.taxa_summaries,
+... #                     agps.taxon_significance,
+... #                     agps.body_site_pcoa,
+... #                     agps.gradient_pcoa,
+... #                     agps.bar_chart,
 ...                    ]
 ...
->>> fecal_functions = common_functions + [agps.country_pcoa]
->>> oral_functions  = common_functions + [agps.pie_plot]
->>> skin_functions  = common_functions + [agps.pie_plot]
+>>> fecal_functions = common_functions # + [agps.country_pcoa]
+>>> oral_functions  = common_functions # + [agps.pie_plot]
+>>> skin_functions  = common_functions # + [agps.pie_plot]
 ...
 >>> fecal_opts = agps.create_opts('fecal', chp_path,
 ...                               gradient_color_by='k__Bacteria\;p__Firmicutes',
@@ -90,12 +89,58 @@ And now, let's start mass generating figures!
 
 ```python
 >>> site_to_functions = [('FECAL', process_fecal),
-...                      ('ORAL', process_oral),
-...                      ('SKIN', process_skin)]
+>>> #                      ('ORAL', process_oral),
+... #                      ('SKIN', process_skin)
+...                     ]
 >>> partitions = agps.partition_samples_by_bodysite(ag_cleaned_df, site_to_functions)
 ...
 >>> with open(successful_ids, 'w') as successful_ids_fp, open(unsuccessful_ids, 'w') as unsuccessful_ids_fp:
 ...     agpar.dispatcher(successful_ids_fp, unsuccessful_ids_fp, partitions)
+[INFO/PoolWorker-1] child process calling self.run()
+```
+
+
+
+```python
+>>> with open(successful_ids, 'r') as f_:
+...     sucess = [i for i in f_.read().split('\n') if i not in {'', '#SampleID'}]
+```
+
+```python
+>>> sucess
+['10317.000007108', '10317.000005844', '10317.000002035']
+```
+
+```python
+>>> %time agps.alpha_plot(fecal_opts, sucess)
+CPU times: user 1.92 s, sys: 107 ms, total: 2.03 s
+Wall time: 2.8 s
+{'10317.000002035': None, '10317.000005844': None, '10317.000007108': None}
+```
+
+```python
+>>> os.path.exists('/Users/jwdebelius/Repositories/American-Gut/ipynb/primary-processing/agp_processing/09-per-sample/results/')
+```
+
+```python
+
+```
+
+```python
+>>> alpha_map = pd.read_csv(
+...     agu.get_existing_path(fecal_opts['collapsed']['100nt']['alpha-map']),
+...     sep='\t',
+...     dtype=str,
+...     )
+>>> alpha_map.set_index('#SampleID', inplace=True)
+```
+
+```python
+>>> '10317.000005844' in alpha_map
+```
+
+```python
+>>> alpha_map
 ```
 
 And we'll end with some numbers on the number of successful and unsuccessful samples.
