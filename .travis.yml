@@ -18,6 +18,11 @@ install:
   - source activate env_name
   - pip install -r pip_requirements.txt
   - pip install -e . --no-deps
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # gives time to start
 script:
   - nosetests --with-doctest
   - flake8 americangut/*.py
