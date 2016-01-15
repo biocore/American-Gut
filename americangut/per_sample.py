@@ -1,7 +1,7 @@
 import os
 
 import biom
-from matplotlib import rcParams
+from matplotlib import rcParams, use
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
@@ -10,6 +10,8 @@ from qiime.util import qiime_system_call
 import americangut.util as agu
 import americangut.notebook_environment as agenv
 import americangut.results_utils as agru
+
+use('Agg')
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
