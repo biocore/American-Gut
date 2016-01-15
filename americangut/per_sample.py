@@ -11,8 +11,6 @@ import americangut.util as agu
 import americangut.notebook_environment as agenv
 import americangut.results_utils as agru
 
-# from americangut.alpha_dist_plots import plot_alpha
-
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
 rcParams['font.family'] = 'sans-serif'
@@ -242,7 +240,6 @@ def taxa_summaries(opts, sample_ids):
     table_taxon_ids = site_table.ids(axis='observation')
 
     for id_ in sample_ids:
-        print 'taxa', id_
         if not site_table.exists(id_):
             results[id_] = 'ID not found'
         else:
@@ -262,8 +259,6 @@ def taxa_summaries(opts, sample_ids):
 
 def alpha_plot(opts, sample_ids):
     """Produces digestable alpha diversity distribution plots per sample"""
-
-    print 'alpha_plots'
 
     results = {}
     alpha_map = pd.read_csv(
@@ -288,15 +283,13 @@ def alpha_plot(opts, sample_ids):
             plot_alpha(id_, alpha_map, 'shannon_1k',
                        xlabel='Shannon Diversity',
                        fp=shannon_path)
-            print '%s: We made a plot! It is a pretty plot!' % id_
 
             # Generates the pd whole tree diversity figure
             pd_path = os.path.join(_result_path(opts, id_),
                                    'pd_%s.pdf' % id_)
-            pd_div = plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
-                                xlabel='PD Whole Tree Diversity',
-                                fp=pd_path)
-            print '%s: We can also plot PD!' % id_
+            plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
+                       xlabel='PD Whole Tree Diversity',
+                       fp=pd_path)
 
     return results
 
