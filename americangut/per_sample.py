@@ -1,7 +1,9 @@
 import os
 
+import matplotlib
+matplotlib.use('Agg')
+
 import biom
-from matplotlib import rcParams, use
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
@@ -11,13 +13,11 @@ import americangut.util as agu
 import americangut.notebook_environment as agenv
 import americangut.results_utils as agru
 
-use('Agg')
-
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
-rcParams['font.family'] = 'sans-serif'
-rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
-rcParams['text.usetex'] = True
+matplotlib.rcParams['font.family'] = 'sans-serif'
+matplotlib.rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
+matplotlib.rcParams['text.usetex'] = True
 
 
 def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
