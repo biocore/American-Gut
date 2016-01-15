@@ -1,6 +1,8 @@
 import os
 
 import matplotlib
+matplotlib.use('Agg')
+
 import biom
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -10,8 +12,6 @@ from qiime.util import qiime_system_call
 import americangut.util as agu
 import americangut.notebook_environment as agenv
 import americangut.results_utils as agru
-
-matplotlib.use('Agg')
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
