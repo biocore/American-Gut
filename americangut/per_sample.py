@@ -16,8 +16,7 @@ import americangut.results_utils as agru
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
 matplotlib.rcParams['font.family'] = 'sans-serif'
-matplotlib.rcParams['font.sans-serif'] = ['Helvetica', 'Arial']
-matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams['font.sans-serif'] = ['Arial']
 
 
 def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
