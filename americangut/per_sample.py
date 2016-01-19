@@ -281,11 +281,20 @@ def alpha_plot(opts, sample_ids):
         sep='\t',
         dtype=str,
         )
-    alpha_map[['shannon_1k', 'PD_whole_tree_1k']] = \
-        alpha_map[['shannon_1k', 'PD_whole_tree_1k']].astype(float)
-    alpha_map.set_index('#SampleID', inplace=True)
 
-    results['index'] = alpha_map.index
+    alpha_metrics = ['shannon_1k', 'PD_whole_tree_1k']
+
+    # Checks the alpha_field is in the mapping file
+    for metric in alpha_metrics:
+        if metric not in alpha_map.columns:
+            raise ValueError('%s is not a valid alpha diversity field name.'
+                             % metric)
+    # Checks the group_field is in the mapping file
+    if 'SIMPLE_BODY_SITE' not in alpha_map.columns:
+        raise ValueError('SIMPLE_BODY_SITE is not a valid field name.')
+
+    alpha_map[alpha_metrics] = alpha_map[alpha_metrics].astype(float)
+    alpha_map.set_index('#SampleID', inplace=True)
 
     results = {}
     for id_ in sample_ids:
@@ -587,9 +596,9 @@ def _plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
     ----------
     sample : str
         The sample ID to be plotted
-    alpha_map_fp : str, dataframe
-        The filepath of a comma-seperated file or the pandas dataframe where
-        the sample ID are given in the `'#SampleID'` column, a column with
+    alpha_map_fp : pandas DataFrame
+        A pandas dataframe containing the sample metadata. The sample ID
+        should be given in the `'#SampleID'` column, a column with
         the name given by `alpha_field` contains alpha diversity values,
         and the `group_field` column specifying the groups which should be
         used to seperate the data for making the distribution plot.
@@ -606,42 +615,22 @@ def _plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
 
     Returns
     -------
-    If the sample is not included in the the mapping file, a string is returned
-    stating this fact.
-
     If the sample is present, a matplotlib figure with the alpha diversity
-    distribution and a line indicating the sample value is returned.
+    distribution and a line indicating the sample value is returned. If a
+    file path is specified, the figure will be saved at the filepath instead
+    of returning.
 
     If debug is passed, the following parameters are returned:
         group : str
             The value of the `group_field` for the sample
         group_alpha : ndarray
-            The alpha diversity values assoicated with the group
+            The alpha diversity values associated with the group
         sample_alpha : float
             The alpha diversity for the sample
         xlabel : str
             The label used for the x-axis of the plot.
 
-    Raises
-    ------
-    ValueError
-        If the alpha_field is not in alpha_map
-    ValueError
-        If the group_field is not in alpha_map
-
     """
-
-    # Checks the alpha_field is in the mapping file
-    if alpha_field not in alpha_map.columns:
-        raise ValueError('%s is not a valid alpha diversity field name.'
-                         % alpha_field)
-    # Checks the group_field is in the mapping file
-    if group_field not in alpha_map.columns:
-        raise ValueError('%s is not a valid field name.' % group_field)
-    # Checks the same is in the mapping file
-    if sample not in alpha_map.index:
-        return ('%s does not have an alpha diversity value for %s.'
-                % (alpha_field, sample))
 
     # Explicitly casts the alpha diversity to a float
     alpha_map[alpha_field] = alpha_map[alpha_field].astype(float)

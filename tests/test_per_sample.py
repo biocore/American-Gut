@@ -266,46 +266,27 @@ class PerSampleTests(TestCase):
                                   alpha_field='alpha')
         self.assertEqual(tvalue, kvalue)
 
-    def test_plot_alpha_alpha_field_error(self):
-        map_ = pd.DataFrame(
-            data=np.array([
-                ['skin', '1990', 'female', 'Verity', 'US', 12.5],
-                ['fecal', '1990', 'female', 'Verity', 'US', 8.6],
-                ['fecal', '1987', 'male', 'Alex', 'US', 7.9],
-                ['fecal', '1993', 'female', 'Annie', 'US', 7.5],
-                ['skin', '1989', 'male', 'Dominic', 'UK', 14.0],
-                ['fecal', '1986', 'female', 'Sarah', 'US', 15.0],
-                ['oral', '1988', 'female', 'Shelby', 'AUS', 4.2],
-                ]),
-            index=['VeP0', 'VeP1', 'AxP0', 'AnP0', 'DoD0', 'SaZ0', 'ShT0'],
-            columns=['SIMPLE_BODY_SITE', 'BIRTH_YEAR', 'SEX',
-                     'HOST_SUBJECT_ID', 'NATIONALITY', 'alpha'],
-            )
+    def test_alpha_plts_metric_error_field_error(self):
+        opts = {'collapsed': {
+                    '100nt': {
+                        'alpha_map':
+                        os.path.join(ag.WORKING_DIR.split('American-Gut')[0],
+                                     'American-Gut/tests/files/'
+                                     'test_mapping.txt')}},
+                'sample_type': 'fecal'}
         with self.assertRaises(ValueError):
-            agps._plot_alpha(sample='VeP0',
-                             alpha_map=map_,
-                             alpha_field='InCryptid')
+            agps.alpha_plot(opts, ['sample_a', 'sample_b'])
 
-    def test_plot_alpha_group_field_error(self):
-        map_ = pd.DataFrame(
-            data=np.array([
-                ['skin', '1990', 'female', 'Verity', 'US', 12.5],
-                ['fecal', '1990', 'female', 'Verity', 'US', 8.6],
-                ['fecal', '1987', 'male', 'Alex', 'US', 7.9],
-                ['fecal', '1993', 'female', 'Annie', 'US', 7.5],
-                ['skin', '1989', 'male', 'Dominic', 'UK', 14.0],
-                ['fecal', '1986', 'female', 'Sarah', 'US', 15.0],
-                ['oral', '1988', 'female', 'Shelby', 'AUS', 4.2],
-                ]),
-            index=['VeP0', 'VeP1', 'AxP0', 'AnP0', 'DoD0', 'SaZ0', 'ShT0'],
-            columns=['SIMPLE_BODY_SITE', 'BIRTH_YEAR', 'SEX',
-                     'HOST_SUBJECT_ID', 'NATIONALITY', 'alpha'],
-            )
+    def test_alpha_plot_group_field_error(self):
+        opts = {'collapsed': {
+                    '100nt': {
+                        'alpha_map':
+                        os.path.join(ag.WORKING_DIR.split('American-Gut')[0],
+                                     'American-Gut/tests/files/'
+                                     'test_mapping_alpha.txt')}},
+                'sample_type': 'fecal'}
         with self.assertRaises(ValueError):
-            agps._plot_alpha(sample='VeP0',
-                             alpha_map=map_,
-                             alpha_field='alpha',
-                             group_field='BODY_HABITAT')
+            agps.alpha_plot(opts, ['sample_a', 'sample_b'])
 
 if __name__ == '__main__':
     main()
