@@ -26,7 +26,7 @@ We're going to start by generating per-bodysite mapping files with alpha diversi
 ```
 
 ```python
->>> for trim in ['pgp-hmp-gg-100nt', 'notrim']:
+>>> for trim in ['ag-pgp-hmp-gg-100nt', 'ag-notrim']:
 ...     trimpath = os.path.join(chp_path, trim.split('-')[-1])
 ...     alpha = {}
 ...     if not os.path.exists(trimpath):
@@ -37,7 +37,7 @@ We're going to start by generating per-bodysite mapping files with alpha diversi
 ...             os.mkdir(rarepath)
 ...         for met in agenv.alpha_metrics.keys():
 ...             alpha_fp = agu.get_existing_path(
-...                 agenv.paths['alpha'][rarefaction]['ag-%s-%s' % (trim, met)]
+...                 agenv.paths['alpha'][rarefaction]['%s-%s' % (trim, met)]
 ...             )
 ...             alpha_df = pd.read_csv(alpha_fp, sep='\t', dtype=str).set_index('Unnamed: 0').transpose()
 ...             alpha['%s_%s' % (agenv.alpha_metrics[met], rarefaction)] = alpha_df
