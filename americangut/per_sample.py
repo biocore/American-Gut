@@ -1,13 +1,13 @@
 import os
 
-import matplotlib
-matplotlib.use('Agg')
+from matplotlib import use, rcParams
+use('Agg')  # noqa
 
 import biom
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sn
 from qiime.util import qiime_system_call
+import seaborn as sn
 
 import americangut.util as agu
 import americangut.notebook_environment as agenv
@@ -15,8 +15,8 @@ import americangut.results_utils as agru
 
 # Sets up plotting parameters so that the default setting is use to Helvetica
 # in plots
-matplotlib.rcParams['font.family'] = 'sans-serif'
-matplotlib.rcParams['font.sans-serif'] = ['Arial']
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Arial']
 
 
 def create_opts(sample_type, chp_path, gradient_color_by, barchart_categories):
@@ -259,7 +259,21 @@ def taxa_summaries(opts, sample_ids):
 
 
 def alpha_plot(opts, sample_ids):
-    """Produces digestable alpha diversity distribution plots per sample"""
+    """Produces digestable alpha diversity distribution plots per sample
+
+    Parameters
+    ----------
+    opts : dict
+        A dict of relevant opts.
+    sample_ids : Iterable of str
+        A list of sample IDs of interest
+
+    Returns
+    -------
+    dict
+        A dict containing each sample ID and any errors observed or None if
+        no error was observed for the sample. {str: str or None}
+    """
 
     results = {}
     alpha_map = pd.read_csv(
@@ -281,16 +295,16 @@ def alpha_plot(opts, sample_ids):
             results[id_] = None
             shannon_path = os.path.join(_result_path(opts, id_),
                                         'shannon_%s.pdf' % id_)
-            plot_alpha(id_, alpha_map, 'shannon_1k',
-                       xlabel='Shannon Diversity',
-                       fp=shannon_path)
+            _plot_alpha(id_, alpha_map, 'shannon_1k',
+                        xlabel='Shannon Diversity',
+                        fp=shannon_path)
 
             # Generates the pd whole tree diversity figure
             pd_path = os.path.join(_result_path(opts, id_),
                                    'pd_%s.pdf' % id_)
-            plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
-                       xlabel='PD Whole Tree Diversity',
-                       fp=pd_path)
+            _plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
+                        xlabel='PD Whole Tree Diversity',
+                        fp=pd_path)
 
     return results
 
@@ -565,8 +579,8 @@ def stage_per_sample_specific_statics(opts, sample_ids):
     return result
 
 
-def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
-               output_dir=None, xlabel=None, fp=None, debug=False):
+def _plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
+                output_dir=None, xlabel=None, fp=None, debug=False):
     """Generates a distrbution plot for the data
 
     Parameters
@@ -682,13 +696,13 @@ def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
                 size=11,
                 )
 
-        # Sets the figure size
-        fig = ax.figure
-        fig.set_size_inches((5, 2.5))
-        ax.set_position((0.125, 0.375, 0.75, 0.5))
+    # Sets the figure size
+    fig = ax.figure
+    fig.set_size_inches((5, 2.5))
+    ax.set_position((0.125, 0.375, 0.75, 0.5))
 
-        if fp is None:
-            return fig
-        else:
-            fig.savefig(fp, dpi=300)
-            fig.clear()
+    if fp is None:
+        return fig
+    else:
+        fig.savefig(fp, dpi=300)
+        fig.clear()

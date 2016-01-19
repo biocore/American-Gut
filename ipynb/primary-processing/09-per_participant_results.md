@@ -3,6 +3,9 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 ```python
 >>> import os
 >>> from functools import partial
+...
+>>> from matplotlib import use
+>>> use('Agg')
 >>> import pandas as pd
 ...
 >>> import americangut as ag
@@ -13,14 +16,6 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 >>> import americangut.parallel as agpar
 ...
 >>> chp_path = agenv.activate('09-per-sample')
-/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/matplotlib/__init__.py:1350: UserWarning:  This call to matplotlib.use() has no effect
-because the backend has already been chosen;
-matplotlib.use() must be called *before* pylab, matplotlib.pyplot,
-or matplotlib.backends is imported for the first time.
-
-  warnings.warn(_use_error_msg)
-/Users/jwdebelius/anaconda/envs/americangut/lib/python2.7/site-packages/matplotlib/__init__.py:872: UserWarning: axes.color_cycle is deprecated and replaced with axes.prop_cycle; please use the latter.
-  warnings.warn(self.msg_depr % (key, alt_key))
 ```
 
 First we'll setup our existing paths that we need.
@@ -59,17 +54,17 @@ And finally, these next blocks of code support the per-sample type processing. F
 >>> common_functions = [agps.sufficient_sequence_counts,
 ...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
->>> #                     agps.taxa_summaries,
+...                     agps.taxa_summaries,
 ...                     agps.alpha_plot,
->>> #                     agps.taxon_significance,
-... #                     agps.body_site_pcoa,
-... #                     agps.gradient_pcoa,
-... #                     agps.bar_chart,
+...                     agps.taxon_significance,
+...                     agps.body_site_pcoa,
+...                     agps.gradient_pcoa,
+...                     agps.bar_chart,
 ...                    ]
 ...
->>> fecal_functions = common_functions # + [agps.country_pcoa]
->>> oral_functions  = common_functions # + [agps.pie_plot]
->>> skin_functions  = common_functions # + [agps.pie_plot]
+>>> fecal_functions = common_functions + [agps.country_pcoa]
+>>> oral_functions  = common_functions + [agps.pie_plot]
+>>> skin_functions  = common_functions + [agps.pie_plot]
 ...
 >>> fecal_opts = agps.create_opts('fecal', chp_path,
 ...                               gradient_color_by='k__Bacteria\;p__Firmicutes',
