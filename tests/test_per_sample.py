@@ -235,7 +235,7 @@ class PerSampleTests(TestCase):
 
         (tgroup, tgalpha, tsalpha, txlabel) = \
             agps._plot_alpha(sample=sample,
-                             alpha_map=smap_,
+                             alpha_map=map_,
                              alpha_field='alpha',
                              debug=True)
 
@@ -261,9 +261,9 @@ class PerSampleTests(TestCase):
             )
         sample = 'AlP0'
         kvalue = 'alpha does not have an alpha diversity value for AlP0.'
-        tvalue = plot_alpha(sample=sample,
-                            alpha_map=self.map_,
-                            alpha_field='alpha')
+        tvalue = agps._plot_alpha(sample=sample,
+                                  alpha_map=map_,
+                                  alpha_field='alpha')
         self.assertEqual(tvalue, kvalue)
 
     def test_plot_alpha_alpha_field_error(self):
@@ -282,9 +282,9 @@ class PerSampleTests(TestCase):
                      'HOST_SUBJECT_ID', 'NATIONALITY', 'alpha'],
             )
         with self.assertRaises(ValueError):
-            plot_alpha(sample='VeP0',
-                       alpha_map=map_,
-                       alpha_field='InCryptid')
+            agps._plot_alpha(sample='VeP0',
+                             alpha_map=map_,
+                             alpha_field='InCryptid')
 
     def test_plot_alpha_group_field_error(self):
         map_ = pd.DataFrame(
@@ -302,10 +302,10 @@ class PerSampleTests(TestCase):
                      'HOST_SUBJECT_ID', 'NATIONALITY', 'alpha'],
             )
         with self.assertRaises(ValueError):
-            plot_alpha(sample='VeP0',
-                       alpha_map=map_,
-                       alpha_field='alpha',
-                       group_field='BODY_HABITAT')
+            agps._plot_alpha(sample='VeP0',
+                             alpha_map=map_,
+                             alpha_field='alpha',
+                             group_field='BODY_HABITAT')
 
 if __name__ == '__main__':
     main()
