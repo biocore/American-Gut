@@ -266,7 +266,6 @@ def main(taxa_table, output_dir, mapping=None, samples_to_analyze=None):
             if sample_type_prelim in SAMPLE_CONVERTER:
                 sample_type = SAMPLE_CONVERTER[sample_type_prelim]
             elif sample_type in UNKNOWNS:
-                sample_type = 'unknown'
                 sample_time = 'unknown'
             else:
                 sample_type = sample_type_prelim.lower()
