@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import numpy.testing as npt
 
+import americangut as ag
 import americangut.notebook_environment as agenv
 import americangut.per_sample as agps
 
@@ -244,29 +245,7 @@ class PerSampleTests(TestCase):
         self.assertEqual(tsalpha, ksalpha)
         self.assertEqual(txlabel, kxlabel)
 
-    def test_plot_alpha_no_sample(self):
-        map_ = pd.DataFrame(
-            data=np.array([
-                ['skin', '1990', 'female', 'Verity', 'US', 12.5],
-                ['fecal', '1990', 'female', 'Verity', 'US', 8.6],
-                ['fecal', '1987', 'male', 'Alex', 'US', 7.9],
-                ['fecal', '1993', 'female', 'Annie', 'US', 7.5],
-                ['skin', '1989', 'male', 'Dominic', 'UK', 14.0],
-                ['fecal', '1986', 'female', 'Sarah', 'US', 15.0],
-                ['oral', '1988', 'female', 'Shelby', 'AUS', 4.2],
-                ]),
-            index=['VeP0', 'VeP1', 'AxP0', 'AnP0', 'DoD0', 'SaZ0', 'ShT0'],
-            columns=['SIMPLE_BODY_SITE', 'BIRTH_YEAR', 'SEX',
-                     'HOST_SUBJECT_ID', 'NATIONALITY', 'alpha'],
-            )
-        sample = 'AlP0'
-        kvalue = 'alpha does not have an alpha diversity value for AlP0.'
-        tvalue = agps._plot_alpha(sample=sample,
-                                  alpha_map=map_,
-                                  alpha_field='alpha')
-        self.assertEqual(tvalue, kvalue)
-
-    def test_alpha_plts_metric_error_field_error(self):
+    def test_alpha_plot_metric_error_field_error(self):
         opts = {'collapsed': {
                     '100nt': {
                         'alpha_map':
