@@ -248,7 +248,7 @@ class PerSampleTests(TestCase):
     def test_alpha_plot_metric_error_field_error(self):
         opts = {'collapsed': {
                     '100nt': {
-                        'alpha_map':
+                        'alpha-map':
                         os.path.join(ag.WORKING_DIR.split('American-Gut')[0],
                                      'American-Gut/tests/files/'
                                      'test_mapping.txt')}},
@@ -259,7 +259,7 @@ class PerSampleTests(TestCase):
     def test_alpha_plot_group_field_error(self):
         opts = {'collapsed': {
                     '100nt': {
-                        'alpha_map':
+                        'alpha-map':
                         os.path.join(ag.WORKING_DIR.split('American-Gut')[0],
                                      'American-Gut/tests/files/'
                                      'test_mapping_alpha.txt')}},
