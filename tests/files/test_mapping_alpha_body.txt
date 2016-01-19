@@ -1,0 +1,1 @@
+#SampleID	TEST_CATEGORY	AWESOME_CATEGORY	PD_whole_tree_1k	shannon_1k	SIMPLE_BODY_SITEsample_a	1	super	5	2	skinsample_b	2	totally	12	4	skin
