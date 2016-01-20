@@ -4,6 +4,9 @@ import traceback
 import sys
 from functools import partial
 
+import matplotlib
+matplotlib.use('Agg')  # noqa
+
 import americangut as ag
 import americangut.results_utils as agru
 import americangut.notebook_environment as agenv

@@ -3,6 +3,9 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 ```python
 >>> import os
 >>> from functools import partial
+...
+>>> from matplotlib import use
+>>> use('Agg')
 >>> import pandas as pd
 ...
 >>> import americangut as ag
@@ -52,10 +55,12 @@ And finally, these next blocks of code support the per-sample type processing. F
 ...                     agps.per_sample_directory,
 ...                     agps.stage_per_sample_specific_statics,
 ...                     agps.taxa_summaries,
+...                     agps.alpha_plot,
 ...                     agps.taxon_significance,
 ...                     agps.body_site_pcoa,
 ...                     agps.gradient_pcoa,
-...                     agps.bar_chart]
+...                     agps.bar_chart,
+...                    ]
 ...
 >>> fecal_functions = common_functions + [agps.country_pcoa]
 >>> oral_functions  = common_functions + [agps.pie_plot]
@@ -89,9 +94,9 @@ And now, let's start mass generating figures!
 ```python
 >>> site_to_functions = [('FECAL', process_fecal),
 ...                      ('ORAL', process_oral),
-...                      ('SKIN', process_skin)]
+...                      ('SKIN', process_skin)
+...                     ]
 >>> partitions = agps.partition_samples_by_bodysite(ag_cleaned_df, site_to_functions)
-...
 >>> with open(successful_ids, 'w') as successful_ids_fp, open(unsuccessful_ids, 'w') as unsuccessful_ids_fp:
 ...     agpar.dispatcher(successful_ids_fp, unsuccessful_ids_fp, partitions)
 ```

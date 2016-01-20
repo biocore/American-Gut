@@ -3,6 +3,8 @@ Some of the per-results figures require various slices and perspectives of the d
 ```python
 >>> import os
 ...
+>>> import pandas as pd
+...
 >>> import americangut.notebook_environment as agenv
 >>> import americangut.util as agu
 ...
@@ -17,23 +19,46 @@ Let's make sure we have the paths we need.
 >>> ag_cleaned_md  = agu.get_existing_path(agenv.paths['meta']['ag-cleaned-md'])
 ```
 
-First, we're going to operate on rarefied data again.
+We're going to start by generating per-bodysite mapping files with alpha diversity attached.
 
 ```python
 >>> low_depth, high_depth = agenv.get_rarefaction_depth()
 ```
 
 ```python
+>>> for trim in ['ag-pgp-hmp-gg-100nt', 'ag-notrim']:
+...     trimpath = os.path.join(chp_path, trim.split('-')[-1])
+...     alpha = {}
+...     if not os.path.exists(trimpath):
+...         os.mkdir(trimpath)
+...     for depth, rarefaction in zip([low_depth, high_depth], ['1k', '10k']):
+...         rarepath = os.path.join(trimpath, rarefaction)
+...         if not os.path.exists(rarepath):
+...             os.mkdir(rarepath)
+...         for met in agenv.alpha_metrics.keys():
+...             alpha_fp = agu.get_existing_path(
+...                 agenv.paths['alpha'][rarefaction]['%s-%s' % (trim, met)]
+...             )
+...             alpha_df = pd.read_csv(alpha_fp, sep='\t', dtype=str).set_index('Unnamed: 0').transpose()
+...             alpha['%s_%s' % (agenv.alpha_metrics[met], rarefaction)] = alpha_df
+...     map_ = pd.read_csv(ag_cleaned_md, sep='\t', dtype=str).set_index('#SampleID')
+...     alpha_map = agu.add_alpha_diversity(map_, alpha)
+...     alpha_map.to_csv(
+...         agu.get_new_path(agenv.paths['collapsed'][trim.split('-')[-1]]['alpha-map']),
+...         sep='\t',
+...         index_label='#SampleID'
+...     )
+```
+
+Next, we're going to operate on rarefied data again.
+
+```python
 >>> def rarefaction_parameters():
 ...     for trim in ['100nt', 'notrim']:
 ...         trimpath = os.path.join(chp_path, trim)
-...         if not os.path.exists(trimpath):
-...             os.mkdir(trimpath)
 ...
 ...         for depth, rarefaction in zip([low_depth, high_depth], ['1k', '10k']):
 ...             rarepath = os.path.join(trimpath, rarefaction)
-...             if not os.path.exists(rarepath):
-...                 os.mkdir(rarepath)
 ...
 ...             table  = agu.get_existing_path(agenv.paths['otus'][trim]['ag-biom'])
 ...             output = agu.get_new_path(agenv.paths['collapsed'][trim][rarefaction]['ag-biom'])
@@ -48,7 +73,7 @@ First, we're going to operate on rarefied data again.
 ...                            -d $depth
 ```
 
-Next, we're going to partition the data into per-body site tables.
+Then, we're going to partition the data into per-body site tables.
 
 ```python
 >>> def filter_parameters():
