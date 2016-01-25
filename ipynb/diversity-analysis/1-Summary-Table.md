@@ -1,7 +1,7 @@
 
 The goal of this notebook is to provide demographic summaries for participants in the American Gut and associated projects. We look at metadata, and summarize the available information.
 
-The information generated here will be used for tables 1 of the American Gut paper.
+The information generated here will be used for table 1 of the American Gut paper.
 
 We'll start by importing the necessary libraries.
 
@@ -33,19 +33,7 @@ md = pd.read_csv(map_fp, sep='\t', dtype=str, na_values=['NA', 'no_data', 'unkno
 md.set_index('#SampleID', inplace=True)
 ```
 
-We're also going to calculate the number of sequences per sample, and add that to our mapping file.
-
-
-```python
-otu_summary = !biom summarize-table -i $otu_fp
-seq_depth = pd.DataFrame(np.array([l.split(': ') for l in otu_summary[15:]]), columns=['#SampleID', 'counts'])
-seq_depth.set_index('#SampleID', inplace=True)
-
-md['count'] = seq_depth
-```
-
 Now, let's start to build the first table. To do this, we'll define the counts from the Human Microbiome Project [[PMID: 22699609](http://www.ncbi.nlm.nih.gov/pubmed/22699609)]. The Human Microbiome Project looked at samples across 16 to 18 sites in a small number of healthy adults. 
-
 
 ```python
 hmp_counts = pd.DataFrame([[ 365, 230],
@@ -97,71 +85,3 @@ Now that we've built the tables, let's merge them.
 ag_participants.loc['Blank', 'AGP Participants'] = np.nan
 ag_participants.join(hmp_counts)
 ```
-
-
-
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>AGP Participants</th>
-      <th>AGP Samples</th>
-      <th>HMP Samples</th>
-      <th>HMP Participants</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Blank</th>
-      <td>NaN</td>
-      <td>687</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>Feces</th>
-      <td>5380</td>
-      <td>5952</td>
-      <td>365</td>
-      <td>230</td>
-    </tr>
-    <tr>
-      <th>Hair</th>
-      <td>5</td>
-      <td>5</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>Nose</th>
-      <td>7</td>
-      <td>7</td>
-      <td>339</td>
-      <td>221</td>
-    </tr>
-    <tr>
-      <th>Oral</th>
-      <td>436</td>
-      <td>477</td>
-      <td>3316</td>
-      <td>234</td>
-    </tr>
-    <tr>
-      <th>Skin</th>
-      <td>165</td>
-      <td>337</td>
-      <td>1367</td>
-      <td>238</td>
-    </tr>
-    <tr>
-      <th>Vagina</th>
-      <td>13</td>
-      <td>15</td>
-      <td>482</td>
-      <td>109</td>
-    </tr>
-  </tbody>
-</table>
-</div>
