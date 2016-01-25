@@ -1,8 +1,7 @@
 from unittest import TestCase, main
 
+import numpy as np
 import pandas as pd
-import numpy.testing as npt
-import pandas.util.testing as pdt
 
 from americangut.question.ag_question import AgQuestion
 
@@ -155,3 +154,6 @@ class AgQuestionTest(TestCase):
         self.ag_question.remap_data_type(self.map_)
         self.assertEqual(set(self.map_[self.ag_question.name]) - {np.nan},
                          {0, 1})
+
+if __name__ == '__main__':
+    main()
