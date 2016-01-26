@@ -107,7 +107,7 @@ class AgQuestionTest(TestCase):
         self.assertEqual(test.dtype, self.dtype)
         self.assertEqual(test.clean_name, 'Test Column')
         self.assertEqual(test.free_response, False)
-        self.assertEqual(test.mimmarks, False)
+        self.assertEqual(test.mimarks, False)
         self.assertEqual(test.ontology, None)
         self.assertEqual(test.remap_, None)
 
@@ -115,10 +115,9 @@ class AgQuestionTest(TestCase):
         test = AgQuestion(self.name, self.description, self.dtype,
                           clean_name='This is a test.',
                           free_response=True,
-                          mimmarks=True,
+                          mimarks=True,
                           ontology='GAZ',
                           remap=self.fun,
-                          subset=False
                           )
 
         self.assertEqual(test.name, self.name)
@@ -126,7 +125,7 @@ class AgQuestionTest(TestCase):
         self.assertEqual(test.dtype, self.dtype)
         self.assertEqual(test.clean_name, 'This is a test.')
         self.assertEqual(test.free_response, True)
-        self.assertEqual(test.mimmarks, True)
+        self.assertEqual(test.mimarks, True)
         self.assertEqual(test.ontology, 'GAZ')
         self.assertEqual(test.remap_(1), 'foo')
 

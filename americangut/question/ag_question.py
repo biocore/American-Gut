@@ -5,10 +5,11 @@ import numpy as np
 
 class AgQuestion:
     """A base object class for handling American Gut Data dictionary entries"""
-    true_values = {'yes', 'y', 'true', 1, 1.0, 'Y', 'YES', 'Yes', True}
-    false_values = {'no', 'n', 'false', 0, 0.0, 'N', 'NO', 'No', False}
+    true_values = {'yes', 'true', 1, 1.0, True}
+    false_values = {'no', 'false', 0, 0.0, False}
 
-    def __init__(self, name, description, dtype, clean_name=None, **kwargs):
+    def __init__(self, name, description, dtype, clean_name=None, remap=None,
+                 free_response=False, mimarks=False, ontology=None):
         """A base object for describing single question outputs
 
         Parameters
@@ -27,8 +28,8 @@ class AgQuestion:
         free_response: bool, optional
             Whether the question is a free response question or controlled
             vocabulary
-        mimmarks : bool, optional
-            If the question was a mimmarks standard field
+        mimarks : bool, optional
+            If the question was a mimarks standard field
         ontology : str, optional
             The type of ontology, if any, which was used in the field value.
 
@@ -56,10 +57,10 @@ class AgQuestion:
             self.clean_name = clean_name
 
         # Sets up
-        self.free_response = kwargs.get('free_response', False)
-        self.mimmarks = kwargs.get('mimmarks', False)
-        self.ontology = kwargs.get('ontology', None)
-        self.remap_ = kwargs.get('remap', None)
+        self.free_response = free_response
+        self.mimarks = mimarks
+        self.ontology = ontology
+        self.remap_ = remap
 
     def check_map(self, map_):
         """Checks the group exists in the metadata
