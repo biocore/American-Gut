@@ -12,6 +12,10 @@ class AgQuestion:
                  free_response=False, mimarks=False, ontology=None):
         """A base object for describing single question outputs
 
+        The Question Object is somewhat limited in its functionality. For most
+        questions in the dataset, it is better to use a child object with the
+        appropriate question type.
+
         Parameters
         ----------
         name : str
@@ -76,16 +80,12 @@ class AgQuestion:
             raise ValueError('%s is not a column in the supplied map!'
                              % self.name)
 
-    def remap_data_type(self, map_, watch=True):
+    def remap_data_type(self, map_):
         """Makes sure the target column in map_ has the correct datatype
 
         map_ : DataFrame
             A pandas dataframe containing the column described by the question
             name.
-        watch : bool
-            A flag to indicate the change should be logged. Should generally
-            be true, unless `remap_data_type` is called before another
-            function is executed.
 
         """
         if self.dtype == bool:
@@ -112,7 +112,3 @@ class AgQuestion:
 
         map_[self.name] = map_[self.name].apply(remap_).astype(self.dtype)
         map_.replace('nan', np.nan, inplace=True)
-
-        if watch and self.type in {'Categorical', 'Multiple', 'Clinical',
-                                   'Bool', 'Frequency'}:
-            self._update_order(remap_)
