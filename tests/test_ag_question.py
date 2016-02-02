@@ -154,5 +154,15 @@ class AgQuestionTest(TestCase):
         self.assertEqual(set(self.map_[self.ag_question.name]) - {np.nan},
                          {0, 1})
 
+    def test_remap_data_type_raises(self):
+        self.map_.loc["10317.000006668", "ALCOHOL_TYPES_UNSPECIFIED"] = 'foo'
+        with self.assertRaises(TypeError):
+            self.ag_question.remap_data_type(self.map_)
+
+    def test_check_map(self):
+        self.ag_question.name = 'TEST_CASE'
+        with self.assertRaises(ValueError):
+            self.ag_question.check_map(self.map_)
+
 if __name__ == '__main__':
     main()
