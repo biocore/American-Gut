@@ -303,14 +303,14 @@ def alpha_plot(opts, sample_ids):
         else:
             results[id_] = None
             shannon_path = os.path.join(_result_path(opts, id_),
-                                        'shannon_%s.pdf' % id_)
+                                        'shannon_%s.png' % id_)
             _plot_alpha(id_, alpha_map, 'shannon_1k',
                         xlabel='Shannon Diversity',
                         fp=shannon_path)
 
             # Generates the pd whole tree diversity figure
             pd_path = os.path.join(_result_path(opts, id_),
-                                   'pd_%s.pdf' % id_)
+                                   'pd_%s.png' % id_)
             _plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
                         xlabel='PD Whole Tree Diversity',
                         fp=pd_path)
