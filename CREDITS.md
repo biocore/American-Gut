@@ -14,7 +14,7 @@ American Gut Credits
 * Donna Berg-Lyons
 * Evan Bolyen
 * Jeff DeReus
-* Justine Debelius
+* Dr. Justine Debelius
 * Chandni Desai
 * Dr. Rob Dunn
 * Dr. Merete Eggesbo
@@ -37,7 +37,7 @@ American Gut Credits
 * Dr. Sebastién Matamoros
 * Daniel Mayer
 * Kris Mayer
-* Daniel McDonald
+* Dr. Daniel McDonald
 * Dr. Jess Metcalf
 * Mike Minson
 * Jamie Morton
@@ -49,7 +49,7 @@ American Gut Credits
 * Dr. Joe Petrosino
 * Meg Pirrung
 * Dr. Dorota Porazinska
-* Adam Robbins-Pianka
+* Dr. Adam Robbins-Pianka
 * Jennifer Smilowitz
 * Dr. Se Jin Song
 * Josh Shorenstein
@@ -57,12 +57,12 @@ American Gut Credits
 * Dr. Luke Thompson
 * Kumar Thurimella
 * Will Van Treuren
-* Luke Ursell
+* Dr. Luke Ursell
 * Yoshiki Vazquez-Baeza
 * Tim Vigers
 * Sam Way
-* Tony Walters
-* Sophie Weiss
+* Dr. Tony Walters
+* Dr. Sophie Weiss
 * Doug Wendel
 * Ulla Westermann
 * Dr. Dana Willner
