@@ -154,6 +154,7 @@ To end, as always, let's sanity check and make sure the files of specific intere
 
 ```python
 >>> error = False
+>>> message = []
 >>> for key, value in (agenv.paths['beta']['notrim']['1k'].items() +
 ...                    agenv.paths['beta']['notrim']['10k'].items() +
 ...                    agenv.paths['beta']['100nt']['1k'].items() +
@@ -161,11 +162,12 @@ To end, as always, let's sanity check and make sure the files of specific intere
 ...     if key.endswith('-pc'):
 ...         path = agu.get_path(value)
 ...         if not os.path.exists(path):
-...             print "Could not find: %s" % path
+...             message.append("Could not find: %s" % path)
 ...             error = True
 ...         else:
 ...             if os.stat(path).st_size == 0:
-...                 print "File appears empty: %s" % path
+...                 message.append("File appears empty: %s" % path)
 ...                 error = True
->>> assert not error
+>>> if error:
+...     raise RuntimeError('\n'.join(message))
 ```

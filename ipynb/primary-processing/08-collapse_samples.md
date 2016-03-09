@@ -141,18 +141,18 @@ As usual, let's make sure we have files.
 
 ```python
 >>> error = False
-...
+>>> message = []
 >>> for trim in ['100nt', 'notrim']:
 ...     for rarefaction in ['1k', '10k']:
 ...         for path in agenv.paths['collapsed'][trim][rarefaction].values():
 ...             filepath = agu.get_path(path)
 ...             if not os.path.exists(filepath):
-...                 print "Could not find: %s" % filepath
+...                 message.append("Could not find: %s" % filepath)
 ...                 error = True
 ...             else:
 ...                 if os.stat(filepath) == 0:
-...                     print "File appears to be empty: %s" % filepath
+...                     message.append("File appears to be empty: %s" % filepath)
 ...                     error = True
-...
->>> assert not error
+>>> if error:
+...     raise RuntimeError('\n'.join(message))
 ```

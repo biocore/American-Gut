@@ -57,11 +57,10 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 
 ```python
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
-...     !parallel_alpha_diversity.py -i $multi_directory \
-...                                  -o $adiv_directory \
-...                                  -t $greengenes_tree \
-...                                  -m PD_whole_tree,chao1,observed_otus,shannon \
-...                                  -O $cpu_count
+...     !alpha_diversity.py -i $multi_directory \
+...                         -o $adiv_directory \
+...                         -t $greengenes_tree \
+...                         -m PD_whole_tree,chao1,observed_otus,shannon
 ```
 
 We're going to aggregate the diversity calculations from the multiple rarefactions.
@@ -81,5 +80,6 @@ To end, we're going to verify that the files of interest exist and contain data.
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
 ...     for metric in ['pd', 'chao1', 'observedotus', 'shannon']:
 ...         metric_file = agu.get_existing_path(agenv.paths['alpha'][rarefaction][keybase + '-%s' % metric])
-...         assert os.stat(metric_file).st_size > 0
+...         if not os.stat(metric_file).st_size > 0:
+...             raise RuntimeError('%s file was not generated' % metric)
 ```

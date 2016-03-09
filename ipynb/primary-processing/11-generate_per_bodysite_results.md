@@ -257,17 +257,18 @@ Finally, we're going to check that we've generated the files we expect.
 
 ```python
 >>> error = False
+>>> message = []
 ...
 >>> for path in agenv.paths['package']['split'].values():
 ...     filepath = agu.get_path(path)
 ...     if not os.path.exists(filepath):
-...             print "Could not find: %s" % filepath
+...             message.append("Could not find: %s" % filepath)
 ...             error = True
 ...
 >>> for path in agenv.paths['package']['single_ids'].values():
 ...     filepath = agu.get_path(path)
 ...     if not os.path.exists(filepath):
-...             print "Could not find: %s" % filepath
+...             message.append("Could not find: %s" % filepath)
 ...             error = True
 ...
 >>> for collection in ['all_participants_all_samples', 'all_participants_one_sample',
@@ -279,8 +280,9 @@ Finally, we're going to check that we've generated the files we expect.
 ...             for key, path in agenv.paths['package'][collection][bodysite][trim].iteritems():
 ...                 filepath = agu.get_path(path)
 ...                 if not os.path.exists(filepath):
-...                     print "Could not find: %s" % filepath
+...                     message.append("Could not find: %s" % filepath)
 ...                     error = True
 ...
->>> assert not error
+>>> if error:
+...     raise RuntimeError('\n'.join(message))
 ```

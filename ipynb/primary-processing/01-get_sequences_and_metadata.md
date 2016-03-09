@@ -41,6 +41,9 @@ Now that we have the sequences and sample information, let's merge all the data 
 And finally, let's verify that the files we expect were created.
 
 ```python
->>> assert os.stat(agp_sequences).st_size > 0
->>> assert os.stat(agp_metadata).st_size > 0
+>>> if not os.stat(agp_sequences).st_size > 0:
+...     raise RuntimeError('Sequences were not downloaded')
+...
+>>> if not os.stat(agp_metadata).st_size > 0:
+...     raise RuntimeError('Metadata was not downloaded')
 ```
