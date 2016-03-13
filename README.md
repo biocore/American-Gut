@@ -39,7 +39,7 @@ $ pip install numpy==1.9.2
 $ pip install -r ./pip_requirements.txt
 ```
 
-If you would like to install dependencies within a virualenv environment be
+If you would like to install dependencies within a virtualenv environment be
 sure to change to the appropriate environment prior to the installation
 of dependencies.
 	
@@ -59,7 +59,7 @@ To compile dependencies from source appropriate libraries can be installed
 ```bash
 (root/sudo)$ aptitude install pkg-config libxslt1-dev libxml2 libfreetype6 \
     build-essential python-pip python-dev liblapack-dev liblapack3 \
-    libblas-dev libblas3 gfortran libhdf5-serial-dev
+    libfreetype6-dev libblas-dev libblas3 gfortran libhdf5-serial-dev libsm6
 ```
 
 # RUN
@@ -77,6 +77,8 @@ There are a few environment variable that can be used to customize the run:
   EBI data). This is useful for testing.
 - AG\_CPU\_COUNT: Number of process to use when parallelizing code (defaults to
   the number of cores)
+
+To generate reports (pdfs) a TeX distribution should be installed on the system.
 
 ## Adjusting environment on POSIX systems
 
@@ -99,7 +101,8 @@ different profiles.
 
 ### Markdown based notebooks
 
-Markdown based notebooks can be found in `./ipynb/primary-processing/` folder.
+Markdown based notebooks can be found in `./ipynb/primary-processing/` folder
+and have extension `md`.
 To use these notebooks we first need to create a profile for `ag_ipymd`
 with
 
@@ -107,21 +110,19 @@ with
 $ ipython profile create ag_ipymd
 ```
 
-and adjust newly created `/path/to/.ipython/profile_ipymd/ipython_notebook_config.py'
+and adjust newly created `/path/to/.ipython/profile_ag_ipymd/ipython_notebook_config.py'
 by addding
-
 ```
 #------------------------
 # ipymd
 #------------------------
 c.NotebookApp.contents_manager_class = 'ipymd.IPymdContentsManager'
 ```
-
 to the end of the file.
 
 Now, we can start ipython with
 ```bash
-$ ipython --profile=ag_ipymd notebook
+$ ipython notebook --profile=ag_ipymd
 ```
 and visit the newly started notebook server by going to http://localhost:8888
 
