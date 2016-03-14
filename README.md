@@ -130,7 +130,7 @@ and visit the newly started notebook server by going to http://localhost:8888
 
 Notebooks in native notebook format (ipynb) in `./ipynb/` folder
 and have the extension `ipynb`.
-To use these notebooks we first need to create a profile for `ag\_default`
+To use these notebooks we first need to create a profile for `ag_default`
 with
 
 ```bash
