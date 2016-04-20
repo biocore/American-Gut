@@ -4,10 +4,8 @@ from matplotlib import use, rcParams
 use('Agg')  # noqa
 
 import biom
-import matplotlib.pyplot as plt
 import pandas as pd
 from qiime.util import qiime_system_call
-import seaborn as sn
 
 import americangut.util as agu
 import americangut.notebook_environment as agenv

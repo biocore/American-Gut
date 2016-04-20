@@ -7,6 +7,8 @@ from itertools import izip
 from collections import defaultdict
 from functools import partial
 
+import matplotlib.pyplot as plt
+import seaborn as sn
 from biom.parse import parse_biom_table
 
 from americangut.util import check_file

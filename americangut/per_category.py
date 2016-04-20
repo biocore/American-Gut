@@ -2,9 +2,7 @@ from os.path import join
 from copy import copy
 
 from biom import load_table
-import numpy as np
 import pandas as pd
-
 
 import americangut.notebook_environment as agenv
 from .util import collapse_full, collapse_taxonomy, get_existing_path
