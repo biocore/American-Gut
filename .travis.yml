@@ -7,7 +7,6 @@ addons:
         packages:
             - texlive-latex-extra
 before_install:
-  - pip install --upgrade setuptools
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - chmod +x miniconda.sh
   - ./miniconda.sh -b
@@ -17,6 +16,7 @@ before_install:
 install:
   - conda create --yes -n env_name python=$PYTHON_VERSION --file conda_requirements.txt
   - source activate env_name
+  - conda install -y "setuptools<20.7.0"
   - pip install -r pip_requirements.txt
   - pip install -e . --no-deps
 
