@@ -4,10 +4,15 @@ from StringIO import StringIO
 from unittest import TestCase, main
 from collections import defaultdict
 
+import numpy as np
+import numpy.testing as npt
+import pandas as pd
+
 from americangut.results_utils import (
     filter_mapping_file, count_unique_sequences_per_otu,
-    write_bloom_fasta
+    write_bloom_fasta, plot_alpha
 )
+
 
 class ResultsUtilsTests(TestCase):
     def test_filter_mapping_file(self):
@@ -53,7 +58,6 @@ class ResultsUtilsTests(TestCase):
 
         self.assertEqual(expected, result)
 
-
     def test_write_bloom_fasta(self):
         otu_ids = set(['otu1', 'otu2'])
         unique_counts = {x:defaultdict(int) for x in otu_ids}
@@ -66,6 +70,41 @@ class ResultsUtilsTests(TestCase):
 
         result.seek(0)
         self.assertEqual(result.read(), '>otu1_1\nATCG\n')
+
+    def test_plot_alpha(self):
+        map_ = pd.DataFrame(
+            data=np.array([
+                ['skin', '1990', 'female', 'Verity', 'US', 12.5],
+                ['fecal', '1990', 'female', 'Verity', 'US', 8.6],
+                ['fecal', '1987', 'male', 'Alex', 'US', 7.9],
+                ['fecal', '1993', 'female', 'Annie', 'US', 7.5],
+                ['skin', '1989', 'male', 'Dominic', 'UK', 14.0],
+                ['fecal', '1986', 'female', 'Sarah', 'US', 15.0],
+                ['oral', '1988', 'female', 'Shelby', 'AUS', 4.2],
+                ]),
+            index=['VeP0', 'VeP1', 'AxP0', 'AnP0', 'DoD0', 'SaZ0', 'ShT0'],
+            columns=['SIMPLE_BODY_SITE', 'BIRTH_YEAR', 'SEX',
+                     'HOST_SUBJECT_ID', 'NATIONALITY', 'alpha'],
+            )
+        sample = 'VeP0'
+        kgroup = 'skin'
+        kgalpha = pd.Series([12.5, 14.0],
+                            index=['VeP0', 'DoD0'],
+                            name='alpha',
+                            dtype=object)
+        ksalpha = 12.5
+        kxlabel = 'alphadiversity'
+
+        (tgroup, tgalpha, tsalpha, txlabel) = \
+            plot_alpha(sample=sample,
+                       alpha_map=map_,
+                       alpha_field='alpha',
+                       debug=True)
+
+        self.assertEqual(tgroup, kgroup)
+        npt.assert_array_equal(tgalpha.values, kgalpha.values)
+        self.assertEqual(tsalpha, ksalpha)
+        self.assertEqual(txlabel, kxlabel)
 
 
 filter_mapping_testdata = StringIO(

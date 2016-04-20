@@ -595,3 +595,134 @@ def write_bloom_fasta(unique_counts, output_file, abundance_threshold):
             counter += 1
             if 1.0*count/otu_total_count > abundance_threshold:
                 output_file.write('>%s_%d\n%s\n' % (otu_id, counter, seq))
+
+
+def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
+               output_dir=None, xlabel=None, fp=None, sample_color='#525252',
+               highlight_range=None, categorical=False, debug=False):
+    """Generates a distrbution plot for the data
+
+    Parameters
+    ----------
+    sample : str
+        The sample ID to be plotted
+    alpha_map_fp : pandas DataFrame
+        A pandas dataframe containing the sample metadata. The sample ID
+        should be given in the `'#SampleID'` column, a column with
+        the name given by `alpha_field` contains alpha diversity values,
+        and the `group_field` column specifying the groups which should be
+        used to seperate the data for making the distribution plot.
+    alpha_field : str
+        The name of the column in `alpha_map` which includes the alpha
+        diversity values.
+    group_field : str
+        Default is 'SIMPLE_BODY_SITE'. The name of the column in `alpha_map`
+        which provides the grouping for generating distribution plots.
+    output_dir : str
+        The location where the alpha diversity figures should be saved.
+    xlabel : str
+        Text describing the quantity on the x-axis.
+    sample_color : str, optional
+        Hex color for the sample line. Default '#525252'
+    highlight_range: list of [float, float], optional
+        If given, the range to highlight under the curve. Will be lighter shade
+        of sample_color. Default None.
+    categorical : bool, optional
+        Whether the text should be added categorically or per sample.
+        Default False (add per sample)
+
+    Returns
+    -------
+    If the sample is present, a matplotlib figure with the alpha diversity
+    distribution and a line indicating the sample value is returned. If a
+    file path is specified, the figure will be saved at the filepath instead
+    of returning.
+
+    If debug is passed, the following parameters are returned:
+        group : str
+            The value of the `group_field` for the sample
+        group_alpha : ndarray
+            The alpha diversity values associated with the group
+        sample_alpha : float
+            The alpha diversity for the sample
+        xlabel : str
+            The label used for the x-axis of the plot.
+
+    """
+
+    # Explicitly casts the alpha diversity to a float
+    alpha_map[alpha_field] = alpha_map[alpha_field].astype(float)
+
+    # Draws the observations and group
+    group = alpha_map.loc[sample, group_field]
+    group_alpha = alpha_map.loc[alpha_map[group_field] == group, alpha_field]
+    sample_alpha = alpha_map.loc[sample, alpha_field]
+
+    if xlabel is None:
+        xlabel = '%sdiversity' % alpha_field.split('1')[0].replace('_', ' ')
+
+    if debug:
+        return group, group_alpha, sample_alpha, xlabel
+
+    # Defines the group color. This is currently hardcoded, although the
+    # longer term plan is to substitute in function which will define the color
+    # based on the relationship between the sample and a yet to be written
+    # predicted value.
+    group_color = '#1f78b4'
+
+    with sn.axes_style('ticks', {'axes.facecolor': 'none'}):
+        # Sets up the axis for plotting
+        ax = plt.axes()
+
+        # Plots the distribution
+        sn.kdeplot(group_alpha,
+                   ax=ax,
+                   legend=False,
+                   color=group_color)
+        ylim = ax.get_ylim()
+
+        # Plots the individual line
+        ax.plot([sample_alpha, sample_alpha], [-1, 1], color=sample_color)
+
+        # Returns the y-limits to the original value and removes the ticks
+        ax.set_ylim(ylim)
+        ax.set_yticks([])
+        # Removes the spine
+        sn.despine(offset=5, trim=True, top=True, left=True, right=True)
+        # Updates the xticks to match the correct font
+        ax.set_xticklabels(map(int, ax.get_xticks()), size=11)
+        ax.set_xlabel(xlabel, size=13)
+
+        # Highlight range, if given
+        if highlight_range is not None:
+            xticks = ax.get_xticks()
+            x, y = ax.lines[0].get_xydata().T
+            m = (highlight_range[0] < x) & (x < highlight_range[1])
+            ax.fill_between(x[m], 0, y[m], alpha=.15, color=group_color)
+            # Fill between changes axis ever so slightly, so need to reset
+            # back to what we want.
+            ax.set_xticks(xticks)
+
+        # Adds text describing the sample or category
+        if categorical:
+            '\n\n%s:\t%1.1f' % (sample, group_alpha.mean())
+        else:
+            text = 'Your Sample:\t%1.1f\nAverage:\t%1.1f' % (
+                sample_alpha, group_alpha.mean())
+        ax.text(x=ax.get_xticks().max(),
+                y=ax.get_ylim()[1]*0.85,
+                s=text,
+                ha='right',
+                size=11,
+                )
+
+    # Sets the figure size
+    fig = ax.figure
+    fig.set_size_inches((5, 2.5))
+    ax.set_position((0.125, 0.375, 0.75, 0.5))
+
+    if fp is None:
+        return fig
+    else:
+        fig.savefig(fp, dpi=300)
+        fig.clear()
