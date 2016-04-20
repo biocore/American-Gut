@@ -48,6 +48,12 @@
 >>> process_pdf = partial(agps.sample_type_processor, [create_pdf, aggregate], opts)
 ```
 
+We also need to write out the taxa summary files for each of the categories in the collapsed data. These will live in the same folder as the participant's taxonomy files.
+
+```python
+>>> agpc.cat_taxa_summaries()
+```
+
 ```python
 >>> partitions = [(process_pdf, ids)]
 >>> with open(successful_pdfs, 'w') as successful_pdfs_fp, open(unsuccessful_pdfs, 'w') as unsuccessful_pdfs_fp:

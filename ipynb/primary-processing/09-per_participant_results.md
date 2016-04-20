@@ -13,6 +13,7 @@ Now that we've done all the bulk processing, let's generate the per-sample resul
 >>> import americangut.util as agu
 >>> import americangut.results_utils as agru
 >>> import americangut.per_sample as agps
+>>> import americangut.per_category as agpc
 >>> import americangut.parallel as agpar
 ...
 >>> chp_path = agenv.activate('09-per-sample')

@@ -137,8 +137,6 @@ Finally, within each body site, we're going to collapse over categories of inter
 ...                          --output_mapping_fp $ignored
 ```
 
-We also need to write out the taxa summary files for each of the categories in the collapsed data.
-
 As usual, let's make sure we have files.
 
 ```python
