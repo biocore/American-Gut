@@ -658,7 +658,8 @@ def collapse_taxonomy(_bt, level=5):
     ---------
     [1] http://biom-format.org/documentation/table_objects.html
     """
-    collapse_f = lambda id_, md: '; '.join(md['taxonomy'][:level + 1])
+    def collapse_f(id_, md):
+        return '; '.join(md['taxonomy'][:level + 1])
     collapsed = _bt.collapse(collapse_f, axis='observation', norm=False)
     return collapsed
 
