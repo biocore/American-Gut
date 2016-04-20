@@ -40,7 +40,7 @@ def cat_taxa_summaries():
                     f.write('%s\t%s\n' % (otu, str(val)))
 
 
-def cat_alpha_plot():
+def cat_alpha_plots():
     out_dir = get_existing_path(
         agenv.paths['populated-templates']['alpha-map'])
     alpha_map = pd.read_csv(

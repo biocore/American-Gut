@@ -55,10 +55,10 @@ We also need to write out the taxa summary files for each of the categories in t
 >>> agpc.cat_taxa_summaries()
 ```
 
-Finally, we need to generate alpha diversity files for each of the categories in the collapsed data. These allow for comparisons on the website.
+Finally, we need to generate alpha diversity figures for each of the categories in the collapsed data. These allow for comparisons on the AG website.
 
 ```python
->>> agpc.cat_alpha_plot()
+>>> agpc.cat_alpha_plots()
 ```
 
 ```python
