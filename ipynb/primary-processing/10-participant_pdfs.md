@@ -7,6 +7,7 @@
 >>> import americangut.util as agu
 >>> import americangut.results_utils as agru
 >>> import americangut.per_sample as agps
+>>> import americangut.per_category as agpc
 >>> import americangut.parallel as agpar
 ...
 >>> chp_path = agenv.activate('10-populated-templates')
