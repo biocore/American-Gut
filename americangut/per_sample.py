@@ -303,15 +303,15 @@ def alpha_plot(opts, sample_ids):
             shannon_path = os.path.join(_result_path(opts, id_),
                                         'shannon_%s.png' % id_)
             agru.plot_alpha(id_, alpha_map, 'shannon_1k',
-                        xlabel='Shannon Diversity',
-                        fp=shannon_path)
+                            xlabel='Shannon Diversity',
+                            fp=shannon_path)
 
             # Generates the pd whole tree diversity figure
             pd_path = os.path.join(_result_path(opts, id_),
                                    'pd_%s.png' % id_)
             agru.plot_alpha(id_, alpha_map, 'PD_whole_tree_1k',
-                        xlabel='PD Whole Tree Diversity',
-                        fp=pd_path)
+                            xlabel='PD Whole Tree Diversity',
+                            fp=pd_path)
 
     return results
 
