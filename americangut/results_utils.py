@@ -655,8 +655,18 @@ def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
 
     # Draws the observations and group
     group = alpha_map.loc[sample, group_field]
-    group_alpha = alpha_map.loc[alpha_map[group_field] == group, alpha_field]
     sample_alpha = alpha_map.loc[sample, alpha_field]
+    group_alpha = alpha_map.loc[alpha_map[group_field] == group, alpha_field]
+    if categorical:
+        # Keep only barcoded items, which can be converted to float.
+        # Categories will be strings in the index
+        def test(val):
+            try:
+                float(val)
+                return True
+            except ValueError:
+                return False
+        group_alpha = group_alpha.loc[[test(v) for v in group_alpha.index]]
 
     if xlabel is None:
         xlabel = '%sdiversity' % alpha_field.split('1')[0].replace('_', ' ')
@@ -705,7 +715,7 @@ def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
 
         # Adds text describing the sample or category
         if categorical:
-            '\n\n%s:\t%1.1f' % (sample, group_alpha.mean())
+            text = '\n\n%s:\t%1.1f' % (sample, sample_alpha)
         else:
             text = 'Your Sample:\t%1.1f\nAverage:\t%1.1f' % (
                 sample_alpha, group_alpha.mean())
