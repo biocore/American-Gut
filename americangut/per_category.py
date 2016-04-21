@@ -40,7 +40,7 @@ def cat_taxa_summaries():
 
 def cat_alpha_plots():
     out_dir = get_existing_path(
-        agenv.paths['populated-templates']['alpha-files'])
+        agenv.paths['populated-templates']['result-alpha'])
     alpha_map = pd.read_csv(
         get_existing_path(agenv.paths['collapsed']['100nt']['alpha-map']),
         sep='\t', dtype=str)

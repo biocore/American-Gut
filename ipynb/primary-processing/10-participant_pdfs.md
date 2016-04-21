@@ -43,6 +43,10 @@
 ...     cmd_fmt += "mv %(result_path)s/%(id)s.pdf " + opts['populated-templates']['result-pdfs']
 ...     cmd_fmt += '; '
 ...     cmd_fmt += "mv %(result_path)s/%(id)s.txt " + opts['populated-templates']['result-taxa']
+...     cmd_fmt += '; '
+...     cmd_fmt += "mv %(result_path)s/shannon_%(id)s.png " + opts['populated-templates']['result-alpha']
+...     cmd_fmt += '; '
+...     cmd_fmt += "mv %(result_path)s/pd_%(id)s.png " + opts['populated-templates']['result-alpha']
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> opts = agps.create_opts('sample-agnostic', chp_path, None, [])
