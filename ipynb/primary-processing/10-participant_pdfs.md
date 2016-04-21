@@ -16,11 +16,13 @@
 ```python
 >>> result_pdfs          = agu.get_new_path(agenv.paths['populated-templates']['result-pdfs'])
 >>> result_taxa          = agu.get_new_path(agenv.paths['populated-templates']['result-taxa'])
+>>> result_alpha         = agu.get_new_path(agenv.paths['populated-templates']['result-alpha'])
 >>> successful_pdfs      = agu.get_new_path(agenv.paths['populated-templates']['successful-pdfs'])
 >>> unsuccessful_pdfs    = agu.get_new_path(agenv.paths['populated-templates']['unsuccessful-pdfs'])
 ...
 >>> os.mkdir(result_pdfs)
 >>> os.mkdir(result_taxa)
+>>> os.mkdir(result_alpha)
 ```
 
 ```python

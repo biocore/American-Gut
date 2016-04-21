@@ -736,5 +736,5 @@ def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
     if fp is None:
         return fig
     else:
-        fig.savefig(fp, dpi=300)
+        fig.savefig(fp, dpi=300, transparent=True)
         fig.clear()

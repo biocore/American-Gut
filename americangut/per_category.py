@@ -14,7 +14,7 @@ def cat_taxa_summaries():
     """
     paths = copy(agenv.paths['collapsed']['notrim']['1k'])
     out_dir = get_existing_path(
-        agenv.path['populated-templates']['result-taxa'])
+        agenv.paths['populated-templates']['result-taxa'])
     del paths['ag-biom']
     for name, path in paths.items():
         # consistent naming as stool for all participant items
@@ -54,8 +54,8 @@ def cat_alpha_plots():
     alpha_metrics = ['shannon_1k', 'PD_whole_tree_1k']
     alpha_map[alpha_metrics] = alpha_map[alpha_metrics].astype(float)
 
-    categories = ['AGE_CAT', 'BMI_CAT', 'SEX', 'DIET_TYPE', 'COSMETICS',
-                  'DOMINANT_HAND']
+    categories = ['AGE_CAT', 'BMI_CAT', 'SEX', 'DIET_TYPE',
+                  'COSMETICS_FREQUENCY', 'DOMINANT_HAND']
     sample_color = '#1f78b4'
 
     for cat in categories:
@@ -64,7 +64,7 @@ def cat_alpha_plots():
             # consistent naming as stool for all participant items
             site_name = site.lower().replace('fecal', 'stool')
             for group in list(cat_groups.keys()):
-                sample_name = '-'.join([site_name, cat, group])
+                sample_name = group.split('(')[0].strip().replace(' ', '_')
                 pd_samps = alpha_map.loc[cat_groups[group], 'PD_whole_tree_1k']
                 pd_mean = pd_samps.mean()
                 pd_stdev = pd_samps.std()
@@ -74,14 +74,15 @@ def cat_alpha_plots():
 
                 # Add the new group row row to the metadata
                 new_df = pd.DataFrame(
-                    [site, sh_mean, pd_mean], index=[sample_name],
+                    [[site, sh_mean, pd_mean]], index=[sample_name],
                     columns=['SIMPLE_BODY_SITE', 'shannon_1k',
                              'PD_whole_tree_1k'])
-                new_map = alpha_map.concat(new_df)
+                new_map = pd.concat([alpha_map, new_df])
+                cat = cat.lower().replace('_cat', '').replace('_frequency', '')
 
                 # Generates the shannon diversity figure
                 shannon_path = join(out_dir, 'shannon_%s-%s-%s.png' % (
-                    site_name, cat, group))
+                    site_name, cat, sample_name))
                 plot_alpha(sample_name, new_map, 'shannon_1k',
                            xlabel='Shannon Diversity',
                            fp=shannon_path,
@@ -92,7 +93,7 @@ def cat_alpha_plots():
 
                 # Generates the pd whole tree diversity figure
                 pd_path = join(out_dir, 'pd_%s-%s-%s.png' %
-                               (site_name, cat, group))
+                               (site_name, cat, sample_name))
                 plot_alpha(sample_name, new_map, 'PD_whole_tree_1k',
                            xlabel='PD Whole Tree Diversity',
                            fp=pd_path,
