@@ -78,7 +78,8 @@ def cat_alpha_plots():
                     columns=['SIMPLE_BODY_SITE', 'shannon_1k',
                              'PD_whole_tree_1k'])
                 new_map = pd.concat([alpha_map, new_df])
-                cat = cat.lower().replace('_cat', '').replace('_frequency', '')
+                cat = cat.lower().replace('_cat', '').replace(
+                    '_frequency', '').replace('_type', '')
 
                 # Generates the shannon diversity figure
                 shannon_path = join(out_dir, 'shannon_%s-%s-%s.png' % (
