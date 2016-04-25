@@ -28,7 +28,10 @@ def cat_taxa_summaries():
         for col in table.ids():
             if col == 'Unknown':
                 continue
-            cleaned_col = col.split('(')[0].strip().replace(' ', '_')
+            # Clean the string to just the base information of the response
+            # and url compliant names.
+            cleaned_col = col.split('(')[0].strip().replace(
+                ' ', '_').rstrip('+')
             filename = '-'.join([name, cleaned_col]) + '.txt'
 
             with open(join(out_dir, filename), 'w') as f:
@@ -64,7 +67,10 @@ def cat_alpha_plots():
             # consistent naming as stool for all participant items
             site_name = site.lower().replace('fecal', 'stool')
             for group in list(cat_groups.keys()):
-                sample_name = group.split('(')[0].strip().replace(' ', '_')
+                # Clean the string to just the base information of the response
+                # and url compliant names.
+                sample_name = group.split('(')[0].strip().replace(
+                    ' ', '_').rstrip('+')
                 pd_samps = alpha_map.loc[cat_groups[group], 'PD_whole_tree_1k']
                 pd_mean = pd_samps.mean()
                 pd_stdev = pd_samps.std()
