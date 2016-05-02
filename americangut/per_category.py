@@ -7,19 +7,19 @@ import americangut.notebook_environment as agenv
 from .util import collapse_full, collapse_taxonomy, get_existing_path
 
 
-def cat_taxa_summaries():
+def cat_taxa_summaries(debug=False):
     """Creates taxa summary files for each available summary category per site
     """
     paths = copy(agenv.paths['collapsed']['notrim']['1k'])
     out_dir = get_existing_path(
-        agenv.path['populated-templates']['result-taxa'])
+        agenv.paths['populated-templates']['result-taxa'])
     del paths['ag-biom']
     for name, path in paths.items():
         # consistent naming as stool for all participant items
         name = name.replace('-biom', '').replace('fecal', 'stool')
         table = load_table(get_existing_path(path))
         if len(name.split('-')) == 2:
-            # Have entire cohort of samples for site, so need to get averages
+            # Have entire cohort of samples for site, so need to get medians
             table = collapse_full(table)
         table = collapse_taxonomy(table)
         ids = table.ids(axis='observation')
