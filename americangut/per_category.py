@@ -7,7 +7,7 @@ import americangut.notebook_environment as agenv
 from .util import collapse_full, collapse_taxonomy, get_existing_path
 
 
-def cat_taxa_summaries(debug=False):
+def cat_taxa_summaries():
     """Creates taxa summary files for each available summary category per site
     """
     paths = copy(agenv.paths['collapsed']['notrim']['1k'])

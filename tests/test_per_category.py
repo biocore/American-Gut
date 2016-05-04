@@ -1,108 +1,87 @@
-from os import remove, mkdir
-from os.path import join, exists
+from os import makedirs, listdir, rmdir
+from os.path import exists, join
+from shutil import rmtree
 
 from unittest import TestCase, main
 import americangut.notebook_environment as agenv
-from americangut.util import get_new_path
+from americangut.util import get_existing_path
 from americangut.per_category import cat_taxa_summaries
 
 
 class PerCategoryTests(TestCase):
     def setUp(self):
-        self.taxa_base = agenv.paths['populated-templates']['result-taxa']
-
-        try:
-            get_new_path(
-                agenv.paths['populated-templates']['result-taxa'])
-        except IOError:
-            pass
-
-        self.taxa_files = [
-            'ag-stool-average.txt',
-            'ag-stool-sex-male.txt',
-            'ag-stool-sex-other.txt',
-            'ag-stool-sex-female.txt',
-            'ag-oral-diet-Omnivore.txt',
-            'ag-oral-diet-Vegetarian.txt',
-            'ag-oral-diet-Vegan.txt',
-            'ag-oral-diet-Omnivore_but_do_not_eat_red_meat.txt',
-            'ag-oral-diet-Vegetarian_but_eat_seafood.txt',
-            'ag-skin-sex-male.txt',
-            'ag-skin-sex-female.txt',
-            'ag-stool-diet-Omnivore.txt',
-            'ag-stool-diet-Vegetarian.txt',
-            'ag-stool-diet-Vegan.txt',
-            'ag-stool-diet-Omnivore_but_do_not_eat_red_meat.txt',
-            'ag-stool-diet-Vegetarian_but_eat_seafood.txt',
-            'ag-skin-hand-I_am_left_handed.txt',
-            'ag-skin-hand-I_am_ambidextrous.txt',
-            'ag-skin-hand-I_am_right_handed.txt',
-            'ag-oral-sex-male.txt',
-            'ag-oral-sex-female.txt',
-            'ag-stool-bmi-Overweight.txt',
-            'ag-stool-bmi-Obese.txt',
-            'ag-stool-bmi-Underweight.txt',
-            'ag-stool-bmi-Normal.txt',
-            'ag-oral-flossing-Never.txt',
-            'ag-oral-flossing-Rarely.txt',
-            'ag-oral-flossing-Daily.txt',
-            'ag-oral-flossing-Occasionally.txt',
-            'ag-oral-flossing-Regularly.txt',
-            'ag-stool-age-teen.txt',
-            'ag-stool-age-20s.txt',
-            'ag-stool-age-60s.txt',
-            'ag-stool-age-30s.txt',
-            'ag-stool-age-child.txt',
-            'ag-stool-age-40s.txt',
-            'ag-stool-age-70+.txt',
-            'ag-stool-age-baby.txt',
-            'ag-stool-age-50s.txt',
-            'ag-oral-average.txt',
-            'ag-skin-cosmetics-Never.txt',
-            'ag-skin-cosmetics-Rarely.txt',
-            'ag-skin-cosmetics-Daily.txt',
-            'ag-skin-cosmetics-Occasionally.txt',
-            'ag-skin-cosmetics-Regularly.txt',
-            'ag-skin-age-teen.txt',
-            'ag-skin-age-20s.txt',
-            'ag-skin-age-60s.txt',
-            'ag-skin-age-30s.txt',
-            'ag-skin-age-70+.txt',
-            'ag-skin-age-40s.txt',
-            'ag-skin-age-child.txt',
-            'ag-skin-age-baby.txt',
-            'ag-skin-age-50s.txt',
-            'ag-skin-average.txt',
-            'ag-oral-age-teen.txt',
-            'ag-oral-age-20s.txt',
-            'ag-oral-age-60s.txt',
-            'ag-oral-age-30s.txt',
-            'ag-oral-age-child.txt',
-            'ag-oral-age-40s.txt',
-            'ag-oral-age-70+.txt',
-            'ag-oral-age-50s.txt']
+        # Make expected directory structure
+        makedirs('../agp_processing/10-populated-templates/taxa')
+        self.path = agenv.paths['collapsed']['notrim']['1k']
+        agenv.paths['collapsed']['notrim']['1k'] = \
+            {'ag-biom':
+                '../tests/data/ag_testing/category_test.biom',
+             'ag-fecal':
+                '../tests/data/ag_testing/ag-fecal.biom',
+             'ag-oral-flossing':
+                '../tests/data/ag_testing/ag-oral-flossing.biom'}
 
     def tearDown(self):
-        for f in self.taxa_files:
-            path = join(self.taxa_base, f)
-            if exists(path):
-                remove(path)
+        rmtree('../agp_processing', ignore_errors=True)
+        agenv.paths['collapsed']['notrim']['1k'] = self.path
 
     def test_cat_taxa_summaries(self):
         cat_taxa_summaries()
-        # Make sure all files created
-        for f in self.taxa_files:
-            path = join(self.taxa_base, f)
-            if not exists(path):
-                raise AssertionError('File %s not generated!' % f)
+        path = get_existing_path(
+            '../agp_processing/10-populated-templates/taxa')
+        exp = ['ag-oral-flossing-Daily.txt', 'ag-oral-flossing-Never.txt',
+               'ag-oral-flossing-Occasionally.txt',
+               'ag-oral-flossing-Rarely.txt', 'ag-oral-flossing-Regularly.txt',
+               'ag-stool-average.txt']
+        files = listdir(path)
+        self.assertEqual(files, exp)
 
-        # Test file for correct format
-        self.maxDiff = None
-        with open(join(self.taxa_base, 'ag-skin-age-teen.txt')) as f:
+        with open(join(path, 'ag-oral-flossing-Rarely.txt')) as f:
             obs = f.read()
-
-        exp = ''
+        exp = """k__Bacteria; p__Fusobacteria; c__Fusobacteriia; o__Fusobacteriales; f__Fusobacteriaceae; g__Fusobacterium\t0.0110430107527
+k__Bacteria; p__Firmicutes; c__Bacilli; o__Bacillales; f__Planococcaceae; g__\t0.00196774193548
+k__Bacteria; p__Bacteroidetes; c__Flavobacteriia; o__Flavobacteriales; f__[Weeksellaceae]; g__Chryseobacterium\t0.0125913978495
+k__Bacteria; p__Bacteroidetes; c__Sphingobacteriia; o__Sphingobacteriales; f__Sphingobacteriaceae; g__Sphingobacterium\t0.00608602150538
+k__Bacteria; p__Firmicutes; c__Erysipelotrichi; o__Erysipelotrichales; f__Erysipelotrichaceae; g__Bulleidia\t0.00269892473118
+k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Neisseriales; f__Neisseriaceae; g__Neisseria\t0.074935483871
+k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Lachnospiraceae; g__Oribacterium\t0.00749462365591
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Xanthomonadales; f__Xanthomonadaceae; g__\t0.017311827957
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pseudomonadales; f__Moraxellaceae; g__Enhydrobacter\t0.000150537634409
+k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Lachnospiraceae; g__\t0.00667741935484
+k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Caulobacterales; f__Caulobacteraceae; g__Brevundimonas\t0.00996774193548
+k__Bacteria; p__Bacteroidetes; c__Flavobacteriia; o__Flavobacteriales; f__[Weeksellaceae]; g__\t0.00139784946237
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__Klebsiella\t0.00174193548387
+k__Bacteria; p__Firmicutes; c__Bacilli; o__Bacillales; f__Staphylococcaceae; g__Staphylococcus\t0.00756989247312
+k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Prevotellaceae; g__Prevotella\t0.0509569892473
+k__Bacteria; p__Fusobacteria; c__Fusobacteriia; o__Fusobacteriales; f__Leptotrichiaceae; g__Leptotrichia\t0.0143333333333
+k__Bacteria; p__Firmicutes; c__Bacilli; o__Lactobacillales; f__Streptococcaceae; g__Streptococcus\t0.138817204301
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pseudomonadales; f__Pseudomonadaceae; g__\t0.0051935483871
+k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__[Paraprevotellaceae]; g__[Prevotella]\t0.00132258064516
+k__Bacteria; p__Proteobacteria; c__Epsilonproteobacteria; o__Campylobacterales; f__Campylobacteraceae; g__Campylobacter\t0.00133333333333
+k__Bacteria; p__Firmicutes; c__Bacilli; o__Gemellales; f__Gemellaceae; g__\t0.0097311827957
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__\t0.0135268817204
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pasteurellales; f__Pasteurellaceae; g__Haemophilus\t0.0668279569892
+k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Rhizobiales; f__Brucellaceae; g__Ochrobactrum\t0.00575268817204
+k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Veillonellaceae; g__Veillonella\t0.0709247311828
+k__Bacteria; p__Bacteroidetes; c__Bacteroidia; o__Bacteroidales; f__Porphyromonadaceae; g__Porphyromonas\t0.0165698924731
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pasteurellales; f__Pasteurellaceae; g__Aggregatibacter\t0.00410752688172
+k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Neisseriales; f__Neisseriaceae; g__\t0.00394623655914
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pseudomonadales; f__Moraxellaceae; g__Acinetobacter\t0.0247634408602
+k__Bacteria; p__Firmicutes; c__Bacilli; o__Lactobacillales; f__Aerococcaceae; g__Alloiococcus\t0.000225806451613
+k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Lachnospiraceae; g__Moryella\t0.000612903225806
+k__Bacteria; p__Actinobacteria; c__Actinobacteria; o__Actinomycetales; f__Micrococcaceae; g__Rothia\t0.114602150538
+k__Bacteria; p__Actinobacteria; c__Coriobacteriia; o__Coriobacteriales; f__Coriobacteriaceae; g__Atopobium\t0.00761290322581
+k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Burkholderiales; f__Comamonadaceae; g__Alicycliphilus\t0.00530107526882
+k__Bacteria; p__Actinobacteria; c__Actinobacteria; o__Actinomycetales; f__Actinomycetaceae; g__Actinomyces\t0.0204408602151
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Xanthomonadales; f__Xanthomonadaceae; g__Stenotrophomonas\t0.0443655913978
+k__Bacteria; p__Actinobacteria; c__Actinobacteria; o__Actinomycetales; f__Corynebacteriaceae; g__Corynebacterium\t0.000440860215054
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__Morganella\t0.000161290322581
+k__Bacteria; p__Firmicutes; c__Bacilli; o__Lactobacillales; f__Carnobacteriaceae; g__Granulicatella\t0.025247311828
+k__Bacteria; p__SR1; c__; o__; f__; g__\t0.00222580645161
+k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pseudomonadales; f__Pseudomonadaceae; g__Pseudomonas\t0.0665268817204
+"""
         self.assertEqual(obs, exp)
+
 
 
 if __name__ == '__main__':
