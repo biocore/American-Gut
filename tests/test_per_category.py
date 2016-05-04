@@ -1,5 +1,5 @@
-from os import makedirs, listdir, rmdir
-from os.path import exists, join
+from os import makedirs, listdir
+from os.path import join, dirname, realpath
 from shutil import rmtree
 
 from unittest import TestCase, main
@@ -11,7 +11,9 @@ from americangut.per_category import cat_taxa_summaries
 class PerCategoryTests(TestCase):
     def setUp(self):
         # Make expected directory structure
-        makedirs('../agp_processing/10-populated-templates/taxa')
+        currpath = dirname(realpath(__file__))
+        self.dirpath = join(currpath, '../agp_processing/10-populated-templates/taxa')
+        makedirs(self.dirpath)
         self.path = agenv.paths['collapsed']['notrim']['1k']
         agenv.paths['collapsed']['notrim']['1k'] = \
             {'ag-biom':
@@ -22,7 +24,7 @@ class PerCategoryTests(TestCase):
                 '../tests/data/ag_testing/ag-oral-flossing.biom'}
 
     def tearDown(self):
-        rmtree('../agp_processing', ignore_errors=True)
+        rmtree(self.dirpath, ignore_errors=True)
         agenv.paths['collapsed']['notrim']['1k'] = self.path
 
     def test_cat_taxa_summaries(self):
@@ -34,7 +36,7 @@ class PerCategoryTests(TestCase):
                'ag-oral-flossing-Rarely.txt', 'ag-oral-flossing-Regularly.txt',
                'ag-stool-average.txt']
         files = listdir(path)
-        self.assertEqual(files, exp)
+        self.assertItemsEqual(files, exp)
 
         with open(join(path, 'ag-oral-flossing-Rarely.txt')) as f:
             obs = f.read()
