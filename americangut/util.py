@@ -678,16 +678,11 @@ def collapse_full(_bt):
         Collapsed biom table, one sample containing median of each OTU,
         normalized.
     """
-    data = np.empty([_bt.length('observation'), 1])
-    obs = []
-    observation_metadata = []
-    pos = 0
-    for vals, id_, metadata in _bt.iter(axis='observation'):
-        data[pos][0] = np.median(vals)
-        obs.append(id_)
-        observation_metadata.append(metadata)
-        pos += 1
-    table = Table(data, obs, ['average'],
-                  observation_metadata=observation_metadata)
+    num_obs = len(_bt.ids(axis='observation'))
+    table = Table(np.array(
+        [np.median(v) for v in _bt.iter_data(axis='observation')]).reshape(
+        (num_obs, 1)),
+        _bt.ids(axis='observation'), ['average'],
+        observation_metadata=_bt.metadata(axis='observation'))
     table.norm(inplace=True)
     return table
