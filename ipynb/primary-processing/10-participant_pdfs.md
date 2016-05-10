@@ -7,6 +7,7 @@
 >>> import americangut.util as agu
 >>> import americangut.results_utils as agru
 >>> import americangut.per_sample as agps
+>>> import americangut.per_category as agpc
 >>> import americangut.parallel as agpar
 ...
 >>> chp_path = agenv.activate('10-populated-templates')
@@ -46,6 +47,12 @@
 ...
 >>> opts = agps.create_opts('sample-agnostic', chp_path, None, [])
 >>> process_pdf = partial(agps.sample_type_processor, [create_pdf, aggregate], opts)
+```
+
+We also need to write out the taxa summary files for each of the categories in the collapsed data. These will live in the same folder as the participant's taxonomy files.
+
+```python
+>>> agpc.cat_taxa_summaries()
 ```
 
 ```python

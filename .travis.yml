@@ -16,6 +16,7 @@ before_install:
 install:
   - conda create --yes -n env_name python=$PYTHON_VERSION --file conda_requirements.txt
   - source activate env_name
+  - conda install -y "setuptools<20.7.0"
   - pip install -r pip_requirements.txt
   - pip install -e . --no-deps
 
