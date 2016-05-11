@@ -21,7 +21,7 @@ def cat_taxa_summaries():
         name = name.replace('-biom', '').replace('fecal', 'stool')
         table = load_table(get_existing_path(path))
         if len(name.split('-')) == 2:
-            # Have entire cohort of samples for site, so need to get averages
+            # Have entire cohort of samples for site, so need to get medians
             table = collapse_full(table)
         table = collapse_taxonomy(table)
         ids = table.ids(axis='observation')
