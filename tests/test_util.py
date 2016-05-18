@@ -7,7 +7,8 @@ import pandas as pd
 from StringIO import StringIO
 from unittest import TestCase, main
 
-from numpy import array, nan
+from numpy import array, nan, arange
+from numpy.testing import assert_almost_equal
 from biom import Table
 from pandas.util.testing import assert_frame_equal
 
@@ -15,7 +16,7 @@ from americangut.util import (
     slice_mapping_file, parse_mapping_file,
     verify_subset, concatenate_files, trim_fasta, count_samples,
     count_seqs, count_unique_participants, clean_and_reformat_mapping,
-    add_alpha_diversity, get_single_id_lists
+    add_alpha_diversity, get_single_id_lists, collapse_taxonomy, collapse_full
 )
 
 __author__ = "Daniel McDonald"
@@ -313,6 +314,37 @@ class UtilTests(TestCase):
                  'unrare': ['A', 'B', 'C', 'D', 'E']}
         self.assertEqual(test, known)
 
+    def test_collapse_taxonomy(self):
+        obs = collapse_taxonomy(table)
+        exp = Table(array([[100.0,  105.0,  110.0,  115.0],
+                           [44.0,   46.0,   48.0,   50.0],
+                           [36.0,   39.0,   42.0,   45.0]]),
+                    ['Bacteria; Firmicutes', 'Bacteria; Bacteroidetes',
+                     'Bacteria; Proteobacteria'], sample_ids,
+                    sample_metadata=sample_metadata, observation_metadata=[
+                    {'collapsed_ids': ['O0', 'O1', 'O7', 'O8', 'O9']},
+                    {'collapsed_ids': ['O5', 'O6']},
+                    {'collapsed_ids': ['O2', 'O3', 'O4']}])
+        self.assertEqual(obs, exp)
+
+    def test_collapse_full(self):
+        obs = collapse_full(table)
+        exp = Table(array([[0.00769230769231], [0.0282051282051],
+                           [0.0487179487179], [0.0692307692308],
+                           [0.0897435897436], [0.110256410256],
+                           [0.130769230769], [0.151282051282],
+                           [0.171794871795], [0.192307692308]]),
+                    observ_ids, ['average'],
+                    observation_metadata=observ_metadata)
+        for r in range(10):
+            assert_almost_equal(obs[r, 0],  exp[r, 0])
+        self.assertEqual(obs.ids(), exp.ids())
+        self.assertItemsEqual(obs.ids('observation'), exp.ids('observation'))
+
+        obs_meta = []
+        for _, _, m in obs.iter(axis='observation'):
+            obs_meta.append(m)
+        self.assertItemsEqual(obs_meta, observ_metadata)
 
 test_mapping = """#SampleIDs\tfoo\tbar
 a\t1\t123123
@@ -341,6 +373,24 @@ C	GAZ:right	12.0	UBERON_FECES	15
 D	GAZ:stuff	32.0	unknown	26
 E	GAZ:stuff	56.0	UBERON:SKIN	37
 """)
+
+data = arange(40).reshape(10, 4)
+sample_ids = ['S%d' % i for i in range(4)]
+observ_ids = ['O%d' % i for i in range(10)]
+sample_metadata = [{'environment': 'A'}, {'environment': 'B'},
+                   {'environment': 'A'}, {'environment': 'B'}]
+observ_metadata = [{'taxonomy': ['Bacteria', 'Firmicutes']},
+                   {'taxonomy': ['Bacteria', 'Firmicutes']},
+                   {'taxonomy': ['Bacteria', 'Proteobacteria']},
+                   {'taxonomy': ['Bacteria', 'Proteobacteria']},
+                   {'taxonomy': ['Bacteria', 'Proteobacteria']},
+                   {'taxonomy': ['Bacteria', 'Bacteroidetes']},
+                   {'taxonomy': ['Bacteria', 'Bacteroidetes']},
+                   {'taxonomy': ['Bacteria', 'Firmicutes']},
+                   {'taxonomy': ['Bacteria', 'Firmicutes']},
+                   {'taxonomy': ['Bacteria', 'Firmicutes']}]
+table = Table(data, observ_ids, sample_ids, observ_metadata,
+              sample_metadata, table_id='Example Table')
 
 
 if __name__ == '__main__':

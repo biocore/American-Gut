@@ -57,20 +57,16 @@ Once we have the rarefactions, we can then compute the diversity of every sample
 
 ```python
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
-...     !parallel_alpha_diversity.py -i $multi_directory \
-...                                  -o $adiv_directory \
-...                                  -t $greengenes_tree \
-...                                  -m PD_whole_tree,chao1,observed_otus,shannon \
-...                                  -O $cpu_count
+...     !alpha_diversity.py -i $multi_directory \
+...                         -o $adiv_directory \
+...                         -t $greengenes_tree \
+...                         -m PD_whole_tree,chao1,observed_otus,shannon
 ```
 
 We're going to aggregate the diversity calculations from the multiple rarefactions.
 
 ```python
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
-...     # sometimes QIIME leaves this directory, unsure why.
-...     if os.path.exists(os.path.join(adiv_directory, 'ALDIV_*')):
-...         !rmdir $adiv_directory/ALDIV_*
 ...     !collate_alpha.py -i $adiv_directory \
 ...                       -o $adiv_directory
 ```
