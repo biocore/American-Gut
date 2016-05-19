@@ -73,7 +73,7 @@ through notebooks (`ipynb` folder).
 There are a few environment variable that can be used to customize the run:
 
 - AG\_TESTING: if set to `True` scripts will not download AmericanGut
-  EBI data (ERP012803) bit instead work with test data (subset of the original
+  EBI data (ERP012803) but instead work with test data (subset of the original
   EBI data). This is useful for testing.
 - AG\_CPU\_COUNT: Number of process to use when parallelizing code (defaults to
   the number of cores)
@@ -110,8 +110,8 @@ with
 $ ipython profile create ag_ipymd
 ```
 
-and adjust newly created `/path/to/.ipython/profile_ag_ipymd/ipython_notebook_config.py'
-by addding
+and adjust newly created `/path/to/.ipython/profile_ag_ipymd/ipython_notebook_config.py`
+by adding
 ```
 #------------------------
 # ipymd
