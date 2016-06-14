@@ -78,7 +78,7 @@ def cat_alpha_plots():
                 sh_mean = shannon_samps.mean()
                 sh_stdev = shannon_samps.std()
 
-                # Add the new group row row to the metadata
+                # Add the new group row to the metadata
                 new_df = pd.DataFrame(
                     [[site, sh_mean, pd_mean]], index=[sample_name],
                     columns=['SIMPLE_BODY_SITE', 'shannon_1k',

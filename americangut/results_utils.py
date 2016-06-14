@@ -7,11 +7,18 @@ from itertools import izip
 from collections import defaultdict
 from functools import partial
 
+from matplotlib import use, rcParams
+use('Agg')  # noqa
 import matplotlib.pyplot as plt
 import seaborn as sn
 from biom.parse import parse_biom_table
 
 from americangut.util import check_file
+
+# Sets up plotting parameters so that the default setting is use to Helvetica
+# in plots
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Arial']
 
 # These are the data files in the American-Gut repository that are used for
 # results processing
@@ -717,15 +724,15 @@ def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
 
         # Adds text describing the sample or category
         if categorical:
-            text = '\n\n%s:\t%1.1f' % (sample, sample_alpha)
+            text = (u' \n\n%s:\t%1.1f' % (sample, sample_alpha)).expandtabs()
         else:
-            text = 'Your Sample:\t%1.1f\nAverage:\t%1.1f' % (
-                sample_alpha, group_alpha.mean())
+            text = u'Your Sample:\t%1.1f\nAverage:\t%1.1f' % (
+                sample_alpha, group_alpha.mean()).expandtabs()
         ax.text(x=ax.get_xticks().max(),
                 y=ax.get_ylim()[1]*0.85,
                 s=text,
                 ha='right',
-                size=11,
+                size=10,
                 )
 
     # Sets the figure size
