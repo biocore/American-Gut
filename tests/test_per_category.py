@@ -1,19 +1,27 @@
-from os import makedirs, listdir
-from os.path import join, dirname, realpath
+from os import makedirs, listdir, rmdir
+from os.path import join, dirname, realpath, exists, abspath
 from shutil import rmtree
 
 from unittest import TestCase, main
 import americangut.notebook_environment as agenv
 from americangut.util import get_existing_path
-from americangut.per_category import cat_taxa_summaries
+from americangut.per_category import cat_taxa_summaries, cat_alpha_plots
 
 
 class PerCategoryTests(TestCase):
     def setUp(self):
         # Make expected directory structure
         currpath = dirname(realpath(__file__))
-        self.dirpath = join(currpath, '../agp_processing/10-populated-templates/taxa')
+        self.dirpath = abspath(join(currpath,
+                               '../agp_processing/10-populated-templates'))
         makedirs(self.dirpath)
+        makedirs(join(self.dirpath, 'taxa'))
+        makedirs(join(self.dirpath, 'alpha-div'))
+
+        self.alpha_path = agenv.paths['collapsed']['100nt']['alpha-map']
+        agenv.paths['collapsed']['100nt']['alpha-map'] = \
+            '../tests/data/ag_testing/cat_metadata_test.txt'
+
         self.path = agenv.paths['collapsed']['notrim']['1k']
         agenv.paths['collapsed']['notrim']['1k'] = \
             {'ag-biom':
@@ -26,6 +34,7 @@ class PerCategoryTests(TestCase):
     def tearDown(self):
         rmtree(self.dirpath, ignore_errors=True)
         agenv.paths['collapsed']['notrim']['1k'] = self.path
+        agenv.paths['collapsed']['100nt']['alpha-map'] = self.alpha_path
 
     def test_cat_taxa_summaries(self):
         cat_taxa_summaries()
@@ -84,6 +93,15 @@ k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Pseudomonadales; f__P
 """
         self.assertEqual(obs, exp)
 
+    def test_cat_alpha_plots(self):
+        cat_alpha_plots()
+
+        self.assertTrue(exists(join(self.dirpath, 'alpha-div',
+                        'pd_oral-age-50s.png')))
+        self.assertTrue(exists(join(self.dirpath, 'alpha-div',
+                        'pd_stool-sex-male.png')))
+        self.assertTrue(exists(join(self.dirpath, 'alpha-div',
+                        'shannon_skin-dominant_hand-I_am_left_handed.png')))
 
 
 if __name__ == '__main__':
