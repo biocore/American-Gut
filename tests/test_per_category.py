@@ -1,4 +1,4 @@
-from os import makedirs, listdir, rmdir
+from os import makedirs, listdir
 from os.path import join, dirname, realpath, exists, abspath
 from shutil import rmtree
 
