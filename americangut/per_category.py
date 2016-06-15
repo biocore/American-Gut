@@ -69,8 +69,7 @@ def cat_alpha_plots():
             for group in list(cat_groups.keys()):
                 # Clean the string to just the base information of the response
                 # and url compliant names.
-                sample_name = group.split('(')[0].strip().replace(
-                    ' ', '_').rstrip('+')
+                sample_name = group.split('(')[0].strip().rstrip('+')
                 pd_samps = alpha_map.loc[cat_groups[group], 'PD_whole_tree_1k']
                 pd_mean = pd_samps.mean()
                 pd_stdev = pd_samps.std()
@@ -89,8 +88,8 @@ def cat_alpha_plots():
 
                 # Generates the shannon diversity figure
                 shannon_path = join(out_dir, 'shannon_%s-%s-%s.png' % (
-                    site_name, cat, sample_name))
-                plot_alpha(group, new_map, 'shannon_1k',
+                    site_name, cat, sample_name.replace(' ', '_')))
+                plot_alpha(sample_name, new_map, 'shannon_1k',
                            xlabel='Shannon Diversity',
                            fp=shannon_path,
                            sample_color=sample_color,
@@ -100,8 +99,8 @@ def cat_alpha_plots():
 
                 # Generates the pd whole tree diversity figure
                 pd_path = join(out_dir, 'pd_%s-%s-%s.png' %
-                               (site_name, cat, sample_name))
-                plot_alpha(group, new_map, 'PD_whole_tree_1k',
+                               (site_name, cat, sample_name.replace(' ', '_')))
+                plot_alpha(sample_name, new_map, 'PD_whole_tree_1k',
                            xlabel='PD Whole Tree Diversity',
                            fp=pd_path,
                            sample_color=sample_color,
