@@ -90,7 +90,7 @@ def cat_alpha_plots():
                 # Generates the shannon diversity figure
                 shannon_path = join(out_dir, 'shannon_%s-%s-%s.png' % (
                     site_name, cat, sample_name))
-                plot_alpha(sample_name, new_map, 'shannon_1k',
+                plot_alpha(group, new_map, 'shannon_1k',
                            xlabel='Shannon Diversity',
                            fp=shannon_path,
                            sample_color=sample_color,
@@ -101,7 +101,7 @@ def cat_alpha_plots():
                 # Generates the pd whole tree diversity figure
                 pd_path = join(out_dir, 'pd_%s-%s-%s.png' %
                                (site_name, cat, sample_name))
-                plot_alpha(sample_name, new_map, 'PD_whole_tree_1k',
+                plot_alpha(group, new_map, 'PD_whole_tree_1k',
                            xlabel='PD Whole Tree Diversity',
                            fp=pd_path,
                            sample_color=sample_color,
