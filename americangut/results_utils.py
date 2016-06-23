@@ -726,8 +726,8 @@ def plot_alpha(sample, alpha_map, alpha_field, group_field='SIMPLE_BODY_SITE',
         if categorical:
             text = (u' \n\n%s:\t%1.1f' % (sample, sample_alpha)).expandtabs()
         else:
-            text = u'Your Sample:\t%1.1f\nAverage:\t%1.1f' % (
-                sample_alpha, group_alpha.mean()).expandtabs()
+            text = (u'Your Sample:\t%1.1f\nAverage:\t%1.1f' % (
+                sample_alpha, group_alpha.mean())).expandtabs()
         ax.text(x=ax.get_xticks().max(),
                 y=ax.get_ylim()[1]*0.85,
                 s=text,
