@@ -19,10 +19,12 @@ import pandas as pd
 
 def _biom_to_pysurvey_mat(table):
     """Convert a BIOM table to a compatible pysurvey DataFrame
+
     Parameters
     ----------
     table : biom.Table
         The BIOM table
+
     Returns
     -------
     DataFrame
@@ -38,6 +40,7 @@ def _biom_to_pysurvey_mat(table):
 
 def _format_edges(fp, sparcc_z, threshold):
     """Generate edges
+
     Parameters
     ----------
     fp : open file
@@ -58,7 +61,8 @@ def _format_edges(fp, sparcc_z, threshold):
 
 def _format_nodes(fp, table):
     """Format the nodes file
-    Paramters
+
+    Parameters
     ---------
     fp : open file
         Where to write the results too
