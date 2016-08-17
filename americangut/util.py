@@ -11,6 +11,7 @@ import pandas as pd
 from itertools import izip
 from StringIO import StringIO
 from collections import defaultdict
+from biom import Table
 
 from lxml import etree
 from skbio.parse.sequences import parse_fastq, parse_fasta
@@ -497,7 +498,8 @@ def clean_and_reformat_mapping(in_fp, out_fp, body_site_column_name,
             body_site = body_site.split('_', 1)[-1].replace("_", " ")
         elif body_site.startswith('UBERON:'):
             body_site = body_site.split(':', 1)[-1]
-        elif body_site in ['NA', 'unknown', '', 'no_data', 'None', 'Unknown']:
+        elif body_site in ['NA', 'unknown', '', 'no_data', 'None', 'Unknown',
+                           'Unspecified']:
             errors[('unspecified_bodysite', body_site)].append(sample_id)
             continue
         else:
@@ -635,3 +637,53 @@ def get_single_id_lists(map_, depths):
             single_ids[depths[idx - 1]].extend(single_ids[depths[idx]])
 
     return single_ids
+
+
+def collapse_taxonomy(_bt, level=5):
+    """Collapses OTUs by taxonomy
+
+    Parameters
+    ----------
+    _bt : biom table
+        Table to collapse
+    level : int, optional
+        Level to collapse to. 0=kingdom, 1=phylum,...,5=genus, 6=species
+        Default 5
+
+    Returns
+    -------
+    biom table
+        Collapsed biom table
+
+    Citations
+    ---------
+    [1] http://biom-format.org/documentation/table_objects.html
+    """
+    def collapse_f(id_, md):
+        return '; '.join(md['taxonomy'][:level + 1])
+    collapsed = _bt.collapse(collapse_f, axis='observation', norm=False)
+    return collapsed
+
+
+def collapse_full(_bt):
+    """Collapses full biom table to median of each OTU
+
+    Parameters
+    ----------
+    _bt : biom table
+        Table to collapse
+
+    Returns
+    -------
+    biom table
+        Collapsed biom table, one sample containing median of each OTU,
+        normalized.
+    """
+    num_obs = len(_bt.ids(axis='observation'))
+    table = Table(np.array(
+        [np.median(v) for v in _bt.iter_data(axis='observation')]).reshape(
+        (num_obs, 1)),
+        _bt.ids(axis='observation'), ['average'],
+        observation_metadata=_bt.metadata(axis='observation'))
+    table.norm(inplace=True)
+    return table

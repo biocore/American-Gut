@@ -1,8 +1,20 @@
-click
+IPython < 4.0.0
 biom-format
+brewer2mpl
+click
 colorbrewer
-seaborn
-qiime
-runipy
+cython
+future == 0.15.2
+h5py >= 2.3.1 
 ipymd
-future==0.15.2
+lxml
+matplotlib >= 1.4.3
+notebook
+pandas >= 0.15
+qiime
+qiime-default-reference
+runipy
+scikit-bio == 0.2.3 
+scipy >= 0.15.1
+seaborn
+statsmodels
