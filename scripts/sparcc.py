@@ -10,11 +10,12 @@ import click
 # and attempts to import nanmedian from scipy.stats. This is a dirty hack.
 import scipy.stats as ss
 import scipy
-ss.nanmedian = scipy.nanmedian
 
 import pysurvey as ps
 import biom
 import pandas as pd
+
+ss.nanmedian = scipy.nanmedian
 
 
 def _biom_to_pysurvey_mat(table):
