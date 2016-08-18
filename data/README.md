@@ -3,6 +3,10 @@ Data
 
 OTU Tables and QIIME-compliant mapping files used to generate figures and statistics for the American Gut project. All data are de-identified. These tables were picked against Greengenes 13_8 at 97% using SortMeRNA.
 
+American Gut Data
+------
+American Gut tables hosted in the repository have not been updated since May 2015. It reflects an old version of the American Gut survey. The latest American Gut biom tables and mapping files can be found at [ftp://ftp.microbio.me/AmericanGut/latest](ftp://ftp.microbio.me/AmericanGut/latest). 
+
 Data sources
 ------------
 
