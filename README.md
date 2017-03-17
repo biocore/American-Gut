@@ -1,7 +1,6 @@
 American-Gut
 ============
 
-<<<<<<< HEAD
 American Gut open-access code and IPython notebooks
 
 A note about data
@@ -159,4 +158,3 @@ Now, we can start ipython with
 $ ipython --profile=ag_default notebook
 ```
 and visit the newly started notebook server by going to http://localhost:8888
->>>>>>> biocore/master
