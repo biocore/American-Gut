@@ -774,6 +774,7 @@ paths = {
     'populated-templates': {
         'result-pdfs': '10-populated-templates/pdfs/',
         'result-taxa': '10-populated-templates/taxa/',
+        'result-alpha':  '10-populated-templates/alpha-div/',
         'successful-pdfs': '10-populated-templates/successful_ids.txt',
         'unsuccessful-pdfs': '10-populated-templates/unsuccessful_ids.txt',
     },

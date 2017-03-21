@@ -16,11 +16,13 @@
 ```python
 >>> result_pdfs          = agu.get_new_path(agenv.paths['populated-templates']['result-pdfs'])
 >>> result_taxa          = agu.get_new_path(agenv.paths['populated-templates']['result-taxa'])
+>>> result_alpha         = agu.get_new_path(agenv.paths['populated-templates']['result-alpha'])
 >>> successful_pdfs      = agu.get_new_path(agenv.paths['populated-templates']['successful-pdfs'])
 >>> unsuccessful_pdfs    = agu.get_new_path(agenv.paths['populated-templates']['unsuccessful-pdfs'])
 ...
 >>> os.mkdir(result_pdfs)
 >>> os.mkdir(result_taxa)
+>>> os.mkdir(result_alpha)
 ```
 
 ```python
@@ -43,6 +45,10 @@
 ...     cmd_fmt += "mv %(result_path)s/%(id)s.pdf " + opts['populated-templates']['result-pdfs']
 ...     cmd_fmt += '; '
 ...     cmd_fmt += "mv %(result_path)s/%(id)s.txt " + opts['populated-templates']['result-taxa']
+...     cmd_fmt += '; '
+...     cmd_fmt += "mv %(result_path)s/shannon_%(id)s.png " + opts['populated-templates']['result-alpha']
+...     cmd_fmt += '; '
+...     cmd_fmt += "mv %(result_path)s/pd_%(id)s.png " + opts['populated-templates']['result-alpha']
 ...     return agps._iter_ids_over_system_call(cmd_fmt, ids, opts)
 ...
 >>> opts = agps.create_opts('sample-agnostic', chp_path, None, [])
@@ -53,6 +59,12 @@ We also need to write out the taxa summary files for each of the categories in t
 
 ```python
 >>> agpc.cat_taxa_summaries()
+```
+
+Finally, we need to generate alpha diversity figures for each of the categories in the collapsed data. These allow for comparisons on the AG website.
+
+```python
+>>> agpc.cat_alpha_plots()
 ```
 
 ```python
