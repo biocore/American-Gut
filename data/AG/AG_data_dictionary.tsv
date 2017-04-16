@@ -1,0 +1,200 @@
+Column name	Data type	Description	Free Response?
+ACNE_MEDICATION	bool	Use of acne medication	No
+ACNE_MEDICATION_OTC	bool	Use of over the counter acne medication	No
+AGE	int	Age in years	No
+AGE_UNIT	str	Unit of measurement for age	No
+ALCOHOL_FREQUENCY	str	Frequency of alcohol consumption	No
+ALTITUDE		A legacy standard field	No
+ANIMAL_PER	int	The percentage of protein from animal sources	No
+ANONYMIZED_NAME		The barcode stripped of zeros and run suffix; a standard legacy field	No
+ANTIBIOTIC_CONDITION	str	Reason for taking antibiotics	Yes
+ANTIBIOTIC_MEDS	str	Antibiotics used	Yes
+ANTIBIOTIC_SELECT	str	How recently antibiotics have been used	No
+APPENDIX_REMOVED	bool	Whether their appendix has been removed	No
+ASSIGNED_FROM_GEO		A legacy standard field	No
+ASTHMA	bool	Does the participant have Asthma?	No
+BMI	float	Body mass index	No
+BODY_HABITAT	str	Body habitat sampled	No
+BODY_PRODUCT	str	Product of the body habitat	No
+BODY_SITE	str	Body site sampled	No
+BarcodeSequence	str	Barcode sequence used; this field may not be supplied for all samples.	No
+CARBOHYDRATE_PER		Percentage of calories from carbohydrates over the week of sampling	No
+CAT	bool	Has a pet cat	No
+CENTER_NAME	str	A standard field	No
+CENTER_PROJECT_NAME	str	A standard field	No
+CEPHALOSPORIN	bool	Was treated with antibiotics related to cephalosporin	derived
+CHICKENPOX	bool	Had chicken pox	No
+CITY	str	City the participant lives in	Yes
+COLLECTION_DATE	str	Date of collection	No
+COMMON_NAME	str	Type of sample	No
+COMMUNAL_DINING	bool	Whether dining tends to be a communal activity (i.e. Participant eats in dining hall or cafeteria)	No
+CONDITIONS_MEDICATION	bool	Whether the participant has conditions that require medication	No
+CONTRACEPTIVE	bool	Whether the participat is taking contraceptives	No
+COSMETICS_FREQUENCY	str	Frequency of cosmetics use	No
+COUNTRY	str	Participant's country of residence	No
+COUNTRY_OF_BIRTH	str	Country of birth	Yes
+CSECTION	bool	Whether the participant was born via c-section	No
+CURRENT_RESIDENCE_DURATION	str	How long the participant has lived in their present location	No
+DECEASED_PARENT		relates to informed consent	No
+DEODORANT_USE	str	Does the participant use deoderant	No
+DEPTH		A legacy standard field	No
+DESCRIPTION	str	A sample description	No
+DESCRIPTION_WELL	str	A description of the sample well	No
+DIABETES	str	Type of diabetes	No
+DIABETES_DIAGNOSE_DATE	str	Date of diabetes diagnosis	No
+DIABETES_MEDICATION	bool	Are they on diabetes medication	No
+DIABETES_MEDICATIONS	str	The diabetes medications in use	Yes
+DIET_RESTRICTIONS	str	Diet restriction type	Yes
+DIET_TYPE	str	High level diet categorization	No
+DOG	bool	Has a pet dog	No
+DOMINANT_HAND	str	The participant's domiant hand	No
+DRINKING_WATER_SOURCE	str	Primary source of water	No
+Description		A Qiime-standard field	No
+ELEVATION	float	Elevation of the sampling location	No
+EMP Status	bool	A standard field	No
+ENA-BASE-COUNT		Lab Processing Information	No
+ENA-CHECKLIST		Lab Processing Information	No
+ENA-SPOT-COUNT		Lab Processing Information	No
+ENV_BIOME	str	Associated biome type	No
+ENV_FEATURE	str	The enviroment sampled	No
+ENV_MATTER	str	Type of matter sampled	No
+EXERCISE_FREQUENCY	str	Freqency of exercise	No
+EXERCISE_LOCATION	str	Primary exercise location	No
+EXPERIMENT_CENTER	str	Center that processed the sample	No
+EXPERIMENT_DESIGN_DESCRIPTION	str	A standard database field	No
+EXPERIMENT_TITLE	str	A standard database field	No
+EXTRACTIONKIT_LOT	str	The extraction kit lot number	No
+EXTRACTION_ROBOT	str	The specific robot being used	No
+FAT_PER		Percentage of calories from fat over the course of the observed week	No
+FIBER_GRAMS		Grams of fiber in the sampled week	No
+FLOSSING_FREQUENCY	str	Frequency of flossing	No
+FLU_VACCINE_DATE	str	How recently a flu vaccine was taken	No
+FOODALLERGIES_OTHER	str	Does the participant have other food allergies? The question was represented in the survey as a checkbox, so a blank may indicate a non answer or negative answer  	No
+FOODALLERGIES_OTHER_TEXT	str	What the other allergies are?	Yes
+FOODALLERGIES_PEANUTS	bool	Whether the participant is allergic to peanuts. The question was represented in the survey as a checkbox, so a blank may indicate a non answer or negative answer 	No
+FOODALLERGIES_SHELLFISH	bool	Whether the participant is allergic to shellfish. The question was represented in the survey as a checkbox, so a blank may indicate a non answer or negative answer  	No
+FOODALLERGIES_TREENUTS	bool	Whether the participant is allergic to tree nuts. The question was represented in the survey as a checkbox, so a blank may indicate a non answer or negative answer  	No
+FRAT	bool	Does the participant live in a fraternity house?	No
+GENERAL_MEDS		A description of the medications participants are taking; generally not used	Yes
+GLUTEN	bool	The participant does eat a gluten free diet	No
+HAS_EXTRACTED_DATA	bool	Lab Processing Information	No
+HAS_PHYSICAL_SPECIMIN	bool	Lab Processing Information	No
+HEIGHT_IN	int	Participant height in inches	No
+HEIGHT_OR_LENGTH	int	Participant height in cm	No
+HOST_COMMON_NAME	str	Host type if applicable	No
+HOST_SUBJECT_ID	str	Unique participant ID	No
+HOST_TAXID	int	NCBI taxon ID	No
+IBD	str	Indication of IBD	No
+ILLUMINA_TECHNOLOGY	str	Technology used	
+KEY_SEQ		A legacy standard field	
+LACTOSE	bool	Is the participant lactose intolerant	No
+LAST_TRAVEL	str	When the participant traveled last	No
+LATITUDE	float	A latitude in the participant's zipcode	No
+LIBRARY_CONSTRUCTION_PROTOCOL	str	Library protocol used	No
+LIVINGWITH	bool	Partipant lives with other people who have submitted samples	No
+LONGITUDE	float	A longitude in the participant's zipcode	
+LinkerPrimerSequence	str	The linker primer used	No
+MACHINE	str	The sequencing instrument used	No
+MACRONUTRIENT_PCT_TOTAL	int	Total percentage of calories cosumed from carbohydrates, fat and protein over the course of the week	No
+MAINFACTOR_OTHER_1		Factors which contribute to participant migraines	Yes
+MAINFACTOR_OTHER_2		Factors which contribute to participant migraines	Yes
+MAINFACTOR_OTHER_3		Factors which contribute to participant migraines	Yes
+MASTERMIX_LOT	str	The mastermix lot used	No
+MIGRAINE	bool	Whether the participant experiences migraines	No
+MIGRAINEMEDS	bool	Whether the participant is taking migraine medications	No
+MIGRAINE_AGGRAVATION		The major factor which contributes to migranes	No
+MIGRAINE_AURA	bool	If the participant experiences migranes, do they experiece an Aura	No
+MIGRAINE_FACTOR_1	str	Factors that contribute to migraines	No
+MIGRAINE_FACTOR_2	str	Factors that contribute to migraines	No
+MIGRAINE_FACTOR_3	str	Factors that contribute to migraines	No
+MIGRAINE_FREQUENCY	str	Frequency of migraines	No
+MIGRAINE_MEDICATIONS	str	Migraine medications in use	Yes
+MIGRAINE_NAUSEA	bool	Whether nausea is associated with the migraine	No
+MIGRAINE_PAIN	bool	Whether pain is associated with the migraine	No
+MIGRAINE_PHONOPHOBIA	bool	Whether there is a sensitivity to sound during a migraine	No
+MIGRAINE_PHOTOPHOBIA	bool	Whether there is a sensitivity to light during a migraine	No
+MIGRAINE_RELATIVES	str	Whether relatives experience migraines	No
+MULTIVITAMIN	bool	Whether the participant takes a multivitamin	
+NAILS	bool	Whether the participant bites their nails	No
+NITROMIDAZOLE		Treatment with Nitromidazole (antibiotic) in the past year	derived
+NONFOODALLERGIES_BEESTINGS	bool	If the participant is allergic to bee strings. This was a check box, and a blank may indicate a negative answer or no answer 	No
+NONFOODALLERGIES_DANDER	bool	If the participant is allergic to dander. This was a check box, and a blank may indicate a negative answer or no answer	No
+NONFOODALLERGIES_DRUG		If the participant is allergic to some type of drug. This was a check box, and a blank may indicate a negative answer or no answer	No
+NONFOODALLERGIES_NO		Participant has no non-food allergies. This was a check box, and a blank may indicate a negative answer or no answer	No
+NONFOODALLERGIES_POISONIVY	bool	If the participant is allergic to poison ivy. This was a check box, and a blank may indicate a negative answer or no answer	No
+NONFOODALLERGIES_SUN	bool	If the participant is allergic to sun. This was a check box, and a blank may indicate a negative answer or no answer	No
+ORIG_NAME		The sample barcode without prefixes or suffixes. Equilivant to ANONYMIZED NAME	
+ORIG_SAMPLE_NAME		The sample barcode without prefixes or suffixes. Equilivant to ANONYMIZED NAME	
+PCR_PRIMERS		Lab Processing Information	
+PENICILLIN	bool	Participant has been treated with pencillin in the past year	derived
+PERCENTAGE_FROM_CARBS	str	The percentage of carbs from processed sources consumed on average	No
+PETS	str	List of participants pets common name	Yes
+PET_CONTACT	str	How frequently does the participant interact with pets	Yes
+PET_LOCATIONS	str	Where pets live	Yes
+PKU	bool	Does the participant have Phenylketonuria?	No
+PLANT_PER	int	The percentage of protein from plants consumed during a week	No
+PLATFORM	str	Type of sequencing used; lab processing information  	No
+PLATING	str	Individual responsible for plating; lab processing information	No
+POOL_FREQUENCY	str	How often the participant uses a pool or hot tub	Yes
+PREGNANT	bool	Is the participant pregnant	No
+PREGNANT_DUE_DATE	date	when pregnant people are due	No
+PRIMARY_CARB	str	the carbohydrate the participant eats most freqently	Yes
+PRIMARY_VEGETABLE	str	the vegetable the participant eats most frequency	Yes
+PRIMER_DATE	int	when the primer plate was created; lab processing information	No
+PRIMER_PLATE	int	primer plate used for sample processing	No
+PROCESSING_ROBOT	str	The robot used for PCR prep; lab processing information	No
+PROJECT_NAME	str	A database standard field; The name of the sequencing run	No
+PROTEIN_PER	int	Percentage of calories from protein consumed over the course of the studied week	No
+PUBLIC	bool	if the sample is publically avaliable in the database	No
+QUINOLINE	bool	Participant has been treated with quinolin in the past year	derived
+RACE	str		No
+RACE_OTHER	str	Free text if "Race" is other	Yes
+REGION		A legacy database field	No
+RELATIONS	str	relatives who are also submitting american gut samples	Yes
+REQUIRED_SAMPLE_INFO_STATUS	str	A databse field	No
+ROOMMATES	str	number of nonrelated roommates	No
+RUN_CENTER	str	where the sample was sequenced	No
+RUN_DATE	date	when the sample was sequenced	No
+RUN_PREFIX	str	a description of the sequencing run	No
+SAMPLE	str	Another column giving the same barcode without preceeding zeros or a run suffix. This is synonymous with ANONIMIZED_NAME, ORI_NAME, or ORI_SAMPLE_NAME	No
+SAMPLE_CENTER	str	Lab processing field; the location where the sample was processed	No
+SAMPLE_DESCRIPTION	str	Lab processing field; a description of the place where the sample was run	No
+SAMPLE_ID	str	A numeric sample identifier	No
+SAMPLE_NAME	int	A column giving the same barcode without preceeding zeros or a run suffix. This is synonymous with ANONIMIZED_NAME, ORI_NAME, or ORI_SAMPLE_NAME	No
+SAMPLE_PLATE	str	The plate on which the sample was run	No
+SAMPLE_TIME	time	When the sample was collected	No
+SAMP_SIZE	str	Sample mass used in analysis; Lab standard field	No
+SEASONAL_ALLERGIES	str	Does the participant have seasonal allergies?	No
+SEQUENCING_METH	str	Lab processing field	No
+SEQ_RUN	str	The run on which samples were sequenced	No
+SEX	str	Participant gender	No
+SHARED_HOUSING	str	Does the participant live in commnaul housing (dorm, frat, senior living)	No
+SITE_SAMPLED	str	Where was the sample collected?	No
+SKIN_CONDITION	str	If the participant has a skin condition	No
+SLEEP_DURATION	str	How long the participant sleeps in the average night	No
+SMOKING_FREQUENCY	str	How often the participant smokes	No
+SOFTENER	str	Does the participant use fabric softener	No
+SPECIAL_RESTRICTIONS	bool	Does the participant have dietary restrictions	No
+STATE	str	The state or provenance where the sample was collected	No
+STUDY_CENTER	str	Where the samples were sequenced	No
+SULFA_DRUG	bool	If the participant used sulfa drugs in the past year	derived
+SUPPLEMENTS	bool	does the participant take suplements	No
+SUPPLEMENTS_FIELDS	str	what supplements does the participant take	Yes
+TANNING_BEDS	str	the participant uses a tanning bed or does not tan	No
+TANNING_SPRAYS	str	the participant uses a tanning spray or does not tan	No
+TARGET_GENE	str	The gene sequenced; A database standard field	No
+TARGET_SUBFRAGMENT	str	The part of the gene sequence; a database standard field	No
+TAXON_ID	int	A description of the host Taxon	No
+TEETHBRUSHING_FREQUENCY	str	frequency with which participant brushes their teeth	No
+TITLE	str	study name	No
+TM1000_8_TOOL	str	Lab processing Field	No
+TM300_8_TOOL	str	Lab processing Field	No
+TM50_8_TOOL	str	Lab processing Field	No
+TONSILS_REMOVED	Bool	if participant had their tonsils removed	No
+TOT_MASS	int	participant weight in kilograms	No
+TYPES_OF_PLANTS	str	Number of plant species eaten in week of observation	No
+WATER_LOT	str	Lab processing field; The water used to in sample processing	No
+WEIGHT_CHANGE	str	if the participants weight has changed more than 10 lbs in the past year	No
+WEIGHT_LBS	int	weight in pounds	No
+WELL_ID	str	The plate well where the sample was sequenced	No
+ZIP	str	participant zipcode	No
