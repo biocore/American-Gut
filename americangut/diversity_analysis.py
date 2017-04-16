@@ -602,7 +602,7 @@ def add_comparison_bars(centers, tops, p_values, ax, space=None,
         elif show_value:
             p_text.append('%1.2f' % p)
         else:
-            p_text.append(_p_marks[np.searchsorted((p > _p_thresh), True)])
+            p_text.append(_p_marks[np.searchsorted((p >= _p_thresh), True)])
 
     lines = []
 
