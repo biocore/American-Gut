@@ -73,7 +73,8 @@ The next thing we need to do is setup the parameters for SortMeRNA, which is the
 >>> !pick_closed_reference_otus.py -i $fecal_sequences \
 ...                                -o $observed_blooms \
 ...                                -r $bloom_sequences \
-...                                -p $_params_file
+...                                -p $_params_file \
+...                                -f
 ```
 
 And now, we can remove the blooms from the input sequences.
@@ -95,8 +96,6 @@ As the data have now been filtered for blooms, we can now trim the reads back to
 Finally, let's do a quick sanity check that we have sequence data, and that the number of sequences is the same between both trimmed and untrimmed. We'll also dump out summary information about how many reads per sample recruited to the blooms.
 
 ```python
->>> assert os.stat(filtered_sequences).st_size > 0
->>> assert os.stat(filtered_sequences_100nt).st_size > 0
-...
->>> !biom summarize-table -i $observed_blooms_biom | head -n 25
+>>> if not (os.stat(filtered_sequences).st_size > 0 and os.stat(filtered_sequences_100nt).st_size > 0):
+...     raise RuntimeError('There are no sequences follow filtering')
 ```

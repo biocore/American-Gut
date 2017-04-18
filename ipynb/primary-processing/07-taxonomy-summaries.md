@@ -71,16 +71,18 @@ And finally, we'll sanity check that the files appear to be there.
 
 ```python
 >>> error = False
+>>> message = []
 >>> for trim in ['100nt', 'notrim']:
 ...     for level in ['L2', 'L3', 'L6']:
 ...         for filename in agenv.paths['taxa'][trim][level].values():
 ...             path = agu.get_path(filename)
 ...             if not os.path.exists(path):
-...                 print "Could not find: %s" % path
+...                 message.append("Could not find: %s" % path)
 ...                 error = True
 ...             else:
 ...                 if os.stat(path).st_size == 0:
-...                     print "File appears empty: %s" % path
+...                     message.append("File appears empty: %s" % path)
 ...                     error = True
->>> assert not error
+>>> if error:
+...     raise RuntimeError('\n'.join(message))
 ```

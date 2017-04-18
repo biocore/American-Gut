@@ -77,5 +77,6 @@ To end, we're going to verify that the files of interest exist and contain data.
 >>> for table, depth, rarefaction, multi_directory, adiv_directory, keybase in parameter_iterator():
 ...     for metric in ['pd', 'chao1', 'observedotus', 'shannon']:
 ...         metric_file = agu.get_existing_path(agenv.paths['alpha'][rarefaction][keybase + '-%s' % metric])
-...         assert os.stat(metric_file).st_size > 0
+...         if not os.stat(metric_file).st_size > 0:
+...             raise RuntimeError('%s file was not generated' % metric)
 ```
